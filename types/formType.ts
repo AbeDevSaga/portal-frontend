@@ -1,4 +1,4 @@
-export type FieldType = "input" | "textarea" | "select" | "radio" | "date" | "number" | "email" | "password" | "fileUpload" | "phone" | "lookup" | "checkbox";
+export type FieldType = "input" | "textarea" | "select" | "radio" | "date" | "number" | "email" | "password" | "fileUpload" | "phone" | "lookup" | "checkbox" | "digitalSignature";
 
 export interface Option {
     label: string;
@@ -48,6 +48,7 @@ export interface FieldConfig {
     searchable?: boolean; // For react-select
     clearable?: boolean; // For react-select
     disabled?: boolean; // For any field type
+     digitalSignatureConfig?: DigitalSignatureConfig;
     // Dynamic field behavior callbacks (available for all field types)
     getDependentValue?: (formValues: any) => any; // Get value from dependent field
     getDescription?: (dependentValue: any) => string; // Dynamic description based on dependent value
@@ -123,4 +124,17 @@ export interface FieldGroup {
 
 export interface GroupedFields {
     [groupName: string]: FieldGroup;
+}
+
+export interface DigitalSignatureConfig {
+    canvasWidth?: number; // Width of the signature canvas
+    canvasHeight?: number; // Height of the signature canvas
+    penColor?: string; // Color of the pen
+    penWidth?: number; // Width of the pen stroke
+    backgroundColor?: string; // Background color of the canvas
+    showClearButton?: boolean; // Whether to show clear button
+    showSaveButton?: boolean; // Whether to show save button
+    required?: boolean; // Whether signature is required
+    placeholder?: string; // Placeholder text when no signature
+    validationMessage?: string; // Custom validation message
 }

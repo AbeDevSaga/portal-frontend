@@ -7,6 +7,45 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { User, ChevronDown, ChevronUp, Expand, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+const formatValueForDisplay = (value: any, fieldType?: string, fieldLabel?: string): string => {
+    if (!value || value === "") return "";
+
+    // Handle digital signature fields
+    if (fieldType === 'digitalSignature' && typeof value === 'object' && value._fieldType === 'digitalSignature') {
+        return value._displayText || `✓ ${fieldLabel || 'Signature'} captured`;
+    }
+
+    // Handle file upload fields
+    if (fieldType === 'fileUpload') {
+        if (Array.isArray(value)) {
+            return value.map((file: any) => file.name || 'File uploaded').join(', ');
+        } else if (value && typeof value === 'object') {
+            return value.name || 'File uploaded';
+        }
+    }
+
+    // Handle lookup fields (select, lookup)
+    if (typeof value === 'object' && value !== null) {
+        if (value.label) return value.label;
+        if (value.name) return value.name;
+        if (value.value) return value.value;
+        if (Array.isArray(value) && value.length > 0) {
+            if (typeof value[0] === 'object' && value[0].label) {
+                return value.map((item: any) => item.label).join(', ');
+            }
+            return value.join(', ');
+        }
+        return 'Selected';
+    }
+
+    // Handle data URLs (base64)
+    if (typeof value === 'string' && value.startsWith('data:')) {
+        return `✓ ${fieldLabel || 'File'} uploaded`;
+    }
+
+    // Handle regular values
+    return String(value);
+};
 
 interface LivePreviewProps {
     title: string;
@@ -15,7 +54,7 @@ interface LivePreviewProps {
     avatarAlt?: string;
     formValues: Record<string, any>;
     groupMap?: Record<string, string>;
-    allFields: Array<{ key: string; label: string }>;
+    allFields: Array<{ key: string; label: string; type: string }>;
     className?: string;
     style?: React.CSSProperties;
     config?: FormConfig; // Add config to access step information
@@ -57,10 +96,14 @@ export default function LivePreview({
         const value = formValues[field.key] ?? "";
 
         if (!acc[groupName]) acc[groupName] = [];
-        acc[groupName].push({ label: field.label, value });
+        acc[groupName].push({
+            label: field.label,
+            value,
+            type: field.type // Include field type for proper formatting
+        });
 
         return acc;
-    }, {} as Record<string, { label: string; value: any }[]>);
+    }, {} as Record<string, { label: string; value: any; type: string }[]>);
 
     const groupedArray = Object.values(groupedData);
 
@@ -145,26 +188,23 @@ export default function LivePreview({
                             </AccordionTrigger>
                             <AccordionContent className="text-white">
                                 {/* Step Fields */}
-                                <div className="space-y-3 pt-2">
+                                <div className="space-y-3">
                                     {step.fields.map((field) => {
                                         const value = formValues[field.key] ?? "";
+                                        const displayValue = formatValueForDisplay(value, field.type, field.label);
+
                                         return (
-                                            <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10 last:border-b-0">
+                                            <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10">
                                                 <span className="text-sm font-medium text-white/90">
                                                     {field.label}:
                                                 </span>
                                                 <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                    {value === "" ? (
+                                                    {displayValue === "" ? (
                                                         <span className="text-white/50 italic">Not filled</span>
                                                     ) : (
                                                         // Handle both string and object values for lookup fields
-                                                        typeof value === 'object' && value !== null ? (
-                                                            <span>
-                                                                {value.label || value.name || value.value || 'Selected'}
-                                                            </span>
-                                                        ) : (
-                                                            value
-                                                        )
+                                                        displayValue
+
                                                     )}
                                                 </span>
                                             </div>
@@ -207,7 +247,7 @@ export default function LivePreview({
                         </Button>
                     </div>
                 )}
-                
+
 
                 {config.steps.map((step, stepIndex) => {
                     // Check if this step should use accordion (tabular: true)
@@ -245,26 +285,22 @@ export default function LivePreview({
                                     </AccordionTrigger>
                                     <AccordionContent className="text-white">
                                         {/* Step Fields */}
-                                        <div className="space-y-3 pt-2">
+                                        <div className="space-y-3">
                                             {step.fields.map((field) => {
                                                 const value = formValues[field.key] ?? "";
+                                                const displayValue = formatValueForDisplay(value, field.type, field.label);
+
                                                 return (
-                                                    <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10 last:border-b-0">
+                                                    <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10">
                                                         <span className="text-sm font-medium text-white/90">
                                                             {field.label}:
                                                         </span>
                                                         <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                            {value === "" ? (
+                                                            {displayValue === "" ? (
                                                                 <span className="text-white/50 italic">Not filled</span>
                                                             ) : (
                                                                 // Handle both string and object values for lookup fields
-                                                                typeof value === 'object' && value !== null ? (
-                                                                    <span>
-                                                                        {value.label || value.name || value.value || 'Selected'}
-                                                                    </span>
-                                                                ) : (
-                                                                    value
-                                                                )
+                                                                displayValue
                                                             )}
                                                         </span>
                                                     </div>
@@ -290,23 +326,19 @@ export default function LivePreview({
                                 <div className="space-y-3">
                                     {step.fields.map((field) => {
                                         const value = formValues[field.key] ?? "";
+                                        const displayValue = formatValueForDisplay(value, field.type, field.label);
+
                                         return (
                                             <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10">
                                                 <span className="text-sm font-medium text-white/90">
                                                     {field.label}:
                                                 </span>
                                                 <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                    {value === "" ? (
+                                                    {displayValue === "" ? (
                                                         <span className="text-white/50 italic">Not filled</span>
                                                     ) : (
                                                         // Handle both string and object values for lookup fields
-                                                        typeof value === 'object' && value !== null ? (
-                                                            <span>
-                                                                {value.label || value.name || value.value || 'Selected'}
-                                                            </span>
-                                                        ) : (
-                                                            value
-                                                        )
+                                                        displayValue
                                                     )}
                                                 </span>
                                             </div>
@@ -348,13 +380,8 @@ export default function LivePreview({
                                         <span className="text-white/50 italic">Not filled</span>
                                     ) : (
                                         // Handle both string and object values for lookup fields
-                                        typeof groupItem.value === 'object' && groupItem.value !== null ? (
-                                            <span>
-                                                {groupItem.value.label || groupItem.value.name || groupItem.value.value || 'Selected'}
-                                            </span>
-                                        ) : (
-                                            groupItem.value
-                                        )
+                                        formatValueForDisplay(groupItem.value, groupItem.type, groupItem.label)
+
                                     )}
                                 </span>
                             </div>

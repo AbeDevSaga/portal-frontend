@@ -8,6 +8,7 @@ import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
 import {formConfig} from './birth-form-fields'
 import { useEffect, useState } from "react";
+import { processFormSubmission } from "@/utils/formSubmissionUtils";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -24,7 +25,46 @@ export default function Page() {
     };
 
     const handleCreateBirth = (value: any) => {
-        console.log(value);
+         const result = processFormSubmission(value, formConfig);
+        
+        if (result.success) {
+            // Form is ready for submission
+            console.log("Form is ready! API Payload:", result.apiPayload);
+            console.log("Clean form values for display:", result.cleanFormValues);
+            
+            // Here you can make your API call
+            submitBirthRegistration(result.apiPayload, result.data);
+        } else {
+            // Form is not ready - validation errors are already shown
+            console.log("Form is not ready:", result.data);
+            console.log("Current form values for display:", result.cleanFormValues);
+        }
+    };
+
+        const submitBirthRegistration = async (apiPayload: any, submissionData: any) => {
+        try {
+            console.log("Submitting birth registration with payload:", apiPayload);
+            
+            // Here you would make your actual API call
+            // Example:
+            // const response = await fetch('/api/birth-registration', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(apiPayload)
+            // });
+            
+            // For now, simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            console.log("Birth registration submitted successfully!");
+            alert("Birth registration submitted successfully!");
+            
+        } catch (error) {
+            console.error("Error submitting birth registration:", error);
+            alert("Error submitting birth registration. Please try again.");
+        }
     };
 
     const formContent = (
