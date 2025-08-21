@@ -6,8 +6,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
-import {formConfig} from './birth-form-fields'
+import { formConfig } from "./birth-form-fields";
 import { useEffect, useState } from "react";
+import { useSubmitFormMutation } from "@/redux/api/birthApi";
+import { toast } from "sonner";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -15,16 +17,35 @@ export default function Page() {
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     useEffect(() => {
         const initialExpanded = formConfig.steps
-            .map((step, index) => step.defaultExpanded ? `step-${index}` : null)
+            .map((step, index) =>
+                step.defaultExpanded ? `step-${index}` : null
+            )
             .filter(Boolean) as string[];
         setExpandedSections(initialExpanded);
     }, [formConfig.steps]);
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
+    const [submitForm, { data, isLoading, isError }] = useSubmitFormMutation();
+    const handleCreateBirth = async (value: any) => {
+        const body = {
+            value,
+        };
 
-    const handleCreateBirth = (value: any) => {
-        console.log(value);
+        try {
+            const response = await submitForm(body).unwrap();
+
+            if (response) {
+                toast.success("Birth registration created successfully");
+            } else {
+                toast.error("Failed to create birth registration");
+            }
+        } catch (error) {
+            console.error("Error creating birth registration:", error);
+            toast.error(
+                "An error occurred while creating the birth registration"
+            );
+        }
     };
 
     const formContent = (
@@ -53,8 +74,8 @@ export default function Page() {
                 formValues={formValues}
                 groupMap={groupMap}
                 allFields={allFields}
-                previewTitle="Birth Registrations"
-                layout="2-1"
+                previewTitle='Birth Registrations'
+                layout='2-1'
                 config={formConfig}
                 expandedSections={expandedSections}
             />

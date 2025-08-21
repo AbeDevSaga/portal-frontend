@@ -24,7 +24,8 @@ export const formConfig: FormConfig = {
                     key: "firstName",
                     label: "First Name",
                     placeholder: "",
-                    description: "Enter your legal first name as it appears on official documents",
+                    description:
+                        "Enter your legal first name as it appears on official documents",
                     validators: [
                         { type: "required", message: "First name is required" },
                     ],
@@ -37,9 +38,13 @@ export const formConfig: FormConfig = {
                     key: "fatherName",
                     label: "Father Name",
                     placeholder: "",
-                    description: "Enter your legal father name as it appears on official documents",
+                    description:
+                        "Enter your legal father name as it appears on official documents",
                     validators: [
-                        { type: "required", message: "Father name is required" },
+                        {
+                            type: "required",
+                            message: "Father name is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
@@ -50,9 +55,13 @@ export const formConfig: FormConfig = {
                     key: "grandFatherName",
                     label: "Grand Father Name",
                     placeholder: "",
-                    description: "Enter your legal grand father name as it appears on official documents",
+                    description:
+                        "Enter your legal grand father name as it appears on official documents",
                     validators: [
-                        { type: "required", message: "Grand Father name is required" },
+                        {
+                            type: "required",
+                            message: "Grand Father name is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
@@ -80,9 +89,13 @@ export const formConfig: FormConfig = {
                     key: "nationality",
                     label: "Nationality",
                     placeholder: "Search for a nationality...",
-                    description: "Select the nationality where the person was born",
+                    description:
+                        "Select the nationality where the person was born",
                     validators: [
-                        { type: "required", message: "Nationality is required" },
+                        {
+                            type: "required",
+                            message: "Nationality is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
@@ -97,7 +110,12 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: { value: "ET", label: "Ethiopia", id: 1, name: "Ethiopia" }
+                        defaultValue: {
+                            value: "ET",
+                            label: "Ethiopia",
+                            id: 1,
+                            name: "Ethiopia",
+                        },
                     },
                 },
                 {
@@ -105,10 +123,15 @@ export const formConfig: FormConfig = {
                     key: "dateOfBirth",
                     label: "Date of Birth",
                     placeholder: "",
-                    description: "Select your birth date. Future dates are not acceptable.",
+                    description:
+                        "Select your birth date. Future dates are not acceptable.",
                     validators: [
                         { type: "required", message: "Date is required" },
-                        { type: "maxDate", value: new Date().toISOString().split('T')[0], message: "Date cannot be in the future" },
+                        {
+                            type: "maxDate",
+                            value: new Date().toISOString().split("T")[0],
+                            message: "Date cannot be in the future",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
@@ -128,16 +151,24 @@ export const formConfig: FormConfig = {
                     key: "birthTimeWeight",
                     label: "Birth Time Weight",
                     placeholder: "",
-                    description: "Please insert the weight of the child during the birth time.",
+                    description:
+                        "Please insert the weight of the child during the birth time.",
                     validators: [
-                        { type: "required", message: "Birth time weight is required" },
-                        { type: "min", value: 0, message: "Must be at least 1" }
+                        {
+                            type: "required",
+                            message: "Birth time weight is required",
+                        },
+                        {
+                            type: "min",
+                            value: 0,
+                            message: "Must be at least 1",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
                     groupOrder: 8,
                     getDependentValue: (formValues: any) => ({
-                        isNewBorn: formValues.isNewBorn
+                        isNewBorn: formValues.isNewBorn,
                     }),
                     isRequired: (dependentValues: any) => {
                         return dependentValues?.isNewBorn === true;
@@ -153,7 +184,10 @@ export const formConfig: FormConfig = {
                     placeholder: "Search for a country...",
                     description: "Select the country where the person was born",
                     validators: [
-                        { type: "required", message: "Country of birth is required" },
+                        {
+                            type: "required",
+                            message: "Country of birth is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
@@ -168,83 +202,15 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: { value: "ET", label: "Ethiopia", id: 1, name: "Ethiopia" }
+                        defaultValue: {
+                            value: "ET",
+                            label: "Ethiopia",
+                            id: 1,
+                            name: "Ethiopia",
+                        },
                     },
                 },
-                {
-                    type: "lookup",
-                    key: "region",
-                    label: "Birth Place Region",
-                    placeholder: "Search for a region...",
-                    description: "Select the region where the person was born",
-                    validators: [
-                        { type: "required", message: "Region of birth is required" },
-                    ],
-                    required: true,
-                    group: "Child Details",
-                    groupOrder: 10,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "zone",
-                    label: "City/Sub City/Zone",
-                    placeholder: "Search for a zone...",
-                    description: "Select the zone where the person was born",
-                    validators: [
-                        { type: "required", message: "Zone of birth is required" },
-                    ],
-                    required: true,
-                    group: "Child Details",
-                    groupOrder: 11,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "woreda",
-                    label: "Birth Place Woreda",
-                    placeholder: "Search for a woreda...",
-                    description: "Select the woreda where the person was born",
-                    validators: [
-                        { type: "required", message: "Woreda of birth is required" },
-                    ],
-                    required: true,
-                    group: "Child Details",
-                    groupOrder: 12,
-                    clearable: false,
-                    searchable: true,
-                    multiple: true,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
+
                 {
                     type: "checkbox",
                     key: "isBornInHealthCenter",
@@ -261,13 +227,16 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description: "Enter the name of the health center.",
                     validators: [
-                        { type: "required", message: "Health center name is required" },
+                        {
+                            type: "required",
+                            message: "Health center name is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
                     groupOrder: 14,
                     getDependentValue: (formValues: any) => ({
-                        isBornInHealthCenter: formValues.isBornInHealthCenter
+                        isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
                     isRequired: (dependentValues: any) => {
                         return dependentValues?.isBornInHealthCenter === true;
@@ -283,13 +252,16 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description: "Enter the type of the health center.",
                     validators: [
-                        { type: "required", message: "Health center type is required" },
+                        {
+                            type: "required",
+                            message: "Health center type is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
                     groupOrder: 15,
                     getDependentValue: (formValues: any) => ({
-                        isBornInHealthCenter: formValues.isBornInHealthCenter
+                        isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
                     isRequired: (dependentValues: any) => {
                         return dependentValues?.isBornInHealthCenter === true;
@@ -305,13 +277,16 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description: "Enter the owner of the health center.",
                     validators: [
-                        { type: "required", message: "Health center owner is required" },
+                        {
+                            type: "required",
+                            message: "Health center owner is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
                     groupOrder: 16,
                     getDependentValue: (formValues: any) => ({
-                        isBornInHealthCenter: formValues.isBornInHealthCenter
+                        isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
                     isRequired: (dependentValues: any) => {
                         return dependentValues?.isBornInHealthCenter === true;
@@ -320,8 +295,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.isBornInHealthCenter !== true;
                     },
                 },
-            ]
-
+            ],
         },
         {
             title: "Father Details",
@@ -335,7 +309,8 @@ export const formConfig: FormConfig = {
                     key: "firstName",
                     label: "First Name",
                     placeholder: "",
-                    description: "Enter father's first name as it appears on official documents",
+                    description:
+                        "Enter father's first name as it appears on official documents",
                     validators: [
                         { type: "required", message: "First name is required" },
                     ],
@@ -348,9 +323,13 @@ export const formConfig: FormConfig = {
                     key: "fatherName",
                     label: "Father Name",
                     placeholder: "",
-                    description: "Enter father's father name as it appears on official documents",
+                    description:
+                        "Enter father's father name as it appears on official documents",
                     validators: [
-                        { type: "required", message: "Father name is required" },
+                        {
+                            type: "required",
+                            message: "Father name is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -361,9 +340,13 @@ export const formConfig: FormConfig = {
                     key: "grandFatherName",
                     label: "Grand Father Name",
                     placeholder: "",
-                    description: "Enter father's grand father name as it appears on official documents",
+                    description:
+                        "Enter father's grand father name as it appears on official documents",
                     validators: [
-                        { type: "required", message: "Grand Father name is required" },
+                        {
+                            type: "required",
+                            message: "Grand Father name is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -376,7 +359,10 @@ export const formConfig: FormConfig = {
                     placeholder: "Search for a nationality...",
                     description: "Select the nationality of the father",
                     validators: [
-                        { type: "required", message: "Nationality is required" },
+                        {
+                            type: "required",
+                            message: "Nationality is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -391,7 +377,12 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: { value: "ET", label: "Ethiopia", id: 1, name: "Ethiopia" }
+                        defaultValue: {
+                            value: "ET",
+                            label: "Ethiopia",
+                            id: 1,
+                            name: "Ethiopia",
+                        },
                     },
                 },
                 {
@@ -401,7 +392,10 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description: "Enter the fathers identification number",
                     validators: [
-                        { type: "required", message: "Identification number is required" },
+                        {
+                            type: "required",
+                            message: "Identification number is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -412,10 +406,15 @@ export const formConfig: FormConfig = {
                     key: "dateOfBirth",
                     label: "Date of Birth",
                     placeholder: "",
-                    description: "Select father's birth date. Future dates are not acceptable.",
+                    description:
+                        "Select father's birth date. Future dates are not acceptable.",
                     validators: [
                         { type: "required", message: "Date is required" },
-                        { type: "maxDate", value: new Date().toISOString().split('T')[0], message: "Date cannot be in the future" },
+                        {
+                            type: "maxDate",
+                            value: new Date().toISOString().split("T")[0],
+                            message: "Date cannot be in the future",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -428,7 +427,10 @@ export const formConfig: FormConfig = {
                     placeholder: "Search for a country...",
                     description: "Select the country where the father was born",
                     validators: [
-                        { type: "required", message: "Country of birth is required" },
+                        {
+                            type: "required",
+                            message: "Country of birth is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -443,91 +445,27 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: { value: "ET", label: "Ethiopia", id: 1, name: "Ethiopia" }
+                        defaultValue: {
+                            value: "ET",
+                            label: "Ethiopia",
+                            id: 1,
+                            name: "Ethiopia",
+                        },
                     },
                 },
-                {
-                    type: "lookup",
-                    key: "region",
-                    label: "Birth Place Region",
-                    placeholder: "Search for a region...",
-                    description: "Select the region where the father was born",
-                    validators: [
-                        { type: "required", message: "Region of birth is required" },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 8,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "zone",
-                    label: "City/Sub City/Zone",
-                    placeholder: "Search for a zone...",
-                    description: "Select the zone where the father was born",
-                    validators: [
-                        { type: "required", message: "Zone of birth is required" },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 9,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "woreda",
-                    label: "Birth Place Woreda",
-                    placeholder: "Search for a woreda...",
-                    description: "Select the woreda where the father was born",
-                    validators: [
-                        { type: "required", message: "Woreda of birth is required" },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 10,
-                    clearable: false,
-                    searchable: true,
-                    multiple: true,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
+
                 {
                     type: "lookup",
                     key: "maritalStatus",
                     label: "Marital Status",
                     placeholder: "Search for a marital status...",
-                    description: "Select the martial status where the father was born",
+                    description:
+                        "Select the martial status where the father was born",
                     validators: [
-                        { type: "required", message: "Marital Status of father is required" },
+                        {
+                            type: "required",
+                            message: "Marital Status of father is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -551,9 +489,14 @@ export const formConfig: FormConfig = {
                     key: "currentResidence",
                     label: "Current Residence Place",
                     placeholder: "Search for a current residence place...",
-                    description: "Select the current residence place where the father was born",
+                    description:
+                        "Select the current residence place where the father was born",
                     validators: [
-                        { type: "required", message: "current residence place of father is required" },
+                        {
+                            type: "required",
+                            message:
+                                "current residence place of father is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -577,9 +520,13 @@ export const formConfig: FormConfig = {
                     key: "religion",
                     label: "Religion",
                     placeholder: "Search for a religion...",
-                    description: "Select the religion where the father was born",
+                    description:
+                        "Select the religion where the father was born",
                     validators: [
-                        { type: "required", message: "religion of father is required" },
+                        {
+                            type: "required",
+                            message: "religion of father is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -603,9 +550,13 @@ export const formConfig: FormConfig = {
                     key: "educationLevels",
                     label: "Education Status",
                     placeholder: "Search for a education levels...",
-                    description: "Select the education levels where the father was born",
+                    description:
+                        "Select the education levels where the father was born",
                     validators: [
-                        { type: "required", message: "Education Levels of father is required" },
+                        {
+                            type: "required",
+                            message: "Education Levels of father is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -629,9 +580,13 @@ export const formConfig: FormConfig = {
                     key: "occupations",
                     label: "Job Type",
                     placeholder: "Search for a job type...",
-                    description: "Select the job type where the father was born",
+                    description:
+                        "Select the job type where the father was born",
                     validators: [
-                        { type: "required", message: "Job type of father is required" },
+                        {
+                            type: "required",
+                            message: "Job type of father is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
@@ -655,17 +610,25 @@ export const formConfig: FormConfig = {
                     key: "phone",
                     label: "Phone Number",
                     placeholder: "e.g., +251912345678 or 0912345678",
-                    description: "Enter father's Ethiopian phone number in any valid format",
+                    description:
+                        "Enter father's Ethiopian phone number in any valid format",
                     validators: [
-                        { type: "required", message: "Phone number is required" },
-                        { type: "pattern", value: "^(\\+251|251|0)?[79]\\d{8}$", message: "Please enter a valid Ethiopian phone number" },
+                        {
+                            type: "required",
+                            message: "Phone number is required",
+                        },
+                        {
+                            type: "pattern",
+                            value: "^(\\+251|251|0)?[79]\\d{8}$",
+                            message:
+                                "Please enter a valid Ethiopian phone number",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
                     groupOrder: 16,
-                }
-            ]
-
+                },
+            ],
         },
         {
             title: "Mother Details",
@@ -679,7 +642,8 @@ export const formConfig: FormConfig = {
                     key: "firstName",
                     label: "First Name",
                     placeholder: "",
-                    description: "Enter mother's first name as it appears on official documents",
+                    description:
+                        "Enter mother's first name as it appears on official documents",
                     validators: [
                         { type: "required", message: "First name is required" },
                     ],
@@ -692,9 +656,13 @@ export const formConfig: FormConfig = {
                     key: "fatherName",
                     label: "Father Name",
                     placeholder: "",
-                    description: "Enter mother's father name as it appears on official documents",
+                    description:
+                        "Enter mother's father name as it appears on official documents",
                     validators: [
-                        { type: "required", message: "Father name is required" },
+                        {
+                            type: "required",
+                            message: "Father name is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -705,9 +673,13 @@ export const formConfig: FormConfig = {
                     key: "grandFatherName",
                     label: "Grand Father Name",
                     placeholder: "",
-                    description: "Enter mother's grand father name as it appears on official documents",
+                    description:
+                        "Enter mother's grand father name as it appears on official documents",
                     validators: [
-                        { type: "required", message: "Grand Father name is required" },
+                        {
+                            type: "required",
+                            message: "Grand Father name is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -720,7 +692,10 @@ export const formConfig: FormConfig = {
                     placeholder: "Search for a nationality...",
                     description: "Select the nationality of the mother",
                     validators: [
-                        { type: "required", message: "Nationality is required" },
+                        {
+                            type: "required",
+                            message: "Nationality is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -735,7 +710,12 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: { value: "ET", label: "Ethiopia", id: 1, name: "Ethiopia" }
+                        defaultValue: {
+                            value: "ET",
+                            label: "Ethiopia",
+                            id: 1,
+                            name: "Ethiopia",
+                        },
                     },
                 },
                 {
@@ -745,7 +725,10 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description: "Enter the mother's identification number",
                     validators: [
-                        { type: "required", message: "Identification number is required" },
+                        {
+                            type: "required",
+                            message: "Identification number is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -756,10 +739,15 @@ export const formConfig: FormConfig = {
                     key: "dateOfBirth",
                     label: "Date of Birth",
                     placeholder: "",
-                    description: "Select mother's birth date. Future dates are not acceptable.",
+                    description:
+                        "Select mother's birth date. Future dates are not acceptable.",
                     validators: [
                         { type: "required", message: "Date is required" },
-                        { type: "maxDate", value: new Date().toISOString().split('T')[0], message: "Date cannot be in the future" },
+                        {
+                            type: "maxDate",
+                            value: new Date().toISOString().split("T")[0],
+                            message: "Date cannot be in the future",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -772,7 +760,10 @@ export const formConfig: FormConfig = {
                     placeholder: "Search for a country...",
                     description: "Select the country where the mother was born",
                     validators: [
-                        { type: "required", message: "Country of birth is required" },
+                        {
+                            type: "required",
+                            message: "Country of birth is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -787,91 +778,27 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: { value: "ET", label: "Ethiopia", id: 1, name: "Ethiopia" }
+                        defaultValue: {
+                            value: "ET",
+                            label: "Ethiopia",
+                            id: 1,
+                            name: "Ethiopia",
+                        },
                     },
                 },
-                {
-                    type: "lookup",
-                    key: "region",
-                    label: "Birth Place Region",
-                    placeholder: "Search for a region...",
-                    description: "Select the region where the mother was born",
-                    validators: [
-                        { type: "required", message: "Region of birth is required" },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 8,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "zone",
-                    label: "City/Sub City/Zone",
-                    placeholder: "Search for a zone...",
-                    description: "Select the zone where the mother was born",
-                    validators: [
-                        { type: "required", message: "Zone of birth is required" },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 9,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "woreda",
-                    label: "Birth Place Woreda",
-                    placeholder: "Search for a woreda...",
-                    description: "Select the woreda where the mother was born",
-                    validators: [
-                        { type: "required", message: "Woreda of birth is required" },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 10,
-                    clearable: false,
-                    searchable: true,
-                    multiple: true,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
+
                 {
                     type: "lookup",
                     key: "maritalStatus",
                     label: "Marital Status",
                     placeholder: "Search for a marital status...",
-                    description: "Select the martial status where the mother was born",
+                    description:
+                        "Select the martial status where the mother was born",
                     validators: [
-                        { type: "required", message: "Marital Status of mother is required" },
+                        {
+                            type: "required",
+                            message: "Marital Status of mother is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -895,9 +822,14 @@ export const formConfig: FormConfig = {
                     key: "currentResidence",
                     label: "Current Residence Place",
                     placeholder: "Search for a current residence place...",
-                    description: "Select the current residence place where the mother was born",
+                    description:
+                        "Select the current residence place where the mother was born",
                     validators: [
-                        { type: "required", message: "current residence place of mother is required" },
+                        {
+                            type: "required",
+                            message:
+                                "current residence place of mother is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -921,9 +853,13 @@ export const formConfig: FormConfig = {
                     key: "religion",
                     label: "Religion",
                     placeholder: "Search for a religion...",
-                    description: "Select the religion where the mother was born",
+                    description:
+                        "Select the religion where the mother was born",
                     validators: [
-                        { type: "required", message: "religion of mother is required" },
+                        {
+                            type: "required",
+                            message: "religion of mother is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -947,9 +883,13 @@ export const formConfig: FormConfig = {
                     key: "educationLevels",
                     label: "Education Status",
                     placeholder: "Search for a education levels...",
-                    description: "Select the education levels where the mother was born",
+                    description:
+                        "Select the education levels where the mother was born",
                     validators: [
-                        { type: "required", message: "Education Levels of mother is required" },
+                        {
+                            type: "required",
+                            message: "Education Levels of mother is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -973,9 +913,13 @@ export const formConfig: FormConfig = {
                     key: "occupations",
                     label: "Job Type",
                     placeholder: "Search for a job type...",
-                    description: "Select the job type where the mother was born",
+                    description:
+                        "Select the job type where the mother was born",
                     validators: [
-                        { type: "required", message: "Job type of mother is required" },
+                        {
+                            type: "required",
+                            message: "Job type of mother is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
@@ -999,17 +943,25 @@ export const formConfig: FormConfig = {
                     key: "phone",
                     label: "Phone Number",
                     placeholder: "e.g., +251912345678 or 0912345678",
-                    description: "Enter mother's Ethiopian phone number in any valid format",
+                    description:
+                        "Enter mother's Ethiopian phone number in any valid format",
                     validators: [
-                        { type: "required", message: "Phone number is required" },
-                        { type: "pattern", value: "^(\\+251|251|0)?[79]\\d{8}$", message: "Please enter a valid Ethiopian phone number" },
+                        {
+                            type: "required",
+                            message: "Phone number is required",
+                        },
+                        {
+                            type: "pattern",
+                            value: "^(\\+251|251|0)?[79]\\d{8}$",
+                            message:
+                                "Please enter a valid Ethiopian phone number",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
                     groupOrder: 16,
-                }
-            ]
-
-        }
-    ]
-}
+                },
+            ],
+        },
+    ],
+};
