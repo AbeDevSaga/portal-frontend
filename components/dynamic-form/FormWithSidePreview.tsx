@@ -19,6 +19,7 @@ interface FormWithSidePreviewProps {
     className?: string;
     config?: FormConfig; // Add config for step-based preview
     expandedSections?: string[];
+    onAccordionStateChange?: (expandedItems: string[]) => void;
 }
 
 export default function FormWithSidePreview({
@@ -36,6 +37,7 @@ export default function FormWithSidePreview({
     className = "",
     config,
     expandedSections = [],
+    onAccordionStateChange,
 }: FormWithSidePreviewProps) {
     const getGridCols = () => {
         switch (layout) {
@@ -94,6 +96,7 @@ export default function FormWithSidePreview({
                     style={previewStyle}
                     config={config}
                     expandedSections={expandedSections}
+                    onAccordionStateChange={onAccordionStateChange}
                 />
             </div>
         </div>

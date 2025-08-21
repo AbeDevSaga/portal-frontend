@@ -57,6 +57,7 @@ export default function Page() {
                 layout="2-1"
                 config={formConfig}
                 expandedSections={expandedSections}
+                onAccordionStateChange={handleAccordionStateChange}
             />
         </>
     );

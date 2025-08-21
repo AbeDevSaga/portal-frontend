@@ -1,10 +1,12 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { User } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { FormConfig } from "@/types/formType";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { User, ChevronDown, ChevronUp, Expand, ChevronsUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 interface LivePreviewProps {
     title: string;
@@ -18,6 +20,7 @@ interface LivePreviewProps {
     style?: React.CSSProperties;
     config?: FormConfig; // Add config to access step information
     expandedSections?: string[];
+    onAccordionStateChange?: (expandedItems: string[]) => void;
 }
 
 export default function LivePreview({
@@ -37,7 +40,15 @@ export default function LivePreview({
     },
     config,
     expandedSections = [],
+    onAccordionStateChange,
 }: LivePreviewProps) {
+    const [localExpandedSections, setLocalExpandedSections] = useState<string[]>(expandedSections);
+
+    // Sync local state with parent form's accordion state
+    useEffect(() => {
+        setLocalExpandedSections(expandedSections);
+    }, [expandedSections]);
+
     // Group the data based on the groupMap
     const groupedData = allFields.reduce((acc, field) => {
         if (!groupMap[field.key]) return acc;
@@ -56,62 +67,115 @@ export default function LivePreview({
     // Check if we should use accordion (when stepperData is not empty)
     const shouldUseAccordion = config?.stepperData && config.stepperData.length > 0;
 
+    // Check if form has multiple steps (stepper)
+    const hasMultipleSteps = config?.steps && config.steps.length > 1;
+
+    // Function to expand all sections
+    const expandAll = () => {
+        if (config?.steps) {
+            const allStepKeys = config.steps.map((_, index) => `step-${index}`);
+            setLocalExpandedSections(allStepKeys);
+            // Notify parent form of the change
+            if (onAccordionStateChange) {
+                onAccordionStateChange(allStepKeys);
+            }
+        }
+    };
+
+    // Function to collapse all sections
+    const collapseAll = () => {
+        setLocalExpandedSections([]);
+        // Notify parent form of the change
+        if (onAccordionStateChange) {
+            onAccordionStateChange([]);
+        }
+    };
+
+    // Function to handle accordion value change
+    const handleAccordionChange = (value: string[]) => {
+        setLocalExpandedSections(value);
+    };
+
     // Function to render step-based preview with accordion
     const renderStepBasedPreviewWithAccordion = () => {
         if (!config?.steps) return null;
 
         return (
-            <Accordion
-                type="multiple"
-                className="w-full"
-                value={expandedSections}
-            >
-                {config.steps.map((step, stepIndex) => (
-                    <AccordionItem key={stepIndex} value={`step-${stepIndex}`} className="border-white/20">
-                        <AccordionTrigger className="text-white hover:text-white/80 py-3">
-                            <div className="flex items-center gap-3">
-                                {/* Step indicator */}
-                                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold">
-                                    {stepIndex + 1}
+            <div className="space-y-3">
+                {/* Expand/Collapse Controls */}
+                <div className="flex gap-2 pb-2 border-b border-white/20 justify-end">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={expandAll}
+                        className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
+                    >
+                        <Expand className="w-4 h-4 mr-1" />
+                        Expand All
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={collapseAll}
+                        className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
+                    >
+                        <ChevronUp className="w-4 h-4 mr-1" />
+                        Collapse All
+                    </Button>
+                </div>
+                <Accordion
+                    type="multiple"
+                    className="w-full"
+                    value={localExpandedSections}
+                    onValueChange={handleAccordionChange}
+                >
+                    {config.steps.map((step, stepIndex) => (
+                        <AccordionItem key={stepIndex} value={`step-${stepIndex}`} className="border-white/20">
+                            <AccordionTrigger className="text-white hover:text-white/80 py-3">
+                                <div className="flex items-center gap-3">
+                                    {/* Step indicator */}
+                                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold">
+                                        {stepIndex + 1}
+                                    </div>
+                                    {/* Step title */}
+                                    <span className="text-lg font-semibold text-white">
+                                        {step.title}
+                                    </span>
                                 </div>
-                                {/* Step title */}
-                                <span className="text-lg font-semibold text-white">
-                                    {step.title}
-                                </span>
-                            </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white">
-                            {/* Step Fields */}
-                            <div className="space-y-3 pt-2">
-                                {step.fields.map((field) => {
-                                    const value = formValues[field.key] ?? "";
-                                    return (
-                                        <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10 last:border-b-0">
-                                            <span className="text-sm font-medium text-white/90">
-                                                {field.label}:
-                                            </span>
-                                            <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                {value === "" ? (
-                                                    <span className="text-white/50 italic">Not filled</span>
-                                                ) : (
-                                                    // Handle both string and object values for lookup fields
-                                                    typeof value === 'object' && value !== null ? (
-                                                        <span>
-                                                            {value.label || value.name || value.value || 'Selected'}
-                                                        </span>
+                            </AccordionTrigger>
+                            <AccordionContent className="text-white">
+                                {/* Step Fields */}
+                                <div className="space-y-3 pt-2">
+                                    {step.fields.map((field) => {
+                                        const value = formValues[field.key] ?? "";
+                                        return (
+                                            <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10 last:border-b-0">
+                                                <span className="text-sm font-medium text-white/90">
+                                                    {field.label}:
+                                                </span>
+                                                <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
+                                                    {value === "" ? (
+                                                        <span className="text-white/50 italic">Not filled</span>
                                                     ) : (
-                                                        value
-                                                    )
-                                                )}
-                                            </span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </AccordionContent>
-                    </AccordionItem>
-                ))}
-            </Accordion>
+                                                        // Handle both string and object values for lookup fields
+                                                        typeof value === 'object' && value !== null ? (
+                                                            <span>
+                                                                {value.label || value.name || value.value || 'Selected'}
+                                                            </span>
+                                                        ) : (
+                                                            value
+                                                        )
+                                                    )}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
         );
     };
 
@@ -120,7 +184,31 @@ export default function LivePreview({
         if (!config?.steps) return null;
 
         return (
-            <div className="space-y-4">
+            <div className="space-y-4">                {/* Expand/Collapse Controls for stepper forms */}
+                {hasMultipleSteps && (
+                    <div className="flex gap-2 pb-2 border-b border-white/20">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={expandAll}
+                            className="text-white border-white/30 hover:bg-white/10 hover:text-white"
+                        >
+                            <Expand className="w-4 h-4 mr-1" />
+                            Expand All
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={collapseAll}
+                            className="text-white border-white/30 hover:bg-white/10 hover:text-white"
+                        >
+                            <ChevronsUpDown className="w-4 h-4 mr-1" />
+                            Collapse All
+                        </Button>
+                    </div>
+                )}
+                
+
                 {config.steps.map((step, stepIndex) => {
                     // Check if this step should use accordion (tabular: true)
                     const shouldUseAccordionForStep = step.tabular === true;
@@ -128,12 +216,19 @@ export default function LivePreview({
                     if (shouldUseAccordionForStep) {
                         // Render step as accordion
                         return (
-                            <Accordion 
-                                key={stepIndex} 
-                                type="single" 
-                                collapsible 
+                            <Accordion
+                                key={stepIndex}
+                                type="single"
+                                collapsible
                                 className="w-full"
-                                value={expandedSections.includes(`step-${stepIndex}`) ? `step-${stepIndex}` : undefined}
+                                value={localExpandedSections.includes(`step-${stepIndex}`) ? `step-${stepIndex}` : undefined}
+                                onValueChange={(value) => {
+                                    if (value) {
+                                        setLocalExpandedSections(prev => [...prev, value]);
+                                    } else {
+                                        setLocalExpandedSections(prev => prev.filter(item => item !== `step-${stepIndex}`));
+                                    }
+                                }}
                             >
                                 <AccordionItem value={`step-${stepIndex}`} className="border-white/20">
                                     <AccordionTrigger className="text-white hover:text-white/80 py-3">
