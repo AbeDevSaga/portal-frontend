@@ -102,7 +102,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 5,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "nationalities",
+                        apiEndpoint: "/reference-data/nationalities",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -115,6 +115,23 @@ export const formConfig: FormConfig = {
                             label: "Ethiopia",
                             id: 1,
                             name: "Ethiopia",
+                        },
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
                         },
                     },
                 },
@@ -194,7 +211,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 9,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "nationalities",
+                        apiEndpoint: "/reference-data/nationalities",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -207,6 +224,23 @@ export const formConfig: FormConfig = {
                             label: "Ethiopia",
                             id: 1,
                             name: "Ethiopia",
+                        },
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
                         },
                     },
                 },
@@ -227,10 +261,78 @@ export const formConfig: FormConfig = {
                     groupOrder: 10,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
+                        apiEndpoint: "/reference-data/region",
                         method: "GET",
                         valueKey: "value",
                         labelKey: "label",
+                        searchKey: "name",
+                        debounceMs: 300,
+                        minSearchLength: 0,
+                        cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
+                        getDependentValue: (formValues: any) => ({
+                            countryOfBirth: formValues.countryOfBirth,
+                        }),
+                        transformRequest: (
+                            request: any,
+                            dependentValues: any
+                        ) => {
+                            if (dependentValues?.countryOfBirth) {
+                                // Handle both object and simple value cases
+                                const countryId =
+                                    typeof dependentValues.countryOfBirth ===
+                                    "object"
+                                        ? dependentValues.countryOfBirth
+                                              .value ||
+                                          dependentValues.countryOfBirth.id
+                                        : dependentValues.countryOfBirth;
+
+                                // Update the API endpoint to include the country ID
+                                request.apiEndpoint = `/reference-data/region/${countryId}`;
+
+                                return request;
+                            }
+                            return request;
+                        },
+                    },
+                },
+                {
+                    type: "lookup",
+                    key: "zone",
+                    label: "City/Sub City/Zone",
+                    placeholder: "Search for a zone...",
+                    description: "Select the zone where the person was born",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Zone of birth is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Child Details",
+                    groupOrder: 11,
+                    clearable: false,
+                    lookupConfig: {
+                        apiEndpoint: "/reference-data/zones",
+                        method: "GET",
+                        valueKey: "id",
+                        labelKey: "name",
                         searchKey: "name",
                         debounceMs: 300,
                         minSearchLength: 0,
@@ -256,33 +358,6 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "zone",
-                    label: "City/Sub City/Zone",
-                    placeholder: "Search for a zone...",
-                    description: "Select the zone where the person was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Zone of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Child Details",
-                    groupOrder: 11,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                    },
-                },
-                {
-                    type: "lookup",
                     key: "woreda",
                     label: "Birth Place Woreda",
                     placeholder: "Search for a woreda...",
@@ -300,7 +375,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -308,6 +383,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -468,7 +560,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 4,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "nationalities",
+                        apiEndpoint: "/reference-data/nationalities",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -481,6 +573,23 @@ export const formConfig: FormConfig = {
                             label: "Ethiopia",
                             id: 1,
                             name: "Ethiopia",
+                        },
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
                         },
                     },
                 },
@@ -536,7 +645,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 7,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "nationalities",
+                        apiEndpoint: "/reference-data/nationalities",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -549,6 +658,23 @@ export const formConfig: FormConfig = {
                             label: "Ethiopia",
                             id: 1,
                             name: "Ethiopia",
+                        },
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
                         },
                     },
                 },
@@ -569,7 +695,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 8,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -577,6 +703,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -596,7 +739,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 9,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/zones",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -604,6 +747,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -625,7 +785,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -633,6 +793,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -686,7 +863,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -694,6 +871,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -716,7 +910,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "religions",
+                        apiEndpoint: "/reference-data/religions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -724,6 +918,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -746,7 +957,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "education-levels",
+                        apiEndpoint: "/reference-data/education-levels",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -754,6 +965,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -774,9 +1002,9 @@ export const formConfig: FormConfig = {
                     groupOrder: 15,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
-                        apiEndpoint: "occupations",
+                        apiEndpoint: "/reference-data/occupation-types",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -784,6 +1012,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -883,7 +1128,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 4,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "nationalities",
+                        apiEndpoint: "/reference-data/nationalities",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -896,6 +1141,23 @@ export const formConfig: FormConfig = {
                             label: "Ethiopia",
                             id: 1,
                             name: "Ethiopia",
+                        },
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
                         },
                     },
                 },
@@ -951,7 +1213,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 7,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "nationalities",
+                        apiEndpoint: "/reference-data/nationalities",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -964,6 +1226,23 @@ export const formConfig: FormConfig = {
                             label: "Ethiopia",
                             id: 1,
                             name: "Ethiopia",
+                        },
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
                         },
                     },
                 },
@@ -984,7 +1263,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 8,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -992,6 +1271,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -1011,7 +1307,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 9,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/zones",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -1019,6 +1315,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -1040,7 +1353,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -1048,6 +1361,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -1101,7 +1431,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "regions",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -1109,6 +1439,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -1131,7 +1478,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "religions",
+                        apiEndpoint: "/reference-data/religions",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -1139,6 +1486,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -1161,7 +1525,7 @@ export const formConfig: FormConfig = {
                     searchable: true,
                     multiple: true,
                     lookupConfig: {
-                        apiEndpoint: "education-levels",
+                        apiEndpoint: "/reference-data/education-levels",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -1169,6 +1533,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
@@ -1189,9 +1570,9 @@ export const formConfig: FormConfig = {
                     groupOrder: 15,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
-                        apiEndpoint: "occupations",
+                        apiEndpoint: "/reference-data/occupation-types",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -1199,6 +1580,23 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            return response.content.map((res: any) => ({
+                                id: res.code,
+                                value: res.code,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                            }));
+                        },
                     },
                 },
                 {
