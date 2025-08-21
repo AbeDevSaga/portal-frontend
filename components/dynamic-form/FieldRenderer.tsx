@@ -1350,7 +1350,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                 </div>
             );
 
-        case "lookup":
+                    case "lookup":
             return (
                 <Field name={field.key}>
                     {({ field: formikField, form }: any) => {
@@ -1533,7 +1533,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             // Handle single selection defaults
                                             if (
                                                 typeof defaultVal ===
-                                                    "object" &&
+                                                "object" &&
                                                 defaultVal !== null
                                             ) {
                                                 // If default is an object, store it directly
@@ -1630,7 +1630,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 // Handle single selection defaults
                                                 if (
                                                     typeof defaultVal ===
-                                                        "object" &&
+                                                    "object" &&
                                                     defaultVal !== null
                                                 ) {
                                                     form.setFieldValue(
@@ -1686,9 +1686,8 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             // Cache for storing API results
                             const cacheKey = React.useMemo(
                                 () =>
-                                    `${effectiveApiEndpoint}_${inputValue}_${
-                                        JSON.stringify(dependentValues) ||
-                                        "none"
+                                    `${effectiveApiEndpoint}_${inputValue}_${JSON.stringify(dependentValues) ||
+                                    "none"
                                     }`,
                                 [
                                     effectiveApiEndpoint,
@@ -1731,7 +1730,9 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     }
                                     timeoutRef.current = setTimeout(
                                         async () => {
+                                            // Only skip search if minSearchLength > 0 and search term is too short
                                             if (
+                                                minSearchLengthForLogic > 0 &&
                                                 searchTerm.length <
                                                 minSearchLengthForLogic
                                             ) {
@@ -1788,10 +1789,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                         },
                                                         body:
                                                             effectiveMethod ===
-                                                            "POST"
+                                                                "POST"
                                                                 ? JSON.stringify(
-                                                                      requestParams
-                                                                  )
+                                                                    requestParams
+                                                                )
                                                                 : undefined,
                                                     }
                                                 );
@@ -1911,8 +1912,8 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 body:
                                                     effectiveMethod === "POST"
                                                         ? JSON.stringify(
-                                                              requestParams
-                                                          )
+                                                            requestParams
+                                                        )
                                                         : undefined,
                                             }
                                         );
@@ -2030,22 +2031,20 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 })
                                             );
                                         } else {
-                                            // Handle clearing the selection
+                                            // Handle single selection - store the full selected object
                                             console.log(
-                                                "Clearing field value:",
-                                                field.key
+                                                "Setting single field value:",
+                                                field.key,
+                                                selectedOption
                                             );
-                                            const clearValue = isMultiple
-                                                ? []
-                                                : null;
                                             form.setFieldValue(
                                                 field.key,
-                                                clearValue
+                                                selectedOption
                                             );
                                             dispatch(
                                                 updateField({
                                                     key: field.key,
-                                                    value: clearValue,
+                                                    value: selectedOption,
                                                 })
                                             );
                                         }
@@ -2055,11 +2054,12 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             "Clearing field value:",
                                             field.key
                                         );
-                                        form.setFieldValue(field.key, null);
+                                        const clearValue = isMultiple ? [] : null;
+                                        form.setFieldValue(field.key, clearValue);
                                         dispatch(
                                             updateField({
                                                 key: field.key,
-                                                value: null,
+                                                value: clearValue,
                                             })
                                         );
                                     }
@@ -2138,10 +2138,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 typeof value === "object"
                                                     ? value
                                                     : safeOptions.find(
-                                                          (option) =>
-                                                              option.value ===
-                                                              value
-                                                      )
+                                                        (option) =>
+                                                            option.value ===
+                                                            value
+                                                    )
                                             )
                                             .filter(Boolean);
                                     } else if (currentValue) {
@@ -2150,10 +2150,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             typeof currentValue === "object"
                                                 ? currentValue
                                                 : safeOptions.find(
-                                                      (option) =>
-                                                          option.value ===
-                                                          currentValue
-                                                  );
+                                                    (option) =>
+                                                        option.value ===
+                                                        currentValue
+                                                );
                                         selectedOption = value ? [value] : [];
                                     } else {
                                         selectedOption = [];
@@ -2164,10 +2164,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         ? typeof currentValue === "object"
                                             ? currentValue
                                             : safeOptions.find(
-                                                  (option) =>
-                                                      option.value ===
-                                                      currentValue
-                                              )
+                                                (option) =>
+                                                    option.value ===
+                                                    currentValue
+                                            )
                                         : null;
                                 }
                             } catch (error) {
@@ -2199,8 +2199,8 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     backgroundColor: state.isSelected
                                         ? "#3b82f6"
                                         : state.isFocused
-                                        ? "#f3f4f6"
-                                        : "white",
+                                            ? "#f3f4f6"
+                                            : "white",
                                     color: state.isSelected
                                         ? "white"
                                         : "#374151",
@@ -2257,12 +2257,12 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 // Get dynamic properties from field configuration
                                                 const isSearchable =
                                                     field.searchable !==
-                                                    undefined
+                                                        undefined
                                                         ? field.searchable
                                                         : true;
                                                 const isClearable =
                                                     field.clearable !==
-                                                    undefined
+                                                        undefined
                                                         ? field.clearable
                                                         : true;
                                                 const isMultiple =
@@ -2293,7 +2293,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                     <ReactSelect
                                                         menuPortalTarget={
                                                             typeof window !==
-                                                            "undefined"
+                                                                "undefined"
                                                                 ? document.body
                                                                 : undefined
                                                         }
@@ -2327,10 +2327,11 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                         noOptionsMessage={() =>
                                                             isLoading
                                                                 ? "Loading..."
-                                                                : safeInputValue.length <
-                                                                  minSearchLengthForLogic
-                                                                ? `Type at least ${minSearchLengthForLogic} characters to search`
-                                                                : "No options found"
+                                                                : minSearchLengthForLogic > 0 &&
+                                                                  safeInputValue.length <
+                                                                    minSearchLengthForLogic
+                                                                    ? `Type at least ${minSearchLengthForLogic} characters to search`
+                                                                    : "No options found"
                                                         }
                                                         loadingMessage={() =>
                                                             "Loading options..."
@@ -2403,7 +2404,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         {/* Description */}
                                         {dynamicDescription &&
                                             dynamicDescription.trim() !==
-                                                "" && (
+                                            "" && (
                                                 <p className='text-[#7D7D7D] text-sm mt-1'>
                                                     {dynamicDescription}
                                                 </p>
@@ -2438,7 +2439,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                     }}
                 </Field>
             );
-            
+
         case "digitalSignature":
             return (
                 <Field name={field.key}>

@@ -229,8 +229,8 @@ export const formConfig: FormConfig = {
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
+                        valueKey: "value",
+                        labelKey: "label",
                         searchKey: "name",
                         debounceMs: 300,
                         minSearchLength: 0,
@@ -240,7 +240,7 @@ export const formConfig: FormConfig = {
                             locale: "en" | "am" = "en"
                         ) => {
                             console.log("response data", response);
-                            return response.content.map((res) => ({
+                            return response.content.map((res: any) => ({
                                 id: res.code,
                                 value: res.code,
                                 name:
