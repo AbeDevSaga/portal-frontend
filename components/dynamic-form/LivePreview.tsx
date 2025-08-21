@@ -186,12 +186,12 @@ export default function LivePreview({
         return (
             <div className="space-y-4">                {/* Expand/Collapse Controls for stepper forms */}
                 {hasMultipleSteps && (
-                    <div className="flex gap-2 pb-2 border-b border-white/20">
+                    <div className="flex gap-2 pb-2 border-b border-white/20 justify-end">
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={expandAll}
-                            className="text-white border-white/30 hover:bg-white/10 hover:text-white"
+                            className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
                         >
                             <Expand className="w-4 h-4 mr-1" />
                             Expand All
@@ -200,7 +200,7 @@ export default function LivePreview({
                             variant="outline"
                             size="sm"
                             onClick={collapseAll}
-                            className="text-white border-white/30 hover:bg-white/10 hover:text-white"
+                            className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
                         >
                             <ChevronsUpDown className="w-4 h-4 mr-1" />
                             Collapse All
