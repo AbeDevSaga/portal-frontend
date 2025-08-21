@@ -12,37 +12,14 @@ const nextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: [
-              "default-src 'self';",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' " +
-              "https://www.youtube.com " +
-              "https://www.seepie.com " +
-              "https://www.elastic.com " +
-              "https://www.google.com/recaptcha/ " +
-              "https://www.gstatic.com/recaptcha/;",
-              "style-src 'self' 'unsafe-inline' " +
-              "https://fonts.googleapis.com " +
-              "https://www.seepie.com " +
-              "https://www.elastic.com;",
-              "img-src 'self' data: blob: " +
-              "https://*.tile.openstreetmap.org " +
-              "https://*.osm.org " +
-              "https://www.youtube.com " +
-              "https://randomuser.me " +
-              "https://github.com;",
-              "font-src 'self' " +
-              "https://fonts.gstatic.com " +
-              "https://www.seepie.com " +
-              "https://www.elastic.com;",
-              "connect-src 'self' " +
-              "https://*.tile.openstreetmap.org " +
-              "https://*.osm.org " +
-              "https://www.youtube.com;",
-              "frame-src 'self' " +
-              "https://www.google.com " +
-              "https://www.youtube.com;",
-              "media-src 'self' blob: data: " +
-              "https://www.youtube.com;"
+            value: ["default-src 'self';",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.seepie.com https://www.elastic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/;",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.seepie.com https://www.elastic.com;",
+              "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.osm.org https://www.youtube.com https://randomuser.me https://github.com;",
+              "font-src 'self' https://fonts.gstatic.com https://www.seepie.com https://www.elastic.com;",
+              "connect-src 'self' https://*.tile.openstreetmap.org https://*.osm.org https://www.youtube.com https://crrsa-api.risertechservices.com;",
+              "frame-src 'self' https://www.google.com https://www.youtube.com;",
+              "media-src 'self' blob: data: https://www.youtube.com;"
             ].join(" ").replace(/\s{2,}/g, ' ').trim()
           },
           {
