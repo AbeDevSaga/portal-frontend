@@ -1,18 +1,5 @@
 import { NextResponse } from "next/server";
-import { mockDataTable } from "@/utils/json/sample-marriage-table";
-
-const transformItem = (item: any) => {
-    const transformed: any = {};
-    for (const key in item) {
-        const value = item[key];
-        if (value && typeof value === "object" && !Array.isArray(value)) {
-            transformed[key] = value.label ?? null;
-        } else {
-            transformed[key] = value;
-        }
-    }
-    return transformed;
-};
+import { mockDataTable } from "@/utils/json/sample-birth-table";
 
 export async function GET(
     request: Request,
@@ -33,10 +20,8 @@ export async function GET(
         );
     }
 
-    const transformedMarriage = transformItem(marriage);
-
     return NextResponse.json({
-        response: [transformedMarriage],
+        response: [marriage],
         metadata: { total: 1 },
     });
 }

@@ -1,16 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import birthSliceReducer from "./feature/birthSlice";
+import { birthApi } from "./api/birthApi";
+import { marriageApi } from "./api/marriageApi";
+
 export const store = configureStore({
     reducer: {
         birthSlice: birthSliceReducer,
-        // [fraudSliceApi.reducerPath]: fraudSliceApi.reducer,
+        [birthApi.reducerPath]: birthApi.reducer,
+        [marriageApi.reducerPath]: marriageApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         // fraudSliceApi.middleware
         getDefaultMiddleware({
             serializableCheck: false,
-        }).concat(),
+        }).concat(birthApi.middleware, marriageApi.middleware),
 });
 
 setupListeners(store.dispatch);

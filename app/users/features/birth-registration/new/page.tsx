@@ -9,6 +9,8 @@ import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
 import { formConfig } from "./birth-form-fields";
 import { useEffect, useState } from "react";
 import { processFormSubmission } from "@/utils/formSubmissionUtils";
+import { useSubmitFormMutation } from "@/redux/api/birthApi";
+import { toast } from "sonner";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -28,7 +30,7 @@ export default function Page() {
 
     const handleCreateBirth = (value: any) => {
         const result = processFormSubmission(value, formConfig);
-
+        console.log("result", result);
         if (result.success) {
             // Form is ready for submission
             console.log("Form is ready! API Payload:", result.apiPayload);
@@ -48,36 +50,30 @@ export default function Page() {
             );
         }
     };
-
+    const [submitForm, { data, isLoading, isError }] = useSubmitFormMutation();
     const submitBirthRegistration = async (
         apiPayload: any,
         submissionData: any
     ) => {
         try {
-            console.log(
-                "Submitting birth registration with payload:",
-                apiPayload
-            );
-
-            // Here you would make your actual API call
-            // Example:
-            // const response = await fetch('/api/birth-registration', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(apiPayload)
-            // });
-
-            // For now, simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            console.log("Birth registration submitted successfully!");
-            alert("Birth registration submitted successfully!");
+            const response = await submitForm(apiPayload).unwrap();
+            // const response2 = await new Promise((resolve) =>
+            //     setTimeout(resolve, 1000)
+            // );
+            if (response) {
+                toast.success("Birth registration created successfully");
+            } else {
+                toast.error("Failed to create birth registration");
+            }
         } catch (error) {
-            console.error("Error submitting birth registration:", error);
-            alert("Error submitting birth registration. Please try again.");
+            console.error("Error creating birth registration:", error);
+            toast.error(
+                "An error occurred while creating the birth registration"
+            );
         }
+
+        console.log("Birth registration submitted successfully!");
+        alert("Birth registration submitted successfully!");
     };
 
     const formContent = (

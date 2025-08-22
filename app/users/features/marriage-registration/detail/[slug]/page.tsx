@@ -1,4 +1,5 @@
 "use client";
+import { useGetMarriageBySlugQuery } from "@/redux/api/marriageApi";
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,16 +7,15 @@ import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import DetailBlock from "../components/detailBlock";
 import HeroSection from "@/components/common/HeroSection";
-import { formConfig } from "../../new/birth-form-fields";
+import { formConfig } from "../../new/marraige-form-fields";
 import { mapApiResponseToFormFields } from "@/utils/dynamic-form/dynamicApiMapper";
-import { useGetBirthBySlugQuery } from "@/redux/api/birthApi";
 
 export default function Page() {
     const [copied, setCopied] = useState(false);
     const [showTimer, setShowTimer] = useState(false);
     const params = useParams();
     const slug = params.slug;
-    const { isLoading, isError, data } = useGetBirthBySlugQuery({
+    const { isLoading, isError, data } = useGetMarriageBySlugQuery({
         id: slug,
     });
     const [response, setResponse] = useState([]);

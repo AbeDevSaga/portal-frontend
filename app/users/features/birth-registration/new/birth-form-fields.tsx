@@ -261,7 +261,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 10,
                     clearable: false,
                     lookupConfig: {
-                        apiEndpoint: "/reference-data/region",
+                        apiEndpoint: "/reference-data/regions",
                         method: "GET",
                         valueKey: "value",
                         labelKey: "label",
@@ -285,30 +285,6 @@ export const formConfig: FormConfig = {
                                     res.code,
                                 isDisabled: false,
                             }));
-                        },
-                        getDependentValue: (formValues: any) => ({
-                            countryOfBirth: formValues.countryOfBirth,
-                        }),
-                        transformRequest: (
-                            request: any,
-                            dependentValues: any
-                        ) => {
-                            if (dependentValues?.countryOfBirth) {
-                                // Handle both object and simple value cases
-                                const countryId =
-                                    typeof dependentValues.countryOfBirth ===
-                                    "object"
-                                        ? dependentValues.countryOfBirth
-                                              .value ||
-                                          dependentValues.countryOfBirth.id
-                                        : dependentValues.countryOfBirth;
-
-                                // Update the API endpoint to include the country ID
-                                request.apiEndpoint = `/reference-data/region/${countryId}`;
-
-                                return request;
-                            }
-                            return request;
                         },
                     },
                 },
@@ -373,7 +349,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 12,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
@@ -497,7 +473,7 @@ export const formConfig: FormConfig = {
             fields: [
                 {
                     type: "input",
-                    key: "firstName",
+                    key: "firstNameFather",
                     label: "First Name",
                     placeholder: "",
                     description:
@@ -511,7 +487,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "input",
-                    key: "fatherName",
+                    key: "fatherNameFather",
                     label: "Father Name",
                     placeholder: "",
                     description:
@@ -528,7 +504,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "input",
-                    key: "grandFatherName",
+                    key: "grandFatherNameFather",
                     label: "Grand Father Name",
                     placeholder: "",
                     description:
@@ -545,7 +521,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "nationality",
+                    key: "nationalityFather",
                     label: "Nationality",
                     placeholder: "Search for a nationality...",
                     description: "Select the nationality of the father",
@@ -611,7 +587,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "date",
-                    key: "dateOfBirth",
+                    key: "dateOfBirthFather",
                     label: "Date of Birth",
                     placeholder: "",
                     description:
@@ -630,7 +606,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "countryOfBirth",
+                    key: "countryOfBirthFather",
                     label: "Country of Birth",
                     placeholder: "Search for a country...",
                     description: "Select the country where the father was born",
@@ -680,7 +656,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "region",
+                    key: "regionFather",
                     label: "Birth Place Region",
                     placeholder: "Search for a region...",
                     description: "Select the region where the father was born",
@@ -724,7 +700,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "zone",
+                    key: "zoneFather",
                     label: "City/Sub City/Zone",
                     placeholder: "Search for a zone...",
                     description: "Select the zone where the father was born",
@@ -768,7 +744,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "woreda",
+                    key: "woredaFather",
                     label: "Birth Place Woreda",
                     placeholder: "Search for a woreda...",
                     description: "Select the woreda where the father was born",
@@ -783,7 +759,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 10,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
@@ -814,7 +790,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "maritalStatus",
+                    key: "maritalStatusFather",
                     label: "Marital Status",
                     placeholder: "Search for a marital status...",
                     description:
@@ -830,8 +806,9 @@ export const formConfig: FormConfig = {
                     groupOrder: 11,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
+                        isExternal: false,
                         apiEndpoint: "maritalStatuses",
                         method: "GET",
                         valueKey: "id",
@@ -844,7 +821,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "currentResidence",
+                    key: "currentResidenceFather",
                     label: "Current Residence Place",
                     placeholder: "Search for a current residence place...",
                     description:
@@ -861,7 +838,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 12,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
@@ -892,7 +869,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "religion",
+                    key: "religionFather",
                     label: "Religion",
                     placeholder: "Search for a religion...",
                     description:
@@ -908,7 +885,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 13,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/religions",
                         method: "GET",
@@ -939,7 +916,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "educationLevels",
+                    key: "educationLevelsFather",
                     label: "Education Status",
                     placeholder: "Search for a education levels...",
                     description:
@@ -955,7 +932,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 14,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/education-levels",
                         method: "GET",
@@ -986,7 +963,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "occupations",
+                    key: "occupationsFather",
                     label: "Job Type",
                     placeholder: "Search for a job type...",
                     description:
@@ -1033,7 +1010,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "phone",
-                    key: "phone",
+                    key: "phoneFather",
                     label: "Phone Number",
                     placeholder: "e.g., +251912345678 or 0912345678",
                     description:
@@ -1065,7 +1042,7 @@ export const formConfig: FormConfig = {
             fields: [
                 {
                     type: "input",
-                    key: "firstName",
+                    key: "firstNameMother",
                     label: "First Name",
                     placeholder: "",
                     description:
@@ -1079,7 +1056,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "input",
-                    key: "fatherName",
+                    key: "fatherNameMother",
                     label: "Father Name",
                     placeholder: "",
                     description:
@@ -1096,7 +1073,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "input",
-                    key: "grandFatherName",
+                    key: "grandFatherNameMother",
                     label: "Grand Father Name",
                     placeholder: "",
                     description:
@@ -1113,7 +1090,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "nationality",
+                    key: "nationalityMother",
                     label: "Nationality",
                     placeholder: "Search for a nationality...",
                     description: "Select the nationality of the mother",
@@ -1179,7 +1156,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "date",
-                    key: "dateOfBirth",
+                    key: "dateOfBirthMother",
                     label: "Date of Birth",
                     placeholder: "",
                     description:
@@ -1198,7 +1175,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "countryOfBirth",
+                    key: "countryOfBirthMother",
                     label: "Country of Birth",
                     placeholder: "Search for a country...",
                     description: "Select the country where the mother was born",
@@ -1248,7 +1225,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "region",
+                    key: "regionMother",
                     label: "Birth Place Region",
                     placeholder: "Search for a region...",
                     description: "Select the region where the mother was born",
@@ -1292,7 +1269,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "zone",
+                    key: "zoneMother",
                     label: "City/Sub City/Zone",
                     placeholder: "Search for a zone...",
                     description: "Select the zone where the mother was born",
@@ -1336,7 +1313,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "woreda",
+                    key: "woredaMother",
                     label: "Birth Place Woreda",
                     placeholder: "Search for a woreda...",
                     description: "Select the woreda where the mother was born",
@@ -1351,7 +1328,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 10,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
@@ -1382,7 +1359,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "maritalStatus",
+                    key: "maritalStatusMother",
                     label: "Marital Status",
                     placeholder: "Search for a marital status...",
                     description:
@@ -1398,8 +1375,9 @@ export const formConfig: FormConfig = {
                     groupOrder: 11,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
+                        isExternal: false,
                         apiEndpoint: "maritalStatuses",
                         method: "GET",
                         valueKey: "id",
@@ -1412,7 +1390,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "currentResidence",
+                    key: "currentResidenceMother",
                     label: "Current Residence Place",
                     placeholder: "Search for a current residence place...",
                     description:
@@ -1429,7 +1407,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 12,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
@@ -1460,7 +1438,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "religion",
+                    key: "religionMother",
                     label: "Religion",
                     placeholder: "Search for a religion...",
                     description:
@@ -1476,7 +1454,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 13,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/religions",
                         method: "GET",
@@ -1507,7 +1485,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "educationLevels",
+                    key: "educationLevelsMother",
                     label: "Education Status",
                     placeholder: "Search for a education levels...",
                     description:
@@ -1523,7 +1501,7 @@ export const formConfig: FormConfig = {
                     groupOrder: 14,
                     clearable: false,
                     searchable: true,
-                    multiple: true,
+                    multiple: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/education-levels",
                         method: "GET",
@@ -1554,7 +1532,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "lookup",
-                    key: "occupations",
+                    key: "occupationsMother",
                     label: "Job Type",
                     placeholder: "Search for a job type...",
                     description:
@@ -1601,7 +1579,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "phone",
-                    key: "phone",
+                    key: "phoneMother",
                     label: "Phone Number",
                     placeholder: "e.g., +251912345678 or 0912345678",
                     description:

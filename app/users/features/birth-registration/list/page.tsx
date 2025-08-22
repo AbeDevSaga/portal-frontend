@@ -11,10 +11,11 @@ import Link from "next/link";
 import { DataTable } from "@/components/common/CrrsaTable";
 import { Birthcolumns } from "./tableColumns";
 import SelectComponent from "@/components/common/SelectComponent";
-import SampleBirthData from "@/utils/json/sample-birth-data.json";
-
+import { useGetBirthsListQuery } from "@/redux/api/birthApi";
 
 export default function Page() {
+    const [response, setResponse] = useState([]);
+
     const t = useTranslations();
 
     const router = useRouter();
@@ -24,8 +25,8 @@ export default function Page() {
     const statusValue = searchParams.get("status") || "all";
     const [pageDetail, setPageDetail] = useState({
         pageIndex: 0,
-        pageCount: 3,
-        pageSize: 20,
+        pageCount: 1,
+        pageSize: 10,
     });
     const setSearchParams = useCallback(
         (pn: number | string | null, paramType: string) => {
@@ -60,12 +61,21 @@ export default function Page() {
         });
     };
 
+    const { data, isLoading, isError } = useGetBirthsListQuery({
+        page: pageDetail.pageIndex + 1,
+        perPage: pageDetail.pageSize,
+    });
+
     useEffect(() => {
-        console.log("page detail", pageDetail);
-    }, [pageDetail]);
-
-    const data = SampleBirthData;
-
+        if (!isError && !isLoading && data) {
+            setResponse(data.response);
+            setPageDetail({
+                ...pageDetail,
+                pageCount: data.metadata.totalPages,
+            });
+            console.log("data", data.response);
+        }
+    }, [data]);
     return (
         <>
             <Card className='py-8 px-5 space-y-8 w-full'>
@@ -75,36 +85,34 @@ export default function Page() {
                             Birth
                         </p>
                         <p className='text-lg text-[#073954]/40'>
-                            This is the birth registration and
-                            certificate seciton
+                            This is the birth registration and certificate
+                            seciton
                         </p>
                     </div>
+
                     <div className='flex flex-wrap items-center gap-2 min-w-fit'>
                         <div className='py-2 px-3 rounded-md border-2 border-[#e4e4e4] gap-4 w-fit flex flex-wrap'>
-                            {filterStatus.map(
-                                (filterStatusOption) => (
-                                    <Button
-                                        onClick={() =>
-                                            setSearchParams(
-                                                filterStatusOption,
-                                                "status"
-                                            )
-                                        }
-                                        className={`${
-                                            statusValue ===
-                                            filterStatusOption
-                                                ? "bg-[#2C566A] shadow-md"
-                                                : "bg-transparent border-none shadow-none text-primary hover:text-secondary"
-                                        }`}
-                                        key={filterStatusOption}
-                                        size='lg'
-                                    >
-                                        <p className='capitalize py-2'>
-                                            {filterStatusOption}
-                                        </p>
-                                    </Button>
-                                )
-                            )}
+                            {filterStatus.map((filterStatusOption) => (
+                                <Button
+                                    onClick={() =>
+                                        setSearchParams(
+                                            filterStatusOption,
+                                            "status"
+                                        )
+                                    }
+                                    className={`${
+                                        statusValue === filterStatusOption
+                                            ? "bg-[#2C566A] shadow-md"
+                                            : "bg-transparent border-none shadow-none text-primary hover:text-secondary"
+                                    }`}
+                                    key={filterStatusOption}
+                                    size='lg'
+                                >
+                                    <p className='capitalize py-2'>
+                                        {filterStatusOption}
+                                    </p>
+                                </Button>
+                            ))}
                         </div>
                         <div>
                             <SelectComponent
@@ -124,9 +132,10 @@ export default function Page() {
                         </Button>
                     </div>
                 </div>
+
                 <DataTable
                     columns={Birthcolumns}
-                    data={data}
+                    data={response}
                     handlePagination={handlePagination}
                     tablePageSize={pageDetail.pageSize}
                     totalPageCount={pageDetail.pageCount}

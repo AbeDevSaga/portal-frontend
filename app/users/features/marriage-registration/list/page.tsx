@@ -11,6 +11,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/common/CrrsaTable";
 import { Marriagecolumns } from "./tableColumns";
 import SelectComponent from "@/components/common/SelectComponent";
+import { useGetMarriagesListQuery } from "@/redux/api/marriageApi";
 
 export default function Page() {
     const [response, setResponse] = useState([]);
@@ -23,8 +24,8 @@ export default function Page() {
     const statusValue = searchParams.get("status") || "all";
     const [pageDetail, setPageDetail] = useState({
         pageIndex: 0,
-        pageCount: 3,
-        pageSize: 20,
+        pageCount: 1,
+        pageSize: 10,
     });
     const setSearchParams = useCallback(
         (pn: number | string | null, paramType: string) => {
@@ -58,15 +59,22 @@ export default function Page() {
             pageSize: size,
         });
     };
-    const handleFetchData = async () => {
-        const res = await fetch("/api/marriage");
-        const marriages = await res.json();
-        setResponse(marriages.response);
-    };
+
+    const { data, isLoading, isError } = useGetMarriagesListQuery({
+        page: pageDetail.pageIndex + 1,
+        perPage: pageDetail.pageSize,
+    });
 
     useEffect(() => {
-        handleFetchData();
-    }, [pageDetail]);
+        if (!isError && !isLoading && data) {
+            setResponse(data.response);
+            setPageDetail({
+                ...pageDetail,
+                pageCount: data.metadata.totalPages,
+            });
+            console.log("data", data.response);
+        }
+    }, [data]);
 
     return (
         <>
@@ -74,10 +82,10 @@ export default function Page() {
                 <div className='flex flex-wrap gap-5 justify-between items-center'>
                     <div>
                         <p className='font-bold text-2xl text-[#073954]'>
-                            Birth
+                            Marriage
                         </p>
                         <p className='text-lg text-[#073954]/40'>
-                            This is the birth registration and certificate
+                            This is the Marriage registration and certificate
                             seciton
                         </p>
                     </div>
@@ -116,9 +124,9 @@ export default function Page() {
                             className='flex items-center gap-1.5 !h-full primary-button'
                             asChild
                         >
-                            <Link href='/users/features/birth-registration/new'>
+                            <Link href='/users/features/marriage-registration/new'>
                                 <Plus />
-                                Register Birth
+                                Register Marriage
                             </Link>
                         </Button>
                     </div>

@@ -8,47 +8,36 @@ const statusColorMapping = {
 };
 export const Birthcolumns: ColumnDef<unknown>[] = [
     {
-        accessorKey: "fullName",
-        header: "Full Name",
+        accessorKey: "id",
+        header: "ID",
     },
     {
-        accessorKey: "mothersName",
-        header: "Mothers Name",
+        accessorKey: "firstName",
+        header: "First Name",
     },
     {
-        accessorKey: "fathersName",
-        header: "Fathers Name",
+        accessorKey: "fatherName",
+        header: "Father Name",
     },
     {
-        accessorKey: "sex",
-        header: "Sex",
+        accessorKey: "grandFatherName",
+        header: "Grand Father Name",
     },
     {
-        accessorKey: "type",
-        header: "Type",
+        accessorKey: "gender",
+        header: "Gender",
     },
     {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ getValue }) => {
-            const status = String(getValue()) || "";
-            const key = status.toLowerCase();
-            const classes =
-                statusColorMapping[key as keyof typeof statusColorMapping] ??
-                "";
-
-            const labelText = status.charAt(0).toUpperCase() + status.slice(1);
-
-            return (
-                <div className='rounded-full w-[120px] overflow-clip'>
-                    <p
-                        className={`${classes} font-medium whitespace-nowrap py-1 w-full text-center`}
-                    >
-                        {labelText}
-                    </p>
-                </div>
-            );
-        },
+        accessorKey: "husbandNationality",
+        header: "Husband Nationality",
+    },
+    {
+        accessorKey: "isBornInHealthCenter",
+        header: "Health Center Birth",
+    },
+    {
+        accessorKey: "isNewBorn",
+        header: "New Born",
     },
     {
         id: "actions",
