@@ -388,11 +388,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -414,8 +409,8 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "radio",
-                    key: "Earlier Marital Status",
-                    label: "Marital",
+                    key: "earlierMaritalStatusHusband",
+                    label: "Earlier Marital Status",
                     description: "Select your previous marital status",
                     options: [
                         { label: "Never Married", value: "never" },
@@ -460,11 +455,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -511,11 +501,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -562,11 +547,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -868,11 +848,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -894,8 +869,8 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "radio",
-                    key: "Earlier Marital Status",
-                    label: "Marital",
+                    key: "earlierMaritalStatusWife",
+                    label: "Earlier Marital Status",
                     description: "Select your previous marital status",
                     options: [
                         { label: "Never Married", value: "never" },
@@ -940,11 +915,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -991,11 +961,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -1042,11 +1007,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"

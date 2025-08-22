@@ -56,7 +56,10 @@ export const Birthcolumns: ColumnDef<unknown>[] = [
         cell: ({ row }: any) => {
             const recordId = row?.original?.id;
             return (
-                <Link className='' href={`/home/birthdetails/${recordId}`}>
+                <Link
+                    className=''
+                    href={`/users/features/birth-registration/detail/${recordId}`}
+                >
                     <Eye />
                 </Link>
             );
