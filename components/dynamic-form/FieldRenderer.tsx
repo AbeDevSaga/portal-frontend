@@ -1716,14 +1716,16 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             // Safe input value
                             const safeInputValue = inputValue || "";
 
-                            // Simple cache for storing API results
-                            const cache = new Map();
+                            // Simple cache for storing API results - use useRef to persist across renders
+                            const cacheRef = React.useRef(new Map());
+                            const cache = cacheRef.current;
 
                             // Debounced search function
                             const debouncedSearch = React.useCallback(
                                 (searchTerm: string) => {
-                                    // Skip search if field is hidden
-                                    if (isFieldHidden) {
+                                    // Skip search if field is hidden or disabled
+                                    if (isFieldHidden || isFieldDisabled) {
+                                        console.log("FieldRenderer: Skipping search - field hidden or disabled:", { isFieldHidden, isFieldDisabled });
                                         return;
                                     }
 
@@ -1768,23 +1770,48 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 };
 
                                                 // Add dependent values to request if transformRequest is provided
-                                                if (
-                                                    transformRequest &&
-                                                    dependentValues
-                                                ) {
-                                                    requestParams =
-                                                        transformRequest(
-                                                            requestParams,
-                                                            dependentValues
-                                                        );
-                                                }
-
-                                                const endpoint = isExternal
+                                                let modifiedEndpoint = isExternal
                                                     ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
                                                     : `/api/${effectiveApiEndpoint}`;
+
+                                                                                        if (
+                                            transformRequest &&
+                                            dependentValues
+                                        ) {
+                                            console.log("FieldRenderer: Initial load transformRequest called with:", { 
+                                                requestParams, 
+                                                modifiedEndpoint, 
+                                                dependentValues 
+                                            });
+                                            
+                                            const transformedRequest = transformRequest(
+                                                { ...requestParams, url: modifiedEndpoint },
+                                                dependentValues
+                                            );
+                                            
+                                            console.log("FieldRenderer: Initial load transformRequest returned:", transformedRequest);
+                                            
+                                            // Update both requestParams and endpoint if transformRequest modifies them
+                                            if (transformedRequest.url) {
+                                                modifiedEndpoint = transformedRequest.url;
+                                                console.log("FieldRenderer: Initial load updated modifiedEndpoint to:", modifiedEndpoint);
+                                            }
+                                            if (transformedRequest.params) {
+                                                requestParams = transformedRequest.params;
+                                            } else if (transformedRequest.search) {
+                                                requestParams = transformedRequest.search;
+                                            } else if (transformedRequest.body) {
+                                                requestParams = transformedRequest.body;
+                                            } else {
+                                                // If no specific params property, assume the whole object is params
+                                                const { url, ...params } = transformedRequest;
+                                                requestParams = params;
+                                            }
+                                        }
+                                                console.log("FieldRenderer: Final endpoint for search:", modifiedEndpoint);
                                                 // Make API request
                                                 const response = await fetch(
-                                                    endpoint,
+                                                    modifiedEndpoint,
                                                     {
                                                         method:
                                                             effectiveMethod ||
@@ -1878,8 +1905,9 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
 
                             // Load initial options on mount and when dependent values change
                             React.useEffect(() => {
-                                // Skip loading if field is hidden
-                                if (isFieldHidden) {
+                                // Skip loading if field is hidden or disabled
+                                if (isFieldHidden || isFieldDisabled) {
+                                    console.log("FieldRenderer: Skipping initial load - field hidden or disabled:", { isFieldHidden, isFieldDisabled });
                                     return;
                                 }
 
@@ -1895,21 +1923,48 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         };
 
                                         // Add dependent values to request if transformRequest is provided
+                                        let modifiedEndpoint = isExternal
+                                            ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
+                                            : `/api/${effectiveApiEndpoint}`;
+
                                         if (
                                             transformRequest &&
                                             dependentValues
                                         ) {
-                                            requestParams = transformRequest(
-                                                requestParams,
+                                            console.log("FieldRenderer: transformRequest called with:", { 
+                                                requestParams, 
+                                                modifiedEndpoint, 
+                                                dependentValues 
+                                            });
+                                            
+                                            const transformedRequest = transformRequest(
+                                                { ...requestParams, url: modifiedEndpoint },
                                                 dependentValues
                                             );
+                                            
+                                            console.log("FieldRenderer: transformRequest returned:", transformedRequest);
+                                            
+                                            // Update both requestParams and endpoint if transformRequest modifies them
+                                            if (transformedRequest.url) {
+                                                modifiedEndpoint = transformedRequest.url;
+                                                console.log("FieldRenderer: Updated modifiedEndpoint to:", modifiedEndpoint);
+                                            }
+                                            if (transformedRequest.params) {
+                                                requestParams = transformedRequest.params;
+                                            } else if (transformedRequest.search) {
+                                                requestParams = transformedRequest.search;
+                                            } else if (transformedRequest.body) {
+                                                requestParams = transformedRequest.body;
+                                            } else {
+                                                // If no specific params property, assume the whole object is params
+                                                const { url, ...params } = transformedRequest;
+                                                requestParams = params;
+                                            }
                                         }
-                                        const endpoint = isExternal
-                                            ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
-                                            : `/api/${effectiveApiEndpoint}`;
 
+                                        console.log("FieldRenderer: Final endpoint for initial load:", modifiedEndpoint);
                                         // Make API request
-                                        const response = await fetch(endpoint, {
+                                        const response = await fetch(modifiedEndpoint, {
                                             method: effectiveMethod || "GET",
                                             headers: {
                                                 "Content-Type":
@@ -1994,6 +2049,16 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 transformResponse,
                                 isFieldHidden,
                             ]);
+
+                            // Debug: Monitor field state changes
+                            React.useEffect(() => {
+                                console.log("FieldRenderer: Field state changed:", {
+                                    key: field.key,
+                                    isFieldHidden,
+                                    isFieldDisabled,
+                                    dependentValues
+                                });
+                            }, [field.key, isFieldHidden, isFieldDisabled, dependentValues]);
 
                             // Handle input change
                             const handleInputChange = (newValue: string) => {
@@ -2281,23 +2346,23 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                         : false;
 
                                                 // Debug logging for dynamic properties
-                                                console.log(
-                                                    `Field ${field.key} properties:`,
-                                                    {
-                                                        searchable:
-                                                            isSearchable,
-                                                        clearable: isClearable,
-                                                        multiple: isMultiple,
-                                                        fieldConfig: {
-                                                            searchable:
-                                                                field.searchable,
-                                                            clearable:
-                                                                field.clearable,
-                                                            multiple:
-                                                                field.multiple,
-                                                        },
-                                                    }
-                                                );
+                                                // console.log(
+                                                //     `Field ${field.key} properties:`,
+                                                //     {
+                                                //         searchable:
+                                                //             isSearchable,
+                                                //         clearable: isClearable,
+                                                //         multiple: isMultiple,
+                                                //         fieldConfig: {
+                                                //             searchable:
+                                                //                 field.searchable,
+                                                //             clearable:
+                                                //                 field.clearable,
+                                                //             multiple:
+                                                //                 field.multiple,
+                                                //         },
+                                                //     }
+                                                // );
 
                                                 return (
                                                     <ReactSelect

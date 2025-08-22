@@ -1143,7 +1143,61 @@ export const formConfig: FormConfig = {
                     required: true,
                     group: "Witness Information",
                     groupOrder: 5,
+                }, {
+                    type: "digitalSignature",
+                    key: "parentSignature",
+                    label: "Witness Signature",
+                    description: "Please sign below to confirm the information provided is accurate and complete",
+                    required: true,
+                    group: "Account Details",
+                    groupOrder: 6,
+                    validators: [
+                        { type: "required", message: "Signature is required to proceed with registration" }
+                    ],
+                    digitalSignatureConfig: {
+                        canvasWidth: 450,
+                        canvasHeight: 200,
+                        penColor: '#1f2937', // Dark gray for better visibility
+                        penWidth: 3,
+                        backgroundColor: '#ffffff',
+                        showClearButton: true,
+                        showSaveButton: true,
+                        placeholder: "Click and drag to sign here",
+                        validationMessage: "Please provide your signature to continue"
+                    },
+                    // Dynamic behavior based on country selection
+                    // getDependentValue: (formValues: any) => {
+                    //     return {
+                    //         countryOfBirth: formValues.countryOfBirth,
+                    //         regionOfBirth: formValues.regionOfBirth,
+                    //     };
+                    // },
+                    // // Make signature required for all countries
+                    // isRequired: (dependentValues: any) => {
+                    //     return true; // Always required for birth registration
+                    // },
+                    // // Always show the signature field, but guide users with description
+                    // isHide: (dependentValues: any) => {
+                    //     return false; // Always visible
+                    // },
+                    // // Custom description based on country
+                    // getDescription: (dependentValues: any) => {
+                    //     if (!dependentValues?.countryOfBirth) {
+                    //         return "Please select a country first before signing. The signature field is available for you to use once you've made your selection.";
+                    //     }
+                    //     const countryId = typeof dependentValues.countryOfBirth === 'object'
+                    //         ? dependentValues.countryOfBirth.value || dependentValues.countryOfBirth.id
+                    //         : dependentValues.countryOfBirth;
+
+                    //     if (countryId === 'ET') {
+                    //         return "Ethiopian birth registration requires parent/guardian signature for verification";
+                    //     } else if (countryId === 'US') {
+                    //         return "US birth registration requires legal guardian signature for processing";
+                    //     }
+                    //     return "Please sign below to confirm the information provided is accurate and complete";
+                    // }
                 },
+
             ],
         },
     ],

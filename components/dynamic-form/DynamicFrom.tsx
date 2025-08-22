@@ -285,7 +285,7 @@ export default function DynamicForm({
                             enableReinitialize
                         >
                             {({ values, isValid, errors, touched }) => {
-                                console.log("Single form state:", { isValid, errors, touched, values });
+                                // console.log("Single form state:", { isValid, errors, touched, values });
 
                                 // Use dynamic validation hook for all fields
                                 const {

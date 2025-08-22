@@ -275,7 +275,7 @@ export const formConfig: FormConfig = {
                         ) => {
                             console.log("response data", response);
                             return response.content.map((res: any) => ({
-                                id: res.code,
+                                id: res.id,
                                 value: res.code,
                                 name:
                                     res.localizedContent?.[locale]?.name ??
@@ -304,6 +304,13 @@ export const formConfig: FormConfig = {
                     group: "Child Details",
                     groupOrder: 11,
                     clearable: false,
+                    disabled: true,
+                    getDependentValue: (formValues: any) => formValues.region,
+                    isDisabled: (dependentValue: any) => !dependentValue,
+                    getPlaceholder: (dependentValue: any) => 
+                        dependentValue ? "Search for a zone..." : "Please select a region first",
+                    getDescription: (dependentValue: any) => 
+                        dependentValue ? "Select the zone where the person was born" : "Zone selection is disabled until a region is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/zones",
                         method: "GET",
@@ -313,13 +320,24 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformRequest: (request: any, dependentValue: any) => {
+                            console.log("transformRequest called with:", { request, dependentValue });
+                            if (dependentValue) {
+                                const modifiedUrl = `${request.url}?regionId=${dependentValue.id || dependentValue}`;
+                                console.log("Modified URL:", modifiedUrl);
+                                return {
+                                    url: modifiedUrl,
+                                    params: request.params || request
+                                };
+                            }
+                            return request;
+                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
                         ) => {
-                            console.log("response data", response);
                             return response.content.map((res: any) => ({
-                                id: res.code,
+                                id: res.id,
                                 value: res.code,
                                 name:
                                     res.localizedContent?.[locale]?.name ??
@@ -350,8 +368,14 @@ export const formConfig: FormConfig = {
                     clearable: false,
                     searchable: true,
                     multiple: false,
+                    getDependentValue: (formValues: any) => formValues.zone,
+                    isDisabled: (dependentValue: any) => !dependentValue,
+                    getPlaceholder: (dependentValue: any) => 
+                        dependentValue ? "Search for a woreda..." : "Please select a zone first",
+                    getDescription: (dependentValue: any) => 
+                        dependentValue ? "Select the woreda where the person was born" : "Woreda selection is disabled until a zone is selected",
                     lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
+                        apiEndpoint: "/reference-data/woredas",
                         method: "GET",
                         valueKey: "id",
                         labelKey: "name",
@@ -359,13 +383,25 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformRequest: (request: any, dependentValue: any) => {
+                            console.log("transformRequest called with:", { request, dependentValue });
+                            if (dependentValue) {
+                                const modifiedUrl = `${request.url}?zoneId=${dependentValue.id || dependentValue}`;
+                                console.log("Modified URL:", modifiedUrl);
+                                return {
+                                    url: modifiedUrl,
+                                    params: request.params || request
+                                };
+                            }
+                            return request;
+                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
                         ) => {
                             console.log("response data", response);
                             return response.content.map((res: any) => ({
-                                id: res.code,
+                                id: res.id,
                                 value: res.code,
                                 name:
                                     res.localizedContent?.[locale]?.name ??
@@ -714,6 +750,13 @@ export const formConfig: FormConfig = {
                     group: "Father Details",
                     groupOrder: 9,
                     clearable: false,
+                    disabled: true,
+                    getDependentValue: (formValues: any) => formValues.regionFather,
+                    isDisabled: (dependentValue: any) => !dependentValue,
+                    getPlaceholder: (dependentValue: any) => 
+                        dependentValue ? "Search for a zone..." : "Please select a region first",
+                    getDescription: (dependentValue: any) => 
+                        dependentValue ? "Select the zone where the father was born" : "Zone selection is disabled until a region is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/zones",
                         method: "GET",
@@ -723,6 +766,18 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformRequest: (request: any, dependentValue: any) => {
+                            console.log("zoneFather transformRequest called with:", { request, dependentValue });
+                            if (dependentValue) {
+                                const modifiedUrl = `${request.url}?regionId=${dependentValue.value || dependentValue}`;
+                                console.log("zoneFather Modified URL:", modifiedUrl);
+                                return {
+                                    url: modifiedUrl,
+                                    params: request.params || request
+                                };
+                            }
+                            return request;
+                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
@@ -1283,6 +1338,13 @@ export const formConfig: FormConfig = {
                     group: "Mother Details",
                     groupOrder: 9,
                     clearable: false,
+                    disabled: true,
+                    getDependentValue: (formValues: any) => formValues.regionMother,
+                    isDisabled: (dependentValue: any) => !dependentValue,
+                    getPlaceholder: (dependentValue: any) => 
+                        dependentValue ? "Search for a zone..." : "Please select a region first",
+                    getDescription: (dependentValue: any) => 
+                        dependentValue ? "Select the zone where the mother was born" : "Zone selection is disabled until a region is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/zones",
                         method: "GET",
@@ -1292,6 +1354,18 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        transformRequest: (request: any, dependentValue: any) => {
+                            console.log("zoneMother transformRequest called with:", { request, dependentValue });
+                            if (dependentValue) {
+                                const modifiedUrl = `${request.url}?regionId=${dependentValue.value || dependentValue}`;
+                                console.log("zoneMother Modified URL:", modifiedUrl);
+                                return {
+                                    url: modifiedUrl,
+                                    params: request.params || request
+                                };
+                            }
+                            return request;
+                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
