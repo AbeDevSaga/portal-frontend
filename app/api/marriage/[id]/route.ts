@@ -3,9 +3,9 @@ import { mockDataTable } from "@/utils/json/sample-marriage-table";
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = params;
+    const { id } = await params;
 
     const marriage = mockDataTable.find((m) => m.id === id);
 

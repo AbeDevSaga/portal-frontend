@@ -177,28 +177,8 @@ export default function DynamicForm({
                             {({ values, isValid, errors, touched }) => {
                                 console.log("Formik state:", { isValid, errors, touched, values });
 
-                                // Use dynamic validation hook for current step
-                                const {
-                                    canSubmit,
-                                    getRequiredFieldsCount,
-                                    getFilledRequiredFieldsCount,
-                                    visibleRequiredFields
-                                } = useDynamicFormValidation(currentStep.fields, values);
-
-                                // Button should be enabled if dynamic validation passes
-                                const shouldEnableButton = canSubmit();
-
-                                // Debug info for development
-                                if (process.env.NODE_ENV === 'development') {
-                                    console.log("Dynamic validation:", {
-                                        canSubmit: canSubmit(),
-                                        requiredFieldsCount: getRequiredFieldsCount(),
-                                        filledRequiredFieldsCount: getFilledRequiredFieldsCount(),
-                                        visibleRequiredFields,
-                                        formikValid: isValid,
-                                        errors: Object.keys(errors).length
-                                    });
-                                }
+                                // Button should be enabled based on Formik validation
+                                const shouldEnableButton = isValid;
 
                                 return (
                                     <Form className='space-y-2.5'>
@@ -251,7 +231,7 @@ export default function DynamicForm({
                                                 className={!shouldEnableButton ? 'opacity-50 cursor-not-allowed' : ''}
                                             >
                                                 {stepIndex === steps.length - 1 ?
-                                                    (canSubmit() ? 'Submit' : 'Fill Required Fields') :
+                                                    (shouldEnableButton ? 'Submit' : 'Fill Required Fields') :
                                                     'Next'
                                                 }
                                             </Button>
@@ -287,28 +267,8 @@ export default function DynamicForm({
                             {({ values, isValid, errors, touched }) => {
                                 // console.log("Single form state:", { isValid, errors, touched, values });
 
-                                // Use dynamic validation hook for all fields
-                                const {
-                                    canSubmit,
-                                    getRequiredFieldsCount,
-                                    getFilledRequiredFieldsCount,
-                                    visibleRequiredFields
-                                } = useDynamicFormValidation(currentStep.fields, values);
-
-                                // Button should be enabled if dynamic validation passes
-                                const shouldEnableButton = canSubmit();
-
-                                // Debug info for development
-                                if (process.env.NODE_ENV === 'development') {
-                                    console.log("Dynamic validation:", {
-                                        canSubmit: canSubmit(),
-                                        requiredFieldsCount: getRequiredFieldsCount(),
-                                        filledRequiredFieldsCount: getFilledRequiredFieldsCount(),
-                                        visibleRequiredFields,
-                                        formikValid: isValid,
-                                        errors: Object.keys(errors).length
-                                    });
-                                }
+                                // Button should be enabled based on Formik validation
+                                const shouldEnableButton = isValid;
 
                                 return (
                                     <Form className='space-y-2.5'>
@@ -382,7 +342,7 @@ export default function DynamicForm({
                                                 disabled={!shouldEnableButton}
                                                 className={`px-8 primary-button ${!shouldEnableButton ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             >
-                                                {canSubmit() ? 'Submit' : 'Fill Required Fields'}
+                                                {shouldEnableButton ? 'Submit' : 'Fill Required Fields'}
                                             </Button>
                                         </div>
                                         {showPreview && (

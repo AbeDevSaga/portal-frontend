@@ -2,7 +2,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FormConfig } from "@/types/formType";
+import { FormConfig, FieldConfig } from "@/types/formType";
 import DynamicForm from "./DynamicFrom";
 import DynamicFormWithPreview from "./DynamicFormWithPreview";
 import FormWithSidePreview from "./FormWithSidePreview";
@@ -41,6 +41,33 @@ const noStepperConfig: FormConfig = {
                         { type: "email", message: "Invalid email format" }
                     ],
                     required: true,
+                },
+                {
+                    type: "inputSearch",
+                    key: "userSearch",
+                    label: "Search User",
+                    placeholder: "Search for a user...",
+                    description: "This field demonstrates the new inputSearch functionality. Type at least 3 characters to search.",
+                    required: true,
+                    validators: [{ type: "required", message: "User selection is required" }],
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "user/user",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 500,
+                        cacheResults: true,
+                        placeholder: "Search users...",
+                        noOptionsMessage: "No users found",
+                        loadingMessage: "Searching...",
+                        transformResponse: (data: any) => {
+                            // Transform the API response to match expected format
+                            return Array.isArray(data) ? data : [];
+                        },
+                    },
                 },
             ],
         },
@@ -178,6 +205,43 @@ const leftStepperConfig: FormConfig = {
     ],
 };
 
+const demoFields: FieldConfig[] = [
+    {
+        type: "input",
+        key: "name",
+        label: "Name",
+        placeholder: "Enter your name",
+        required: true,
+        validators: [{ type: "required", message: "Name is required" }],
+    },
+    {
+        type: "inputSearch",
+        key: "userSearch",
+        label: "Search User",
+        placeholder: "Search for a user...",
+        description: "This field demonstrates the new inputSearch functionality. Type at least 3 characters to search.",
+        required: true,
+        validators: [{ type: "required", message: "User selection is required" }],
+        inputSearchConfig: {
+            apiEndpoint: "https://jsonplaceholder.typicode.com/users",
+            method: "GET",
+            searchKey: "q",
+            valueKey: "id",
+            labelKey: "name",
+            minSearchLength: 3,
+            debounceMs: 500,
+            cacheResults: true,
+            placeholder: "Search users...",
+            noOptionsMessage: "No users found",
+            loadingMessage: "Searching...",
+            transformResponse: (data: any) => {
+                // Filter results based on search query (since jsonplaceholder doesn't support search)
+                return Array.isArray(data) ? data.slice(0, 5) : [];
+            },
+        },
+    },
+];
+
 export default function DemoPage() {
     const handleSubmit = (values: any) => {
         console.log("Form submitted:", values);
@@ -194,6 +258,7 @@ export default function DemoPage() {
         country: "",
         bio: "",
         experience: "",
+        userSearch: null,
     };
 
     return (
@@ -230,7 +295,7 @@ export default function DemoPage() {
                     2. Top Stepper (Multi-step Form)
                 </h2>
                 <p className="text-gray-600 mb-4">
-                    When <code>stepperData</code> has items and <code>stepperPosition</code> is "top",
+                    When <code>stepperData</code> has items and <code>stepperPosition</code> is &quot;top&quot;,
                     the stepper appears above the form with Next/Previous navigation.
                 </p>
                 <DynamicForm
@@ -247,7 +312,7 @@ export default function DemoPage() {
                     3. Left Stepper (Multi-step Form)
                 </h2>
                 <p className="text-gray-600 mb-4">
-                    When <code>stepperPosition</code> is "left", the stepper appears to the left of the form.
+                    When <code>stepperPosition</code> is &quot;left&quot;, the stepper appears to the left of the form.
                     This is ideal for forms with many steps.
                 </p>
                 <div className="relative">
@@ -286,9 +351,9 @@ export default function DemoPage() {
                         email: "Contact Info",
                     }}
                     allFields={[
-                        { key: "firstName", label: "First Name" },
-                        { key: "lastName", label: "Last Name" },
-                        { key: "email", label: "Email" },
+                        { key: "firstName", label: "First Name", type: "input" },
+                        { key: "lastName", label: "Last Name", type: "input" },
+                        { key: "email", label: "Email", type: "input" },
                     ]}
                     previewTitle="User Registration"
                     layout="2-1"

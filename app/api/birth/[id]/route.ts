@@ -3,25 +3,25 @@ import { mockDataTable } from "@/utils/json/sample-birth-table";
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = params;
+    const { id } = await params;
 
-    const marriage = mockDataTable.find((m) => m.id === id);
+    const birth = mockDataTable.find((b) => b.id === id);
 
-    if (!marriage) {
+    if (!birth) {
         return NextResponse.json(
             {
                 response: [],
                 metadata: { total: 0 },
-                error: "Marriage not found",
+                error: "Birth record not found",
             },
             { status: 404 }
         );
     }
 
     return NextResponse.json({
-        response: [marriage],
+        response: [birth],
         metadata: { total: 1 },
     });
 }

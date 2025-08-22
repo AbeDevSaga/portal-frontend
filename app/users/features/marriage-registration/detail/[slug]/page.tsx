@@ -1,5 +1,4 @@
 "use client";
-import { useGetMarriageBySlugQuery } from "@/redux/api/marriageApi";
 import { useParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,13 @@ import DetailBlock from "../components/detailBlock";
 import HeroSection from "@/components/common/HeroSection";
 import { formConfig } from "../../new/marraige-form-fields";
 import { mapApiResponseToFormFields } from "@/utils/dynamic-form/dynamicApiMapper";
+import { useGetMarriageBySlugQuery } from "@/redux/api/marriageApi";
+
+// Define the type for the mapped response data
+type MappedResponseData = {
+    title: string;
+    data: { label: string; key: string; value: string; status?: string }[];
+}[];
 
 export default function Page() {
     const [copied, setCopied] = useState(false);
@@ -18,7 +24,7 @@ export default function Page() {
     const { isLoading, isError, data } = useGetMarriageBySlugQuery({
         id: slug,
     });
-    const [response, setResponse] = useState([]);
+    const [response, setResponse] = useState<MappedResponseData>([]);
 
     useEffect(() => {
         if (!isError && !isLoading && data) {
@@ -68,8 +74,8 @@ export default function Page() {
     return (
         <>
             <HeroSection
-                title='Birth Detail'
-                description='This is the birth detail of a family member section'
+                title='Marriage Detail'
+                description='This is the marriage detail of a family member section'
                 action={
                     <Button
                         className='bg-[#073954]'

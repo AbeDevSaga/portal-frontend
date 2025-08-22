@@ -11,7 +11,8 @@ export type FieldType =
     | "phone"
     | "lookup"
     | "checkbox"
-    | "digitalSignature";
+    | "digitalSignature"
+    | "inputSearch";
 
 export interface Option {
     label: string;
@@ -58,6 +59,8 @@ export interface FieldConfig {
     options?: Option[];
     group?: string;
     groupOrder?: number;
+    // Default value for any field type
+    defaultValue?: any; // Default value for the field
     // File upload specific properties
     multiple?: boolean;
     maxFileSize?: number; // in bytes
@@ -98,11 +101,25 @@ export interface FieldConfig {
         // containing all properties (value, label, and any additional data)
         // Dynamic field behavior callbacks for lookup fields (can also be used at field level)
         getDependentValue?: (formValues: any) => any; // Get value from dependent field
-        getDescription?: (dependentValue: any) => string; // Dynamic description based on dependent value
-        isDisabled?: (dependentValue: any) => boolean; // Dynamic disabled state based on dependent value
-        getPlaceholder?: (dependentValue: any) => string; // Dynamic placeholder based on dependent value
-        isHide?: (dependentValue: any) => boolean; // Dynamic visibility based on dependent value
-        isRequired?: (dependentValue: any) => boolean; // Dynamic requirement based on dependent value
+    };
+    // InputSearch specific properties
+    inputSearchConfig?: {
+        isExternal?: boolean; // Whether to use external API or local API route
+        apiEndpoint: string;
+        method?: "GET" | "POST";
+        headers?: Record<string, string>;
+        searchKey?: string; // Default: 'search'
+        valueKey?: string; // Default: 'id'
+        labelKey?: string; // Default: 'name'
+        minSearchLength?: number; // Minimum characters before searching (default: 3)
+        debounceMs?: number; // Debounce search requests (default: 300)
+        cacheResults?: boolean; // Whether to cache API results
+        transformResponse?: (data: any) => any[]; // Custom transformation function
+        transformRequest?: (request: any, dependentValue: any) => any; // Transform API request based on dependent value
+        placeholder?: string; // Placeholder for the search input
+        noOptionsMessage?: string; // Message when no options are found
+        loadingMessage?: string; // Message while loading
+        additionalParams?: Record<string, any>; // Additional query parameters to include in the request
     };
 }
 

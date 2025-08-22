@@ -127,8 +127,8 @@ const Page = () => {
                         ))}
                     </div>
                     <div className='grid md:grid-cols-2 xl:grid-cols-4 gap-10'>
-                        {marriageData.map((married) => (
-                            <Card className='pt-3.5 pb-2 px-5 rounded-md shadow-md'>
+                        {marriageData.map((married, index) => (
+                            <Card key={index} className='pt-3.5 pb-2 px-5 rounded-md shadow-md'>
                                 <div className='px-5 space-y-2 pb-3 border-b'>
                                     <div className='flex flex-col items-center justify-center'>
                                         <Image

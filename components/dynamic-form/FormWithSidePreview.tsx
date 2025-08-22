@@ -8,7 +8,7 @@ interface FormWithSidePreviewProps {
     formContent: React.ReactNode;
     formValues: Record<string, any>;
     groupMap: Record<string, string>;
-    allFields: Array<{ key: string; label: string }>;
+    allFields: Array<{ key: string; label: string; type: string }>;
     previewTitle?: string;
     previewSubtitle?: string;
     avatarSrc?: string;

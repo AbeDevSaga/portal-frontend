@@ -10,6 +10,12 @@ import { formConfig } from "../../new/birth-form-fields";
 import { mapApiResponseToFormFields } from "@/utils/dynamic-form/dynamicApiMapper";
 import { useGetBirthBySlugQuery } from "@/redux/api/birthApi";
 
+// Define the type for the mapped response data
+type MappedResponseData = {
+    title: string;
+    data: { label: string; key: string; value: string; status?: string }[];
+}[];
+
 export default function Page() {
     const [copied, setCopied] = useState(false);
     const [showTimer, setShowTimer] = useState(false);
@@ -18,7 +24,7 @@ export default function Page() {
     const { isLoading, isError, data } = useGetBirthBySlugQuery({
         id: slug,
     });
-    const [response, setResponse] = useState([]);
+    const [response, setResponse] = useState<MappedResponseData>([]);
 
     useEffect(() => {
         if (!isError && !isLoading && data) {

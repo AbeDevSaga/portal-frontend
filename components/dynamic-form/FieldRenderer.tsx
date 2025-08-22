@@ -40,6 +40,30 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             ? field.getDependentValue(form.values)
                             : null;
 
+                        // Handle default value logic without hooks
+                        if (!form.values[field.key] && field.defaultValue !== undefined) {
+                            const getDefaultValue = () => {
+                                if (typeof field.defaultValue === "function") {
+                                    return field.defaultValue(dependentValues, form.values);
+                                }
+                                return field.defaultValue;
+                            };
+                            
+                            const defaultVal = getDefaultValue();
+                            if (defaultVal !== undefined) {
+                                // Use setTimeout to avoid calling setState during render
+                                setTimeout(() => {
+                                    form.setFieldValue(field.key, defaultVal);
+                                    dispatch(
+                                        updateField({
+                                            key: field.key,
+                                            value: defaultVal,
+                                        })
+                                    );
+                                }, 0);
+                            }
+                        }
+
                         // Dynamic field properties based on dependent values
                         const dynamicDescription = field.getDescription
                             ? field.getDescription(dependentValues)
@@ -2814,6 +2838,401 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             </span>
                                         )}
                                     </div>
+
+                                    {/* Dynamic description */}
+                                    {dynamicDescription &&
+                                        dynamicDescription.trim() !== "" && (
+                                            <p className='text-[#7D7D7D] text-sm mt-1'>
+                                                {dynamicDescription}
+                                            </p>
+                                        )}
+
+                                    {/* Formik validation errors */}
+                                    <ErrorMessage
+                                        name={field.key}
+                                        component='div'
+                                        className='text-red-500 text-sm'
+                                    />
+                                </div>
+                            </div>
+                        );
+                    }}
+                </Field>
+            );
+
+        case "inputSearch":
+            return (
+                <Field name={field.key}>
+                    {({ field: formikField, form }: any) => {
+                        const [options, setOptions] = React.useState<any[]>([]);
+                        const [isLoading, setIsLoading] = React.useState(false);
+                        const [inputValue, setInputValue] = React.useState("");
+                        const [isOpen, setIsOpen] = React.useState(false);
+                        const [error, setError] = React.useState<string | null>(null);
+                        const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+                        const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+                        // Get inputSearch configuration
+                        const inputSearchConfig = field.inputSearchConfig;
+                        const {
+                            isExternal = true,
+                            apiEndpoint,
+                            method = "GET",
+                            searchKey = "search",
+                            valueKey = "id",
+                            labelKey = "name",
+                            minSearchLength = 3,
+                            debounceMs = 300,
+                            cacheResults = true,
+                            placeholder,
+                            noOptionsMessage = "No options found",
+                            loadingMessage = "Loading...",
+                            transformResponse,
+                            transformRequest,
+                        } = inputSearchConfig || {};
+
+                        // Get dependent field values if callback is provided
+                        const dependentValues = field.getDependentValue
+                            ? field.getDependentValue(form.values)
+                            : null;
+
+                        // Dynamic field properties based on dependent values
+                        const dynamicDescription = field.getDescription
+                            ? field.getDescription(dependentValues)
+                            : field.description;
+                        const isFieldDisabled = field.isDisabled
+                            ? field.isDisabled(dependentValues)
+                            : field.disabled;
+                        const isFieldHidden = field.isHide
+                            ? field.isHide(dependentValues)
+                            : false;
+                        const isFieldRequired = field.isRequired
+                            ? field.isRequired(dependentValues)
+                            : field.required;
+
+                        // If field is hidden, render empty div to maintain hook consistency
+                        if (isFieldHidden) {
+                            return <div style={{ display: "none" }}></div>;
+                        }
+
+                        // Validate required configuration
+                        if (!apiEndpoint || !valueKey || !labelKey) {
+                            return (
+                                <div className='text-red-500 text-sm p-4 border border-red-200 rounded bg-red-50'>
+                                    <strong>Configuration Error:</strong>{" "}
+                                    InputSearch field "{field.label}" is missing
+                                    required configuration. Please provide
+                                    apiEndpoint, valueKey, and labelKey in
+                                    inputSearchConfig.
+                                </div>
+                            );
+                        }
+
+                        // Cache for storing API results
+                        const cacheRef = React.useRef(new Map());
+                        const cache = cacheRef.current;
+
+                        // Debounced search function
+                        const debouncedSearch = React.useCallback(
+                            (searchTerm: string) => {
+                                if (timeoutRef.current) {
+                                    clearTimeout(timeoutRef.current);
+                                }
+                                timeoutRef.current = setTimeout(
+                                    async () => {
+                                        if (searchTerm.length < minSearchLength) {
+                                            setOptions([]);
+                                            return;
+                                        }
+
+                                        try {
+                                            setIsLoading(true);
+                                            setError(null);
+
+                                            // Check cache first if caching is enabled
+                                            const cacheKey = `${apiEndpoint}_${searchTerm}_${JSON.stringify(dependentValues) || "none"}`;
+                                            if (cacheResults && cache.has(cacheKey)) {
+                                                const cachedData = cache.get(cacheKey);
+                                                if (cachedData) {
+                                                    setOptions(cachedData);
+                                                    setIsLoading(false);
+                                                    return;
+                                                }
+                                            }
+
+                                                                    // Prepare request parameters - start with just the search term
+                        let requestParams = {
+                            [searchKey]: searchTerm,
+                        };
+
+                        // Add additional query parameters from config if provided
+                        if (inputSearchConfig?.additionalParams) {
+                            requestParams = {
+                                ...requestParams,
+                                ...inputSearchConfig.additionalParams
+                            };
+                        }
+
+                                            // Add dependent values to request if transformRequest is provided
+                                            let modifiedEndpoint = isExternal
+                                                ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${apiEndpoint}`
+                                                : `/api/${apiEndpoint}`;
+
+                                            if (transformRequest && dependentValues) {
+                                                const transformedRequest = transformRequest(
+                                                    { ...requestParams, url: modifiedEndpoint },
+                                                    dependentValues
+                                                );
+                                                
+                                                if (transformedRequest.url) {
+                                                    modifiedEndpoint = transformedRequest.url;
+                                                }
+                                                if (transformedRequest.params) {
+                                                    requestParams = transformedRequest.params;
+                                                } else if (transformedRequest.search) {
+                                                    requestParams = transformedRequest.search;
+                                                } else if (transformedRequest.body) {
+                                                    requestParams = transformedRequest.body;
+                                                } else {
+                                                    const { url, ...params } = transformedRequest;
+                                                    requestParams = params;
+                                                }
+                                            }
+
+                                                                                         // For GET requests, append query parameters to URL
+                                             if (method === "GET") {
+                                                 try {
+                                                     // For external APIs, we need to construct the full URL
+                                                     if (isExternal) {
+                                                         // Start with the base URL
+                                                         let baseUrl = process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL || '';
+                                                         // Remove trailing slash if present
+                                                         if (baseUrl.endsWith('/')) {
+                                                             baseUrl = baseUrl.slice(0, -1);
+                                                         }
+                                                         // Remove leading slash from apiEndpoint if present
+                                                         let cleanEndpoint = apiEndpoint;
+                                                         if (cleanEndpoint.startsWith('/')) {
+                                                             cleanEndpoint = cleanEndpoint.slice(1);
+                                                         }
+                                                         
+                                                         // Construct the full URL
+                                                         let fullUrl = `${baseUrl}/${cleanEndpoint}`;
+                                                         
+                                                         // Add query parameters
+                                                         const queryParams = Object.entries(requestParams)
+                                                             .filter(([_, value]) => value !== undefined && value !== null && value !== "")
+                                                             .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+                                                             .join('&');
+                                                         
+                                                         if (queryParams) {
+                                                             const separator = fullUrl.includes('?') ? '&' : '?';
+                                                             fullUrl = `${fullUrl}${separator}${queryParams}`;
+                                                         }
+                                                         
+                                                         modifiedEndpoint = fullUrl;
+                                                     } else {
+                                                         // For local API routes, just append query parameters
+                                                         const queryParams = Object.entries(requestParams)
+                                                             .filter(([_, value]) => value !== undefined && value !== null && value !== "")
+                                                             .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+                                                             .join('&');
+                                                         
+                                                         if (queryParams) {
+                                                             const separator = modifiedEndpoint.includes('?') ? '&' : '?';
+                                                             modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
+                                                         }
+                                                     }
+                                                 } catch (error) {
+                                                     console.error("Error constructing URL:", error);
+                                                     // Fallback: manually construct query string
+                                                     const queryParams = Object.entries(requestParams)
+                                                         .filter(([_, value]) => value !== undefined && value !== null && value !== "")
+                                                         .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+                                                         .join('&');
+                                                     
+                                                     if (queryParams) {
+                                                         const separator = modifiedEndpoint.includes('?') ? '&' : '?';
+                                                         modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
+                                                     }
+                                                 }
+                                             }
+
+                                            // Make API request
+                                            const response = await fetch(
+                                                modifiedEndpoint,
+                                                {
+                                                    method: method,
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                    },
+                                                    body: method === "POST"
+                                                        ? JSON.stringify(requestParams)
+                                                        : undefined,
+                                                }
+                                            );
+
+                                            if (!response.ok) {
+                                                throw new Error(
+                                                    `API request failed: ${response.status}`
+                                                );
+                                            }
+
+                                            const data = await response.json();
+
+                                            // Transform response if custom transformer is provided
+                                            let transformedOptions = data;
+                                            if (transformResponse) {
+                                                transformedOptions = transformResponse(data);
+                                            } else {
+                                                // Default transformation
+                                                transformedOptions = data.map((item: any) => ({
+                                                    value: item[valueKey],
+                                                    label: item[labelKey],
+                                                    ...item, // Include all original properties
+                                                }));
+                                            }
+
+                                            setOptions(transformedOptions);
+
+                                            // Cache results if enabled
+                                            if (cacheResults) {
+                                                cache.set(cacheKey, transformedOptions);
+                                            }
+                                        } catch (error) {
+                                            console.error("Search error:", error);
+                                            setError(
+                                                error instanceof Error
+                                                    ? error.message
+                                                    : "Search failed"
+                                            );
+                                            setOptions([]);
+                                        } finally {
+                                            setIsLoading(false);
+                                        }
+                                    },
+                                    debounceMs
+                                );
+                            },
+                            [apiEndpoint, valueKey, labelKey, searchKey, debounceMs, minSearchLength, cacheResults, dependentValues, transformRequest, transformResponse]
+                        );
+
+                        // Handle input change
+                        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                            const newValue = e.target.value;
+                            setInputValue(newValue);
+                            formikField.onChange(e);
+                            
+                            if (newValue.length >= minSearchLength) {
+                                debouncedSearch(newValue);
+                                setIsOpen(true);
+                            } else {
+                                setOptions([]);
+                                setIsOpen(false);
+                            }
+                        };
+
+                        // Handle option selection
+                        const handleOptionSelect = (option: any) => {
+                            const inputEvent = {
+                                target: {
+                                    name: field.key,
+                                    value: option[labelKey]
+                                }
+                            } as React.ChangeEvent<HTMLInputElement>;
+                            formikField.onChange(inputEvent);
+                            setInputValue(option[labelKey]);
+                            setIsOpen(false);
+                            
+                            // Store the full selected object as the field value
+                            form.setFieldValue(field.key, option);
+                            dispatch(
+                                updateField({
+                                    key: field.key,
+                                    value: option,
+                                })
+                            );
+                        };
+
+                        // Handle input focus
+                        const handleInputFocus = () => {
+                            if (inputValue.length >= minSearchLength) {
+                                setIsOpen(true);
+                            }
+                        };
+
+                        // Handle input blur
+                        const handleInputBlur = () => {
+                            // Delay closing to allow option selection
+                            setTimeout(() => setIsOpen(false), 200);
+                        };
+
+                        // Close dropdown when clicking outside
+                        React.useEffect(() => {
+                            const handleClickOutside = (event: MouseEvent) => {
+                                if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                                    setIsOpen(false);
+                                }
+                            };
+
+                            document.addEventListener("mousedown", handleClickOutside);
+                            return () => {
+                                document.removeEventListener("mousedown", handleClickOutside);
+                            };
+                        }, []);
+
+                        return (
+                            <div className="relative" ref={dropdownRef}>
+                                <Label className='text-primary font-semibold'>
+                                    {field.label}
+                                    {isFieldRequired && (
+                                        <span className='pl-2 text-red-600'>*</span>
+                                    )}
+                                </Label>
+
+                                <div className='space-y-2'>
+                                    <Input
+                                        {...formikField}
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onFocus={handleInputFocus}
+                                        onBlur={handleInputBlur}
+                                        placeholder={placeholder || `Enter at least ${minSearchLength} characters to search...`}
+                                        disabled={isFieldDisabled}
+                                        className="w-full"
+                                    />
+
+                                    {/* Dropdown Options */}
+                                    {isOpen && (
+                                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                                            {isLoading ? (
+                                                <div className="px-4 py-2 text-sm text-gray-500">
+                                                    {loadingMessage}
+                                                </div>
+                                            ) : options.length > 0 ? (
+                                                options.map((option, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                                        onClick={() => handleOptionSelect(option)}
+                                                    >
+                                                        {option[labelKey]}
+                                                    </div>
+                                                ))
+                                            ) : inputValue.length >= minSearchLength ? (
+                                                <div className="px-4 py-2 text-sm text-gray-500">
+                                                    {noOptionsMessage}
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    )}
+
+                                    {/* Error message */}
+                                    {error && (
+                                        <p className="text-sm text-red-600">
+                                            {error}
+                                        </p>
+                                    )}
 
                                     {/* Dynamic description */}
                                     {dynamicDescription &&

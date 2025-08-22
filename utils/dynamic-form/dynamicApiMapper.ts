@@ -7,6 +7,7 @@ export const mapApiResponseToFormFields = (
     return formConfig.steps.map((step) => {
         const data = step.fields.map((field) => ({
             label: field.label,
+            key: field.key,
             value: apiData[field.key] ?? null,
         }));
 

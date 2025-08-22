@@ -50,7 +50,7 @@ import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
-import { downloadCsv } from "./ExportCsv";
+// import { downloadCsv } from "./ExportCsv";
 import { sanitizeInput } from "../../utils/validations/sanitizer";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
@@ -195,7 +195,7 @@ export const DynamicTable = <T,>({
                 id: column.id,
                 header: column.columnDef.header,
             }));
-        downloadCsv(`${dynamicTableName}.csv`, visibleColumnData, selectedRows);
+        // downloadCsv(`${dynamicTableName}.csv`, visibleColumnData, selectedRows);
     };
 
     const handleFilterTypeChange = async (filterType: any) => {
