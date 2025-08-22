@@ -1,0 +1,151 @@
+{
+  "defaultSection": "civil-registration",
+  "sections": [
+    {
+      "title": "civil-registration",
+      "childRoutes": [
+        {
+          "icon": "birth",
+          "label": "birth",
+          "route": "/users/features/birth-registration/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/birth-registration/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/birth-registration/list"
+            }
+          ]
+        },
+        {
+          "icon": "marriage",
+          "label": "marriage",
+          "route": "/users/features/marriage-registration/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/marriage-registration/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/marriage-registration/list"
+            }
+          ]
+        },
+        {
+          "icon": "death",
+          "label": "death",
+          "route": "/users/features/death-registration/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/death-registration/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/death-registration/list"
+            }
+          ]
+        },
+        {
+          "icon": "divorce",
+          "label": "divorce",
+          "route": "/users/features/divorce/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/divorce/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/divorce/list"
+            }
+          ]
+        },
+        {
+          "icon": "adoption",
+          "label": "adoption",
+          "route": "/users/features/adoption/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/adoption/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/adoption/list"
+            }
+          ]
+        },
+        {
+          "icon": "legitimation",
+          "label": "legitimation",
+          "route": "/users/features/legitimation/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/legitimation/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/legitimation/list"
+            }
+          ]
+        },
+        {
+          "icon": "recognition",
+          "label": "recognitionofchild",
+          "route": "/users/features/recognition/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/recognition/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/recognition/list"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "complaint",
+      "childRoutes": [
+        {
+          "icon": "MessageCircleWarning",
+          "label": "complaint",
+          "route": "/users/features/complaint/list",
+          "children": [
+            {
+              "icon": "create",
+              "label": "new",
+              "route": "/users/features/complaint/new"
+            },
+            {
+              "icon": "list",
+              "label": "list",
+              "route": "/users/features/complaint/list"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
