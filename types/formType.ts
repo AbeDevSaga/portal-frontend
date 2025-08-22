@@ -1,4 +1,17 @@
-export type FieldType = "input" | "textarea" | "select" | "radio" | "date" | "number" | "email" | "password" | "fileUpload" | "phone" | "lookup" | "checkbox" | "digitalSignature";
+export type FieldType =
+    | "input"
+    | "textarea"
+    | "select"
+    | "radio"
+    | "date"
+    | "number"
+    | "email"
+    | "password"
+    | "fileUpload"
+    | "phone"
+    | "lookup"
+    | "checkbox"
+    | "digitalSignature";
 
 export interface Option {
     label: string;
@@ -16,7 +29,14 @@ export interface FileMetadata {
 }
 
 export interface ValidatorConfig {
-    type: "required" | "min" | "max" | "email" | "pattern" | "minDate" | "maxDate";
+    type:
+        | "required"
+        | "min"
+        | "max"
+        | "email"
+        | "pattern"
+        | "minDate"
+        | "maxDate";
     value?: number | string | Date;
     message: string;
 }
@@ -48,7 +68,7 @@ export interface FieldConfig {
     searchable?: boolean; // For react-select
     clearable?: boolean; // For react-select
     disabled?: boolean; // For any field type
-     digitalSignatureConfig?: DigitalSignatureConfig;
+    digitalSignatureConfig?: DigitalSignatureConfig;
     // Dynamic field behavior callbacks (available for all field types)
     getDependentValue?: (formValues: any) => any; // Get value from dependent field
     getDescription?: (dependentValue: any) => string; // Dynamic description based on dependent value
@@ -58,8 +78,9 @@ export interface FieldConfig {
     isRequired?: (dependentValue: any) => boolean; // Dynamic requirement based on dependent value
     // Lookup specific properties
     lookupConfig?: {
+        isExternal?: boolean;
         apiEndpoint: string;
-        method?: 'GET' | 'POST';
+        method?: "GET" | "POST";
         requestBody?: Record<string, any>;
         headers?: Record<string, string>;
         valueKey?: string; // Default: 'id'

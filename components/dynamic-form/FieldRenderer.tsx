@@ -1350,7 +1350,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                 </div>
             );
 
-                    case "lookup":
+        case "lookup":
             return (
                 <Field name={field.key}>
                     {({ field: formikField, form }: any) => {
@@ -1371,6 +1371,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             // Get lookup configuration with defaults
                             const lookupConfig = field.lookupConfig;
                             const {
+                                isExternal = true,
                                 apiEndpoint,
                                 method,
                                 valueKey,
@@ -1533,7 +1534,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             // Handle single selection defaults
                                             if (
                                                 typeof defaultVal ===
-                                                "object" &&
+                                                    "object" &&
                                                 defaultVal !== null
                                             ) {
                                                 // If default is an object, store it directly
@@ -1630,7 +1631,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 // Handle single selection defaults
                                                 if (
                                                     typeof defaultVal ===
-                                                    "object" &&
+                                                        "object" &&
                                                     defaultVal !== null
                                                 ) {
                                                     form.setFieldValue(
@@ -1686,8 +1687,9 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             // Cache for storing API results
                             const cacheKey = React.useMemo(
                                 () =>
-                                    `${effectiveApiEndpoint}_${inputValue}_${JSON.stringify(dependentValues) ||
-                                    "none"
+                                    `${effectiveApiEndpoint}_${inputValue}_${
+                                        JSON.stringify(dependentValues) ||
+                                        "none"
                                     }`,
                                 [
                                     effectiveApiEndpoint,
@@ -1734,7 +1736,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             if (
                                                 minSearchLengthForLogic > 0 &&
                                                 searchTerm.length <
-                                                minSearchLengthForLogic
+                                                    minSearchLengthForLogic
                                             ) {
                                                 setOptions([]);
                                                 return;
@@ -1776,9 +1778,13 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                             dependentValues
                                                         );
                                                 }
+
+                                                const endpoint = isExternal
+                                                    ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
+                                                    : `/api/${effectiveApiEndpoint}`;
                                                 // Make API request
                                                 const response = await fetch(
-                                                    `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`,
+                                                    endpoint,
                                                     {
                                                         method:
                                                             effectiveMethod ||
@@ -1789,10 +1795,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                         },
                                                         body:
                                                             effectiveMethod ===
-                                                                "POST"
+                                                            "POST"
                                                                 ? JSON.stringify(
-                                                                    requestParams
-                                                                )
+                                                                      requestParams
+                                                                  )
                                                                 : undefined,
                                                     }
                                                 );
@@ -1898,25 +1904,24 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 dependentValues
                                             );
                                         }
+                                        const endpoint = isExternal
+                                            ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
+                                            : `/api/${effectiveApiEndpoint}`;
 
                                         // Make API request
-                                        const response = await fetch(
-                                            `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`,
-                                            {
-                                                method:
-                                                    effectiveMethod || "GET",
-                                                headers: {
-                                                    "Content-Type":
-                                                        "application/json",
-                                                },
-                                                body:
-                                                    effectiveMethod === "POST"
-                                                        ? JSON.stringify(
-                                                            requestParams
-                                                        )
-                                                        : undefined,
-                                            }
-                                        );
+                                        const response = await fetch(endpoint, {
+                                            method: effectiveMethod || "GET",
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json",
+                                            },
+                                            body:
+                                                effectiveMethod === "POST"
+                                                    ? JSON.stringify(
+                                                          requestParams
+                                                      )
+                                                    : undefined,
+                                        });
 
                                         if (!response.ok) {
                                             throw new Error(
@@ -2054,8 +2059,13 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             "Clearing field value:",
                                             field.key
                                         );
-                                        const clearValue = isMultiple ? [] : null;
-                                        form.setFieldValue(field.key, clearValue);
+                                        const clearValue = isMultiple
+                                            ? []
+                                            : null;
+                                        form.setFieldValue(
+                                            field.key,
+                                            clearValue
+                                        );
                                         dispatch(
                                             updateField({
                                                 key: field.key,
@@ -2138,10 +2148,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 typeof value === "object"
                                                     ? value
                                                     : safeOptions.find(
-                                                        (option) =>
-                                                            option.value ===
-                                                            value
-                                                    )
+                                                          (option) =>
+                                                              option.value ===
+                                                              value
+                                                      )
                                             )
                                             .filter(Boolean);
                                     } else if (currentValue) {
@@ -2150,10 +2160,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             typeof currentValue === "object"
                                                 ? currentValue
                                                 : safeOptions.find(
-                                                    (option) =>
-                                                        option.value ===
-                                                        currentValue
-                                                );
+                                                      (option) =>
+                                                          option.value ===
+                                                          currentValue
+                                                  );
                                         selectedOption = value ? [value] : [];
                                     } else {
                                         selectedOption = [];
@@ -2164,10 +2174,10 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         ? typeof currentValue === "object"
                                             ? currentValue
                                             : safeOptions.find(
-                                                (option) =>
-                                                    option.value ===
-                                                    currentValue
-                                            )
+                                                  (option) =>
+                                                      option.value ===
+                                                      currentValue
+                                              )
                                         : null;
                                 }
                             } catch (error) {
@@ -2199,8 +2209,8 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     backgroundColor: state.isSelected
                                         ? "#3b82f6"
                                         : state.isFocused
-                                            ? "#f3f4f6"
-                                            : "white",
+                                        ? "#f3f4f6"
+                                        : "white",
                                     color: state.isSelected
                                         ? "white"
                                         : "#374151",
@@ -2257,12 +2267,12 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 // Get dynamic properties from field configuration
                                                 const isSearchable =
                                                     field.searchable !==
-                                                        undefined
+                                                    undefined
                                                         ? field.searchable
                                                         : true;
                                                 const isClearable =
                                                     field.clearable !==
-                                                        undefined
+                                                    undefined
                                                         ? field.clearable
                                                         : true;
                                                 const isMultiple =
@@ -2293,7 +2303,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                     <ReactSelect
                                                         menuPortalTarget={
                                                             typeof window !==
-                                                                "undefined"
+                                                            "undefined"
                                                                 ? document.body
                                                                 : undefined
                                                         }
@@ -2327,11 +2337,12 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                         noOptionsMessage={() =>
                                                             isLoading
                                                                 ? "Loading..."
-                                                                : minSearchLengthForLogic > 0 &&
+                                                                : minSearchLengthForLogic >
+                                                                      0 &&
                                                                   safeInputValue.length <
-                                                                    minSearchLengthForLogic
-                                                                    ? `Type at least ${minSearchLengthForLogic} characters to search`
-                                                                    : "No options found"
+                                                                      minSearchLengthForLogic
+                                                                ? `Type at least ${minSearchLengthForLogic} characters to search`
+                                                                : "No options found"
                                                         }
                                                         loadingMessage={() =>
                                                             "Loading options..."
@@ -2404,7 +2415,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         {/* Description */}
                                         {dynamicDescription &&
                                             dynamicDescription.trim() !==
-                                            "" && (
+                                                "" && (
                                                 <p className='text-[#7D7D7D] text-sm mt-1'>
                                                     {dynamicDescription}
                                                 </p>
@@ -2446,44 +2457,61 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                     {({ field: formikField, form }: any) => {
                         const canvasRef = React.useRef<HTMLCanvasElement>(null);
                         const [isDrawing, setIsDrawing] = React.useState(false);
-                        const [hasSignature, setHasSignature] = React.useState(false);
-                        const [context, setContext] = React.useState<CanvasRenderingContext2D | null>(null);
+                        const [hasSignature, setHasSignature] =
+                            React.useState(false);
+                        const [context, setContext] =
+                            React.useState<CanvasRenderingContext2D | null>(
+                                null
+                            );
 
                         // Get dependent field values if callback is provided
-                        const dependentValues = field.getDependentValue ? field.getDependentValue(form.values) : null;
+                        const dependentValues = field.getDependentValue
+                            ? field.getDependentValue(form.values)
+                            : null;
 
                         // Dynamic field properties based on dependent values
-                        const dynamicDescription = field.getDescription ? field.getDescription(dependentValues) : field.description;
-                        const isFieldDisabled = field.isDisabled ? field.isDisabled(dependentValues) : field.disabled;
-                        const isFieldHidden = field.isHide ? field.isHide(dependentValues) : false;
-                        const isFieldRequired = field.isRequired ? field.isRequired(dependentValues) : field.required;
+                        const dynamicDescription = field.getDescription
+                            ? field.getDescription(dependentValues)
+                            : field.description;
+                        const isFieldDisabled = field.isDisabled
+                            ? field.isDisabled(dependentValues)
+                            : field.disabled;
+                        const isFieldHidden = field.isHide
+                            ? field.isHide(dependentValues)
+                            : false;
+                        const isFieldRequired = field.isRequired
+                            ? field.isRequired(dependentValues)
+                            : field.required;
 
                         // Digital signature configuration with defaults
                         const config = field.digitalSignatureConfig || {};
                         const canvasWidth = config.canvasWidth || 400;
                         const canvasHeight = config.canvasHeight || 200;
-                        const penColor = config.penColor || '#000000';
+                        const penColor = config.penColor || "#000000";
                         const penWidth = config.penWidth || 2;
-                        const backgroundColor = config.backgroundColor || '#ffffff';
-                        const showClearButton = config.showClearButton !== false; // Default to true
+                        const backgroundColor =
+                            config.backgroundColor || "#ffffff";
+                        const showClearButton =
+                            config.showClearButton !== false; // Default to true
                         const showSaveButton = config.showSaveButton !== false; // Default to true;
-                        const placeholder = config.placeholder || "Click and drag to sign here";
+                        const placeholder =
+                            config.placeholder || "Click and drag to sign here";
 
                         // If field is hidden, render empty div to maintain hook consistency
                         if (isFieldHidden) {
-                            return <div style={{ display: 'none' }}></div>;
+                            return <div style={{ display: "none" }}></div>;
                         }
 
                         // Initialize canvas context
                         React.useEffect(() => {
                             if (canvasRef.current) {
                                 const canvas = canvasRef.current;
-                                const ctx = canvas.getContext('2d');
+                                const ctx = canvas.getContext("2d");
                                 if (ctx) {
                                     ctx.strokeStyle = penColor;
                                     ctx.lineWidth = penWidth;
-                                    ctx.lineCap = 'round';
-                                    ctx.lineJoin = 'round';
+                                    ctx.lineCap = "round";
+                                    ctx.lineJoin = "round";
                                     setContext(ctx);
                                 }
                             }
@@ -2494,7 +2522,11 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             if (form.values[field.key]) {
                                 setHasSignature(true);
                                 // Load existing signature if it's a data URL
-                                if (typeof form.values[field.key] === 'string' && form.values[field.key].startsWith('data:')) {
+                                if (
+                                    typeof form.values[field.key] ===
+                                        "string" &&
+                                    form.values[field.key].startsWith("data:")
+                                ) {
                                     loadSignature(form.values[field.key]);
                                 }
                             }
@@ -2505,19 +2537,35 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 const img = new Image();
                                 img.onload = () => {
                                     if (canvasRef.current && context) {
-                                        context.clearRect(0, 0, canvasWidth, canvasHeight);
-                                        context.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+                                        context.clearRect(
+                                            0,
+                                            0,
+                                            canvasWidth,
+                                            canvasHeight
+                                        );
+                                        context.drawImage(
+                                            img,
+                                            0,
+                                            0,
+                                            canvasWidth,
+                                            canvasHeight
+                                        );
                                     }
                                 };
                                 img.src = dataUrl;
                             }
                         };
 
-                        const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+                        const startDrawing = (
+                            e:
+                                | React.MouseEvent<HTMLCanvasElement>
+                                | React.TouchEvent<HTMLCanvasElement>
+                        ) => {
                             if (isFieldDisabled) return;
-                            
+
                             setIsDrawing(true);
-                            const rect = canvasRef.current?.getBoundingClientRect();
+                            const rect =
+                                canvasRef.current?.getBoundingClientRect();
                             if (rect && context) {
                                 const x = (e as any).clientX - rect.left;
                                 const y = (e as any).clientY - rect.top;
@@ -2526,10 +2574,15 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             }
                         };
 
-                        const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+                        const draw = (
+                            e:
+                                | React.MouseEvent<HTMLCanvasElement>
+                                | React.TouchEvent<HTMLCanvasElement>
+                        ) => {
                             if (!isDrawing || isFieldDisabled) return;
-                            
-                            const rect = canvasRef.current?.getBoundingClientRect();
+
+                            const rect =
+                                canvasRef.current?.getBoundingClientRect();
                             if (rect && context) {
                                 const x = (e as any).clientX - rect.left;
                                 const y = (e as any).clientY - rect.top;
@@ -2547,56 +2600,71 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
 
                         const clearSignature = () => {
                             if (canvasRef.current && context) {
-                                context.clearRect(0, 0, canvasWidth, canvasHeight);
+                                context.clearRect(
+                                    0,
+                                    0,
+                                    canvasWidth,
+                                    canvasHeight
+                                );
                                 setHasSignature(false);
-                                form.setFieldValue(field.key, '');
+                                form.setFieldValue(field.key, "");
                                 dispatch(
-                                    updateField({ key: field.key, value: '' })
+                                    updateField({ key: field.key, value: "" })
                                 );
                             }
                         };
 
                         const saveSignature = () => {
                             if (canvasRef.current && hasSignature) {
-                                const dataUrl = canvasRef.current.toDataURL('image/png');
-                                
+                                const dataUrl =
+                                    canvasRef.current.toDataURL("image/png");
+
                                 // Create a custom display value for the live preview
                                 const displayValue = {
                                     _signatureData: dataUrl, // Store actual signature data
                                     _displayText: `✓ ${field.label} captured`, // User-friendly display text
                                     _timestamp: new Date().toISOString(),
-                                    _fieldType: 'digitalSignature'
+                                    _fieldType: "digitalSignature",
                                 };
-                                
+
                                 form.setFieldValue(field.key, displayValue);
                                 dispatch(
-                                    updateField({ key: field.key, value: displayValue })
+                                    updateField({
+                                        key: field.key,
+                                        value: displayValue,
+                                    })
                                 );
                             }
                         };
 
                         // Handle touch events for mobile devices
-                        const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+                        const handleTouchStart = (
+                            e: React.TouchEvent<HTMLCanvasElement>
+                        ) => {
                             e.preventDefault();
                             const touch = e.touches[0];
-                            const mouseEvent = new MouseEvent('mousedown', {
+                            const mouseEvent = new MouseEvent("mousedown", {
                                 clientX: touch.clientX,
-                                clientY: touch.clientY
+                                clientY: touch.clientY,
                             });
                             startDrawing(mouseEvent as any);
                         };
 
-                        const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+                        const handleTouchMove = (
+                            e: React.TouchEvent<HTMLCanvasElement>
+                        ) => {
                             e.preventDefault();
                             const touch = e.touches[0];
-                            const mouseEvent = new MouseEvent('mousemove', {
+                            const mouseEvent = new MouseEvent("mousemove", {
                                 clientX: touch.clientX,
-                                clientY: touch.clientY
+                                clientY: touch.clientY,
                             });
                             draw(mouseEvent as any);
                         };
 
-                        const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+                        const handleTouchEnd = (
+                            e: React.TouchEvent<HTMLCanvasElement>
+                        ) => {
                             e.preventDefault();
                             stopDrawing();
                         };
@@ -2606,18 +2674,20 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 <Label className='text-primary font-semibold'>
                                     {field.label}
                                     {isFieldRequired && (
-                                        <span className='pl-2 text-red-600'>*</span>
+                                        <span className='pl-2 text-red-600'>
+                                            *
+                                        </span>
                                     )}
                                 </Label>
-                                
-                                <div className="space-y-3">
+
+                                <div className='space-y-3'>
                                     {/* Signature Canvas */}
-                                    <div className="border-2 border-gray-300 rounded-lg overflow-hidden relative">
+                                    <div className='border-2 border-gray-300 rounded-lg overflow-hidden relative'>
                                         <canvas
                                             ref={canvasRef}
                                             width={canvasWidth}
                                             height={canvasHeight}
-                                            className="cursor-crosshair bg-white"
+                                            className='cursor-crosshair bg-white'
                                             style={{ backgroundColor }}
                                             onMouseDown={startDrawing}
                                             onMouseMove={draw}
@@ -2627,11 +2697,11 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             onTouchMove={handleTouchMove}
                                             onTouchEnd={handleTouchEnd}
                                         />
-                                        
+
                                         {/* Placeholder text when no signature */}
                                         {!hasSignature && (
-                                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-gray-50/50">
-                                                <span className="text-gray-400 text-sm font-medium px-4 py-2 bg-white/80 rounded-lg border border-gray-200 shadow-sm">
+                                            <div className='absolute inset-0 flex items-center justify-center pointer-events-none bg-gray-50/50'>
+                                                <span className='text-gray-400 text-sm font-medium px-4 py-2 bg-white/80 rounded-lg border border-gray-200 shadow-sm'>
                                                     {placeholder}
                                                 </span>
                                             </div>
@@ -2639,28 +2709,28 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className="flex gap-2">
+                                    <div className='flex gap-2'>
                                         {showClearButton && (
                                             <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
+                                                type='button'
+                                                variant='outline'
+                                                size='sm'
                                                 onClick={clearSignature}
                                                 disabled={isFieldDisabled}
-                                                className="text-red-600 hover:text-red-700"
+                                                className='text-red-600 hover:text-red-700'
                                             >
                                                 Clear Signature
                                             </Button>
                                         )}
-                                        
+
                                         {showSaveButton && hasSignature && (
                                             <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
+                                                type='button'
+                                                variant='outline'
+                                                size='sm'
                                                 onClick={saveSignature}
                                                 disabled={isFieldDisabled}
-                                                className="text-blue-600 hover:text-blue-700"
+                                                className='text-blue-600 hover:text-blue-700'
                                             >
                                                 Save Signature
                                             </Button>
@@ -2668,18 +2738,25 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     </div>
 
                                     {/* Signature Status */}
-                                    <div className="text-sm">
+                                    <div className='text-sm'>
                                         {hasSignature ? (
-                                            <span className="text-green-600">✓ Signature captured</span>
+                                            <span className='text-green-600'>
+                                                ✓ Signature captured
+                                            </span>
                                         ) : (
-                                            <span className="text-gray-500">No signature yet</span>
+                                            <span className='text-gray-500'>
+                                                No signature yet
+                                            </span>
                                         )}
                                     </div>
 
                                     {/* Dynamic description */}
-                                    {dynamicDescription && dynamicDescription.trim() !== "" && (
-                                        <p className='text-[#7D7D7D] text-sm mt-1'>{dynamicDescription}</p>
-                                    )}
+                                    {dynamicDescription &&
+                                        dynamicDescription.trim() !== "" && (
+                                            <p className='text-[#7D7D7D] text-sm mt-1'>
+                                                {dynamicDescription}
+                                            </p>
+                                        )}
 
                                     {/* Formik validation errors */}
                                     <ErrorMessage
@@ -2693,7 +2770,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                     }}
                 </Field>
             );
-
 
         default:
             return null;
