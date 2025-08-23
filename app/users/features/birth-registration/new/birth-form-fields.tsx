@@ -136,100 +136,6 @@ export const formConfig: FormConfig = {
                     },
                 },
                 {
-                    type: "inputSearch",
-                    key: "userId",
-                    label: "User ID",
-                    placeholder: "Enter at least 3 characters to search...",
-                    description: "Search for a user by entering their ID. The system will search as you type.",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "User ID is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Child Details",
-                    groupOrder: 6,
-                    inputSearchConfig: {
-                        isExternal: true,
-                        apiEndpoint: "/resident/residents",
-                        method: "GET",
-                        searchKey: "search",
-                        valueKey: "id",
-                        labelKey: "name",
-                        minSearchLength: 3,
-                        debounceMs: 300,
-                        cacheResults: true,
-                        placeholder: "Search for user...",
-                        noOptionsMessage: "No users found",
-                        loadingMessage: "Searching users...",
-                        // Add any additional query parameters you want to include
-                        additionalParams: {
-                            // limit: 20,        // Uncomment and modify as needed
-                            // offset: 0,        // Uncomment and modify as needed
-                            // Add any other parameters your API expects
-                        },
-                        transformResponse: (data: any) => {
-                            // Transform the API response to match expected format
-                            // Assuming the API returns an array of user objects
-                            return Array.isArray(data) ? data : [];
-                        },
-                    },
-                },
-                {
-                    type: "input",
-                    key: "userFullName",
-                    label: "User Full Name",
-                    placeholder: "User full name will be populated automatically",
-                    description: "This field is automatically populated based on the selected User ID",
-                    validators: [
-                        { type: "required", message: "User full name is required" },
-                    ],
-                    required: false,
-                    group: "Child Details",
-                    groupOrder: 7,
-                    defaultValue: (dependentValues: any) => {
-                        console.log("the dependent resident search value", dependentValues);
-                        // If a user is selected, return their name as default value
-                        if (dependentValues?.userId && typeof dependentValues.userId === 'object') {
-                            // Try multiple possible property names for the user's name
-                            return dependentValues.userId.name || 
-                                   dependentValues.userId.userName || 
-                                   dependentValues.userId.fullName || 
-                                   dependentValues.userId.label || 
-                                   "";
-                        }
-                        return "";
-                    },
-                    getDependentValue: (formValues: any) => ({
-                        userId: formValues.userId,
-                    }),
-                    getPlaceholder: (dependentValues: any) => {
-                        if (!dependentValues?.userId) {
-                            return "Please select a User ID first";
-                        }
-                        // Show the selected user's name in the placeholder
-                        if (typeof dependentValues.userId === 'object') {
-                            const userName = dependentValues.userId.name || 
-                                           dependentValues.userId.userName || 
-                                           dependentValues.userId.fullName || 
-                                           dependentValues.userId.label || 
-                                           'Unknown';
-                            return `Selected user: ${userName}`;
-                        }
-                        return "User full name will be populated automatically";
-                    },
-                    isDisabled: (dependentValues: any) => {
-                        return !dependentValues?.userId;
-                    },
-                    isHide: (dependentValues: any) => {
-                        return !dependentValues?.userId;
-                    },
-                    isRequired: (dependentValues: any) => {
-                        return !!dependentValues?.userId;
-                    },
-                },
-                {
                     type: "date",
                     key: "dateOfBirth",
                     label: "Date of Birth",
@@ -313,12 +219,6 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            value: "ET",
-                            label: "Ethiopia",
-                            id: 1,
-                            name: "Ethiopia",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
