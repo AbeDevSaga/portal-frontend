@@ -152,7 +152,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 8,
+                    groupOrder: 7,
                 },
                 {
                     type: "checkbox",
@@ -161,7 +161,7 @@ export const formConfig: FormConfig = {
                     description: "",
                     required: false,
                     group: "Child Details",
-                    groupOrder: 9,
+                    groupOrder: 7,
                 },
                 {
                     type: "number",
@@ -183,7 +183,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 10,
+                    groupOrder: 8,
                     getDependentValue: (formValues: any) => ({
                         isNewBorn: formValues.isNewBorn,
                     }),
@@ -208,7 +208,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 11,
+                    groupOrder: 9,
                     clearable: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/nationalities",
@@ -252,7 +252,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 12,
+                    groupOrder: 10,
                     clearable: false,
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
@@ -294,16 +294,16 @@ export const formConfig: FormConfig = {
                             message: "Zone of birth is required",
                         },
                     ],
-                    required: true,
+                    required: false,
                     group: "Child Details",
-                    groupOrder: 13,
+                    groupOrder: 11,
                     clearable: false,
                     disabled: true,
                     getDependentValue: (formValues: any) => formValues.region,
                     isDisabled: (dependentValue: any) => !dependentValue,
-                    getPlaceholder: (dependentValue: any) => 
+                    getPlaceholder: (dependentValue: any) =>
                         dependentValue ? "Search for a zone..." : "Please select a region first",
-                    getDescription: (dependentValue: any) => 
+                    getDescription: (dependentValue: any) =>
                         dependentValue ? "Select the zone where the person was born" : "Zone selection is disabled until a region is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/zones",
@@ -356,17 +356,17 @@ export const formConfig: FormConfig = {
                             message: "Woreda of birth is required",
                         },
                     ],
-                    required: true,
+                    required: false,
                     group: "Child Details",
-                    groupOrder: 14,
+                    groupOrder: 12,
                     clearable: false,
                     searchable: true,
                     multiple: false,
                     getDependentValue: (formValues: any) => formValues.zone,
                     isDisabled: (dependentValue: any) => !dependentValue,
-                    getPlaceholder: (dependentValue: any) => 
+                    getPlaceholder: (dependentValue: any) =>
                         dependentValue ? "Search for a woreda..." : "Please select a zone first",
-                    getDescription: (dependentValue: any) => 
+                    getDescription: (dependentValue: any) =>
                         dependentValue ? "Select the woreda where the person was born" : "Woreda selection is disabled until a zone is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/woredas",
@@ -415,7 +415,7 @@ export const formConfig: FormConfig = {
                     description: "",
                     required: false,
                     group: "Child Details",
-                    groupOrder: 14,
+                    groupOrder: 13,
                 },
                 {
                     type: "input",
@@ -431,7 +431,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 16,
+                    groupOrder: 14,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
@@ -456,7 +456,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 17,
+                    groupOrder: 15,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
@@ -481,7 +481,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 17,
+                    groupOrder: 16,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
@@ -502,583 +502,633 @@ export const formConfig: FormConfig = {
             groupOrder: 2,
             fields: [
                 {
-                    type: "input",
-                    key: "firstNameFather",
-                    label: "First Name",
-                    placeholder: "",
-                    description:
-                        "Enter father's first name as it appears on official documents",
+                    type: "inputSearch",
+                    key: "fatherResidentId",
+                    label: "Father's resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
+                    description: "Search for a resident by entering their ID. The system will search as you type.",
                     validators: [
-                        { type: "required", message: "First name is required" },
+                        {
+                            type: "required",
+                            message: "Resident ID is required",
+                        },
                     ],
                     required: true,
                     group: "Father Details",
                     groupOrder: 1,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 300,
+                        cacheResults: true,
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
+                        },
+                        transformResponse: (data: any) => {
+                            if (!data || !data.content || !Array.isArray(data.content)) {
+                                return [];
+                            }
+
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.firstName || 'Unknown',
+                                name: resident.firstName || 'Unknown',
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [resident.firstName, resident.middleName, resident.lastName]
+                                    .filter(Boolean)
+                                    .join(' '),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident
+                            }));
+                        },
+                    },
                 },
                 {
                     type: "input",
-                    key: "fatherNameFather",
-                    label: "Father Name",
+                    key: "fatherFullName",
+                    label: "Father's Full Name",
                     placeholder: "",
                     description:
-                        "Enter father's father name as it appears on official documents",
+                        "",
                     validators: [
-                        {
-                            type: "required",
-                            message: "Father name is required",
-                        },
+                        { type: "required", message: "First name is required" },
                     ],
-                    required: true,
+                    required: false,
                     group: "Father Details",
                     groupOrder: 2,
-                },
-                {
-                    type: "input",
-                    key: "grandFatherNameFather",
-                    label: "Grand Father Name",
-                    placeholder: "",
-                    description:
-                        "Enter father's grand father name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Grand Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 3,
-                },
-                {
-                    type: "lookup",
-                    key: "nationalityFather",
-                    label: "Nationality",
-                    placeholder: "Search for a nationality...",
-                    description: "Select the nationality of the father",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Nationality is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 4,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/nationalities",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        defaultValue: {
-                            value: "ET",
-                            label: "Ethiopia",
-                            id: 1,
-                            name: "Ethiopia",
-                        },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
+                            return dependentValues.fatherResidentId.fullName || "";
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    // getPlaceholder: (dependentValues: any) => {
+                    //     if (!dependentValues?.fatherResidentId) {
+                    //         return "Please select a resident ID first";
+                    //     }
+                    //     if (typeof dependentValues.fatherResidentId === 'object') {
+                    //         const fullName = dependentValues.fatherResidentId.fullName || 'Unknown';
+                    //         return `Selected resident: ${fullName}`;
+                    //     }
+                    //     return "Father's full name will be populated automatically";
+                    // },
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.fatherResidentId;
                     },
                 },
                 {
                     type: "input",
-                    key: "fatherId",
-                    label: "Identification Number",
-                    placeholder: "",
-                    description: "Enter the fathers identification number",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Identification number is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 5,
-                },
-                {
-                    type: "date",
-                    key: "dateOfBirthFather",
-                    label: "Date of Birth",
+                    key: "fatherDateOfBirth",
+                    label: "Father's Date of Birth",
                     placeholder: "",
                     description:
-                        "Select father's birth date. Future dates are not acceptable.",
+                        "",
                     validators: [
                         { type: "required", message: "Date is required" },
-                        {
-                            type: "maxDate",
-                            value: new Date().toISOString().split("T")[0],
-                            message: "Date cannot be in the future",
-                        },
                     ],
-                    required: true,
+                    required: false,
                     group: "Father Details",
-                    groupOrder: 6,
-                },
-                {
-                    type: "lookup",
-                    key: "countryOfBirthFather",
-                    label: "Country of Birth",
-                    placeholder: "Search for a country...",
-                    description: "Select the country where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Country of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 7,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/nationalities",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        defaultValue: {
-                            value: "ET",
-                            label: "Ethiopia",
-                            id: 1,
-                            name: "Ethiopia",
-                        },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    groupOrder: 3,
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
+                            return dependentValues.fatherResidentId.dateOfBirth || "";
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    // getPlaceholder: (dependentValues: any) => {
+                    //     if (!dependentValues?.fatherResidentId) {
+                    //         return "Please select a resident ID first";
+                    //     }
+                    //     if (typeof dependentValues.fatherResidentId === 'object') {
+                    //         const dateOfBirth = dependentValues.fatherResidentId.dateOfBirth || 'Unknown';
+                    //         return `Selected resident: ${dateOfBirth}`;
+                    //     }
+                    //     return "Father's date of birth will be populated automatically";
+                    // },
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.fatherResidentId;
                     },
                 },
+                // {
+                //     type: "lookup",
+                //     key: "countryOfBirthFather",
+                //     label: "Country of Birth",
+                //     placeholder: "Search for a country...",
+                //     description: "Select the country where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Country of birth is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 7,
+                //     clearable: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/nationalities",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         defaultValue: {
+                //             value: "ET",
+                //             label: "Ethiopia",
+                //             id: 1,
+                //             name: "Ethiopia",
+                //         },
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "regionFather",
+                //     label: "Birth Place Region",
+                //     placeholder: "Search for a region...",
+                //     description: "Select the region where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Region of birth is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 8,
+                //     clearable: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/regions",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "zoneFather",
+                //     label: "City/Sub City/Zone",
+                //     placeholder: "Search for a zone...",
+                //     description: "Select the zone where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Zone of birth is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 9,
+                //     clearable: false,
+                //     disabled: true,
+                //     getDependentValue: (formValues: any) => formValues.regionFather,
+                //     isDisabled: (dependentValue: any) => !dependentValue,
+                //     getPlaceholder: (dependentValue: any) =>
+                //         dependentValue ? "Search for a zone..." : "Please select a region first",
+                //     getDescription: (dependentValue: any) =>
+                //         dependentValue ? "Select the zone where the father was born" : "Zone selection is disabled until a region is selected",
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/zones",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformRequest: (request: any, dependentValue: any) => {
+                //             console.log("zoneFather transformRequest called with:", { request, dependentValue });
+                //             if (dependentValue) {
+                //                 const modifiedUrl = `${request.url}?regionId=${dependentValue.value || dependentValue}`;
+                //                 console.log("zoneFather Modified URL:", modifiedUrl);
+                //                 return {
+                //                     url: modifiedUrl,
+                //                     params: request.params || request
+                //                 };
+                //             }
+                //             return request;
+                //         },
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "woredaFather",
+                //     label: "Birth Place Woreda",
+                //     placeholder: "Search for a woreda...",
+                //     description: "Select the woreda where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Woreda of birth is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 10,
+                //     clearable: false,
+                //     searchable: true,
+                //     multiple: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/regions",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "maritalStatusFather",
+                //     label: "Marital Status",
+                //     placeholder: "Search for a marital status...",
+                //     description:
+                //         "Select the martial status where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Marital Status of father is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 11,
+                //     clearable: false,
+                //     searchable: true,
+                //     multiple: false,
+                //     lookupConfig: {
+                //         isExternal: false,
+                //         apiEndpoint: "maritalStatuses",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //     },
+                // },
                 {
-                    type: "lookup",
-                    key: "regionFather",
-                    label: "Birth Place Region",
-                    placeholder: "Search for a region...",
-                    description: "Select the region where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Region of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 8,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "zoneFather",
-                    label: "City/Sub City/Zone",
-                    placeholder: "Search for a zone...",
-                    description: "Select the zone where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Zone of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 9,
-                    clearable: false,
-                    disabled: true,
-                    getDependentValue: (formValues: any) => formValues.regionFather,
-                    isDisabled: (dependentValue: any) => !dependentValue,
-                    getPlaceholder: (dependentValue: any) => 
-                        dependentValue ? "Search for a zone..." : "Please select a region first",
-                    getDescription: (dependentValue: any) => 
-                        dependentValue ? "Select the zone where the father was born" : "Zone selection is disabled until a region is selected",
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/zones",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformRequest: (request: any, dependentValue: any) => {
-                            console.log("zoneFather transformRequest called with:", { request, dependentValue });
-                            if (dependentValue) {
-                                const modifiedUrl = `${request.url}?regionId=${dependentValue.value || dependentValue}`;
-                                console.log("zoneFather Modified URL:", modifiedUrl);
-                                return {
-                                    url: modifiedUrl,
-                                    params: request.params || request
-                                };
-                            }
-                            return request;
-                        },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "woredaFather",
-                    label: "Birth Place Woreda",
-                    placeholder: "Search for a woreda...",
-                    description: "Select the woreda where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Woreda of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 10,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "maritalStatusFather",
-                    label: "Marital Status",
-                    placeholder: "Search for a marital status...",
+                    type: "input",
+                    key: "fatherMaritalStatus",
+                    label: "Father's marital status",
+                    placeholder: "",
                     description:
-                        "Select the martial status where the father was born",
+                        "",
                     validators: [
-                        {
-                            type: "required",
-                            message: "Marital Status of father is required",
-                        },
+                        { type: "required", message: "Date is required" },
                     ],
-                    required: true,
+                    required: false,
                     group: "Father Details",
-                    groupOrder: 11,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        isExternal: false,
-                        apiEndpoint: "maritalStatuses",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
+                    groupOrder: 4,
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
+                            return dependentValues.fatherResidentId.maritalStatus || "";
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    // getDescription: (dependentValues: any) => {
+                    //     if (!dependentValues?.fatherResidentId) {
+                    //         return "Please select a resident ID first";
+                    //     }
+                    //     if (typeof dependentValues.fatherResidentId === 'object') {
+                    //         const maritalStatus = dependentValues.fatherResidentId.maritalStatus || 'Unknown';
+                    //         return `Selected resident: ${maritalStatus}`;
+                    //     }
+                    //     return "Father's marital status will be populated automatically";
+                    // },
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.fatherResidentId;
                     },
                 },
+                // {
+                //     type: "lookup",
+                //     key: "currentResidenceFather",
+                //     label: "Current Residence Place",
+                //     placeholder: "Search for a current residence place...",
+                //     description:
+                //         "Select the current residence place where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message:
+                //                 "current residence place of father is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 12,
+                //     clearable: false,
+                //     searchable: true,
+                //     multiple: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/regions",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "religionFather",
+                //     label: "Religion",
+                //     placeholder: "Search for a religion...",
+                //     description:
+                //         "Select the religion where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "religion of father is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 13,
+                //     clearable: false,
+                //     searchable: true,
+                //     multiple: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/religions",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "educationLevelsFather",
+                //     label: "Education Status",
+                //     placeholder: "Search for a education levels...",
+                //     description:
+                //         "Select the education levels where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Education Levels of father is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 14,
+                //     clearable: false,
+                //     searchable: true,
+                //     multiple: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/education-levels",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
+                // {
+                //     type: "lookup",
+                //     key: "occupationsFather",
+                //     label: "Job Type",
+                //     placeholder: "Search for a job type...",
+                //     description:
+                //         "Select the job type where the father was born",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Job type of father is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Father Details",
+                //     groupOrder: 15,
+                //     clearable: false,
+                //     searchable: true,
+                //     multiple: false,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/occupation-types",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
                 {
-                    type: "lookup",
-                    key: "currentResidenceFather",
-                    label: "Current Residence Place",
-                    placeholder: "Search for a current residence place...",
+                    type: "input",
+                    key: "fatherPhoneNumber",
+                    label: "Father's phone number",
+                    placeholder: "",
                     description:
-                        "Select the current residence place where the father was born",
+                        "",
                     validators: [
-                        {
-                            type: "required",
-                            message:
-                                "current residence place of father is required",
-                        },
+                        { type: "required", message: "Date is required" },
                     ],
-                    required: true,
+                    required: false,
                     group: "Father Details",
-                    groupOrder: 12,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    groupOrder: 4,
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
+                            return dependentValues.fatherResidentId.mobileNumber || "";
+                        }
+                        return "";
                     },
-                },
-                {
-                    type: "lookup",
-                    key: "religionFather",
-                    label: "Religion",
-                    placeholder: "Search for a religion...",
-                    description:
-                        "Select the religion where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "religion of father is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 13,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/religions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
                     },
-                },
-                {
-                    type: "lookup",
-                    key: "educationLevelsFather",
-                    label: "Education Status",
-                    placeholder: "Search for a education levels...",
-                    description:
-                        "Select the education levels where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Education Levels of father is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 14,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/education-levels",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.fatherResidentId;
                     },
-                },
-                {
-                    type: "lookup",
-                    key: "occupationsFather",
-                    label: "Job Type",
-                    placeholder: "Search for a job type...",
-                    description:
-                        "Select the job type where the father was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Job type of father is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 15,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/occupation-types",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "phone",
-                    key: "phoneFather",
-                    label: "Phone Number",
-                    placeholder: "e.g., +251912345678 or 0912345678",
-                    description:
-                        "Enter father's Ethiopian phone number in any valid format",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Phone number is required",
-                        },
-                        {
-                            type: "pattern",
-                            value: "^(\\+251|251|0)?[79]\\d{8}$",
-                            message:
-                                "Please enter a valid Ethiopian phone number",
-                        },
-                    ],
-                    required: true,
-                    group: "Father Details",
-                    groupOrder: 16,
                 },
             ],
         },
@@ -1090,583 +1140,180 @@ export const formConfig: FormConfig = {
             groupOrder: 3,
             fields: [
                 {
-                    type: "input",
-                    key: "firstNameMother",
-                    label: "First Name",
-                    placeholder: "",
-                    description:
-                        "Enter mother's first name as it appears on official documents",
+                    type: "inputSearch",
+                    key: "motherResidentId",
+                    label: "Mother's resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
+                    description: "Search for a resident by entering their ID. The system will search as you type.",
                     validators: [
-                        { type: "required", message: "First name is required" },
+                        {
+                            type: "required",
+                            message: "Resident ID is required",
+                        },
                     ],
                     required: true,
                     group: "Mother Details",
                     groupOrder: 1,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 300,
+                        cacheResults: true,
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
+                        },
+                        transformResponse: (data: any) => {
+                            if (!data || !data.content || !Array.isArray(data.content)) {
+                                return [];
+                            }
+
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.firstName || 'Unknown',
+                                name: resident.firstName || 'Unknown',
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [resident.firstName, resident.middleName, resident.lastName]
+                                    .filter(Boolean)
+                                    .join(' '),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident
+                            }));
+                        },
+                    },
                 },
                 {
                     type: "input",
-                    key: "fatherNameMother",
-                    label: "Father Name",
+                    key: "motherFullName",
+                    label: "Mother's Full Name",
                     placeholder: "",
                     description:
-                        "Enter mother's father name as it appears on official documents",
+                        "",
                     validators: [
-                        {
-                            type: "required",
-                            message: "Father name is required",
-                        },
+                        { type: "required", message: "First name is required" },
                     ],
-                    required: true,
+                    required: false,
                     group: "Mother Details",
                     groupOrder: 2,
-                },
-                {
-                    type: "input",
-                    key: "grandFatherNameMother",
-                    label: "Grand Father Name",
-                    placeholder: "",
-                    description:
-                        "Enter mother's grand father name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Grand Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 3,
-                },
-                {
-                    type: "lookup",
-                    key: "nationalityMother",
-                    label: "Nationality",
-                    placeholder: "Search for a nationality...",
-                    description: "Select the nationality of the mother",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Nationality is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 4,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/nationalities",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        defaultValue: {
-                            value: "ET",
-                            label: "Ethiopia",
-                            id: 1,
-                            name: "Ethiopia",
-                        },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
+                            return dependentValues.motherResidentId.fullName || "";
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId;
                     },
                 },
                 {
                     type: "input",
-                    key: "motherId",
-                    label: "Identification Number",
-                    placeholder: "",
-                    description: "Enter the mother's identification number",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Identification number is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 5,
-                },
-                {
-                    type: "date",
-                    key: "dateOfBirthMother",
-                    label: "Date of Birth",
+                    key: "motherDateOfBirth",
+                    label: "Mother's Date of Birth",
                     placeholder: "",
                     description:
-                        "Select mother's birth date. Future dates are not acceptable.",
+                        "",
                     validators: [
                         { type: "required", message: "Date is required" },
-                        {
-                            type: "maxDate",
-                            value: new Date().toISOString().split("T")[0],
-                            message: "Date cannot be in the future",
-                        },
                     ],
-                    required: true,
+                    required: false,
                     group: "Mother Details",
-                    groupOrder: 6,
-                },
-                {
-                    type: "lookup",
-                    key: "countryOfBirthMother",
-                    label: "Country of Birth",
-                    placeholder: "Search for a country...",
-                    description: "Select the country where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Country of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 7,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/nationalities",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        defaultValue: {
-                            value: "ET",
-                            label: "Ethiopia",
-                            id: 1,
-                            name: "Ethiopia",
-                        },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    groupOrder: 3,
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
+                            return dependentValues.motherResidentId.dateOfBirth || "";
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId;
                     },
                 },
                 {
-                    type: "lookup",
-                    key: "regionMother",
-                    label: "Birth Place Region",
-                    placeholder: "Search for a region...",
-                    description: "Select the region where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Region of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 8,
-                    clearable: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "zoneMother",
-                    label: "City/Sub City/Zone",
-                    placeholder: "Search for a zone...",
-                    description: "Select the zone where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Zone of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 9,
-                    clearable: false,
-                    disabled: true,
-                    getDependentValue: (formValues: any) => formValues.regionMother,
-                    isDisabled: (dependentValue: any) => !dependentValue,
-                    getPlaceholder: (dependentValue: any) => 
-                        dependentValue ? "Search for a zone..." : "Please select a region first",
-                    getDescription: (dependentValue: any) => 
-                        dependentValue ? "Select the zone where the mother was born" : "Zone selection is disabled until a region is selected",
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/zones",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformRequest: (request: any, dependentValue: any) => {
-                            console.log("zoneMother transformRequest called with:", { request, dependentValue });
-                            if (dependentValue) {
-                                const modifiedUrl = `${request.url}?regionId=${dependentValue.value || dependentValue}`;
-                                console.log("zoneMother Modified URL:", modifiedUrl);
-                                return {
-                                    url: modifiedUrl,
-                                    params: request.params || request
-                                };
-                            }
-                            return request;
-                        },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "woredaMother",
-                    label: "Birth Place Woreda",
-                    placeholder: "Search for a woreda...",
-                    description: "Select the woreda where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Woreda of birth is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 10,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "lookup",
-                    key: "maritalStatusMother",
-                    label: "Marital Status",
-                    placeholder: "Search for a marital status...",
+                    type: "input",
+                    key: "motherMaritalStatus",
+                    label: "Mother's marital status",
+                    placeholder: "",
                     description:
-                        "Select the martial status where the mother was born",
+                        "",
                     validators: [
-                        {
-                            type: "required",
-                            message: "Marital Status of mother is required",
-                        },
+                        { type: "required", message: "Date is required" },
                     ],
-                    required: true,
+                    required: false,
                     group: "Mother Details",
-                    groupOrder: 11,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        isExternal: false,
-                        apiEndpoint: "maritalStatuses",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
+                    groupOrder: 4,
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
+                            return dependentValues.motherResidentId.maritalStatus || "";
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId;
                     },
                 },
                 {
-                    type: "lookup",
-                    key: "currentResidenceMother",
-                    label: "Current Residence Place",
-                    placeholder: "Search for a current residence place...",
+                    type: "input",
+                    key: "motherPhoneNumber",
+                    label: "Mother's phone number",
+                    placeholder: "",
                     description:
-                        "Select the current residence place where the mother was born",
+                        "",
                     validators: [
-                        {
-                            type: "required",
-                            message:
-                                "current residence place of mother is required",
-                        },
+                        { type: "required", message: "Date is required" },
                     ],
-                    required: true,
+                    required: false,
                     group: "Mother Details",
-                    groupOrder: 12,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/regions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    groupOrder: 4,
+                    defaultValue: (dependentValues: any) => {
+                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
+                            return dependentValues.motherResidentId.mobileNumber || "";
+                        }
+                        return "";
                     },
-                },
-                {
-                    type: "lookup",
-                    key: "religionMother",
-                    label: "Religion",
-                    placeholder: "Search for a religion...",
-                    description:
-                        "Select the religion where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "religion of mother is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 13,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/religions",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
                     },
-                },
-                {
-                    type: "lookup",
-                    key: "educationLevelsMother",
-                    label: "Education Status",
-                    placeholder: "Search for a education levels...",
-                    description:
-                        "Select the education levels where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Education Levels of mother is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 14,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/education-levels",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId;
                     },
-                },
-                {
-                    type: "lookup",
-                    key: "occupationsMother",
-                    label: "Job Type",
-                    placeholder: "Search for a job type...",
-                    description:
-                        "Select the job type where the mother was born",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Job type of mother is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 15,
-                    clearable: false,
-                    searchable: true,
-                    multiple: false,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/occupation-types",
-                        method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
-                        searchKey: "name",
-                        debounceMs: 300,
-                        minSearchLength: 0,
-                        cacheResults: true,
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                            }));
-                        },
-                    },
-                },
-                {
-                    type: "phone",
-                    key: "phoneMother",
-                    label: "Phone Number",
-                    placeholder: "e.g., +251912345678 or 0912345678",
-                    description:
-                        "Enter mother's Ethiopian phone number in any valid format",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Phone number is required",
-                        },
-                        {
-                            type: "pattern",
-                            value: "^(\\+251|251|0)?[79]\\d{8}$",
-                            message:
-                                "Please enter a valid Ethiopian phone number",
-                        },
-                    ],
-                    required: true,
-                    group: "Mother Details",
-                    groupOrder: 16,
                 },
             ],
         },
