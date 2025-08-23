@@ -76,7 +76,7 @@ const LoginPage = () => {
         setTimeout(() => {
             setLoading(false);
             showSuccess("Logged in Successfully!");
-            router.push("/home/birth");
+            router.push("/users/features/birth-registration/new");
         }, 2000);
 
         // router.push("/home");
@@ -102,12 +102,12 @@ const LoginPage = () => {
     const [selectedLoginOption, setSelectedLoginOption] = useState<
         "email" | "fayda" | "phone"
     >("email");
-        
+
     // Create a handler function for the select component
     const handleLoginOptionChange = (value: string) => {
         setSelectedLoginOption(value as "email" | "fayda" | "phone");
     };
- 
+
     const initialValueTypes = {
         email: loginEmailInitialValues,
         fayda: loginFaydaInitialValues,
@@ -179,7 +179,7 @@ const LoginPage = () => {
                             className='w-full shadow-lg bg-[#E1E7EA] text-[#073954] hover:text-white'
                         >
                             <Link href='/home'>
-                                <House size={20}/>
+                                <House size={20} />
                             </Link>
                         </Button>
                         <LanguageSwitcher />
@@ -211,11 +211,11 @@ const LoginPage = () => {
                                             <p>Login using</p>
                                         </Label>
                                         <CustomSelectComponent
-                                            name="loginOption"
+                                            name='loginOption'
                                             value={selectedLoginOption}
                                             options={optionsLoginAndSignup}
                                             onChange={handleLoginOptionChange}
-                                            placeholder="Select login option"
+                                            placeholder='Select login option'
                                         />
                                     </div>
                                 </div>

@@ -20,7 +20,11 @@ export const formConfig: FormConfig = {
         },
         {
             label: "Step 5",
-            content: "Witness Information",
+            content: "Husband Witness Information",
+        },
+        {
+            label: "Step 6",
+            content: "Wife Witness Information",
         },
     ],
     stepperPosition: "",
@@ -117,107 +121,236 @@ export const formConfig: FormConfig = {
             defaultExpanded: true,
             fields: [
                 {
-                    type: "input",
-                    key: "husbandFirstName",
-                    label: "Husband's First Name",
-                    placeholder: "",
+                    type: "inputSearch",
+                    key: "husbandResidentId",
+                    label: "Husbands's resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
                     description:
-                        "Enter your legal Husband First Name as it appears on official documents",
+                        "Search for a resident by entering their ID. The system will search as you type.",
                     validators: [
                         {
                             type: "required",
-                            message: "Husband first name is required",
+                            message: "Resident ID is required",
                         },
                     ],
                     required: true,
                     group: "Husband's Information",
-                    groupOrder: 2,
-                },
-                {
-                    type: "input",
-                    key: "husbandFatherName",
-                    label: "Husband Father's Name",
-                    placeholder: "",
-                    description:
-                        "Enter Husband's Father Name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Husband's Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Husband's Information",
-                    groupOrder: 2,
-                },
-                {
-                    type: "input",
-                    key: "husbandGrandFatherName",
-                    label: "Husband's GrandFather Name",
-                    placeholder: "",
-                    description:
-                        "Enter Husband's GrandFather Name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Husband's GrandFather name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Husband's Information",
-                    groupOrder: 2,
-                },
-                {
-                    type: "lookup",
-                    key: "husbandNationality",
-                    label: "Husband's Nationality",
-                    placeholder: "Search for nationality.",
-                    description: "Select the Husband's Nationality",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Nationality is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Husband's Information",
-                    groupOrder: 2,
-                    clearable: false,
-                    searchable: true,
-
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/nationalities",
+                    groupOrder: 1,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
                         method: "GET",
+                        searchKey: "search",
                         valueKey: "id",
                         labelKey: "name",
-                        searchKey: "name",
+                        minSearchLength: 3,
                         debounceMs: 300,
-                        minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
                         },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
+                        transformResponse: (data: any) => {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
+                                return [];
+                            }
+                            // console.log("husband data", data);
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.firstName || "Unknown",
+                                name: resident.firstName || "Unknown",
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" "),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident,
                             }));
                         },
                     },
                 },
+                {
+                    type: "input",
+                    key: "husbandFullName",
+                    label: "Husband's Full Name",
+                    placeholder: "",
+                    description:
+                        "Husband legal Full Name as it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Husband Full name is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Husband's Information",
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.husbandResidentId &&
+                            typeof dependentValues.husbandResidentId ===
+                                "object"
+                        ) {
+                            return (
+                                dependentValues.husbandResidentId.fullName || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        husbandResidentId: formValues.husbandResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.husbandResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.husbandResidentId;
+                    },
+                },
+                // {
+                //     type: "input",
+                //     key: "husbandFatherName",
+                //     label: "Husband Father's Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Husband's Father Name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Husband's Father name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Husband's Information",
+                //     groupOrder: 2,
+                // },
+                // {
+                //     type: "input",
+                //     key: "husbandGrandFatherName",
+                //     label: "Husband's GrandFather Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Husband's GrandFather Name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Husband's GrandFather name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Husband's Information",
+                //     groupOrder: 2,
+                // },
+                {
+                    type: "input",
+                    key: "husbandNationality",
+                    label: "Husband's Nationality",
+                    placeholder: "",
+                    description:
+                        "Husband Nationality it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Husband Nationality is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Husband's Information",
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.husbandResidentId &&
+                            typeof dependentValues.husbandResidentId ===
+                                "object"
+                        ) {
+                            return (
+                                dependentValues.husbandResidentId.nationality ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        husbandResidentId: formValues.husbandResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.husbandResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.husbandResidentId;
+                    },
+                },
+                // {
+                //     type: "lookup",
+                //     key: "husbandNationality",
+                //     label: "Husband's Nationality",
+                //     placeholder: "Search for nationality.",
+                //     description: "Select the Husband's Nationality",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Nationality is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Husband's Information",
+                //     groupOrder: 2,
+                //     clearable: false,
+                //     searchable: true,
+
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/nationalities",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         defaultValue: {
+                //             id: 1,
+                //             label: "Ethiopia",
+                //             value: "ET",
+                //         },
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
                 {
                     type: "input",
                     key: "husbandNationalId",
@@ -241,25 +374,64 @@ export const formConfig: FormConfig = {
                     clearable: false,
                     searchable: true,
                 },
+
                 {
-                    type: "date",
+                    type: "input",
                     key: "husbandDateOfBirth",
                     label: "Husband's Date of Birth",
                     placeholder: "",
-                    description:
-                        "Select Husband's Birth Date. Future dates are not acceptable.",
+                    description: "Birth Date it appears on official documents",
                     validators: [
-                        { type: "required", message: "Date is required" },
                         {
-                            type: "maxDate",
-                            value: new Date().toISOString().split("T")[0],
-                            message: "Date cannot be in the future",
+                            type: "required",
+                            message: "Birth Date is required",
                         },
                     ],
                     required: true,
                     group: "Husband's Information",
                     groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.husbandResidentId &&
+                            typeof dependentValues.husbandResidentId ===
+                                "object"
+                        ) {
+                            return (
+                                dependentValues.husbandResidentId.dateOfBirth ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        husbandResidentId: formValues.husbandResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.husbandResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.husbandResidentId;
+                    },
                 },
+                // {
+                //     type: "date",
+                //     key: "husbandDateOfBirth",
+                //     label: "Husband's Date of Birth",
+                //     placeholder: "",
+                //     description:
+                //         "Select Husband's Birth Date. Future dates are not acceptable.",
+                //     validators: [
+                //         { type: "required", message: "Date is required" },
+                //         {
+                //             type: "maxDate",
+                //             value: new Date().toISOString().split("T")[0],
+                //             message: "Date cannot be in the future",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Husband's Information",
+                //     groupOrder: 2,
+                // },
                 {
                     type: "lookup",
                     key: "husbandPlaceOfBirth",
@@ -408,26 +580,65 @@ export const formConfig: FormConfig = {
                     },
                 },
                 {
-                    type: "radio",
+                    type: "input",
                     key: "earlierMaritalStatusHusband",
                     label: "Earlier Marital Status",
-                    description: "Select your previous marital status",
-                    options: [
-                        { label: "Never Married", value: "never" },
-                        { label: "Divorced", value: "divorced" },
-                        { label: "Widow", value: "widow" },
-                    ],
                     placeholder: "",
+                    description:
+                        "Earlier Marital Status it appears on official documents",
                     validators: [
                         {
                             type: "required",
-                            message: "Earlier status is required",
+                            message: "Earlier Marital Status is required",
                         },
                     ],
                     required: true,
                     group: "Husband's Information",
                     groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.husbandResidentId &&
+                            typeof dependentValues.husbandResidentId ===
+                                "object"
+                        ) {
+                            return (
+                                dependentValues.husbandResidentId
+                                    .maritalStatus || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        husbandResidentId: formValues.husbandResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.husbandResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.husbandResidentId;
+                    },
                 },
+                // {
+                //     type: "radio",
+                //     key: "earlierMaritalStatusHusband",
+                //     label: "Earlier Marital Status",
+                //     description: "Select your previous marital status",
+                //     options: [
+                //         { label: "Never Married", value: "never" },
+                //         { label: "Divorced", value: "divorced" },
+                //         { label: "Widow", value: "widow" },
+                //     ],
+                //     placeholder: "",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Earlier status is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Husband's Information",
+                //     groupOrder: 2,
+                // },
                 {
                     type: "lookup",
                     key: "husbandEducationlStatus",
@@ -577,106 +788,249 @@ export const formConfig: FormConfig = {
             defaultExpanded: true,
             fields: [
                 {
-                    type: "input",
-                    key: "wifeFirstName",
-                    label: "Wife's First Name",
-                    placeholder: "",
+                    type: "inputSearch",
+                    key: "wifeResidentId",
+                    label: "Wifes's resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
                     description:
-                        "Enter your legal Wife First Name as it appears on official documents",
+                        "Search for a resident by entering their ID. The system will search as you type.",
                     validators: [
                         {
                             type: "required",
-                            message: "Wife first name is required",
+                            message: "Resident ID is required",
                         },
                     ],
                     required: true,
                     group: "Wife's Information",
-                    groupOrder: 3,
-                },
-                {
-                    type: "input",
-                    key: "wifeFatherName",
-                    label: "Wife Father's Name",
-                    placeholder: "",
-                    description:
-                        "Enter Wife's Father Name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Wife's Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Wife's Information",
-                    groupOrder: 3,
-                },
-                {
-                    type: "input",
-                    key: "wifeGrandFatherName",
-                    label: "Wife's GrandFather Name",
-                    placeholder: "",
-                    description:
-                        "Enter Wife's GrandFather Name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Wife's GrandFather name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Wife's Information",
-                    groupOrder: 3,
-                },
-                {
-                    type: "lookup",
-                    key: "wifeNationality",
-                    label: "Wife's Nationality",
-                    placeholder: "Search for nationality.",
-                    description: "Select the Wife's Nationality",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Nationality is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Wife's Information",
-                    groupOrder: 3,
-                    clearable: false,
-                    searchable: true,
-                    lookupConfig: {
-                        apiEndpoint: "/reference-data/nationalities",
+                    groupOrder: 1,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
                         method: "GET",
+                        searchKey: "search",
                         valueKey: "id",
                         labelKey: "name",
-                        searchKey: "name",
+                        minSearchLength: 3,
                         debounceMs: 300,
-                        minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            id: 1,
-                            label: "Ethiopia",
-                            value: "ET",
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
                         },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
-                            console.log("response data", response);
-                            return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
+                        transformResponse: (data: any) => {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
+                                return [];
+                            }
+                            // console.log("husband data", data);
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.firstName || "Unknown",
+                                name: resident.firstName || "Unknown",
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" "),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident,
                             }));
                         },
                     },
                 },
+                {
+                    type: "input",
+                    key: "wifeFullName",
+                    label: "wife's Full Name",
+                    placeholder: "",
+                    description:
+                        "wife legal Full Name as it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "wife Full name is required",
+                        },
+                    ],
+                    required: true,
+                    group: "wife's Information",
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.wifeResidentId &&
+                            typeof dependentValues.wifeResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.wifeResidentId.fullName || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        wifeResidentId: formValues.wifeResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.wifeResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.wifeResidentId;
+                    },
+                },
+                // {
+                //     type: "input",
+                //     key: "wifeFirstName",
+                //     label: "Wife's First Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter your legal Wife First Name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Wife first name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Wife's Information",
+                //     groupOrder: 3,
+                // },
+                // {
+                //     type: "input",
+                //     key: "wifeFatherName",
+                //     label: "Wife Father's Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Wife's Father Name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Wife's Father name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Wife's Information",
+                //     groupOrder: 3,
+                // },
+                // {
+                //     type: "input",
+                //     key: "wifeGrandFatherName",
+                //     label: "Wife's GrandFather Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Wife's GrandFather Name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Wife's GrandFather name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Wife's Information",
+                //     groupOrder: 3,
+                // },
+                {
+                    type: "input",
+                    key: "wifeNationality",
+                    label: "Wife's Nationality",
+                    placeholder: "",
+                    description:
+                        "Wife Nationality it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Wife Nationality is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Wife's Information",
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.wifeResidentId &&
+                            typeof dependentValues.wifeResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.wifeResidentId.nationality || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        wifeResidentId: formValues.wifeResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.wifeResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.wifeResidentId;
+                    },
+                },
+                // {
+                //     type: "lookup",
+                //     key: "wifeNationality",
+                //     label: "Wife's Nationality",
+                //     placeholder: "Search for nationality.",
+                //     description: "Select the Wife's Nationality",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Nationality is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Wife's Information",
+                //     groupOrder: 3,
+                //     clearable: false,
+                //     searchable: true,
+                //     lookupConfig: {
+                //         apiEndpoint: "/reference-data/nationalities",
+                //         method: "GET",
+                //         valueKey: "id",
+                //         labelKey: "name",
+                //         searchKey: "name",
+                //         debounceMs: 300,
+                //         minSearchLength: 0,
+                //         cacheResults: true,
+                //         defaultValue: {
+                //             id: 1,
+                //             label: "Ethiopia",
+                //             value: "ET",
+                //         },
+                //         transformResponse: (
+                //             response,
+                //             locale: "en" | "am" = "en"
+                //         ) => {
+                //             console.log("response data", response);
+                //             return response.content.map((res: any) => ({
+                //                 id: res.code,
+                //                 value: res.code,
+                //                 name:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 label:
+                //                     res.localizedContent?.[locale]?.name ??
+                //                     res.code,
+                //                 isDisabled: false,
+                //             }));
+                //         },
+                //     },
+                // },
                 {
                     type: "input",
                     key: "wifeNationalId",
@@ -701,24 +1055,60 @@ export const formConfig: FormConfig = {
                     searchable: true,
                 },
                 {
-                    type: "date",
+                    type: "input",
                     key: "wifeDateOfBirth",
                     label: "Wife's Date of Birth",
                     placeholder: "",
-                    description:
-                        "Select Wife's Birth Date. Future dates are not acceptable.",
+                    description: "Birth Date it appears on official documents",
                     validators: [
-                        { type: "required", message: "Date is required" },
                         {
-                            type: "maxDate",
-                            value: new Date().toISOString().split("T")[0],
-                            message: "Date cannot be in the future",
+                            type: "required",
+                            message: "Birth Date is required",
                         },
                     ],
                     required: true,
                     group: "Wife's Information",
-                    groupOrder: 3,
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.wifeResidentId &&
+                            typeof dependentValues.wifeResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.wifeResidentId.dateOfBirth || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        wifeResidentId: formValues.wifeResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.wifeResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.wifeResidentId;
+                    },
                 },
+                // {
+                //     type: "date",
+                //     key: "wifeDateOfBirth",
+                //     label: "Wife's Date of Birth",
+                //     placeholder: "",
+                //     description:
+                //         "Select Wife's Birth Date. Future dates are not acceptable.",
+                //     validators: [
+                //         { type: "required", message: "Date is required" },
+                //         {
+                //             type: "maxDate",
+                //             value: new Date().toISOString().split("T")[0],
+                //             message: "Date cannot be in the future",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Wife's Information",
+                //     groupOrder: 3,
+                // },
                 {
                     type: "lookup",
                     key: "wifePlaceOfBirth",
@@ -868,26 +1258,64 @@ export const formConfig: FormConfig = {
                     },
                 },
                 {
-                    type: "radio",
+                    type: "input",
                     key: "earlierMaritalStatusWife",
                     label: "Earlier Marital Status",
-                    description: "Select your previous marital status",
-                    options: [
-                        { label: "Never Married", value: "never" },
-                        { label: "Divorced", value: "divorced" },
-                        { label: "Widow", value: "widow" },
-                    ],
                     placeholder: "",
+                    description:
+                        "Earlier Marital Status it appears on official documents",
                     validators: [
                         {
                             type: "required",
-                            message: "Earlier status is required",
+                            message: "Earlier Marital Status is required",
                         },
                     ],
                     required: true,
                     group: "Wife's Information",
-                    groupOrder: 3,
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.wifeResidentId &&
+                            typeof dependentValues.wifeResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.wifeResidentId.maritalStatus ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        wifeResidentId: formValues.wifeResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.wifeResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.wifeResidentId;
+                    },
                 },
+                // {
+                //     type: "radio",
+                //     key: "earlierMaritalStatusWife",
+                //     label: "Earlier Marital Status",
+                //     description: "Select your previous marital status",
+                //     options: [
+                //         { label: "Never Married", value: "never" },
+                //         { label: "Divorced", value: "divorced" },
+                //         { label: "Widow", value: "widow" },
+                //     ],
+                //     placeholder: "",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Earlier status is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Wife's Information",
+                //     groupOrder: 3,
+                // },
                 {
                     type: "lookup",
                     key: "wifeEducationlStatus",
@@ -1087,15 +1515,15 @@ export const formConfig: FormConfig = {
             ],
         },
         {
-            title: "Witness Information",
-            group: "Witness Information",
+            title: "Husband Witness Information",
+            group: "Husband Witness Information",
             groupOrder: 5,
             tabular: false,
             defaultExpanded: true,
             fields: [
                 {
                     type: "input",
-                    key: "witnessFirstName",
+                    key: "witnessFirstNameHusband",
                     label: "Witness First Name",
                     placeholder: "",
                     description:
@@ -1112,7 +1540,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "input",
-                    key: "witnessFatherName",
+                    key: "witnessFatherNameHusband",
                     label: "Witness Father Name",
                     placeholder: "",
                     description:
@@ -1129,7 +1557,7 @@ export const formConfig: FormConfig = {
                 },
                 {
                     type: "input",
-                    key: "witnessGrandFatherName",
+                    key: "witnessGrandFatherNameHusband",
                     label: "Withness Grand Father Name",
                     placeholder: "",
                     description:
@@ -1143,27 +1571,34 @@ export const formConfig: FormConfig = {
                     required: true,
                     group: "Witness Information",
                     groupOrder: 5,
-                }, {
+                },
+                {
                     type: "digitalSignature",
-                    key: "parentSignature",
+                    key: "parentSignatureHusband",
                     label: "Witness Signature",
-                    description: "Please sign below to confirm the information provided is accurate and complete",
+                    description:
+                        "Please sign below to confirm the information provided is accurate and complete",
                     required: true,
                     group: "Account Details",
                     groupOrder: 6,
                     validators: [
-                        { type: "required", message: "Signature is required to proceed with registration" }
+                        {
+                            type: "required",
+                            message:
+                                "Signature is required to proceed with registration",
+                        },
                     ],
                     digitalSignatureConfig: {
                         canvasWidth: 450,
                         canvasHeight: 200,
-                        penColor: '#1f2937', // Dark gray for better visibility
+                        penColor: "#1f2937", // Dark gray for better visibility
                         penWidth: 3,
-                        backgroundColor: '#ffffff',
+                        backgroundColor: "#ffffff",
                         showClearButton: true,
                         showSaveButton: true,
                         placeholder: "Click and drag to sign here",
-                        validationMessage: "Please provide your signature to continue"
+                        validationMessage:
+                            "Please provide your signature to continue",
                     },
                     // Dynamic behavior based on country selection
                     // getDependentValue: (formValues: any) => {
@@ -1197,7 +1632,126 @@ export const formConfig: FormConfig = {
                     //     return "Please sign below to confirm the information provided is accurate and complete";
                     // }
                 },
+            ],
+        },
+        {
+            title: "Wife Witness Information",
+            group: "Wife Witness Information",
+            groupOrder: 6,
+            tabular: false,
+            defaultExpanded: true,
+            fields: [
+                {
+                    type: "input",
+                    key: "witnessFirstNameWife",
+                    label: "Witness First Name",
+                    placeholder: "",
+                    description:
+                        "Enter Witness First name as it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Witness First name is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Witness Information",
+                    groupOrder: 6,
+                },
+                {
+                    type: "input",
+                    key: "witnessFatherNameWife",
+                    label: "Witness Father Name",
+                    placeholder: "",
+                    description:
+                        "Enter Witness Father name as it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Witness Father name is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Witness Information",
+                    groupOrder: 6,
+                },
+                {
+                    type: "input",
+                    key: "witnessGrandFatherNameWife",
+                    label: "Withness Grand Father Name",
+                    placeholder: "",
+                    description:
+                        "Enter Witness Grand father name as it appears on official documents",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Witness Grand Father name is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Witness Information",
+                    groupOrder: 6,
+                },
+                {
+                    type: "digitalSignature",
+                    key: "parentSignatureWife",
+                    label: "Witness Signature",
+                    description:
+                        "Please sign below to confirm the information provided is accurate and complete",
+                    required: true,
+                    group: "Account Details",
+                    groupOrder: 6,
+                    validators: [
+                        {
+                            type: "required",
+                            message:
+                                "Signature is required to proceed with registration",
+                        },
+                    ],
+                    digitalSignatureConfig: {
+                        canvasWidth: 450,
+                        canvasHeight: 200,
+                        penColor: "#1f2937", // Dark gray for better visibility
+                        penWidth: 3,
+                        backgroundColor: "#ffffff",
+                        showClearButton: true,
+                        showSaveButton: true,
+                        placeholder: "Click and drag to sign here",
+                        validationMessage:
+                            "Please provide your signature to continue",
+                    },
+                    // Dynamic behavior based on country selection
+                    // getDependentValue: (formValues: any) => {
+                    //     return {
+                    //         countryOfBirth: formValues.countryOfBirth,
+                    //         regionOfBirth: formValues.regionOfBirth,
+                    //     };
+                    // },
+                    // // Make signature required for all countries
+                    // isRequired: (dependentValues: any) => {
+                    //     return true; // Always required for birth registration
+                    // },
+                    // // Always show the signature field, but guide users with description
+                    // isHide: (dependentValues: any) => {
+                    //     return false; // Always visible
+                    // },
+                    // // Custom description based on country
+                    // getDescription: (dependentValues: any) => {
+                    //     if (!dependentValues?.countryOfBirth) {
+                    //         return "Please select a country first before signing. The signature field is available for you to use once you've made your selection.";
+                    //     }
+                    //     const countryId = typeof dependentValues.countryOfBirth === 'object'
+                    //         ? dependentValues.countryOfBirth.value || dependentValues.countryOfBirth.id
+                    //         : dependentValues.countryOfBirth;
 
+                    //     if (countryId === 'ET') {
+                    //         return "Ethiopian birth registration requires parent/guardian signature for verification";
+                    //     } else if (countryId === 'US') {
+                    //         return "US birth registration requires legal guardian signature for processing";
+                    //     }
+                    //     return "Please sign below to confirm the information provided is accurate and complete";
+                    // }
+                },
             ],
         },
     ],
