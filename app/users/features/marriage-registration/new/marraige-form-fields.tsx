@@ -1522,56 +1522,166 @@ export const formConfig: FormConfig = {
             defaultExpanded: true,
             fields: [
                 {
+                    type: "inputSearch",
+                    key: "witnessResidentIdHusband",
+                    label: "Husband's Witness resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
+                    description:
+                        "Search for a resident by entering their ID. The system will search as you type.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Resident ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Husband Witness Information",
+
+                    groupOrder: 1,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 300,
+                        cacheResults: true,
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
+                        },
+                        transformResponse: (data: any) => {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
+                                return [];
+                            }
+                            // console.log("husband data", data);
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.firstName || "Unknown",
+                                name: resident.firstName || "Unknown",
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" "),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident,
+                            }));
+                        },
+                    },
+                },
+                {
                     type: "input",
                     key: "witnessFirstNameHusband",
-                    label: "Witness First Name",
+                    label: "Husband Witness Information",
                     placeholder: "",
                     description:
-                        "Enter Witness First name as it appears on official documents",
+                        "Enter Witness Full name as it appears on official documents",
                     validators: [
                         {
                             type: "required",
-                            message: "Witness First name is required",
+                            message: "Earlier Marital Status is required",
                         },
                     ],
                     required: true,
-                    group: "Witness Information",
-                    groupOrder: 5,
+                    group: "Husband Witness Information",
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.witnessResidentIdHusband &&
+                            typeof dependentValues.witnessResidentIdHusband ===
+                                "object"
+                        ) {
+                            return (
+                                dependentValues.witnessResidentIdHusband
+                                    .fullName || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        witnessResidentIdHusband:
+                            formValues.witnessResidentIdHusband,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.witnessResidentIdHusband;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.witnessResidentIdHusband;
+                    },
                 },
-                {
-                    type: "input",
-                    key: "witnessFatherNameHusband",
-                    label: "Witness Father Name",
-                    placeholder: "",
-                    description:
-                        "Enter Witness Father name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Witness Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Witness Information",
-                    groupOrder: 5,
-                },
-                {
-                    type: "input",
-                    key: "witnessGrandFatherNameHusband",
-                    label: "Withness Grand Father Name",
-                    placeholder: "",
-                    description:
-                        "Enter Witness Grand father name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Witness Grand Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Witness Information",
-                    groupOrder: 5,
-                },
+                // {
+                //     type: "input",
+                //     key: "witnessFirstNameHusband",
+                //     label: "Witness First Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Witness First name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Witness First name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Witness Information",
+                //     groupOrder: 5,
+                // },
+                // {
+                //     type: "input",
+                //     key: "witnessFatherNameHusband",
+                //     label: "Witness Father Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Witness Father name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Witness Father name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Witness Information",
+                //     groupOrder: 5,
+                // },
+                // {
+                //     type: "input",
+                //     key: "witnessGrandFatherNameHusband",
+                //     label: "Withness Grand Father Name",
+                //     placeholder: "",
+                //     description:
+                //         "Enter Witness Grand father name as it appears on official documents",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Witness Grand Father name is required",
+                //         },
+                //     ],
+                //     required: true,
+                //     group: "Witness Information",
+                //     groupOrder: 5,
+                // },
                 {
                     type: "digitalSignature",
                     key: "parentSignatureHusband",
@@ -1642,56 +1752,115 @@ export const formConfig: FormConfig = {
             defaultExpanded: true,
             fields: [
                 {
+                    type: "inputSearch",
+                    key: "witnessResidentIdWife",
+                    label: "Wife's Witness resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
+                    description:
+                        "Search for a resident by entering their ID. The system will search as you type.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Resident ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Wife Witness Information",
+
+                    groupOrder: 1,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 300,
+                        cacheResults: true,
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
+                        },
+                        transformResponse: (data: any) => {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
+                                return [];
+                            }
+                            // console.log("husband data", data);
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.firstName || "Unknown",
+                                name: resident.firstName || "Unknown",
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" "),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident,
+                            }));
+                        },
+                    },
+                },
+                {
                     type: "input",
                     key: "witnessFirstNameWife",
-                    label: "Witness First Name",
+                    label: "Husband Witness Information",
                     placeholder: "",
                     description:
-                        "Enter Witness First name as it appears on official documents",
+                        "Enter Witness Full name as it appears on official documents",
                     validators: [
                         {
                             type: "required",
-                            message: "Witness First name is required",
+                            message: "Earlier Marital Status is required",
                         },
                     ],
                     required: true,
-                    group: "Witness Information",
-                    groupOrder: 6,
+                    group: "Wife Witness Information",
+                    groupOrder: 2,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.witnessResidentIdWife &&
+                            typeof dependentValues.witnessResidentIdWife ===
+                                "object"
+                        ) {
+                            return (
+                                dependentValues.witnessResidentIdWife
+                                    .fullName || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        witnessResidentIdWife: formValues.witnessResidentIdWife,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.witnessResidentIdWife;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.witnessResidentIdWife;
+                    },
                 },
-                {
-                    type: "input",
-                    key: "witnessFatherNameWife",
-                    label: "Witness Father Name",
-                    placeholder: "",
-                    description:
-                        "Enter Witness Father name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Witness Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Witness Information",
-                    groupOrder: 6,
-                },
-                {
-                    type: "input",
-                    key: "witnessGrandFatherNameWife",
-                    label: "Withness Grand Father Name",
-                    placeholder: "",
-                    description:
-                        "Enter Witness Grand father name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Witness Grand Father name is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Witness Information",
-                    groupOrder: 6,
-                },
+
                 {
                     type: "digitalSignature",
                     key: "parentSignatureWife",
