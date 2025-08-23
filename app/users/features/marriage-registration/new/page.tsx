@@ -9,6 +9,7 @@ import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
 import { formConfig } from "./marraige-form-fields";
 import { useEffect, useState } from "react";
 import { processFormSubmission } from "@/utils/formSubmissionUtils";
+import { toast } from "sonner";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -74,9 +75,13 @@ export default function Page() {
 
             console.log("Marriage registration submitted successfully!");
             alert("Marriage registration submitted successfully!");
+            //   toast.success("Marriage registration submitted successfully!");
         } catch (error) {
             console.error("Error submitting Marriage registration:", error);
             alert("Error submitting Marriage registration. Please try again.");
+            // toast.error(
+            //     "Error submitting Marriage registration. Please try again."
+            // );
         }
     };
     const formContent = (
