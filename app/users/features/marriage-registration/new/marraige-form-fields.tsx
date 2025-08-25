@@ -283,6 +283,10 @@ export const formConfig: FormConfig = {
                             typeof dependentValues.husbandResidentId ===
                                 "object"
                         ) {
+                            console.log(
+                                "dependentValues.husbandResidentId.nationality",
+                                dependentValues.husbandResidentId.nationality
+                            );
                             return (
                                 dependentValues.husbandResidentId.nationality ||
                                 ""

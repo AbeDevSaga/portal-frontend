@@ -10,7 +10,12 @@ import { useDynamicForm } from "@/hooks/useDynamicForm";
 import { useDynamicFormValidation } from "@/hooks/useDynamicFormValidation";
 import { generateEnhancedSchema } from "@/utils/dynamic-form/schemaGenerator";
 import { Stepper } from "../common/stepper";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "../ui/accordion";
 import LivePreview from "./LivePreview";
 
 interface DynamicFormProps {
@@ -35,15 +40,17 @@ export default function DynamicForm({
     const [expandedItems, setExpandedItems] = useState<string[]>([]);
     // Ensure config has steps before accessing
     const steps = config?.steps || [];
-    console.log("config steps", steps);
+    // console.log("config steps", steps);
 
     // Check if stepper should be shown
     const hasStepper = config?.stepperData && config.stepperData.length > 0;
     const stepperPosition = config?.stepperPosition || "top";
 
     // If no stepper, show all fields at once
-    const currentStep = hasStepper ? (steps[stepIndex] || { title: "", fields: [] }) : { title: "", fields: steps.flatMap(step => step.fields) };
-    console.log("config steps Index", stepIndex);
+    const currentStep = hasStepper
+        ? steps[stepIndex] || { title: "", fields: [] }
+        : { title: "", fields: steps.flatMap((step) => step.fields) };
+    // console.log("config steps Index", stepIndex);
 
     // For single forms, we need to preserve step structure to check tabular property
     const singleFormSteps = hasStepper ? null : steps;
@@ -51,7 +58,9 @@ export default function DynamicForm({
     React.useEffect(() => {
         if (singleFormSteps) {
             const initialExpanded = singleFormSteps
-                .map((step, index) => step.defaultExpanded ? `step-${index}` : null)
+                .map((step, index) =>
+                    step.defaultExpanded ? `step-${index}` : null
+                )
                 .filter(Boolean) as string[];
             setExpandedItems(initialExpanded);
         }
@@ -70,19 +79,20 @@ export default function DynamicForm({
     const validationSchema = generateEnhancedSchema(config);
 
     // Generate validation schema for current step only (for multi-step forms)
-    const currentStepValidationSchema = hasStepper && steps[stepIndex]
-        ? generateEnhancedSchema({
-            ...config,
-            steps: [steps[stepIndex]]
-        })
-        : validationSchema;
+    const currentStepValidationSchema =
+        hasStepper && steps[stepIndex]
+            ? generateEnhancedSchema({
+                  ...config,
+                  steps: [steps[stepIndex]],
+              })
+            : validationSchema;
 
     const handleNext = (values: any) => {
-        console.log("Step values:", values);
+        // console.log("Step values:", values);
         if (hasStepper && stepIndex < steps.length - 1) {
             setStepIndex((prev) => prev + 1);
         } else {
-            console.log("Final submit from dynamic form:", values);
+            // console.log("Final submit from dynamic form:", values);
             if (hasStepper) {
                 setStepIndex(steps.length);
             }
@@ -97,26 +107,27 @@ export default function DynamicForm({
     };
 
     // Function to render fields in tabular/accordion mode
-    const renderTabularFields = (fields: any[], stepTitle: string, defaultExpanded: boolean = false, stepIndex: number = 0) => {
+    const renderTabularFields = (
+        fields: any[],
+        stepTitle: string,
+        defaultExpanded: boolean = false,
+        stepIndex: number = 0
+    ) => {
         const accordionValue = `step-${stepIndex}`;
         return (
-            <AccordionItem
-                value={accordionValue}
-                className="border-gray-200"
-            >
-                <AccordionTrigger className="text-lg font-semibold text-gray-900 hover:text-gray-700 py-3">
-                    <div className="flex items-center gap-3">
+            <AccordionItem value={accordionValue} className='border-gray-200'>
+                <AccordionTrigger className='text-lg font-semibold text-gray-900 hover:text-gray-700 py-3'>
+                    <div className='flex items-center gap-3'>
                         <span>{stepTitle}</span>
-                        <span className="text-sm text-gray-500">({fields.length} fields)</span>
+                        <span className='text-sm text-gray-500'>
+                            ({fields.length} fields)
+                        </span>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="pt-4">
+                <AccordionContent className='pt-4'>
                     <div className={`${formStyle} space-y-4`}>
                         {fields.map((field: any) => (
-                            <FieldRenderer
-                                key={field.key}
-                                field={field}
-                            />
+                            <FieldRenderer key={field.key} field={field} />
                         ))}
                     </div>
                 </AccordionContent>
@@ -129,10 +140,7 @@ export default function DynamicForm({
         return (
             <div className={`${formStyle}`}>
                 {fields.map((field: any) => (
-                    <FieldRenderer
-                        key={field.key}
-                        field={field}
-                    />
+                    <FieldRenderer key={field.key} field={field} />
                 ))}
             </div>
         );
@@ -146,7 +154,9 @@ export default function DynamicForm({
             <Stepper
                 steps={config.stepperData!}
                 activeStep={stepIndex}
-                orientation={stepperPosition === "left" ? "vertical" : "horizontal"}
+                orientation={
+                    stepperPosition === "left" ? "vertical" : "horizontal"
+                }
             />
         );
     };
@@ -156,18 +166,22 @@ export default function DynamicForm({
             {stepperPosition === "top" && renderStepper()}
 
             {stepperPosition === "left" && (
-                <div className="hidden lg:block lg:w-64 lg:flex-shrink-0">
-                    <div className="sticky top-32">
-                        {renderStepper()}
-                    </div>
+                <div className='hidden lg:block lg:w-64 lg:flex-shrink-0'>
+                    <div className='sticky top-32'>{renderStepper()}</div>
                 </div>
             )}
 
-            <div className={`${stepperPosition === "left" ? "flex-1" : ""} ${hasStepper ? '' : 'space-y-4'}`}>
+            <div
+                className={`${stepperPosition === "left" ? "flex-1" : ""} ${
+                    hasStepper ? "" : "space-y-4"
+                }`}
+            >
                 {hasStepper ? (
                     // Multi-step form
                     <>
-                        <h2 className='text-xl font-bold mb-4'>{currentStep.title}</h2>
+                        <h2 className='text-xl font-bold mb-4'>
+                            {currentStep.title}
+                        </h2>
                         <Formik
                             initialValues={initialValues}
                             validationSchema={currentStepValidationSchema}
@@ -175,18 +189,28 @@ export default function DynamicForm({
                             enableReinitialize
                         >
                             {({ values, isValid, errors, touched }) => {
-                                console.log("Formik state:", { isValid, errors, touched, values });
+                                console.log("Formik state:", {
+                                    isValid,
+                                    errors,
+                                    touched,
+                                    values,
+                                });
 
                                 // Button should be enabled based on Formik validation
                                 const shouldEnableButton = isValid;
 
                                 return (
                                     <Form className='space-y-2.5'>
-                                        {currentStep.tabular ? (
-                                            renderTabularFields(currentStep.fields, currentStep.title, currentStep.defaultExpanded, stepIndex)
-                                        ) : (
-                                            renderNormalFields(currentStep.fields)
-                                        )}
+                                        {currentStep.tabular
+                                            ? renderTabularFields(
+                                                  currentStep.fields,
+                                                  currentStep.title,
+                                                  currentStep.defaultExpanded,
+                                                  stepIndex
+                                              )
+                                            : renderNormalFields(
+                                                  currentStep.fields
+                                              )}
                                         {/* ************************************************ NOTE: for debugging purpose only *********************************** */}
                                         {/* Validation Status */}
                                         {/* <div className="bg-gray-50 p-3 rounded-lg mb-4">
@@ -228,12 +252,17 @@ export default function DynamicForm({
                                             <Button
                                                 type='submit'
                                                 disabled={!shouldEnableButton}
-                                                className={!shouldEnableButton ? 'opacity-50 cursor-not-allowed' : ''}
-                                            >
-                                                {stepIndex === steps.length - 1 ?
-                                                    (shouldEnableButton ? 'Submit' : 'Fill Required Fields') :
-                                                    'Next'
+                                                className={
+                                                    !shouldEnableButton
+                                                        ? "opacity-50 cursor-not-allowed"
+                                                        : ""
                                                 }
+                                            >
+                                                {stepIndex === steps.length - 1
+                                                    ? shouldEnableButton
+                                                        ? "Submit"
+                                                        : "Fill Required Fields"
+                                                    : "Next"}
                                             </Button>
                                         </div>
 
@@ -273,37 +302,58 @@ export default function DynamicForm({
                                 return (
                                     <Form className='space-y-2.5'>
                                         {/* Render each step individually to preserve tabular property */}
-                                        {singleFormSteps?.some(step => step.tabular) ? (
+                                        {singleFormSteps?.some(
+                                            (step) => step.tabular
+                                        ) ? (
                                             <Accordion
-                                                type="multiple"
-                                                className="w-full"
+                                                type='multiple'
+                                                className='w-full'
                                                 value={expandedItems}
-                                                onValueChange={handleAccordionValueChange}
+                                                onValueChange={
+                                                    handleAccordionValueChange
+                                                }
                                             >
-                                                {singleFormSteps?.map((step, stepIndex) => (
-                                                    <div key={stepIndex} className="mb-8">
-                                                        {!step.tabular && (
-                                                            <h3 className="text-lg font-semibold mb-4 text-gray-900 border-b pb-2">
-                                                                {step.title}
-                                                            </h3>
-                                                        )}
-                                                        {step.tabular ? (
-                                                            renderTabularFields(step.fields, step.title, step.defaultExpanded, stepIndex)
-                                                        ) : (
-                                                            renderNormalFields(step.fields)
-                                                        )}
-                                                    </div>
-                                                ))}
+                                                {singleFormSteps?.map(
+                                                    (step, stepIndex) => (
+                                                        <div
+                                                            key={stepIndex}
+                                                            className='mb-8'
+                                                        >
+                                                            {!step.tabular && (
+                                                                <h3 className='text-lg font-semibold mb-4 text-gray-900 border-b pb-2'>
+                                                                    {step.title}
+                                                                </h3>
+                                                            )}
+                                                            {step.tabular
+                                                                ? renderTabularFields(
+                                                                      step.fields,
+                                                                      step.title,
+                                                                      step.defaultExpanded,
+                                                                      stepIndex
+                                                                  )
+                                                                : renderNormalFields(
+                                                                      step.fields
+                                                                  )}
+                                                        </div>
+                                                    )
+                                                )}
                                             </Accordion>
                                         ) : (
-                                            singleFormSteps?.map((step, stepIndex) => (
-                                                <div key={stepIndex} className="mb-8">
-                                                    <h3 className="text-lg font-semibold mb-4 text-gray-900 border-b pb-2">
-                                                        {step.title}
-                                                    </h3>
-                                                    {renderNormalFields(step.fields)}
-                                                </div>
-                                            ))
+                                            singleFormSteps?.map(
+                                                (step, stepIndex) => (
+                                                    <div
+                                                        key={stepIndex}
+                                                        className='mb-8'
+                                                    >
+                                                        <h3 className='text-lg font-semibold mb-4 text-gray-900 border-b pb-2'>
+                                                            {step.title}
+                                                        </h3>
+                                                        {renderNormalFields(
+                                                            step.fields
+                                                        )}
+                                                    </div>
+                                                )
+                                            )
                                         )}
 
                                         {/* ************************************************ NOTE: for debugging purpose only *********************************** */}
@@ -340,17 +390,25 @@ export default function DynamicForm({
                                             <Button
                                                 type='submit'
                                                 disabled={!shouldEnableButton}
-                                                className={`px-8 primary-button ${!shouldEnableButton ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                className={`px-8 primary-button ${
+                                                    !shouldEnableButton
+                                                        ? "opacity-50 cursor-not-allowed"
+                                                        : ""
+                                                }`}
                                             >
-                                                {shouldEnableButton ? 'Submit' : 'Fill Required Fields'}
+                                                {shouldEnableButton
+                                                    ? "Submit"
+                                                    : "Fill Required Fields"}
                                             </Button>
                                         </div>
                                         {showPreview && (
                                             <LivePreview
-                                                title="Form Preview"
-                                                subtitle="Live preview of your form data"
+                                                title='Form Preview'
+                                                subtitle='Live preview of your form data'
                                                 formValues={values}
-                                                allFields={steps.flatMap(step => step.fields)}
+                                                allFields={steps.flatMap(
+                                                    (step) => step.fields
+                                                )}
                                                 config={config}
                                                 expandedSections={expandedItems}
                                             />
