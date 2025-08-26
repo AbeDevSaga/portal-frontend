@@ -41,14 +41,20 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             : null;
 
                         // Handle default value logic without hooks
-                        if (!form.values[field.key] && field.defaultValue !== undefined) {
+                        if (
+                            !form.values[field.key] &&
+                            field.defaultValue !== undefined
+                        ) {
                             const getDefaultValue = () => {
                                 if (typeof field.defaultValue === "function") {
-                                    return field.defaultValue(dependentValues, form.values);
+                                    return field.defaultValue(
+                                        dependentValues,
+                                        form.values
+                                    );
                                 }
                                 return field.defaultValue;
                             };
-                            
+
                             const defaultVal = getDefaultValue();
                             if (defaultVal !== undefined) {
                                 // Use setTimeout to avoid calling setState during render
@@ -1379,9 +1385,9 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                 <Field name={field.key}>
                     {({ field: formikField, form }: any) => {
                         try {
-                            const [options, setOptions] = React.useState<
-                                { label: string; value: string }[]
-                            >([]);
+                            const [options, setOptions] = React.useState<any[]>(
+                                []
+                            );
                             const [isLoading, setIsLoading] =
                                 React.useState(false);
                             const [inputValue, setInputValue] =
@@ -1391,6 +1397,11 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             >(null);
                             const timeoutRef =
                                 React.useRef<NodeJS.Timeout | null>(null);
+
+                            // ADD THIS: Declare the ref for dependency tracking
+                            const dependencyRef = React.useRef<{
+                                previousDependentValues: any;
+                            } | null>(null);
 
                             // Get lookup configuration with defaults
                             const lookupConfig = field.lookupConfig;
@@ -1596,116 +1607,62 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 field.multiple,
                             ]);
 
-                            // Separate effect to handle clearing field value when dependent values change
+                            // FIXED: Dependency change detection with proper ref
                             React.useEffect(() => {
-                                // Skip clearing if field is hidden
-                                if (isFieldHidden) {
+                                // Skip clearing if field is hidden or no dependent values
+                                if (isFieldHidden || !dependentValues) {
                                     return;
                                 }
 
-                                // Check if any dependent value has changed and clear the field
-                                const shouldClear =
-                                    dependentValues &&
-                                    Object.values(dependentValues).some(
-                                        (value) =>
-                                            value !== form.values[field.key] &&
-                                            form.values[field.key]
-                                    );
-                                if (shouldClear) {
+                                // Check if dependent values have changed significantly
+                                const currentDependentValues =
+                                    field.getDependentValue?.(form.values) ||
+                                    null;
+                                const previousDependentValues =
+                                    dependencyRef.current
+                                        ?.previousDependentValues;
+
+                                // Store current values for next comparison
+                                if (!dependencyRef.current) {
+                                    dependencyRef.current = {
+                                        previousDependentValues: null,
+                                    };
+                                }
+                                dependencyRef.current.previousDependentValues =
+                                    currentDependentValues;
+
+                                // If this is the first render or dependencies haven't been set yet, don't clear
+                                if (previousDependentValues === null) {
+                                    return;
+                                }
+
+                                // Compare dependent values to see if they changed
+                                const hasDependencyChanged =
+                                    JSON.stringify(currentDependentValues) !==
+                                    JSON.stringify(previousDependentValues);
+
+                                if (hasDependencyChanged) {
                                     const isMultiple =
                                         field.multiple !== undefined
                                             ? field.multiple
                                             : false;
+                                    const clearValue = isMultiple ? [] : null;
 
-                                    // If default value is provided, reset to default instead of clearing
-                                    if (defaultValue !== undefined) {
-                                        const defaultVal = getDefaultValue();
-                                        if (defaultVal !== undefined) {
-                                            if (isMultiple) {
-                                                // Handle multiple selection defaults
-                                                if (Array.isArray(defaultVal)) {
-                                                    form.setFieldValue(
-                                                        field.key,
-                                                        defaultVal
-                                                    );
-                                                    dispatch(
-                                                        updateField({
-                                                            key: field.key,
-                                                            value: defaultVal,
-                                                        })
-                                                    );
-                                                } else {
-                                                    // Convert single default to array for multiple selection
-                                                    const defaultArray =
-                                                        defaultVal
-                                                            ? [defaultVal]
-                                                            : [];
-                                                    form.setFieldValue(
-                                                        field.key,
-                                                        defaultArray
-                                                    );
-                                                    dispatch(
-                                                        updateField({
-                                                            key: field.key,
-                                                            value: defaultArray,
-                                                        })
-                                                    );
-                                                }
-                                            } else {
-                                                // Handle single selection defaults
-                                                if (
-                                                    typeof defaultVal ===
-                                                        "object" &&
-                                                    defaultVal !== null
-                                                ) {
-                                                    form.setFieldValue(
-                                                        field.key,
-                                                        defaultVal
-                                                    );
-                                                    dispatch(
-                                                        updateField({
-                                                            key: field.key,
-                                                            value: defaultVal,
-                                                        })
-                                                    );
-                                                } else {
-                                                    form.setFieldValue(
-                                                        field.key,
-                                                        defaultVal
-                                                    );
-                                                    dispatch(
-                                                        updateField({
-                                                            key: field.key,
-                                                            value: defaultVal,
-                                                        })
-                                                    );
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        // Clear the field if no default is provided
-                                        const clearValue = isMultiple
-                                            ? []
-                                            : null;
-                                        form.setFieldValue(
-                                            field.key,
-                                            clearValue
-                                        );
-                                        dispatch(
-                                            updateField({
-                                                key: field.key,
-                                                value: clearValue,
-                                            })
-                                        );
-                                    }
+                                    form.setFieldValue(field.key, clearValue);
+                                    dispatch(
+                                        updateField({
+                                            key: field.key,
+                                            value: clearValue,
+                                        })
+                                    );
                                 }
                             }, [
                                 dependentValues,
-                                defaultValue,
-                                form.values,
-                                field.key,
                                 isFieldHidden,
+                                field.key,
                                 field.multiple,
+                                field.getDependentValue,
+                                form.values,
                             ]);
 
                             // Cache for storing API results
@@ -1749,7 +1706,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 (searchTerm: string) => {
                                     // Skip search if field is hidden or disabled
                                     if (isFieldHidden || isFieldDisabled) {
-                                        console.log("FieldRenderer: Skipping search - field hidden or disabled:", { isFieldHidden, isFieldDisabled });
                                         return;
                                     }
 
@@ -1794,48 +1750,80 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 };
 
                                                 // Add dependent values to request if transformRequest is provided
-                                                let modifiedEndpoint = isExternal
-                                                    ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
-                                                    : `/api/${effectiveApiEndpoint}`;
+                                                let modifiedEndpoint =
+                                                    isExternal
+                                                        ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${effectiveApiEndpoint}`
+                                                        : `/api/${effectiveApiEndpoint}`;
 
-                                                                                        if (
-                                            transformRequest &&
-                                            dependentValues
-                                        ) {
-                                            console.log("FieldRenderer: Initial load transformRequest called with:", { 
-                                                requestParams, 
-                                                modifiedEndpoint, 
-                                                dependentValues 
-                                            });
-                                            
-                                            const transformedRequest = transformRequest(
-                                                { ...requestParams, url: modifiedEndpoint },
-                                                dependentValues
-                                            );
-                                            
-                                            console.log("FieldRenderer: Initial load transformRequest returned:", transformedRequest);
-                                            
-                                            // Update both requestParams and endpoint if transformRequest modifies them
-                                            if (transformedRequest.url) {
-                                                modifiedEndpoint = transformedRequest.url;
-                                                console.log("FieldRenderer: Initial load updated modifiedEndpoint to:", modifiedEndpoint);
-                                            }
-                                            if (transformedRequest.params) {
-                                                requestParams = transformedRequest.params;
-                                            } else if (transformedRequest.search) {
-                                                requestParams = transformedRequest.search;
-                                            } else if (transformedRequest.body) {
-                                                requestParams = transformedRequest.body;
-                                            } else {
-                                                // If no specific params property, assume the whole object is params
-                                                const { url, ...params } = transformedRequest;
-                                                requestParams = params;
-                                            }
-                                        }
-                                                console.log("FieldRenderer: Final endpoint for search:", modifiedEndpoint);
+                                                if (
+                                                    transformRequest &&
+                                                    dependentValues
+                                                ) {
+                                                    // FIXED: Pass correct parameters to transformRequest
+                                                    const transformedRequest =
+                                                        transformRequest(
+                                                            {
+                                                                url: modifiedEndpoint,
+                                                                params: requestParams,
+                                                            },
+                                                            dependentValues
+                                                        );
+
+                                                    // Update both requestParams and endpoint if transformRequest modifies them
+                                                    if (
+                                                        transformedRequest.url
+                                                    ) {
+                                                        modifiedEndpoint =
+                                                            transformedRequest.url;
+                                                    }
+                                                    if (
+                                                        transformedRequest.params
+                                                    ) {
+                                                        requestParams =
+                                                            transformedRequest.params;
+                                                    }
+                                                }
+
+                                                // For GET requests, construct the query string properly
+                                                if (
+                                                    effectiveMethod === "GET" &&
+                                                    Object.keys(requestParams)
+                                                        .length > 0
+                                                ) {
+                                                    const queryParams =
+                                                        new URLSearchParams();
+                                                    Object.entries(
+                                                        requestParams
+                                                    ).forEach(
+                                                        ([key, value]) => {
+                                                            if (
+                                                                value !==
+                                                                    undefined &&
+                                                                value !==
+                                                                    null &&
+                                                                value !== ""
+                                                            ) {
+                                                                queryParams.append(
+                                                                    key,
+                                                                    String(
+                                                                        value
+                                                                    )
+                                                                );
+                                                            }
+                                                        }
+                                                    );
+
+                                                    const separator =
+                                                        modifiedEndpoint.includes(
+                                                            "?"
+                                                        )
+                                                            ? "&"
+                                                            : "?";
+                                                    modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams.toString()}`;
+                                                }
+
                                                 // Make API request
-                                                const response = await fetch(
-                                                    modifiedEndpoint,
+                                                const requestOptions: RequestInit =
                                                     {
                                                         method:
                                                             effectiveMethod ||
@@ -1844,14 +1832,20 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                             "Content-Type":
                                                                 "application/json",
                                                         },
-                                                        body:
-                                                            effectiveMethod ===
-                                                            "POST"
-                                                                ? JSON.stringify(
-                                                                      requestParams
-                                                                  )
-                                                                : undefined,
-                                                    }
+                                                    };
+
+                                                if (
+                                                    effectiveMethod === "POST"
+                                                ) {
+                                                    requestOptions.body =
+                                                        JSON.stringify(
+                                                            requestParams
+                                                        );
+                                                }
+
+                                                const response = await fetch(
+                                                    modifiedEndpoint,
+                                                    requestOptions
                                                 );
 
                                                 if (!response.ok) {
@@ -1879,7 +1873,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                                 label: item[
                                                                     effectiveLabelKey
                                                                 ],
-                                                                ...item, // Include all original properties
+                                                                ...item,
                                                             })
                                                         );
                                                 }
@@ -1924,6 +1918,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     dependentValues,
                                     transformResponse,
                                     isFieldHidden,
+                                    effectiveMethod,
                                 ]
                             );
 
@@ -1931,7 +1926,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             React.useEffect(() => {
                                 // Skip loading if field is hidden or disabled
                                 if (isFieldHidden || isFieldDisabled) {
-                                    console.log("FieldRenderer: Skipping initial load - field hidden or disabled:", { isFieldHidden, isFieldDisabled });
                                     return;
                                 }
 
@@ -1941,7 +1935,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         setError(null);
 
                                         // Prepare request parameters
-                                        let requestParams = {
+                                        let requestParams: any = {
                                             limit: 20,
                                             offset: 0,
                                         };
@@ -1955,52 +1949,75 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             transformRequest &&
                                             dependentValues
                                         ) {
-                                            console.log("FieldRenderer: transformRequest called with:", { 
-                                                requestParams, 
-                                                modifiedEndpoint, 
-                                                dependentValues 
-                                            });
-                                            
-                                            const transformedRequest = transformRequest(
-                                                { ...requestParams, url: modifiedEndpoint },
-                                                dependentValues
-                                            );
-                                            
-                                            console.log("FieldRenderer: transformRequest returned:", transformedRequest);
-                                            
+                                            // FIXED: Pass correct parameters to transformRequest
+                                            const transformedRequest =
+                                                transformRequest(
+                                                    {
+                                                        url: modifiedEndpoint,
+                                                        params: requestParams,
+                                                    },
+                                                    dependentValues
+                                                );
+
                                             // Update both requestParams and endpoint if transformRequest modifies them
                                             if (transformedRequest.url) {
-                                                modifiedEndpoint = transformedRequest.url;
-                                                console.log("FieldRenderer: Updated modifiedEndpoint to:", modifiedEndpoint);
+                                                modifiedEndpoint =
+                                                    transformedRequest.url;
                                             }
                                             if (transformedRequest.params) {
-                                                requestParams = transformedRequest.params;
-                                            } else if (transformedRequest.search) {
-                                                requestParams = transformedRequest.search;
-                                            } else if (transformedRequest.body) {
-                                                requestParams = transformedRequest.body;
-                                            } else {
-                                                // If no specific params property, assume the whole object is params
-                                                const { url, ...params } = transformedRequest;
-                                                requestParams = params;
+                                                requestParams =
+                                                    transformedRequest.params;
                                             }
                                         }
 
-                                        console.log("FieldRenderer: Final endpoint for initial load:", modifiedEndpoint);
+                                        // For GET requests, construct the query string properly
+                                        if (
+                                            effectiveMethod === "GET" &&
+                                            Object.keys(requestParams).length >
+                                                0
+                                        ) {
+                                            const queryParams =
+                                                new URLSearchParams();
+                                            Object.entries(
+                                                requestParams
+                                            ).forEach(([key, value]) => {
+                                                if (
+                                                    value !== undefined &&
+                                                    value !== null &&
+                                                    value !== ""
+                                                ) {
+                                                    queryParams.append(
+                                                        key,
+                                                        String(value)
+                                                    );
+                                                }
+                                            });
+
+                                            const separator =
+                                                modifiedEndpoint.includes("?")
+                                                    ? "&"
+                                                    : "?";
+                                            modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams.toString()}`;
+                                        }
+
                                         // Make API request
-                                        const response = await fetch(modifiedEndpoint, {
+                                        const requestOptions: RequestInit = {
                                             method: effectiveMethod || "GET",
                                             headers: {
                                                 "Content-Type":
                                                     "application/json",
                                             },
-                                            body:
-                                                effectiveMethod === "POST"
-                                                    ? JSON.stringify(
-                                                          requestParams
-                                                      )
-                                                    : undefined,
-                                        });
+                                        };
+
+                                        if (effectiveMethod === "POST") {
+                                            requestOptions.body =
+                                                JSON.stringify(requestParams);
+                                        }
+
+                                        const response = await fetch(
+                                            modifiedEndpoint,
+                                            requestOptions
+                                        );
 
                                         if (!response.ok) {
                                             throw new Error(
@@ -2012,10 +2029,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
 
                                         // Transform response if custom transformer is provided
                                         let transformedOptions = data;
-                                        console.log(
-                                            "transformResponse",
-                                            transformResponse
-                                        );
                                         if (transformResponse) {
                                             transformedOptions =
                                                 transformResponse(data);
@@ -2029,7 +2042,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                     label: item[
                                                         effectiveLabelKey
                                                     ],
-                                                    ...item, // Include all original properties
+                                                    ...item,
                                                 })
                                             );
                                         }
@@ -2062,27 +2075,15 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 loadInitialOptions();
                             }, [
                                 effectiveApiEndpoint,
+                                effectiveMethod,
                                 effectiveValueKey,
                                 effectiveLabelKey,
-                                effectiveSearchKey,
-                                effectiveDebounceMs,
-                                effectiveCacheResults,
-                                cacheKey,
                                 transformRequest,
-                                dependentValues,
                                 transformResponse,
+                                dependentValues,
                                 isFieldHidden,
+                                isFieldDisabled,
                             ]);
-
-                            // Debug: Monitor field state changes
-                            React.useEffect(() => {
-                                console.log("FieldRenderer: Field state changed:", {
-                                    key: field.key,
-                                    isFieldHidden,
-                                    isFieldDisabled,
-                                    dependentValues
-                                });
-                            }, [field.key, isFieldHidden, isFieldDisabled, dependentValues]);
 
                             // Handle input change
                             const handleInputChange = (newValue: string) => {
@@ -2109,11 +2110,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                 Array.isArray(selectedOption)
                                                     ? selectedOption
                                                     : [selectedOption];
-                                            console.log(
-                                                "Setting multiple field values:",
-                                                field.key,
-                                                selectedValues
-                                            );
                                             form.setFieldValue(
                                                 field.key,
                                                 selectedValues
@@ -2126,11 +2122,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                             );
                                         } else {
                                             // Handle single selection - store the full selected object
-                                            console.log(
-                                                "Setting single field value:",
-                                                field.key,
-                                                selectedOption
-                                            );
                                             form.setFieldValue(
                                                 field.key,
                                                 selectedOption
@@ -2144,10 +2135,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         }
                                     } else {
                                         // Handle clearing the selection
-                                        console.log(
-                                            "Clearing field value:",
-                                            field.key
-                                        );
                                         const clearValue = isMultiple
                                             ? []
                                             : null;
@@ -2163,10 +2150,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         );
                                     }
                                 } catch (error) {
-                                    console.error(
-                                        "Error in handleChange:",
-                                        error
-                                    );
                                     // Fallback to simple value if object storage fails
                                     try {
                                         const isMultiple =
@@ -2270,10 +2253,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         : null;
                                 }
                             } catch (error) {
-                                console.error(
-                                    "Error getting selected option:",
-                                    error
-                                );
                                 selectedOption = isMultiple ? [] : null;
                             }
 
@@ -2368,25 +2347,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                     field.multiple !== undefined
                                                         ? field.multiple
                                                         : false;
-
-                                                // Debug logging for dynamic properties
-                                                // console.log(
-                                                //     `Field ${field.key} properties:`,
-                                                //     {
-                                                //         searchable:
-                                                //             isSearchable,
-                                                //         clearable: isClearable,
-                                                //         multiple: isMultiple,
-                                                //         fieldConfig: {
-                                                //             searchable:
-                                                //                 field.searchable,
-                                                //             clearable:
-                                                //                 field.clearable,
-                                                //             multiple:
-                                                //                 field.multiple,
-                                                //         },
-                                                //     }
-                                                // );
 
                                                 return (
                                                     <ReactSelect
@@ -2539,7 +2499,6 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                     }}
                 </Field>
             );
-
         case "digitalSignature":
             return (
                 <Field name={field.key}>
@@ -2868,8 +2827,12 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                         const [isLoading, setIsLoading] = React.useState(false);
                         const [inputValue, setInputValue] = React.useState("");
                         const [isOpen, setIsOpen] = React.useState(false);
-                        const [error, setError] = React.useState<string | null>(null);
-                        const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+                        const [error, setError] = React.useState<string | null>(
+                            null
+                        );
+                        const timeoutRef = React.useRef<NodeJS.Timeout | null>(
+                            null
+                        );
                         const dropdownRef = React.useRef<HTMLDivElement>(null);
 
                         // Get inputSearch configuration
@@ -2938,191 +2901,325 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 if (timeoutRef.current) {
                                     clearTimeout(timeoutRef.current);
                                 }
-                                timeoutRef.current = setTimeout(
-                                    async () => {
-                                        if (searchTerm.length < minSearchLength) {
-                                            setOptions([]);
-                                            return;
+                                timeoutRef.current = setTimeout(async () => {
+                                    if (searchTerm.length < minSearchLength) {
+                                        setOptions([]);
+                                        return;
+                                    }
+
+                                    try {
+                                        setIsLoading(true);
+                                        setError(null);
+
+                                        // Check cache first if caching is enabled
+                                        const cacheKey = `${apiEndpoint}_${searchTerm}_${
+                                            JSON.stringify(dependentValues) ||
+                                            "none"
+                                        }`;
+                                        if (
+                                            cacheResults &&
+                                            cache.has(cacheKey)
+                                        ) {
+                                            const cachedData =
+                                                cache.get(cacheKey);
+                                            if (cachedData) {
+                                                setOptions(cachedData);
+                                                setIsLoading(false);
+                                                return;
+                                            }
                                         }
 
-                                        try {
-                                            setIsLoading(true);
-                                            setError(null);
+                                        // Prepare request parameters - start with just the search term
+                                        let requestParams = {
+                                            [searchKey]: searchTerm,
+                                        };
 
-                                            // Check cache first if caching is enabled
-                                            const cacheKey = `${apiEndpoint}_${searchTerm}_${JSON.stringify(dependentValues) || "none"}`;
-                                            if (cacheResults && cache.has(cacheKey)) {
-                                                const cachedData = cache.get(cacheKey);
-                                                if (cachedData) {
-                                                    setOptions(cachedData);
-                                                    setIsLoading(false);
-                                                    return;
-                                                }
-                                            }
+                                        // Add additional query parameters from config if provided
+                                        if (
+                                            inputSearchConfig?.additionalParams
+                                        ) {
+                                            requestParams = {
+                                                ...requestParams,
+                                                ...inputSearchConfig.additionalParams,
+                                            };
+                                        }
 
-                                                                    // Prepare request parameters - start with just the search term
-                        let requestParams = {
-                            [searchKey]: searchTerm,
-                        };
+                                        // Add dependent values to request if transformRequest is provided
+                                        let modifiedEndpoint = isExternal
+                                            ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${apiEndpoint}`
+                                            : `/api/${apiEndpoint}`;
 
-                        // Add additional query parameters from config if provided
-                        if (inputSearchConfig?.additionalParams) {
-                            requestParams = {
-                                ...requestParams,
-                                ...inputSearchConfig.additionalParams
-                            };
-                        }
-
-                                            // Add dependent values to request if transformRequest is provided
-                                            let modifiedEndpoint = isExternal
-                                                ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${apiEndpoint}`
-                                                : `/api/${apiEndpoint}`;
-
-                                            if (transformRequest && dependentValues) {
-                                                const transformedRequest = transformRequest(
-                                                    { ...requestParams, url: modifiedEndpoint },
+                                        if (
+                                            transformRequest &&
+                                            dependentValues
+                                        ) {
+                                            const transformedRequest =
+                                                transformRequest(
+                                                    {
+                                                        ...requestParams,
+                                                        url: modifiedEndpoint,
+                                                    },
                                                     dependentValues
                                                 );
-                                                
-                                                if (transformedRequest.url) {
-                                                    modifiedEndpoint = transformedRequest.url;
-                                                }
-                                                if (transformedRequest.params) {
-                                                    requestParams = transformedRequest.params;
-                                                } else if (transformedRequest.search) {
-                                                    requestParams = transformedRequest.search;
-                                                } else if (transformedRequest.body) {
-                                                    requestParams = transformedRequest.body;
-                                                } else {
-                                                    const { url, ...params } = transformedRequest;
-                                                    requestParams = params;
-                                                }
+
+                                            if (transformedRequest.url) {
+                                                modifiedEndpoint =
+                                                    transformedRequest.url;
                                             }
-
-                                                                                         // For GET requests, append query parameters to URL
-                                             if (method === "GET") {
-                                                 try {
-                                                     // For external APIs, we need to construct the full URL
-                                                     if (isExternal) {
-                                                         // Start with the base URL
-                                                         let baseUrl = process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL || '';
-                                                         // Remove trailing slash if present
-                                                         if (baseUrl.endsWith('/')) {
-                                                             baseUrl = baseUrl.slice(0, -1);
-                                                         }
-                                                         // Remove leading slash from apiEndpoint if present
-                                                         let cleanEndpoint = apiEndpoint;
-                                                         if (cleanEndpoint.startsWith('/')) {
-                                                             cleanEndpoint = cleanEndpoint.slice(1);
-                                                         }
-                                                         
-                                                         // Construct the full URL
-                                                         let fullUrl = `${baseUrl}/${cleanEndpoint}`;
-                                                         
-                                                         // Add query parameters
-                                                         const queryParams = Object.entries(requestParams)
-                                                             .filter(([_, value]) => value !== undefined && value !== null && value !== "")
-                                                             .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
-                                                             .join('&');
-                                                         
-                                                         if (queryParams) {
-                                                             const separator = fullUrl.includes('?') ? '&' : '?';
-                                                             fullUrl = `${fullUrl}${separator}${queryParams}`;
-                                                         }
-                                                         
-                                                         modifiedEndpoint = fullUrl;
-                                                     } else {
-                                                         // For local API routes, just append query parameters
-                                                         const queryParams = Object.entries(requestParams)
-                                                             .filter(([_, value]) => value !== undefined && value !== null && value !== "")
-                                                             .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
-                                                             .join('&');
-                                                         
-                                                         if (queryParams) {
-                                                             const separator = modifiedEndpoint.includes('?') ? '&' : '?';
-                                                             modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
-                                                         }
-                                                     }
-                                                 } catch (error) {
-                                                     console.error("Error constructing URL:", error);
-                                                     // Fallback: manually construct query string
-                                                     const queryParams = Object.entries(requestParams)
-                                                         .filter(([_, value]) => value !== undefined && value !== null && value !== "")
-                                                         .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
-                                                         .join('&');
-                                                     
-                                                     if (queryParams) {
-                                                         const separator = modifiedEndpoint.includes('?') ? '&' : '?';
-                                                         modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
-                                                     }
-                                                 }
-                                             }
-
-                                            // Make API request
-                                            const response = await fetch(
-                                                modifiedEndpoint,
-                                                {
-                                                    method: method,
-                                                    headers: {
-                                                        "Content-Type": "application/json",
-                                                    },
-                                                    body: method === "POST"
-                                                        ? JSON.stringify(requestParams)
-                                                        : undefined,
-                                                }
-                                            );
-
-                                            if (!response.ok) {
-                                                throw new Error(
-                                                    `API request failed: ${response.status}`
-                                                );
-                                            }
-
-                                            const data = await response.json();
-
-                                            // Transform response if custom transformer is provided
-                                            let transformedOptions = data;
-                                            if (transformResponse) {
-                                                transformedOptions = transformResponse(data);
+                                            if (transformedRequest.params) {
+                                                requestParams =
+                                                    transformedRequest.params;
+                                            } else if (
+                                                transformedRequest.search
+                                            ) {
+                                                requestParams =
+                                                    transformedRequest.search;
+                                            } else if (
+                                                transformedRequest.body
+                                            ) {
+                                                requestParams =
+                                                    transformedRequest.body;
                                             } else {
-                                                // Default transformation
-                                                transformedOptions = data.map((item: any) => ({
+                                                const { url, ...params } =
+                                                    transformedRequest;
+                                                requestParams = params;
+                                            }
+                                        }
+
+                                        // For GET requests, append query parameters to URL
+                                        if (method === "GET") {
+                                            try {
+                                                // For external APIs, we need to construct the full URL
+                                                if (isExternal) {
+                                                    // Start with the base URL
+                                                    let baseUrl =
+                                                        process.env
+                                                            .NEXT_PUBLIC_CRRSA_BACKEND_API_URL ||
+                                                        "";
+                                                    // Remove trailing slash if present
+                                                    if (baseUrl.endsWith("/")) {
+                                                        baseUrl = baseUrl.slice(
+                                                            0,
+                                                            -1
+                                                        );
+                                                    }
+                                                    // Remove leading slash from apiEndpoint if present
+                                                    let cleanEndpoint =
+                                                        apiEndpoint;
+                                                    if (
+                                                        cleanEndpoint.startsWith(
+                                                            "/"
+                                                        )
+                                                    ) {
+                                                        cleanEndpoint =
+                                                            cleanEndpoint.slice(
+                                                                1
+                                                            );
+                                                    }
+
+                                                    // Construct the full URL
+                                                    let fullUrl = `${baseUrl}/${cleanEndpoint}`;
+
+                                                    // Add query parameters
+                                                    const queryParams =
+                                                        Object.entries(
+                                                            requestParams
+                                                        )
+                                                            .filter(
+                                                                ([_, value]) =>
+                                                                    value !==
+                                                                        undefined &&
+                                                                    value !==
+                                                                        null &&
+                                                                    value !== ""
+                                                            )
+                                                            .map(
+                                                                ([
+                                                                    key,
+                                                                    value,
+                                                                ]) =>
+                                                                    `${key}=${encodeURIComponent(
+                                                                        String(
+                                                                            value
+                                                                        )
+                                                                    )}`
+                                                            )
+                                                            .join("&");
+
+                                                    if (queryParams) {
+                                                        const separator =
+                                                            fullUrl.includes(
+                                                                "?"
+                                                            )
+                                                                ? "&"
+                                                                : "?";
+                                                        fullUrl = `${fullUrl}${separator}${queryParams}`;
+                                                    }
+
+                                                    modifiedEndpoint = fullUrl;
+                                                } else {
+                                                    // For local API routes, just append query parameters
+                                                    const queryParams =
+                                                        Object.entries(
+                                                            requestParams
+                                                        )
+                                                            .filter(
+                                                                ([_, value]) =>
+                                                                    value !==
+                                                                        undefined &&
+                                                                    value !==
+                                                                        null &&
+                                                                    value !== ""
+                                                            )
+                                                            .map(
+                                                                ([
+                                                                    key,
+                                                                    value,
+                                                                ]) =>
+                                                                    `${key}=${encodeURIComponent(
+                                                                        String(
+                                                                            value
+                                                                        )
+                                                                    )}`
+                                                            )
+                                                            .join("&");
+
+                                                    if (queryParams) {
+                                                        const separator =
+                                                            modifiedEndpoint.includes(
+                                                                "?"
+                                                            )
+                                                                ? "&"
+                                                                : "?";
+                                                        modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
+                                                    }
+                                                }
+                                            } catch (error) {
+                                                console.error(
+                                                    "Error constructing URL:",
+                                                    error
+                                                );
+                                                // Fallback: manually construct query string
+                                                const queryParams =
+                                                    Object.entries(
+                                                        requestParams
+                                                    )
+                                                        .filter(
+                                                            ([_, value]) =>
+                                                                value !==
+                                                                    undefined &&
+                                                                value !==
+                                                                    null &&
+                                                                value !== ""
+                                                        )
+                                                        .map(
+                                                            ([key, value]) =>
+                                                                `${key}=${encodeURIComponent(
+                                                                    String(
+                                                                        value
+                                                                    )
+                                                                )}`
+                                                        )
+                                                        .join("&");
+
+                                                if (queryParams) {
+                                                    const separator =
+                                                        modifiedEndpoint.includes(
+                                                            "?"
+                                                        )
+                                                            ? "&"
+                                                            : "?";
+                                                    modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
+                                                }
+                                            }
+                                        }
+
+                                        // Make API request
+                                        const response = await fetch(
+                                            modifiedEndpoint,
+                                            {
+                                                method: method,
+                                                headers: {
+                                                    "Content-Type":
+                                                        "application/json",
+                                                },
+                                                body:
+                                                    method === "POST"
+                                                        ? JSON.stringify(
+                                                              requestParams
+                                                          )
+                                                        : undefined,
+                                            }
+                                        );
+
+                                        if (!response.ok) {
+                                            throw new Error(
+                                                `API request failed: ${response.status}`
+                                            );
+                                        }
+
+                                        const data = await response.json();
+
+                                        // Transform response if custom transformer is provided
+                                        let transformedOptions = data;
+                                        if (transformResponse) {
+                                            transformedOptions =
+                                                transformResponse(data);
+                                        } else {
+                                            // Default transformation
+                                            transformedOptions = data.map(
+                                                (item: any) => ({
                                                     value: item[valueKey],
                                                     label: item[labelKey],
                                                     ...item, // Include all original properties
-                                                }));
-                                            }
-
-                                            setOptions(transformedOptions);
-
-                                            // Cache results if enabled
-                                            if (cacheResults) {
-                                                cache.set(cacheKey, transformedOptions);
-                                            }
-                                        } catch (error) {
-                                            console.error("Search error:", error);
-                                            setError(
-                                                error instanceof Error
-                                                    ? error.message
-                                                    : "Search failed"
+                                                })
                                             );
-                                            setOptions([]);
-                                        } finally {
-                                            setIsLoading(false);
                                         }
-                                    },
-                                    debounceMs
-                                );
+
+                                        setOptions(transformedOptions);
+
+                                        // Cache results if enabled
+                                        if (cacheResults) {
+                                            cache.set(
+                                                cacheKey,
+                                                transformedOptions
+                                            );
+                                        }
+                                    } catch (error) {
+                                        console.error("Search error:", error);
+                                        setError(
+                                            error instanceof Error
+                                                ? error.message
+                                                : "Search failed"
+                                        );
+                                        setOptions([]);
+                                    } finally {
+                                        setIsLoading(false);
+                                    }
+                                }, debounceMs);
                             },
-                            [apiEndpoint, valueKey, labelKey, searchKey, debounceMs, minSearchLength, cacheResults, dependentValues, transformRequest, transformResponse]
+                            [
+                                apiEndpoint,
+                                valueKey,
+                                labelKey,
+                                searchKey,
+                                debounceMs,
+                                minSearchLength,
+                                cacheResults,
+                                dependentValues,
+                                transformRequest,
+                                transformResponse,
+                            ]
                         );
 
                         // Handle input change
-                        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                        const handleInputChange = (
+                            e: React.ChangeEvent<HTMLInputElement>
+                        ) => {
                             const newValue = e.target.value;
                             setInputValue(newValue);
                             formikField.onChange(e);
-                            
+
                             if (newValue.length >= minSearchLength) {
                                 debouncedSearch(newValue);
                                 setIsOpen(true);
@@ -3137,13 +3234,13 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                             const inputEvent = {
                                 target: {
                                     name: field.key,
-                                    value: option[labelKey]
-                                }
+                                    value: option[labelKey],
+                                },
                             } as React.ChangeEvent<HTMLInputElement>;
                             formikField.onChange(inputEvent);
                             setInputValue(option[labelKey]);
                             setIsOpen(false);
-                            
+
                             // Store the full selected object as the field value
                             form.setFieldValue(field.key, option);
                             dispatch(
@@ -3170,23 +3267,36 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                         // Close dropdown when clicking outside
                         React.useEffect(() => {
                             const handleClickOutside = (event: MouseEvent) => {
-                                if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                                if (
+                                    dropdownRef.current &&
+                                    !dropdownRef.current.contains(
+                                        event.target as Node
+                                    )
+                                ) {
                                     setIsOpen(false);
                                 }
                             };
 
-                            document.addEventListener("mousedown", handleClickOutside);
+                            document.addEventListener(
+                                "mousedown",
+                                handleClickOutside
+                            );
                             return () => {
-                                document.removeEventListener("mousedown", handleClickOutside);
+                                document.removeEventListener(
+                                    "mousedown",
+                                    handleClickOutside
+                                );
                             };
                         }, []);
 
                         return (
-                            <div className="relative" ref={dropdownRef}>
+                            <div className='relative' ref={dropdownRef}>
                                 <Label className='text-primary font-semibold'>
                                     {field.label}
                                     {isFieldRequired && (
-                                        <span className='pl-2 text-red-600'>*</span>
+                                        <span className='pl-2 text-red-600'>
+                                            *
+                                        </span>
                                     )}
                                 </Label>
 
@@ -3197,30 +3307,38 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                         onChange={handleInputChange}
                                         onFocus={handleInputFocus}
                                         onBlur={handleInputBlur}
-                                        placeholder={placeholder || `Enter at least ${minSearchLength} characters to search...`}
+                                        placeholder={
+                                            placeholder ||
+                                            `Enter at least ${minSearchLength} characters to search...`
+                                        }
                                         disabled={isFieldDisabled}
-                                        className="w-full"
+                                        className='w-full'
                                     />
 
                                     {/* Dropdown Options */}
                                     {isOpen && (
-                                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                                        <div className='absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto'>
                                             {isLoading ? (
-                                                <div className="px-4 py-2 text-sm text-gray-500">
+                                                <div className='px-4 py-2 text-sm text-gray-500'>
                                                     {loadingMessage}
                                                 </div>
                                             ) : options.length > 0 ? (
                                                 options.map((option, index) => (
                                                     <div
                                                         key={index}
-                                                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                                        onClick={() => handleOptionSelect(option)}
+                                                        className='px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm'
+                                                        onClick={() =>
+                                                            handleOptionSelect(
+                                                                option
+                                                            )
+                                                        }
                                                     >
                                                         {option[labelKey]}
                                                     </div>
                                                 ))
-                                            ) : inputValue.length >= minSearchLength ? (
-                                                <div className="px-4 py-2 text-sm text-gray-500">
+                                            ) : inputValue.length >=
+                                              minSearchLength ? (
+                                                <div className='px-4 py-2 text-sm text-gray-500'>
                                                     {noOptionsMessage}
                                                 </div>
                                             ) : null}
@@ -3229,7 +3347,7 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
 
                                     {/* Error message */}
                                     {error && (
-                                        <p className="text-sm text-red-600">
+                                        <p className='text-sm text-red-600'>
                                             {error}
                                         </p>
                                     )}

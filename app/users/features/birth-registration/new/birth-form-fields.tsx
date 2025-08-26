@@ -257,7 +257,7 @@ export const formConfig: FormConfig = {
                     lookupConfig: {
                         apiEndpoint: "/reference-data/regions",
                         method: "GET",
-                        valueKey: "value",
+                        valueKey: "id",
                         labelKey: "label",
                         searchKey: "name",
                         debounceMs: 300,
@@ -270,7 +270,7 @@ export const formConfig: FormConfig = {
                             console.log("response data", response);
                             return response.content.map((res: any) => ({
                                 id: res.id,
-                                value: res.code,
+                                value: res.id,
                                 name:
                                     res.localizedContent?.[locale]?.name ??
                                     res.code,
@@ -294,7 +294,7 @@ export const formConfig: FormConfig = {
                             message: "Zone of birth is required",
                         },
                     ],
-                    required: false,
+                    required: true,
                     group: "Child Details",
                     groupOrder: 11,
                     clearable: false,
@@ -302,44 +302,44 @@ export const formConfig: FormConfig = {
                     getDependentValue: (formValues: any) => formValues.region,
                     isDisabled: (dependentValue: any) => !dependentValue,
                     getPlaceholder: (dependentValue: any) =>
-                        dependentValue ? "Search for a zone..." : "Please select a region first",
+                        dependentValue
+                            ? "Search for a zone..."
+                            : "Please select a region first",
                     getDescription: (dependentValue: any) =>
-                        dependentValue ? "Select the zone where the person was born" : "Zone selection is disabled until a region is selected",
+                        dependentValue
+                            ? "Select the zone where the person was born"
+                            : "Zone selection is disabled until a region is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/zones",
                         method: "GET",
                         valueKey: "id",
-                        labelKey: "name",
+                        labelKey: "label",
                         searchKey: "name",
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        transformRequest: (request: any, dependentValue: any) => {
-                            console.log("transformRequest called with:", { request, dependentValue });
+                        transformRequest: (
+                            request: any,
+                            dependentValue: any
+                        ) => {
                             if (dependentValue) {
-                                const modifiedUrl = `${request.url}?regionId=${dependentValue.id || dependentValue}`;
-                                console.log("Modified URL:", modifiedUrl);
+                                const modifiedUrl = `${request.url}?regionId=${
+                                    dependentValue.id || dependentValue
+                                }`;
                                 return {
                                     url: modifiedUrl,
-                                    params: request.params || request
+                                    params: request.params || request,
                                 };
                             }
                             return request;
                         },
-                        transformResponse: (
-                            response,
-                            locale: "en" | "am" = "en"
-                        ) => {
+                        transformResponse: (response, locale = "en") => {
                             return response.content.map((res: any) => ({
                                 id: res.id,
-                                value: res.code,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
+                                value: res.id,
                                 label:
                                     res.localizedContent?.[locale]?.name ??
                                     res.code,
-                                isDisabled: false,
                             }));
                         },
                     },
@@ -356,35 +356,46 @@ export const formConfig: FormConfig = {
                             message: "Woreda of birth is required",
                         },
                     ],
-                    required: false,
+                    required: false, // Changed to false as per your config, but validator says required
                     group: "Child Details",
                     groupOrder: 12,
                     clearable: false,
-                    searchable: true,
-                    multiple: false,
+                    disabled: true, // Added disabled property
                     getDependentValue: (formValues: any) => formValues.zone,
                     isDisabled: (dependentValue: any) => !dependentValue,
                     getPlaceholder: (dependentValue: any) =>
-                        dependentValue ? "Search for a woreda..." : "Please select a zone first",
+                        dependentValue
+                            ? "Search for a woreda..."
+                            : "Please select a zone first",
                     getDescription: (dependentValue: any) =>
-                        dependentValue ? "Select the woreda where the person was born" : "Woreda selection is disabled until a zone is selected",
+                        dependentValue
+                            ? "Select the woreda where the person was born"
+                            : "Woreda selection is disabled until a zone is selected",
                     lookupConfig: {
                         apiEndpoint: "/reference-data/woredas",
                         method: "GET",
-                        valueKey: "id",
-                        labelKey: "name",
+                        valueKey: "id", // Changed to "id" for consistency
+                        labelKey: "label",
                         searchKey: "name",
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        transformRequest: (request: any, dependentValue: any) => {
-                            console.log("transformRequest called with:", { request, dependentValue });
+                        transformRequest: (
+                            request: any,
+                            dependentValue: any
+                        ) => {
+                            console.log("transformRequest called with:", {
+                                request,
+                                dependentValue,
+                            });
                             if (dependentValue) {
-                                const modifiedUrl = `${request.url}?zoneId=${dependentValue.id || dependentValue}`;
+                                const modifiedUrl = `${request.url}?zoneId=${
+                                    dependentValue.id || dependentValue
+                                }`;
                                 console.log("Modified URL:", modifiedUrl);
                                 return {
                                     url: modifiedUrl,
-                                    params: request.params || request
+                                    params: request.params || request,
                                 };
                             }
                             return request;
@@ -396,7 +407,7 @@ export const formConfig: FormConfig = {
                             console.log("response data", response);
                             return response.content.map((res: any) => ({
                                 id: res.id,
-                                value: res.code,
+                                value: res.id, // Changed to use id for consistency
                                 name:
                                     res.localizedContent?.[locale]?.name ??
                                     res.code,
@@ -506,7 +517,8 @@ export const formConfig: FormConfig = {
                     key: "fatherResidentId",
                     label: "Father's resident ID",
                     placeholder: "Enter at least 3 characters to search...",
-                    description: "Search for a resident by entering their ID. The system will search as you type.",
+                    description:
+                        "Search for a resident by entering their ID. The system will search as you type.",
                     validators: [
                         {
                             type: "required",
@@ -535,28 +547,36 @@ export const formConfig: FormConfig = {
                             // Add any other parameters your API expects
                         },
                         transformResponse: (data: any) => {
-                            if (!data || !data.content || !Array.isArray(data.content)) {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
                                 return [];
                             }
 
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || 'Unknown',
-                                name: resident.firstName || 'Unknown',
+                                label: resident.firstName || "Unknown",
+                                name: resident.firstName || "Unknown",
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
-                                fullName: [resident.firstName, resident.middleName, resident.lastName]
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
                                     .filter(Boolean)
-                                    .join(' '),
+                                    .join(" "),
                                 age: resident.age,
                                 dateOfBirth: resident.dateOfBirth,
                                 gender: resident.gender,
                                 maritalStatus: resident.maritalStatus,
                                 mobileNumber: resident.mobileNumber,
                                 nationality: resident.nationality,
-                                ...resident
+                                ...resident,
                             }));
                         },
                     },
@@ -566,8 +586,7 @@ export const formConfig: FormConfig = {
                     key: "fatherFullName",
                     label: "Father's Full Name",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "First name is required" },
                     ],
@@ -575,8 +594,13 @@ export const formConfig: FormConfig = {
                     group: "Father Details",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
-                            return dependentValues.fatherResidentId.fullName || "";
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId.fullName || ""
+                            );
                         }
                         return "";
                     },
@@ -605,8 +629,7 @@ export const formConfig: FormConfig = {
                     key: "fatherDateOfBirth",
                     label: "Father's Date of Birth",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "Date is required" },
                     ],
@@ -614,8 +637,14 @@ export const formConfig: FormConfig = {
                     group: "Father Details",
                     groupOrder: 3,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
-                            return dependentValues.fatherResidentId.dateOfBirth || "";
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId.dateOfBirth ||
+                                ""
+                            );
                         }
                         return "";
                     },
@@ -878,8 +907,7 @@ export const formConfig: FormConfig = {
                     key: "fatherMaritalStatus",
                     label: "Father's marital status",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "Date is required" },
                     ],
@@ -887,8 +915,14 @@ export const formConfig: FormConfig = {
                     group: "Father Details",
                     groupOrder: 4,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
-                            return dependentValues.fatherResidentId.maritalStatus || "";
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId
+                                    .maritalStatus || ""
+                            );
                         }
                         return "";
                     },
@@ -1106,8 +1140,7 @@ export const formConfig: FormConfig = {
                     key: "fatherPhoneNumber",
                     label: "Father's phone number",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "Date is required" },
                     ],
@@ -1115,8 +1148,14 @@ export const formConfig: FormConfig = {
                     group: "Father Details",
                     groupOrder: 4,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.fatherResidentId && typeof dependentValues.fatherResidentId === 'object') {
-                            return dependentValues.fatherResidentId.mobileNumber || "";
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId.mobileNumber ||
+                                ""
+                            );
                         }
                         return "";
                     },
@@ -1144,7 +1183,8 @@ export const formConfig: FormConfig = {
                     key: "motherResidentId",
                     label: "Mother's resident ID",
                     placeholder: "Enter at least 3 characters to search...",
-                    description: "Search for a resident by entering their ID. The system will search as you type.",
+                    description:
+                        "Search for a resident by entering their ID. The system will search as you type.",
                     validators: [
                         {
                             type: "required",
@@ -1173,28 +1213,36 @@ export const formConfig: FormConfig = {
                             // Add any other parameters your API expects
                         },
                         transformResponse: (data: any) => {
-                            if (!data || !data.content || !Array.isArray(data.content)) {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
                                 return [];
                             }
 
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || 'Unknown',
-                                name: resident.firstName || 'Unknown',
+                                label: resident.firstName || "Unknown",
+                                name: resident.firstName || "Unknown",
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
-                                fullName: [resident.firstName, resident.middleName, resident.lastName]
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
                                     .filter(Boolean)
-                                    .join(' '),
+                                    .join(" "),
                                 age: resident.age,
                                 dateOfBirth: resident.dateOfBirth,
                                 gender: resident.gender,
                                 maritalStatus: resident.maritalStatus,
                                 mobileNumber: resident.mobileNumber,
                                 nationality: resident.nationality,
-                                ...resident
+                                ...resident,
                             }));
                         },
                     },
@@ -1204,8 +1252,7 @@ export const formConfig: FormConfig = {
                     key: "motherFullName",
                     label: "Mother's Full Name",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "First name is required" },
                     ],
@@ -1213,8 +1260,13 @@ export const formConfig: FormConfig = {
                     group: "Mother Details",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
-                            return dependentValues.motherResidentId.fullName || "";
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId.fullName || ""
+                            );
                         }
                         return "";
                     },
@@ -1233,8 +1285,7 @@ export const formConfig: FormConfig = {
                     key: "motherDateOfBirth",
                     label: "Mother's Date of Birth",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "Date is required" },
                     ],
@@ -1242,8 +1293,14 @@ export const formConfig: FormConfig = {
                     group: "Mother Details",
                     groupOrder: 3,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
-                            return dependentValues.motherResidentId.dateOfBirth || "";
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId.dateOfBirth ||
+                                ""
+                            );
                         }
                         return "";
                     },
@@ -1262,8 +1319,7 @@ export const formConfig: FormConfig = {
                     key: "motherMaritalStatus",
                     label: "Mother's marital status",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "Date is required" },
                     ],
@@ -1271,8 +1327,14 @@ export const formConfig: FormConfig = {
                     group: "Mother Details",
                     groupOrder: 4,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
-                            return dependentValues.motherResidentId.maritalStatus || "";
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId
+                                    .maritalStatus || ""
+                            );
                         }
                         return "";
                     },
@@ -1291,8 +1353,7 @@ export const formConfig: FormConfig = {
                     key: "motherPhoneNumber",
                     label: "Mother's phone number",
                     placeholder: "",
-                    description:
-                        "",
+                    description: "",
                     validators: [
                         { type: "required", message: "Date is required" },
                     ],
@@ -1300,8 +1361,14 @@ export const formConfig: FormConfig = {
                     group: "Mother Details",
                     groupOrder: 4,
                     defaultValue: (dependentValues: any) => {
-                        if (dependentValues?.motherResidentId && typeof dependentValues.motherResidentId === 'object') {
-                            return dependentValues.motherResidentId.mobileNumber || "";
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId.mobileNumber ||
+                                ""
+                            );
                         }
                         return "";
                     },
