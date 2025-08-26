@@ -9,8 +9,8 @@ type copuleAvatarType = {
 const MarriageAvatar = ({ coupleAvatar }: copuleAvatarType) => {
     return (
         <div className='flex w-fit gap-10 py-2.5 mx-auto'>
-            {coupleAvatar.map((item) => (
-                <div className='flex flex-col items-center gap-2'>
+            {coupleAvatar.map((item, index) => (
+                <div key={index} className='flex flex-col items-center gap-2'>
                     <Avatar className='w-[80px] h-[80px] mx-auto lg:mx-0'>
                         <AvatarImage
                             src={

@@ -52,7 +52,7 @@
 
         --radius: 0.5rem;
 
-        --color-primary: #0c4A6B;
+        --color-primary: #0c4a6b;
         --color-secondary: #f3b32b;
         --color-whitesmoke: whitesmoke;
         --color-success: #218838;
@@ -148,7 +148,7 @@ html {
 #__next-build-error,
 #__next-build-dev-overlay,
 nextjs-portal {
-  display: none !important;
+    display: none !important;
 }
 
 h1,
@@ -405,4 +405,14 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* For Firefox and IE */
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }

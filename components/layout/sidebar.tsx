@@ -3,37 +3,23 @@ import { usePathname } from "next/navigation";
 
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Card } from "../ui/card";
-import {
-    Baby,
-    BookUser,
-    Cake,
-    House,
-    IdCard,
-    MessageCircleWarning,
-    ScanHeart,
-    Skull,
-} from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import birth from "@/public/images/sidebar/birth.svg";
-import death from "@/public/images/sidebar/death.svg";
-import marriage from "@/public/images/sidebar/marriage.svg";
-import divorce from "@/public/images/sidebar/divorce.svg";
-import adoption from "@/public/images/sidebar/adoption.svg";
-import legitmation from "@/public/images/sidebar/legitimationoffather.svg";
-import recognition from "@/public/images/sidebar/recognitionofchild.svg";
-import id from "@/public/images/sidebar/id.svg";
-import family from "@/public/images/sidebar/family.svg";
-
-import Image from "next/image";
+import sidebarConfigData from "@/utils/constants/sidebarConfig.json";
+import { IconRenderer } from "@/utils/constants/iconRenderer";
+import { SidebarConfig, SidebarSection, SidebarChildRoute } from "@/utils/constants/sidebarTypes";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { getIconColor } from "@/utils/constants/iconColors";
 
 const Sidebar = () => {
     const { data: session, status: sessionStatus } = useSession();
     const t = useTranslations();
-    const router = usePathname().toLowerCase();
+    const currentPath = usePathname();
+    const [expandedRoutes, setExpandedRoutes] = useState<Set<string>>(new Set());
+    const [isInitialized, setIsInitialized] = useState(false);
 
     //TODO fix this to have the right model
     const decodedToken: any = jwt.decode(session?.user.access_token);
@@ -42,134 +28,166 @@ const Sidebar = () => {
             ? decodedToken.preferred_username
             : null;
 
-    const sidebarRoutes = [
-        {
-            title: "civil-registration",
-            childRoutes: [
-                {
-                    icon: (
-                        <Image
-                            src={birth.src}
-                            width={24}
-                            height={24}
-                            alt='birth'
-                            className='bg-[#073954]'
-                        />
-                    ),
-                    label: "birth",
-                    route: "/home/birth",
-                },
-                {
-                    icon: (
-                        <Image
-                            src={death.src}
-                            width={24}
-                            height={24}
-                            alt='death'
-                        />
-                    ),
-                    label: "death",
-                    route: "/home/death",
-                },
-                {
-                    icon: (
-                        <Image
-                            src={marriage.src}
-                            width={24}
-                            height={24}
-                            alt='marriage'
-                        />
-                    ),
-                    label: "marriage",
-                    route: "/home/marriage",
-                },
-                {
-                    icon: (
-                        <Image
-                            src={divorce.src}
-                            width={24}
-                            height={24}
-                            alt='divorce'
-                        />
-                    ),
-                    label: "divorce",
-                    route: "/home/divorce",
-                },
-                {
-                    icon: (
-                        <Image
-                            src={adoption.src}
-                            width={24}
-                            height={24}
-                            alt='adoption'
-                        />
-                    ),
-                    label: "adoption",
-                    route: "/home/adoption",
-                },
-                {
-                    icon: (
-                        <Image
-                            src={legitmation.src}
-                            width={24}
-                            height={24}
-                            alt='legitmation'
-                        />
-                    ),
-                    label: "legitimation",
-                    route: "/home/legitimation",
-                },
-                {
-                    icon: (
-                        <Image
-                            src={recognition.src}
-                            width={24}
-                            height={24}
-                            alt='recognition'
-                        />
-                    ),
-                    label: "recognitionofchild",
-                    route: "/home/recognition",
-                },
-            ],
-        },
-        {
-            title: "complaint",
-            childRoutes: [
-                {
-                    icon: <MessageCircleWarning />,
-                    label: "complaint",
-                    route: "/home/complaint",
-                },
-            ],
-        },
-    ];
+    const config = sidebarConfigData as SidebarConfig;
+
+    // Initialize default expanded routes on first load
+    useEffect(() => {
+        if (!isInitialized && config.sections.length > 0) {
+            // Find the default section and expand its first route
+            const defaultSection = config.sections.find(section => section.title === config.defaultSection);
+            if (defaultSection && defaultSection.childRoutes.length > 0) {
+                const firstRoute = defaultSection.childRoutes[0];
+                setExpandedRoutes(new Set([firstRoute.label]));
+            }
+            setIsInitialized(true);
+        }
+    }, [isInitialized, config.defaultSection, config.sections]);
+
+
+    const isRouteActive = (route: string) => {
+        const currentPathLower = currentPath.toLowerCase();
+        const routeLower = route.toLowerCase();
+
+        // Exact match
+        if (currentPathLower === routeLower) {
+            return true;
+        }
+
+        // Check if current path starts with the route and has a sub-route
+        // This will match /home/birth/new, /home/birth/list, /home/birth/detail, etc.
+        if (currentPathLower.startsWith(routeLower + '/')) {
+            return true;
+        }
+
+        return false;
+    };
+
+    // Helper function to check if any child route is active
+    const isSectionActive = (childRoutes: SidebarChildRoute[]) => {
+        return childRoutes.some(child => isRouteActive(child.route));
+    };
+
+    // Toggle section expansion
+    const toggleRoute = (routeLabel: string) => {
+        const newExpanded = new Set(expandedRoutes);
+        if (newExpanded.has(routeLabel)) {
+            newExpanded.delete(routeLabel);
+        } else {
+            newExpanded.add(routeLabel);
+        }
+        setExpandedRoutes(newExpanded);
+    };
+
+    // Check if route should be expanded (has active route)
+    const shouldExpandRoute = (route: SidebarChildRoute) => {
+        return isRouteActive(route.route) ||
+            route.children?.some(child => isRouteActive(child.route));
+    };
+
+    // const config = sidebarConfigData as SidebarConfig;
+
     return (
         <Card className='py-8 px-5 space-y-8 w-fit h-fit hidden 2xl:block '>
             <div className='text-[#073954] space-y-5'>
-                {sidebarRoutes.map((item) => (
-                    <div key={item.title} className='space-y-1'>
-                        <p className='mb-4 text-[#073954]/30 font-semibold'>
-                            {t(item.title)}
-                        </p>
-                        {item.childRoutes.map((child) => (
-                            <Button
-                                asChild
-                                className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none ${
-                                    router === child.route
-                                        ? ""
-                                        : "text-[#073954] hover:text-secondary bg-transparent"
-                                }`}
-                                key={child.label}
-                            >
-                                <Link href={child.route}>
-                                    {child.icon}
-                                    {t(child.label)}
-                                </Link>
-                            </Button>
-                        ))}
-                    </div>
-                ))}
+                {/* {sidebarRoutes.map((item) => (
+                    <div key={item.title} className='space-y-1'> */}
+                {config.sections.map((section: SidebarSection) => {
+                    // const isManuallyExpanded = expandedSections.has(section.title);
+                    // const hasActiveRoute = shouldExpandSection(section);
+                    // const isDefaultSection = section.title === config.defaultSection;
+
+                    // const isExpanded = isManuallyExpanded || hasActiveRoute || (isDefaultSection && !isInitialized);
+
+                    return (
+                        <div key={section.title} className='space-y-1'>
+                            <p className='mb-4 text-[#073954]/30 font-semibold'>
+                                {t(section.title)}
+                            </p>
+                            {section.childRoutes.map((child: SidebarChildRoute) => {
+                                const isActive = isRouteActive(child.route);
+                                const hasChildren = child.children && child.children.length > 0;
+                                const isChildActive = hasChildren && child.children!.some(subChild => isRouteActive(subChild.route));
+
+                                // Determine if this route should be expanded
+                                const isManuallyExpanded = expandedRoutes.has(child.label);
+                                const hasActiveRoute = shouldExpandRoute(child);
+                                const isDefaultRoute = section.title === config.defaultSection && !isInitialized;
+
+                                const isExpanded = isManuallyExpanded || hasActiveRoute || isDefaultRoute;
+
+                                return (
+                                    <div key={child.label} className='space-y-1'>
+                                        {/* Main route button */}
+                                        <Button
+                                            asChild
+                                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none w-full ${isActive || isChildActive
+                                                ? "bg-[#073954] text-white"
+                                                : "text-[#073954] hover:text-[#073954] hover:bg-[#073954]/10 bg-transparent"
+                                                }`}
+                                        >
+                                            <Link href={child.route}>
+                                                <IconRenderer
+                                                    icon={child.icon}
+                                                    alt={child.label}
+                                                    className={isActive || isChildActive ? "text-white" : ""}
+                                                    color={isActive || isChildActive ? getIconColor('active') : getIconColor('default')}
+
+                                                />
+                                                <span className="flex-1 text-left">{t(child.label)}</span>
+                                                {hasChildren && (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            toggleRoute(child.label);
+                                                        }}
+                                                        className="ml-auto p-1 hover:bg-white/20 rounded"
+                                                    >
+                                                        {isExpanded ? (
+                                                            <ChevronDown className="w-4 h-4" />
+                                                        ) : (
+                                                            <ChevronRight className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                )}
+                                            </Link>
+                                        </Button>
+
+                                        {/* Nested children */}
+                                        {hasChildren && isExpanded && (
+                                            <div className="ml-6 space-y-1">
+                                                {child.children!.map((subChild) => {
+                                                    const isSubActive = isRouteActive(subChild.route);
+                                                    return (
+                                                        <Button
+                                                            asChild
+                                                            key={subChild.label}
+                                                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none font-semibold w-full text-sm ${isSubActive
+                                                                ? "bg-[#073954]/80 text-white"
+                                                                : "text-[#073954]/70 hover:text-[#073954] hover:bg-[#073954]/10 bg-transparent"
+                                                                }`}
+                                                        >
+                                                            <Link href={subChild.route}>
+                                                                <IconRenderer
+                                                                    icon={subChild.icon}
+                                                                    alt={subChild.label}
+                                                                    className={isSubActive ? "text-white" : ""}
+                                                                    color={isSubActive ? getIconColor('active') : getIconColor('default')}
+
+                                                                />
+                                                                {t(subChild.label)}
+                                                            </Link>
+                                                        </Button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    );
+                })}
             </div>
         </Card>
     );

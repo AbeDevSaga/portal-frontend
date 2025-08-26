@@ -9,6 +9,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { DM_Sans } from "next/font/google";
 import CustomToaster from "@/components/common/CustomToast";
 import Providers from "./provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const dmSans = DM_Sans({
     subsets: ["latin"], // choose subsets you need
@@ -36,6 +37,7 @@ export default async function RootLayout({
         <html lang={locale}>
             <body className={dmSans.className}>
                 <CustomToaster />
+                {/* <Toaster/> */}
                 <SessionProvider session={session}>
                     <NextIntlClientProvider>
                         <Providers>

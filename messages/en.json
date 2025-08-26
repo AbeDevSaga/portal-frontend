@@ -65,5 +65,7 @@
     "transfer": "Transfer",
     "authentication": "Authentication",
     "complaint": "Complaint",
-    "hello": "Hello!"
+    "hello": "Hello!",
+    "new": "New",
+    "list": "List"
 }

@@ -8,6 +8,8 @@ import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
 import { formConfig } from "./marraige-form-fields";
 import { useEffect, useState } from "react";
+import { processFormSubmission } from "@/utils/formSubmissionUtils";
+import { toast } from "sonner";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -25,16 +27,68 @@ export default function Page() {
         setExpandedSections(expandedItems);
     };
 
-    const handleCreateBirth = (value: any) => {
-        console.log(value);
-        alert("Birth registration created successfully!");
+    const handleCreateMarriage = (value: any) => {
+        const result = processFormSubmission(value, formConfig);
+
+        if (result.success) {
+            // Form is ready for submission
+            console.log("Form is ready! API Payload:", result.apiPayload);
+            console.log(
+                "Cleans form values for display:",
+                result.cleanFormValues
+            );
+
+            // Here you can make your API call
+            submitMarriageRegistration(result.apiPayload, result.data);
+        } else {
+            // Form is not ready - validation errors are already shown
+            console.log("Form is not ready:", result.data);
+            console.log(
+                "Current form values for display:",
+                result.cleanFormValues
+            );
+        }
     };
 
+    const submitMarriageRegistration = async (
+        apiPayload: any,
+        submissionData: any
+    ) => {
+        try {
+            console.log(
+                "Submitting Marriage registration with payload:",
+                apiPayload
+            );
+
+            // Here you would make your actual API call
+            // Example:
+            // const response = await fetch('/api/Marriage-registration', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(apiPayload)
+            // });
+
+            // For now, simulate API call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            console.log("Marriage registration submitted successfully!");
+            alert("Marriage registration submitted successfully!");
+            //   toast.success("Marriage registration submitted successfully!");
+        } catch (error) {
+            console.error("Error submitting Marriage registration:", error);
+            alert("Error submitting Marriage registration. Please try again.");
+            // toast.error(
+            //     "Error submitting Marriage registration. Please try again."
+            // );
+        }
+    };
     const formContent = (
         <Card className='p-5'>
             <DynamicForm
                 config={formConfig}
-                handleSubmit={(value) => handleCreateBirth(value)}
+                handleSubmit={(value) => handleCreateMarriage(value)}
                 initialValues={formValues}
                 formStyle='grid grid-cols-2 gap-5'
                 onAccordionStateChange={handleAccordionStateChange}
@@ -46,8 +100,8 @@ export default function Page() {
     return (
         <>
             <HeroSection
-                title='New Birth Registration'
-                description='This is the place to register birth.'
+                title='New Marriage Registration'
+                description='This is the place to register Marriage.'
                 action={<></>}
             />
 
@@ -56,10 +110,11 @@ export default function Page() {
                 formValues={formValues}
                 groupMap={groupMap}
                 allFields={allFields}
-                previewTitle='Birth Registrations'
+                previewTitle='Marriage Registrations'
                 layout='2-1'
                 config={formConfig}
                 expandedSections={expandedSections}
+                onAccordionStateChange={handleAccordionStateChange}
             />
         </>
     );

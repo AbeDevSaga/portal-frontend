@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Sample marriage type data
 const marriageType = [
     { id: 1, name: "National", code: "NA", value: "NA" },
-    { id: 2, name: "Regional", code: "RE", value: "RE" },
+    { id: 2, name: "Religious", code: "RE", value: "RE" },
     { id: 3, name: "Traditional", code: "TR", value: "TR" },
 ];
 

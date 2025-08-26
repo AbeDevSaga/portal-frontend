@@ -1,10 +1,72 @@
 "use client";
 import { Card } from "@/components/ui/card";
-import { User } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { FormConfig } from "@/types/formType";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+    User,
+    ChevronDown,
+    ChevronUp,
+    Expand,
+    ChevronsUpDown,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+const formatValueForDisplay = (
+    value: any,
+    fieldType?: string,
+    fieldLabel?: string
+): string => {
+    if (!value || value === "") return "";
+
+    // Handle digital signature fields
+    if (
+        fieldType === "digitalSignature" &&
+        typeof value === "object" &&
+        value._fieldType === "digitalSignature"
+    ) {
+        return value._displayText || `✓ ${fieldLabel || "Signature"} captured`;
+    }
+
+    // Handle file upload fields
+    if (fieldType === "fileUpload") {
+        if (Array.isArray(value)) {
+            return value
+                .map((file: any) => file.name || "File uploaded")
+                .join(", ");
+        } else if (value && typeof value === "object") {
+            return value.name || "File uploaded";
+        }
+    }
+
+    // Handle lookup fields (select, lookup)
+    if (typeof value === "object" && value !== null) {
+        if (value.label) return value.label;
+        if (value.name) return value.name;
+        if (value.value) return value.value;
+        if (Array.isArray(value) && value.length > 0) {
+            if (typeof value[0] === "object" && value[0].label) {
+                return value.map((item: any) => item.label).join(", ");
+            }
+            return value.join(", ");
+        }
+        return "Selected";
+    }
+
+    // Handle data URLs (base64)
+    if (typeof value === "string" && value.startsWith("data:")) {
+        return `✓ ${fieldLabel || "File"} uploaded`;
+    }
+
+    // Handle regular values
+    return String(value);
+};
 
 interface LivePreviewProps {
     title: string;
@@ -13,11 +75,12 @@ interface LivePreviewProps {
     avatarAlt?: string;
     formValues: Record<string, any>;
     groupMap?: Record<string, string>;
-    allFields: Array<{ key: string; label: string }>;
+    allFields: Array<{ key: string; label: string; type: string }>;
     className?: string;
     style?: React.CSSProperties;
     config?: FormConfig; // Add config to access step information
     expandedSections?: string[];
+    onAccordionStateChange?: (expandedItems: string[]) => void;
 }
 
 export default function LivePreview({
@@ -37,7 +100,16 @@ export default function LivePreview({
     },
     config,
     expandedSections = [],
+    onAccordionStateChange,
 }: LivePreviewProps) {
+    const [localExpandedSections, setLocalExpandedSections] =
+        useState<string[]>(expandedSections);
+
+    // Sync local state with parent form's accordion state
+    useEffect(() => {
+        setLocalExpandedSections(expandedSections);
+    }, [expandedSections]);
+
     // Group the data based on the groupMap
     const groupedData = allFields.reduce((acc, field) => {
         if (!groupMap[field.key]) return acc;
@@ -46,72 +118,141 @@ export default function LivePreview({
         const value = formValues[field.key] ?? "";
 
         if (!acc[groupName]) acc[groupName] = [];
-        acc[groupName].push({ label: field.label, value });
+        acc[groupName].push({
+            label: field.label,
+            value,
+            type: field.type, // Include field type for proper formatting
+        });
 
         return acc;
-    }, {} as Record<string, { label: string; value: any }[]>);
+    }, {} as Record<string, { label: string; value: any; type: string }[]>);
 
     const groupedArray = Object.values(groupedData);
 
     // Check if we should use accordion (when stepperData is not empty)
-    const shouldUseAccordion = config?.stepperData && config.stepperData.length > 0;
+    const shouldUseAccordion =
+        config?.stepperData && config.stepperData.length > 0;
+
+    // Check if form has multiple steps (stepper)
+    const hasMultipleSteps = config?.steps && config.steps.length > 1;
+
+    // Function to expand all sections
+    const expandAll = () => {
+        if (config?.steps) {
+            const allStepKeys = config.steps.map((_, index) => `step-${index}`);
+            setLocalExpandedSections(allStepKeys);
+            // Notify parent form of the change
+            if (onAccordionStateChange) {
+                onAccordionStateChange(allStepKeys);
+            }
+        }
+    };
+
+    // Function to collapse all sections
+    const collapseAll = () => {
+        setLocalExpandedSections([]);
+        // Notify parent form of the change
+        if (onAccordionStateChange) {
+            onAccordionStateChange([]);
+        }
+    };
+
+    // Function to handle accordion value change
+    const handleAccordionChange = (value: string[]) => {
+        setLocalExpandedSections(value);
+    };
 
     // Function to render step-based preview with accordion
     const renderStepBasedPreviewWithAccordion = () => {
         if (!config?.steps) return null;
 
         return (
-            <Accordion
-                type="multiple"
-                className="w-full"
-                value={expandedSections}
-            >
-                {config.steps.map((step, stepIndex) => (
-                    <AccordionItem key={stepIndex} value={`step-${stepIndex}`} className="border-white/20">
-                        <AccordionTrigger className="text-white hover:text-white/80 py-3">
-                            <div className="flex items-center gap-3">
-                                {/* Step indicator */}
-                                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold">
-                                    {stepIndex + 1}
+            <div className='space-y-3'>
+                {/* Expand/Collapse Controls */}
+                <div className='flex gap-2 pb-2 border-b border-white/20 justify-end'>
+                    <Button
+                        variant='outline'
+                        size='sm'
+                        onClick={expandAll}
+                        className='text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white'
+                    >
+                        <Expand className='w-4 h-4 mr-1' />
+                        Expand All
+                    </Button>
+                    <Button
+                        variant='outline'
+                        size='sm'
+                        onClick={collapseAll}
+                        className='text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white'
+                    >
+                        <ChevronUp className='w-4 h-4 mr-1' />
+                        Collapse All
+                    </Button>
+                </div>
+                <Accordion
+                    type='multiple'
+                    className='w-full'
+                    value={localExpandedSections}
+                    onValueChange={handleAccordionChange}
+                >
+                    {config.steps.map((step, stepIndex) => (
+                        <AccordionItem
+                            key={stepIndex}
+                            value={`step-${stepIndex}`}
+                            className='border-white/20'
+                        >
+                            <AccordionTrigger className='text-white hover:text-white/80 py-3'>
+                                <div className='flex items-center gap-3'>
+                                    {/* Step indicator */}
+                                    <div className='flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold'>
+                                        {stepIndex + 1}
+                                    </div>
+                                    {/* Step title */}
+                                    <span className='text-lg font-semibold text-white'>
+                                        {step.title}
+                                    </span>
                                 </div>
-                                {/* Step title */}
-                                <span className="text-lg font-semibold text-white">
-                                    {step.title}
-                                </span>
-                            </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white">
-                            {/* Step Fields */}
-                            <div className="space-y-3 pt-2">
-                                {step.fields.map((field) => {
-                                    const value = formValues[field.key] ?? "";
-                                    return (
-                                        <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10 last:border-b-0">
-                                            <span className="text-sm font-medium text-white/90">
-                                                {field.label}:
-                                            </span>
-                                            <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                {value === "" ? (
-                                                    <span className="text-white/50 italic">Not filled</span>
-                                                ) : (
-                                                    // Handle both string and object values for lookup fields
-                                                    typeof value === 'object' && value !== null ? (
-                                                        <span>
-                                                            {value.label || value.name || value.value || 'Selected'}
+                            </AccordionTrigger>
+                            <AccordionContent className='text-white'>
+                                {/* Step Fields */}
+                                <div className='space-y-3'>
+                                    {step.fields.map((field) => {
+                                        const value =
+                                            formValues[field.key] ?? "";
+                                        const displayValue =
+                                            formatValueForDisplay(
+                                                value,
+                                                field.type,
+                                                field.label
+                                            );
+
+                                        return (
+                                            <div
+                                                key={field.key}
+                                                className='flex justify-between items-start py-2 border-b border-white/10'
+                                            >
+                                                <span className='text-sm font-medium text-white/90'>
+                                                    {field.label}:
+                                                </span>
+                                                <span className='text-sm text-white/80 text-right max-w-[60%] break-words'>
+                                                    {displayValue === "" ? (
+                                                        <span className='text-white/50 italic'>
+                                                            Not filled
                                                         </span>
                                                     ) : (
-                                                        value
-                                                    )
-                                                )}
-                                            </span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </AccordionContent>
-                    </AccordionItem>
-                ))}
-            </Accordion>
+                                                        // Handle both string and object values for lookup fields
+                                                        displayValue
+                                                    )}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
         );
     };
 
@@ -120,7 +261,31 @@ export default function LivePreview({
         if (!config?.steps) return null;
 
         return (
-            <div className="space-y-4">
+            <div className='space-y-4'>
+                {" "}
+                {/* Expand/Collapse Controls for stepper forms */}
+                {hasMultipleSteps && (
+                    <div className='flex gap-2 pb-2 border-b border-white/20 justify-end'>
+                        <Button
+                            variant='outline'
+                            size='sm'
+                            onClick={expandAll}
+                            className='text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white'
+                        >
+                            <Expand className='w-4 h-4 mr-1' />
+                            Expand All
+                        </Button>
+                        <Button
+                            variant='outline'
+                            size='sm'
+                            onClick={collapseAll}
+                            className='text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white'
+                        >
+                            <ChevronsUpDown className='w-4 h-4 mr-1' />
+                            Collapse All
+                        </Button>
+                    </div>
+                )}
                 {config.steps.map((step, stepIndex) => {
                     // Check if this step should use accordion (tabular: true)
                     const shouldUseAccordionForStep = step.tabular === true;
@@ -128,48 +293,80 @@ export default function LivePreview({
                     if (shouldUseAccordionForStep) {
                         // Render step as accordion
                         return (
-                            <Accordion 
-                                key={stepIndex} 
-                                type="single" 
-                                collapsible 
-                                className="w-full"
-                                value={expandedSections.includes(`step-${stepIndex}`) ? `step-${stepIndex}` : undefined}
+                            <Accordion
+                                key={stepIndex}
+                                type='single'
+                                collapsible
+                                className='w-full'
+                                value={
+                                    localExpandedSections.includes(
+                                        `step-${stepIndex}`
+                                    )
+                                        ? `step-${stepIndex}`
+                                        : undefined
+                                }
+                                onValueChange={(value) => {
+                                    if (value) {
+                                        setLocalExpandedSections((prev) => [
+                                            ...prev,
+                                            value,
+                                        ]);
+                                    } else {
+                                        setLocalExpandedSections((prev) =>
+                                            prev.filter(
+                                                (item) =>
+                                                    item !== `step-${stepIndex}`
+                                            )
+                                        );
+                                    }
+                                }}
                             >
-                                <AccordionItem value={`step-${stepIndex}`} className="border-white/20">
-                                    <AccordionTrigger className="text-white hover:text-white/80 py-3">
-                                        <div className="flex items-center gap-3">
+                                <AccordionItem
+                                    value={`step-${stepIndex}`}
+                                    className='border-white/20'
+                                >
+                                    <AccordionTrigger className='text-white hover:text-white/80 py-3'>
+                                        <div className='flex items-center gap-3'>
                                             {/* Step indicator */}
-                                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold">
+                                            <div className='flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold'>
                                                 {stepIndex + 1}
                                             </div>
                                             {/* Step title */}
-                                            <span className="text-lg font-semibold text-white">
+                                            <span className='text-lg font-semibold text-white'>
                                                 {step.title}
                                             </span>
                                         </div>
                                     </AccordionTrigger>
-                                    <AccordionContent className="text-white">
+                                    <AccordionContent className='text-white'>
                                         {/* Step Fields */}
-                                        <div className="space-y-3 pt-2">
+                                        <div className='space-y-3'>
                                             {step.fields.map((field) => {
-                                                const value = formValues[field.key] ?? "";
+                                                const value =
+                                                    formValues[field.key] ?? "";
+                                                const displayValue =
+                                                    formatValueForDisplay(
+                                                        value,
+                                                        field.type,
+                                                        field.label
+                                                    );
+
                                                 return (
-                                                    <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10 last:border-b-0">
-                                                        <span className="text-sm font-medium text-white/90">
+                                                    <div
+                                                        key={field.key}
+                                                        className='flex justify-between items-start py-2 border-b border-white/10'
+                                                    >
+                                                        <span className='text-sm font-medium text-white/90'>
                                                             {field.label}:
                                                         </span>
-                                                        <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                            {value === "" ? (
-                                                                <span className="text-white/50 italic">Not filled</span>
+                                                        <span className='text-sm text-white/80 text-right max-w-[60%] break-words'>
+                                                            {displayValue ===
+                                                            "" ? (
+                                                                <span className='text-white/50 italic'>
+                                                                    Not filled
+                                                                </span>
                                                             ) : (
                                                                 // Handle both string and object values for lookup fields
-                                                                typeof value === 'object' && value !== null ? (
-                                                                    <span>
-                                                                        {value.label || value.name || value.value || 'Selected'}
-                                                                    </span>
-                                                                ) : (
-                                                                    value
-                                                                )
+                                                                displayValue
                                                             )}
                                                         </span>
                                                     </div>
@@ -183,35 +380,42 @@ export default function LivePreview({
                     } else {
                         // Render step normally (non-accordion)
                         return (
-                            <div key={stepIndex} className="space-y-3">
+                            <div key={stepIndex} className='space-y-3'>
                                 {/* Step Title with horizontal line */}
-                                <div className="border-b border-white/30 pb-2">
-                                    <h3 className="text-lg font-semibold text-white">
+                                <div className='border-b border-white/30 pb-2'>
+                                    <h3 className='text-lg font-semibold text-white'>
                                         {step.title}
                                     </h3>
                                 </div>
 
                                 {/* Step Fields */}
-                                <div className="space-y-3">
+                                <div className='space-y-3'>
                                     {step.fields.map((field) => {
-                                        const value = formValues[field.key] ?? "";
+                                        const value =
+                                            formValues[field.key] ?? "";
+                                        const displayValue =
+                                            formatValueForDisplay(
+                                                value,
+                                                field.type,
+                                                field.label
+                                            );
+
                                         return (
-                                            <div key={field.key} className="flex justify-between items-start py-2 border-b border-white/10">
-                                                <span className="text-sm font-medium text-white/90">
+                                            <div
+                                                key={field.key}
+                                                className='flex justify-between items-start py-2 border-b border-white/10'
+                                            >
+                                                <span className='text-sm font-medium text-white/90'>
                                                     {field.label}:
                                                 </span>
-                                                <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
-                                                    {value === "" ? (
-                                                        <span className="text-white/50 italic">Not filled</span>
+                                                <span className='text-sm text-white/80 text-right max-w-[60%] break-words'>
+                                                    {displayValue === "" ? (
+                                                        <span className='text-white/50 italic'>
+                                                            Not filled
+                                                        </span>
                                                     ) : (
                                                         // Handle both string and object values for lookup fields
-                                                        typeof value === 'object' && value !== null ? (
-                                                            <span>
-                                                                {value.label || value.name || value.value || 'Selected'}
-                                                            </span>
-                                                        ) : (
-                                                            value
-                                                        )
+                                                        displayValue
                                                     )}
                                                 </span>
                                             </div>
@@ -221,7 +425,7 @@ export default function LivePreview({
 
                                 {/* Horizontal line after each step (except the last one) */}
                                 {stepIndex < config.steps.length - 1 && (
-                                    <hr className="border-white/20 my-4" />
+                                    <hr className='border-white/20 my-4' />
                                 )}
                             </div>
                         );
@@ -234,7 +438,7 @@ export default function LivePreview({
     // Function to render grouped preview (fallback)
     const renderGroupedPreview = () => {
         return (
-            <div className="space-y-3">
+            <div className='space-y-3'>
                 {groupedArray?.map((group, index) => (
                     <div
                         key={index}
@@ -250,15 +454,15 @@ export default function LivePreview({
                                 </span>
                                 <span className='text-sm text-white/80 text-right max-w-[60%] break-words'>
                                     {groupItem.value === "" ? (
-                                        <span className="text-white/50 italic">Not filled</span>
+                                        <span className='text-white/50 italic'>
+                                            Not filled
+                                        </span>
                                     ) : (
                                         // Handle both string and object values for lookup fields
-                                        typeof groupItem.value === 'object' && groupItem.value !== null ? (
-                                            <span>
-                                                {groupItem.value.label || groupItem.value.name || groupItem.value.value || 'Selected'}
-                                            </span>
-                                        ) : (
-                                            groupItem.value
+                                        formatValueForDisplay(
+                                            groupItem.value,
+                                            groupItem.type,
+                                            groupItem.label
                                         )
                                     )}
                                 </span>
@@ -292,8 +496,8 @@ export default function LivePreview({
             <Card className='' style={style}>
                 {/* Header */}
                 <div className='border-b border-white/30 flex gap-2 pb-3 items-center'>
-                    <User className="text-white" />
-                    <p className="text-white font-medium">{title}</p>
+                    <User className='text-white' />
+                    <p className='text-white font-medium'>{title}</p>
                 </div>
 
                 {/* Avatar and Basic Info */}
@@ -307,8 +511,8 @@ export default function LivePreview({
                                 className='object-contain'
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                                <User className="text-white/60" size={20} />
+                            <div className='w-full h-full flex items-center justify-center'>
+                                <User className='text-white/60' size={20} />
                             </div>
                         )}
                     </div>
@@ -323,7 +527,7 @@ export default function LivePreview({
                 </div>
 
                 {/* Content - Dynamic preview based on configuration */}
-                <div className="pt-3">
+                <div className='pt-3 max-h-[550px] overflow-y-auto px-5 no-scrollbar'>
                     {renderPreview()}
                 </div>
             </Card>

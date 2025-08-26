@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
                                 return (
                                     <TableHead
                                         key={header.id}
-                                        className='text-secondary first:rounded-l-md last:rounded-r-md text-lg h-14'
+                                        className='text-secondary first:rounded-l-md last:rounded-r-md py-5'
                                     >
                                         {header.isPlaceholder
                                             ? null
@@ -120,7 +120,7 @@ export function DataTable<TData, TValue>({
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell
                                         key={cell.id}
-                                        className='px-4 py-3 text-lg'
+                                        className='px-4 py-3.5'
                                     >
                                         {flexRender(
                                             cell.column.columnDef.cell,

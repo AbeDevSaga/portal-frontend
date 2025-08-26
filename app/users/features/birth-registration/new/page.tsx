@@ -6,8 +6,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
-import {formConfig} from './birth-form-fields'
+import { formConfig } from "./birth-form-fields";
 import { useEffect, useState } from "react";
+import { processFormSubmission } from "@/utils/formSubmissionUtils";
+import { useSubmitFormMutation } from "@/redux/api/birthApi";
+import { toast } from "sonner";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -15,7 +18,9 @@ export default function Page() {
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     useEffect(() => {
         const initialExpanded = formConfig.steps
-            .map((step, index) => step.defaultExpanded ? `step-${index}` : null)
+            .map((step, index) =>
+                step.defaultExpanded ? `step-${index}` : null
+            )
             .filter(Boolean) as string[];
         setExpandedSections(initialExpanded);
     }, [formConfig.steps]);
@@ -24,7 +29,51 @@ export default function Page() {
     };
 
     const handleCreateBirth = (value: any) => {
-        console.log(value);
+        const result = processFormSubmission(value, formConfig);
+        console.log("result", result);
+        if (result.success) {
+            // Form is ready for submission
+            console.log("Form is ready! API Payload:", result.apiPayload);
+            console.log(
+                "Cleans form values for display:",
+                result.cleanFormValues
+            );
+
+            // Here you can make your API call
+            submitBirthRegistration(result.apiPayload, result.data);
+        } else {
+            // Form is not ready - validation errors are already shown
+            console.log("Form is not ready:", result.data);
+            console.log(
+                "Current form values for display:",
+                result.cleanFormValues
+            );
+        }
+    };
+    const [submitForm, { data, isLoading, isError }] = useSubmitFormMutation();
+    const submitBirthRegistration = async (
+        apiPayload: any,
+        submissionData: any
+    ) => {
+        try {
+            const response = await submitForm(apiPayload).unwrap();
+            // const response2 = await new Promise((resolve) =>
+            //     setTimeout(resolve, 1000)
+            // );
+            if (response) {
+                toast.success("Birth registration created successfully");
+            } else {
+                toast.error("Failed to create birth registration");
+            }
+        } catch (error) {
+            console.error("Error creating birth registration:", error);
+            toast.error(
+                "An error occurred while creating the birth registration"
+            );
+        }
+
+        console.log("Birth registration submitted successfully!");
+        alert("Birth registration submitted successfully!");
     };
 
     const formContent = (
@@ -53,10 +102,11 @@ export default function Page() {
                 formValues={formValues}
                 groupMap={groupMap}
                 allFields={allFields}
-                previewTitle="Birth Registrations"
-                layout="2-1"
+                previewTitle='Birth Registrations'
+                layout='2-1'
                 config={formConfig}
                 expandedSections={expandedSections}
+                onAccordionStateChange={handleAccordionStateChange}
             />
         </>
     );

@@ -5,7 +5,7 @@ import { FormConfig, FieldConfig, FieldGroup, GroupedFields } from "@/types/form
  * This eliminates the need for hardcoded grouping in individual pages
  */
 export function generateFieldGrouping(config: FormConfig) {
-    const allFields: { key: string; label: string }[] = [];
+    const allFields: { key: string; label: string; type: string }[] = [];
     const groupMap: Record<string, string> = {};
     const groupedFields: GroupedFields = {};
 
@@ -16,6 +16,7 @@ export function generateFieldGrouping(config: FormConfig) {
             allFields.push({
                 key: field.key,
                 label: field.label,
+                type: field.type,
             });
 
             // Determine group for this field
@@ -73,7 +74,7 @@ export function generateAdvancedFieldGrouping(config: FormConfig) {
     // If custom groups are defined in config, use them
     if (config.grouping?.groups) {
         const customGroupMap: Record<string, string> = {};
-        const customAllFields: { key: string; label: string }[] = [];
+        const customAllFields: { key: string; label: string; type: string }[] = [];
 
         config.grouping.groups.forEach((group) => {
             // Find all fields that belong to this group
@@ -90,6 +91,7 @@ export function generateAdvancedFieldGrouping(config: FormConfig) {
                 customAllFields.push({
                     key: field.key,
                     label: field.label,
+                    type: field.type,
                 });
             });
         });
