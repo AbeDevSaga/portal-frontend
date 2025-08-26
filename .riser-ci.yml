@@ -1,0 +1,50 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  tags:
+    - shared
+  script:
+    - docker build -t registry.risertechservices.com/crrsa/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA .
+    - docker tag registry.risertechservices.com/crrsa/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA registry.risertechservices.com/crrsa/$CI_PROJECT_NAME:latest
+    - docker push registry.risertechservices.com/crrsa/$CI_PROJECT_NAME:latest
+
+
+sonarqube-check:
+  stage: test
+  tags:
+    - shared
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "sonarqube-check-protected"
+    paths:
+      - .sonar/cache
+  script: 
+    - echo "Starting SonarQube analysis with Docker CLI..."
+    - docker run --rm -e SONAR_USER_HOME=/tmp/.sonar -v "$(pwd):/usr/src" -w /usr/src sonarsource/sonar-scanner-cli:latest sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.typescript.tsconfigPath= -Dsonar.typescript.lcov.reportPaths= -Dsonar.javascript.lcov.reportPaths= || echo "SonarQube analysis failed but continuing..."
+  allow_failure: true
+  only:
+    - main
+
+
+
+deploy-job:
+  stage: deploy
+  tags:
+    - shared
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh -o StrictHostKeyChecking=no -T $SSH_USER@$SSH_HOST "
+        docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD &&
+        cd $SSH_DIR &&
+        docker pull registry.risertechservices.com/crrsa/$CI_PROJECT_NAME:latest &&
+        ./start.sh"
