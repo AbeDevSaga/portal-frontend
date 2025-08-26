@@ -6,7 +6,7 @@ import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import DetailBlock from "../components/detailBlock";
 import HeroSection from "@/components/common/HeroSection";
-import { formConfig } from "../../new/birth-form-fields";
+import { birthFormConfig } from "../../new/birth-form-fields";
 import { mapApiResponseToFormFields } from "@/utils/dynamic-form/dynamicApiMapper";
 import { useGetBirthBySlugQuery } from "@/redux/api/birthApi";
 
@@ -30,7 +30,7 @@ export default function Page() {
         if (!isError && !isLoading && data) {
             const mappedData = mapApiResponseToFormFields(
                 data.response[0],
-                formConfig
+                birthFormConfig
             );
             setResponse(mappedData);
         }
