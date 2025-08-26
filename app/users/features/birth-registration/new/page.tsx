@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 import { generateFieldGrouping } from "@/utils/dynamic-form/fieldGrouping";
-import { formConfig } from "./birth-form-fields";
+// import { birthFormConfig } from "./birth-form-fields";
+import { hcBirthFormConfig as birthFormConfig } from "./birth-hc-form-fields";
 import { useEffect, useState } from "react";
 import { processFormSubmission } from "@/utils/formSubmissionUtils";
 import { useSubmitFormMutation } from "@/redux/api/birthApi";
@@ -14,22 +15,22 @@ import { toast } from "sonner";
 
 export default function Page() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
-    const { allFields, groupMap } = generateFieldGrouping(formConfig);
+    const { allFields, groupMap } = generateFieldGrouping(birthFormConfig);
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     useEffect(() => {
-        const initialExpanded = formConfig.steps
+        const initialExpanded = birthFormConfig.steps
             .map((step, index) =>
                 step.defaultExpanded ? `step-${index}` : null
             )
             .filter(Boolean) as string[];
         setExpandedSections(initialExpanded);
-    }, [formConfig.steps]);
+    }, [birthFormConfig.steps]);
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
 
     const handleCreateBirth = (value: any) => {
-        const result = processFormSubmission(value, formConfig);
+        const result = processFormSubmission(value, birthFormConfig);
         console.log("result", result);
         if (result.success) {
             // Form is ready for submission
@@ -79,7 +80,7 @@ export default function Page() {
     const formContent = (
         <Card className='p-5'>
             <DynamicForm
-                config={formConfig}
+                config={birthFormConfig}
                 handleSubmit={(value) => handleCreateBirth(value)}
                 initialValues={formValues}
                 formStyle='grid grid-cols-2 gap-5'
@@ -92,8 +93,8 @@ export default function Page() {
     return (
         <>
             <HeroSection
-                title='New Birth Registration'
-                description='This is the place to register birth.'
+                title='Register New Birth'
+                description='This is the place to register new birth from health center.'
                 action={<></>}
             />
 
@@ -102,9 +103,9 @@ export default function Page() {
                 formValues={formValues}
                 groupMap={groupMap}
                 allFields={allFields}
-                previewTitle='Birth Registrations'
+                previewTitle='New Birth Registrations'
                 layout='2-1'
-                config={formConfig}
+                config={birthFormConfig}
                 expandedSections={expandedSections}
                 onAccordionStateChange={handleAccordionStateChange}
             />
