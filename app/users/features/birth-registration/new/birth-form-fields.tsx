@@ -1,6 +1,6 @@
 import { FormConfig } from "@/types/formType";
 
-export const formConfig: FormConfig = {
+export const birthFormConfig: FormConfig = {
     stepperData: [],
     stepperPosition: "",
     grouping: {
