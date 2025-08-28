@@ -12,7 +12,8 @@ export type FieldType =
     | "lookup"
     | "checkbox"
     | "digitalSignature"
-    | "inputSearch";
+    | "inputSearch"
+    | "formArray";
 
 export interface Option {
     label: string;
@@ -37,7 +38,8 @@ export interface ValidatorConfig {
         | "email"
         | "pattern"
         | "minDate"
-        | "maxDate";
+        | "maxDate"
+        | "minAge";
     value?: number | string | Date;
     message: string;
 }
@@ -59,6 +61,9 @@ export interface FieldConfig {
     options?: Option[];
     group?: string;
     groupOrder?: number;
+    // Grid layout configuration
+    gridCols?: 1 | 2 | 3 | 4 | 6 | 12; // Number of grid columns this field should span
+    gridRow?: number; // Optional row positioning
     // Default value for any field type
     defaultValue?: any; // Default value for the field
     // File upload specific properties
@@ -72,6 +77,8 @@ export interface FieldConfig {
     clearable?: boolean; // For react-select
     disabled?: boolean; // For any field type
     digitalSignatureConfig?: DigitalSignatureConfig;
+    // FormArray specific properties
+    formArrayConfig?: FormArrayConfig;
     // Dynamic field behavior callbacks (available for all field types)
     getDependentValue?: (formValues: any) => any; // Get value from dependent field
     getDescription?: (dependentValue: any) => string; // Dynamic description based on dependent value
@@ -175,4 +182,16 @@ export interface DigitalSignatureConfig {
     required?: boolean; // Whether signature is required
     placeholder?: string; // Placeholder text when no signature
     validationMessage?: string; // Custom validation message
+}
+
+export interface FormArrayConfig {
+    // Configuration for the form array field
+    minItems?: number; // Minimum number of items required
+    maxItems?: number; // Maximum number of items allowed
+    addButtonText?: string; // Text for the add button
+    removeButtonText?: string; // Text for the remove button
+    groupTitle?: string; // Title for each group (e.g., "Item {index}")
+    groupFields: FieldConfig[]; // Fields that make up each group
+    allowEmpty?: boolean; // Whether to allow empty groups
+    defaultGroupCount?: number; // Number of groups to show by default
 }
