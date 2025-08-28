@@ -1,4 +1,4 @@
-import { FormConfig } from "@/types/formType";
+import { FormConfig } from "@/common/types/formType";
 
 export const birthFormConfig: FormConfig = {
     stepperData: [],
