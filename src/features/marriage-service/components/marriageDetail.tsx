@@ -2,13 +2,13 @@
 import { useParams } from "next/navigation";
 import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useGetMarriageBySlugQuery } from "@/redux/api/marriageApi";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import HeroSection from "@/common/components/common/HeroSection";
 import DetailBlock from "@/common/components/common/detailBlock";
 import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
 import { formConfig } from "./marraige-form-fields";
+import { useGetMarriageBySlugQuery } from "../api/marriageApi";
 
 // Define the type for the mapped response data
 type MappedResponseData = {

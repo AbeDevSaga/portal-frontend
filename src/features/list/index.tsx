@@ -4,14 +4,15 @@ import { Plus } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Birthcolumns } from "./tableColumns";
+import { Birthcolumns } from "./components/tableColumns";
 import { useGetBirthsListQuery } from "@/redux/api/birthApi";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import { DataTable } from "@/common/components/common/CrrsaTable";
 import SelectComponent from "@/common/components/common/SelectComponent";
+import { useGetListQuery } from "./api/listApi";
 
-export default function BirthList() {
+export default function List() {
     const [response, setResponse] = useState([]);
 
     const t = useTranslations();
@@ -20,7 +21,7 @@ export default function BirthList() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const typeValue = searchParams.get("type") || "";
-    const statusValue = searchParams.get("status") || "all";
+    const statusValue = searchParams.get("status") || "MARRIAGE";
     const [pageDetail, setPageDetail] = useState({
         pageIndex: 0,
         pageCount: 1,
@@ -59,9 +60,15 @@ export default function BirthList() {
         });
     };
 
-    const { data, isLoading, isError } = useGetBirthsListQuery({
-        page: pageDetail.pageIndex + 1,
+    // const { data, isLoading, isError } = useGetBirthsListQuery({
+    //     page: pageDetail.pageIndex + 1,
+    //     perPage: pageDetail.pageSize,
+    // });
+    const { isLoading, isError, data } = useGetListQuery({
+        page: pageDetail.pageIndex,
         perPage: pageDetail.pageSize,
+        type: statusValue,
+        languageCode: "en",
     });
 
     useEffect(() => {

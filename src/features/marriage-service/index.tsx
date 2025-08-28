@@ -13,7 +13,29 @@ import { formConfig } from "./components/marraige-form-fields";
 import { useEffect, useState } from "react";
 import HeroSection from "@/common/components/common/HeroSection";
 import { useSubmitFormMutation } from "./api/marriageApi";
+import { toast } from "sonner";
 
+const data = {
+    dateOfMarriage: "2025-08-06T21:00:00.000Z",
+    groomPlaceOfBirth: "Ethiopia",
+    groomCurrentResidence: "Ethiopia",
+    groomWitnessFirstResidence: "Ethiopia",
+    groomWitnessSecondResidence: "Ethiopia",
+    groomFullName: "",
+    groomNationality: "",
+    groomDateOfBirth: "",
+    earlierMaritalStatusGroom: "",
+    bridePlaceOfBirth: "Ethiopia",
+    brideCurrentResidence: "Ethiopia",
+    brideWitnessFirstResidence: "Ethiopia",
+    brideWitnessSecondResidence: "Ethiopia",
+    brideFullName: "",
+    brideNationality: "",
+    brideDateOfBirth: "",
+    earlierMaritalStatusBride: "",
+    groomSpecialApproval: "crrsa.jpg",
+    brideSpecialApproval: "crrsa.jpg",
+};
 export default function MarriageNew() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
     const { allFields, groupMap } = generateFieldGrouping(formConfig);
@@ -29,20 +51,54 @@ export default function MarriageNew() {
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
+    const mapDataModel = (value: any) => {
+        const body = {
+            wifeId: value.brideResidentId.id,
+            husbandId: value.groomResidentId.id,
+            supportingDoc: "string",
+            registryOfficeCode: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            husbandWetnessOne: value.groomWitnessFirstResidentId.id,
+            husbandWetnessTwo: value.groomWitnessSecondResidentId.id,
+            wifeWetnessOne: value.brideWitnessFirstResidentId.id,
+            wifeWetnessTwo: value.brideWitnessSecondResidentId.id,
+            marriageLocalization: [
+                {
+                    languageCode: "string",
+                    marriageDate: "2025-08-23",
+                    marriageType: "string",
+                    reason: "string",
+                },
+            ],
+            vitalEventsRequest: {
+                requesterId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                eventType: "BIRTH",
+                status: "NEW",
+                registrarOfficeId: "string",
+                localisation: [
+                    {
+                        languageCode: "string",
+                        submissionDate: value.dateOfMarriage,
+                    },
+                ],
+            },
+        };
+        return body;
+    };
 
     const handleCreateMarriage = (value: any) => {
         const result = processFormSubmission(value, formConfig);
 
         if (result.success) {
+            const bodyMapped = mapDataModel(value);
             // Form is ready for submission
-            console.log("Form is ready! API Payload:", result.apiPayload);
-            console.log(
-                "Cleans form values for display:",
-                result.cleanFormValues
-            );
+            console.log("Form is ready! API Payload:", bodyMapped);
+            // console.log(
+            //     "Cleans form values for display:",
+            //     result.cleanFormValues
+            // );
 
             // Here you can make your API call
-            submitMarriageRegistration(result.apiPayload, result.data);
+            submitMarriageRegistration(bodyMapped, result.data);
         } else {
             // Form is not ready - validation errors are already shown
             console.log("Form is not ready:", result.data);
@@ -53,40 +109,34 @@ export default function MarriageNew() {
         }
     };
 
+    const [submitForm, { data, isLoading, isError }] = useSubmitFormMutation();
+
     const submitMarriageRegistration = async (
         apiPayload: any,
         submissionData: any
     ) => {
         try {
-            console.log(
-                "Submitting Marriage registration with payload:",
-                apiPayload
-            );
-
-            // Here you would make your actual API call
-            // Example:
-            // const response = await fetch('/api/Marriage-registration', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(apiPayload)
-            // });
-
-            // For now, simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            console.log("Marriage registration submitted successfully!");
-            alert("Marriage registration submitted successfully!");
-            //   toast.success("Marriage registration submitted successfully!");
-        } catch (error) {
-            console.error("Error submitting Marriage registration:", error);
-            alert("Error submitting Marriage registration. Please try again.");
-            // toast.error(
-            //     "Error submitting Marriage registration. Please try again."
+            const response = await submitForm(apiPayload).unwrap();
+            // const response2 = await new Promise((resolve) =>
+            //     setTimeout(resolve, 1000)
             // );
+            if (response) {
+                toast.success("Marriage registration submitted successfully!");
+            } else {
+                toast.error("Failed to create Marriage registration");
+            }
+        } catch (error) {
+            console.error("Error creating birth registration:", error);
+            toast.error(
+                "An error occurred while creating the birth registration"
+            );
         }
+
+        toast.error(
+            "Error submitting Marriage registration. Please try again."
+        );
     };
+
     const formContent = (
         <Card className='p-5'>
             <DynamicForm
