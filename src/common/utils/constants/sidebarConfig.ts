@@ -26,8 +26,8 @@ export const sidebarConfig: SidebarSection[] = [
     childRoutes: [
       {
         icon: birth.src,
-        label: "birth",
-        route: "/home/birth",
+        label: "Vital Registration",
+        route: "/application",
       },
       {
         icon: death.src,
