@@ -18,56 +18,23 @@ export const birthRegistrationFormConfig: FormConfig = {
             defaultExpanded: true,
             fields: [
                 {
-                    type: "checkbox",
-                    key: "registeredInHospital",
-                    label: "Registered in hospital?",
+                    type: "radio",
+                    key: "birthType",
+                    label: "Birth Type",
                     description: "",
-                    required: false,
+                    options: [
+                        { label: "Registered in hospital?", value: "Registered in hospital" },
+                        { label: "Is new child?", value: "Is new child" },
+                        { label: "Already registered as family member?", value: "Already registered as family member" },
+                    ],
+                    placeholder: "",
+                    validators: [
+                        { type: "required", message: "This field is required" },
+                    ],
+                    required: true,
                     group: "Child Details",
                     groupOrder: 1,
-                    gridCols: 12,
-                    // getDependentValue: (formValues: any) => ({
-                    //     isNewBorn: formValues.isNewChild,
-                    // }),
-                    // isDisabled: (dependentValues: any) => {
-                    //     // Disable the field when it shouldn't be interactive
-                    //     return dependentValues?.isNewBorn !== true;
-                    // },
-                },
-                {
-                    type: "checkbox",
-                    key: "isNewChild",
-                    label: "Is new child?",
-                    description: "",
-                    required: false,
-                    group: "Child Details",
-                    groupOrder: 2,
-                    gridCols: 6,
-                    getDependentValue: (formValues: any) => ({
-                        registeredInHospital: formValues.registeredInHospital,
-                    }),
-                    isDisabled: (dependentValues: any) => {
-                        // Disable the field when it shouldn't be interactive
-                        return dependentValues?.registeredInHospital === true;
-                    },
-                },
-                {
-                    type: "checkbox",
-                    key: "alreadyRegisteredAsFamily",
-                    label: "Already registered as family member?",
-                    description: "",
-                    required: false,
-                    group: "Child Details",
-                    groupOrder: 3,
-                    gridCols: 6,
-                    getDependentValue: (formValues: any) => ({
-                        registeredInHospital: formValues.registeredInHospital,
-                        isNewChild: formValues.isNewChild,
-                    }),
-                    isDisabled: (dependentValues: any) => {
-                        // Disable the field when it shouldn't be interactive
-                        return dependentValues?.registeredInHospital === true && dependentValues?.isNewChild !== true;
-                    },
+                    gridCols: 12
                 },
                 {
                     type: "inputSearch",
@@ -84,7 +51,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 4,
+                    groupOrder: 2,
                     gridCols: 6,
                     inputSearchConfig: {
                         isExternal: true,
@@ -100,9 +67,6 @@ export const birthRegistrationFormConfig: FormConfig = {
                         noOptionsMessage: "No resident found",
                         loadingMessage: "Searching residents...",
                         additionalParams: {
-                            // limit: 20,        // Uncomment and modify as needed
-                            // offset: 0,        // Uncomment and modify as needed
-                            // Add any other parameters your API expects
                         },
                         transformResponse: (data: any) => {
                             if (
@@ -116,8 +80,8 @@ export const birthRegistrationFormConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.urid || "Unknown",
+                                name: resident.urid || "Unknown",
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -139,22 +103,14 @@ export const birthRegistrationFormConfig: FormConfig = {
                         },
                     },
                     getDependentValue: (formValues: any) => ({
-                        isNewBorn: formValues.isNewChild,
-                        registeredInHospital: formValues.registeredInHospital,
+                        birthType: formValues.birthType,
                     }),
-                    // isRequired: (dependentValues: any) => {
-                    //     return dependentValues?.isNewBorn === true;
-                    // },
-                    isHide: (dependentValues: any) => {
-                        // Simplified logic to prevent conditional hook calls
-                        // Always show the field, but control its behavior through other means
-                        return dependentValues?.registeredInHospital !== true;
+                    isRequired: (dependentValues: any) => {
+                        return dependentValues?.birthType === "Registered in hospital";
                     },
-                    // isDisabled: (dependentValues: any) => {
-                    //     // Disable the field when it shouldn't be interactive
-                    //     // This prevents hook issues while maintaining the desired behavior
-                    //     return dependentValues?.isNewBorn !== true && dependentValues?.registeredInHospital !== true;
-                    // },
+                    isHide: (dependentValues: any) => {
+                        return dependentValues?.birthType !== "Registered in hospital";
+                    },
                 },
                 {
                     type: "inputSearch",
@@ -171,7 +127,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 5,
+                    groupOrder: 3,
                     gridCols: 6,
                     inputSearchConfig: {
                         isExternal: true,
@@ -187,9 +143,6 @@ export const birthRegistrationFormConfig: FormConfig = {
                         noOptionsMessage: "No resident found",
                         loadingMessage: "Searching residents...",
                         additionalParams: {
-                            // limit: 20,        // Uncomment and modify as needed
-                            // offset: 0,        // Uncomment and modify as needed
-                            // Add any other parameters your API expects
                         },
                         transformResponse: (data: any) => {
                             if (
@@ -203,8 +156,8 @@ export const birthRegistrationFormConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.urid || "Unknown",
+                                name: resident.urid || "Unknown",
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -226,21 +179,14 @@ export const birthRegistrationFormConfig: FormConfig = {
                         },
                     },
                     getDependentValue: (formValues: any) => ({
-                        alreadyRegisteredAsFamily: formValues.alreadyRegisteredAsFamily,
+                        birthType: formValues.birthType,
                     }),
-                    // isRequired: (dependentValues: any) => {
-                    //     return dependentValues?.isNewBorn === true;
-                    // },
-                    isHide: (dependentValues: any) => {
-                        // Simplified logic to prevent conditional hook calls
-                        // Always show the field, but control its behavior through other means
-                        return dependentValues?.alreadyRegisteredAsFamily !== true;
+                    isRequired: (dependentValues: any) => {
+                        return dependentValues?.birthType === "Already registered as family member";
                     },
-                    // isDisabled: (dependentValues: any) => {
-                    //     // Disable the field when it shouldn't be interactive
-                    //     // This prevents hook issues while maintaining the desired behavior
-                    //     return dependentValues?.isNewBorn !== true && dependentValues?.registeredInHospital !== true;
-                    // },
+                    isHide: (dependentValues: any) => {
+                        return dependentValues?.birthType !== "Already registered as family member";
+                    },
                 },
                 {
                     type: "input",
@@ -254,16 +200,16 @@ export const birthRegistrationFormConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Child Details",
-                    groupOrder: 6,
+                    groupOrder: 4,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isNewChild: formValues.isNewChild,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isNewChild === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isNewChild !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -284,17 +230,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 7,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isNewChild: formValues.isNewChild,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isNewChild === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isNewChild !== true;
-                    },
-                    isDisabled: (dependentValues: any) => {
-                        // Disable the field when it shouldn't be interactive
-                        return dependentValues?.isNewChild !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -349,13 +291,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                         },
                     },
                     getDependentValue: (formValues: any) => ({
-                        isNewChild: formValues.isNewChild,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isNewChild === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isNewChild !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -378,13 +320,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 9,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isNewChild: formValues.isNewChild,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isNewChild === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isNewChild !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -410,13 +352,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 10,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isNewChild: formValues.isNewChild,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isNewChild === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isNewChild !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -429,13 +371,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 13,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isNewChild: formValues.isNewChild,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isNewChild === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isNewChild !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -455,13 +397,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 14,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isBornInHealthCenter: formValues.isBornInHealthCenter,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isBornInHealthCenter === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isBornInHealthCenter !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -481,13 +423,13 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 15,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isBornInHealthCenter: formValues.isBornInHealthCenter,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isBornInHealthCenter === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isBornInHealthCenter !== true;
+                        return dependentValues?.birthType !== "Is new child";
                     },
                 },
                 {
@@ -507,13 +449,383 @@ export const birthRegistrationFormConfig: FormConfig = {
                     groupOrder: 16,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
-                        isBornInHealthCenter: formValues.isBornInHealthCenter,
+                        birthType: formValues.birthType,
                     }),
                     isRequired: (dependentValues: any) => {
-                        return dependentValues?.isBornInHealthCenter === true;
+                        return dependentValues?.birthType === "Is new child";
                     },
                     isHide: (dependentValues: any) => {
-                        return dependentValues?.isBornInHealthCenter !== true;
+                        return dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "inputSearch",
+                    key: "fatherResidentId",
+                    label: "Father's resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
+                    description:
+                        "Search for a resident by entering their ID. The system will search as you type.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Resident ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 300,
+                        cacheResults: true,
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
+                        },
+                        transformResponse: (data: any) => {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
+                                return [];
+                            }
+
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.urid || "Unknown",
+                                name: resident.urid || "Unknown",
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" "),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident,
+                            }));
+                        },
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        birthType: formValues.birthType,
+                    }),
+                    isRequired: (dependentValues: any) => {
+                        return dependentValues?.birthType === "Is new child";
+                    },
+                    isHide: (dependentValues: any) => {
+                        return dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "input",
+                    key: "fatherFullName",
+                    label: "Father's Full Name",
+                    placeholder: "",
+                    description: "",
+                    validators: [
+                        { type: "required", message: "First name is required" },
+                    ],
+                    required: false,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId.fullName || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        console.log("dependentValues father resident", dependentValues);
+                        if(!dependentValues?.fatherResidentId && dependentValues?.birthType !== "Is new child") {
+                            return true;
+                        }
+                        return false;
+                    },
+                },
+                {
+                    type: "input",
+                    key: "fatherDateOfBirth",
+                    label: "Father's Date of Birth",
+                    placeholder: "",
+                    description: "",
+                    validators: [
+                        { type: "required", message: "Date is required" },
+                    ],
+                    required: false,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId.dateOfBirth ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.fatherResidentId || dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "input",
+                    key: "fatherPhoneNumber",
+                    label: "Father's phone number",
+                    placeholder: "",
+                    description: "",
+                    validators: [
+                        { type: "required", message: "Date is required" },
+                    ],
+                    required: false,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.fatherResidentId &&
+                            typeof dependentValues.fatherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.fatherResidentId.mobileNumber ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        fatherResidentId: formValues.fatherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.fatherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.fatherResidentId || dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "inputSearch",
+                    key: "motherResidentId",
+                    label: "Mother's resident ID",
+                    placeholder: "Enter at least 3 characters to search...",
+                    description:
+                        "Search for a resident by entering their ID. The system will search as you type.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Resident ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    inputSearchConfig: {
+                        isExternal: true,
+                        apiEndpoint: "/resident/residents",
+                        method: "GET",
+                        searchKey: "search",
+                        valueKey: "id",
+                        labelKey: "name",
+                        minSearchLength: 3,
+                        debounceMs: 300,
+                        cacheResults: true,
+                        placeholder: "Search for resident...",
+                        noOptionsMessage: "No resident found",
+                        loadingMessage: "Searching residents...",
+                        additionalParams: {
+                            // limit: 20,        // Uncomment and modify as needed
+                            // offset: 0,        // Uncomment and modify as needed
+                            // Add any other parameters your API expects
+                        },
+                        transformResponse: (data: any) => {
+                            if (
+                                !data ||
+                                !data.content ||
+                                !Array.isArray(data.content)
+                            ) {
+                                return [];
+                            }
+
+                            return data.content.map((resident: any) => ({
+                                id: resident.id,
+                                value: resident.id,
+                                label: resident.urid || "Unknown",
+                                name: resident.urid || "Unknown",
+                                firstName: resident.firstName,
+                                middleName: resident.middleName,
+                                lastName: resident.lastName,
+                                fullName: [
+                                    resident.firstName,
+                                    resident.middleName,
+                                    resident.lastName,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" "),
+                                age: resident.age,
+                                dateOfBirth: resident.dateOfBirth,
+                                gender: resident.gender,
+                                maritalStatus: resident.maritalStatus,
+                                mobileNumber: resident.mobileNumber,
+                                nationality: resident.nationality,
+                                ...resident,
+                            }));
+                        },
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        birthType: formValues.birthType,
+                    }),
+                    isRequired: (dependentValues: any) => {
+                        return dependentValues?.birthType === "Is new child";
+                    },
+                    isHide: (dependentValues: any) => {
+                        return dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "input",
+                    key: "motherFullName",
+                    label: "Mother's Full Name",
+                    placeholder: "",
+                    description: "",
+                    validators: [
+                        { type: "required", message: "First name is required" },
+                    ],
+                    required: false,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId.fullName || ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId || dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "input",
+                    key: "motherDateOfBirth",
+                    label: "Mother's Date of Birth",
+                    placeholder: "",
+                    description: "",
+                    validators: [
+                        { type: "required", message: "Date is required" },
+                    ],
+                    required: false,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId.dateOfBirth ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId || dependentValues?.birthType !== "Is new child";
+                    },
+                },
+                {
+                    type: "input",
+                    key: "motherPhoneNumber",
+                    label: "Mother's phone number",
+                    placeholder: "",
+                    description: "",
+                    validators: [
+                        { type: "required", message: "Date is required" },
+                    ],
+                    required: false,
+                    group: "Child Details",
+                    groupOrder: 14,
+                    gridCols: 6,
+                    defaultValue: (dependentValues: any) => {
+                        if (
+                            dependentValues?.motherResidentId &&
+                            typeof dependentValues.motherResidentId === "object"
+                        ) {
+                            return (
+                                dependentValues.motherResidentId.mobileNumber ||
+                                ""
+                            );
+                        }
+                        return "";
+                    },
+                    getDependentValue: (formValues: any) => ({
+                        motherResidentId: formValues.motherResidentId,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.motherResidentId;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.motherResidentId || dependentValues?.birthType !== "Is new child";
                     },
                 },
             ],
