@@ -461,57 +461,79 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
 
             case "radio":
                 return (
-                    <div className='space-y-1'>
-                        <Label className='text-primary font-semibold'>
-                            {field.label}
-                            {field.required ? (
-                                <span className='text-red-600'>*</span>
-                            ) : null}
-                        </Label>
-                        <Field name={field.key}>
-                            {({ field: formikField, form }: any) => (
-                                <RadioGroup
-                                    value={formikField.value || ""}
-                                    onValueChange={(value) => {
-                                        form.setFieldValue(field.key, value);
-                                        dispatch(
-                                            updateField({
-                                                key: field.key,
-                                                value,
-                                            })
-                                        );
-                                    }}
-                                    className='flex space-x-4'
-                                >
-                                    {field.options?.map((opt) => (
-                                        <Label
-                                            key={opt.value}
-                                            className='flex items-center space-x-2'
-                                        >
-                                            <RadioGroupItem value={opt.value} />
-                                            <span>{opt.label}</span>
-                                            {field.required && (
-                                                <span className='text-red-600'>
-                                                    *
-                                                </span>
-                                            )}
-                                        </Label>
-                                    ))}
-                                </RadioGroup>
-                            )}
-                        </Field>
-                        {field.description &&
-                            field.description.trim() !== "" && (
-                                <p className='text-[#7D7D7D] text-sm mt-1'>
-                                    {field.description}
-                                </p>
-                            )}
-                        <ErrorMessage
-                            name={field.key}
-                            component='div'
-                            className='text-red-500 text-sm'
-                        />
-                    </div>
+                    <Field name={field.key}>
+                        {({ field: formikField, form }: any) => {
+                            // Get dependent field values if callback is provided
+                            const dependentValues = field.getDependentValue
+                                ? field.getDependentValue(form.values)
+                                : null;
+
+                            // Dynamic field properties based on dependent values
+                            const dynamicDescription = field.getDescription
+                                ? field.getDescription(dependentValues)
+                                : field.description;
+                            const isFieldDisabled = field.isDisabled
+                                ? field.isDisabled(dependentValues)
+                                : field.disabled;
+                            const isFieldHidden = field.isHide
+                                ? field.isHide(dependentValues)
+                                : false;
+                            const isFieldRequired = field.isRequired
+                                ? field.isRequired(dependentValues)
+                                : field.required;
+
+                            // If field is hidden, render empty div to maintain hook consistency
+                            if (isFieldHidden) {
+                                return <div style={{ display: "none" }}></div>;
+                            }
+
+                            return (
+                                <div className='space-y-1'>
+                                    <Label className='text-primary font-semibold'>
+                                        {field.label}
+                                        {isFieldRequired ? (
+                                            <span className='text-red-600'>*</span>
+                                        ) : null}
+                                    </Label>
+                                    <RadioGroup
+                                        value={formikField.value || ""}
+                                        onValueChange={(value) => {
+                                            form.setFieldValue(field.key, value);
+                                            dispatch(
+                                                updateField({
+                                                    key: field.key,
+                                                    value,
+                                                })
+                                            );
+                                        }}
+                                        className='flex space-x-4'
+                                        disabled={isFieldDisabled}
+                                    >
+                                        {field.options?.map((opt) => (
+                                            <Label
+                                                key={opt.value}
+                                                className='flex items-center space-x-2'
+                                            >
+                                                <RadioGroupItem value={opt.value} />
+                                                <span>{opt.label}</span>
+                                            </Label>
+                                        ))}
+                                    </RadioGroup>
+                                    {dynamicDescription &&
+                                        dynamicDescription.trim() !== "" && (
+                                            <p className='text-[#7D7D7D] text-sm mt-1'>
+                                                {dynamicDescription}
+                                            </p>
+                                        )}
+                                    <ErrorMessage
+                                        name={field.key}
+                                        component='div'
+                                        className='text-red-500 text-sm'
+                                    />
+                                </div>
+                            );
+                        }}
+                    </Field>
                 );
 
             case "checkbox":

@@ -292,6 +292,10 @@ export const birthRegistrationFormConfig: FormConfig = {
                     isHide: (dependentValues: any) => {
                         return dependentValues?.isNewChild !== true;
                     },
+                    isDisabled: (dependentValues: any) => {
+                        // Disable the field when it shouldn't be interactive
+                        return dependentValues?.isNewChild !== true;
+                    },
                 },
                 {
                     type: "lookup",
