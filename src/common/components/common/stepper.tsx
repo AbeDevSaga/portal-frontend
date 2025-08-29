@@ -51,7 +51,11 @@ export function Stepper({
                         >
                             <div
                                 className={cn(
-                                    "flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-colors border border-primary",
+                                    `flex w-fu items-center justify-center w-6 h-6 rounded-full text-sm font-medium transition-colors border border-[#073954] ${
+                                        index === activeStep
+                                            ? "bg-[#073954] text-white"
+                                            : "text-[#073954]"
+                                    }`,
                                     index < activeStep
                                         ? "bg-primary text-white"
                                         : ""
@@ -61,7 +65,7 @@ export function Stepper({
                             </div>
                             <div
                                 className={cn(
-                                    "text-sm",
+                                    "text-xs",
                                     index <= activeStep ? "font-semibold" : "",
                                     orientation === "vertical"
                                         ? "min-w-[200px]"
@@ -76,7 +80,7 @@ export function Stepper({
                                 className={cn(
                                     "transition-colors",
                                     orientation === "horizontal"
-                                        ? "w-12 h-[2px] mt-4"
+                                        ? "w-6 h-[2px] mt-4"
                                         : "w-[2px] h-8 ml-4",
                                     index < activeStep
                                         ? "bg-primary"

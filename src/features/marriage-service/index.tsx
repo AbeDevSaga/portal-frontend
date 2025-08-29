@@ -113,7 +113,6 @@ export default function MarriageNew() {
                 router.push(
                     `/application/marriage/detail/${response.registration_form_number}`
                 );
-              
             } else {
                 toast.error("Failed to create Marriage registration");
             }
@@ -144,11 +143,11 @@ export default function MarriageNew() {
 
     return (
         <>
-            <HeroSection
+            {/* <HeroSection
                 title='New Marriage Registration'
                 description='This is the place to register Marriage.'
                 action={<></>}
-            />
+            /> */}
 
             <FormWithSidePreview
                 formContent={formContent}

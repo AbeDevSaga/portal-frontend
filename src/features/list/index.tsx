@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Birthcolumns } from "./components/tableColumns";
-import { useGetBirthsListQuery } from "@/redux/api/birthApi";
+// import { useGetBirthsListQuery } from "@/redux/api/birthApi";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import { DataTable } from "@/common/components/common/CrrsaTable";

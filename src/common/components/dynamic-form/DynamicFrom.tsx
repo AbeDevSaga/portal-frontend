@@ -15,6 +15,7 @@ import LivePreview from "./LivePreview";
 import { FormConfig } from "@/common/types/formType";
 import { generateEnhancedSchema } from "@/common/utils/dynamic-form/schemaGenerator";
 import { Button } from "../ui/button";
+import HeroSection from "../common/HeroSection";
 
 interface DynamicFormProps {
     config: FormConfig;
@@ -126,7 +127,11 @@ export default function DynamicForm({
                 <AccordionContent className='pt-4'>
                     <div className={`${formStyle} space-y-4`}>
                         {fields.map((field: any) => (
-                            <FieldRenderer key={field.key} field={field} formValues={formValues} />
+                            <FieldRenderer
+                                key={field.key}
+                                field={field}
+                                formValues={formValues}
+                            />
                         ))}
                     </div>
                 </AccordionContent>
@@ -139,7 +144,11 @@ export default function DynamicForm({
         return (
             <div className={`${formStyle}`}>
                 {fields.map((field: any) => (
-                    <FieldRenderer key={field.key} field={field} formValues={formValues} />
+                    <FieldRenderer
+                        key={field.key}
+                        field={field}
+                        formValues={formValues}
+                    />
                 ))}
             </div>
         );
@@ -150,13 +159,22 @@ export default function DynamicForm({
         if (!hasStepper) return null;
 
         return (
-            <Stepper
-                steps={config.stepperData!}
-                activeStep={stepIndex}
-                orientation={
-                    stepperPosition === "left" ? "vertical" : "horizontal"
-                }
-            />
+            <div className='flex justify-between'>
+                <div className='w-full'>
+                    <HeroSection
+                        title='New Marriage Registration'
+                        description='This is the place to register Marriage.'
+                        action={<></>}
+                    />
+                </div>
+                <Stepper
+                    steps={config.stepperData!}
+                    activeStep={stepIndex}
+                    orientation={
+                        stepperPosition === "left" ? "vertical" : "horizontal"
+                    }
+                />
+            </div>
         );
     };
 
