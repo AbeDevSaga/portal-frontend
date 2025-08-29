@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 // import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 // import { birthFormConfig } from "./birth-form-fields";
-import { hcBirthFormConfig as birthFormConfig } from "./components/birth-hc-form-fields";
+// import { hcBirthFormConfig as birthFormConfig } from "./components/birth-hc-form-fields";
+import {birthRegistrationFormConfig} from "./components//birth-registration-fields";
 import { useEffect, useState } from "react";
 // import { processFormSubmission } from "@/utils/formSubmissionUtils";
 import { toast } from "sonner";
@@ -20,22 +21,22 @@ import { useSubmitFormMutation } from "./api/birthApi";
 
 export default function BirthNew() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
-    const { allFields, groupMap } = generateFieldGrouping(birthFormConfig);
+    const { allFields, groupMap } = generateFieldGrouping(birthRegistrationFormConfig);
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     useEffect(() => {
-        const initialExpanded = birthFormConfig.steps
+        const initialExpanded = birthRegistrationFormConfig.steps
             .map((step, index) =>
                 step.defaultExpanded ? `step-${index}` : null
             )
             .filter(Boolean) as string[];
         setExpandedSections(initialExpanded);
-    }, [birthFormConfig.steps]);
+    }, [birthRegistrationFormConfig.steps]);
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
 
     const handleCreateBirth = (value: any) => {
-        const result = processFormSubmission(value, birthFormConfig);
+        const result = processFormSubmission(value, birthRegistrationFormConfig);
         console.log("result", result);
         if (result.success) {
             // Form is ready for submission
@@ -85,7 +86,7 @@ export default function BirthNew() {
     const formContent = (
         <Card className='p-5'>
             <DynamicForm
-                config={birthFormConfig}
+                config={birthRegistrationFormConfig}
                 handleSubmit={handleCreateBirth}
                 initialValues={formValues}
                 formStyle='grid grid-cols-12 gap-5'
@@ -110,7 +111,7 @@ export default function BirthNew() {
                 allFields={allFields}
                 previewTitle='New Birth Registrations'
                 layout='2-1'
-                config={birthFormConfig}
+                config={birthRegistrationFormConfig}
                 expandedSections={expandedSections}
                 onAccordionStateChange={handleAccordionStateChange}
             />

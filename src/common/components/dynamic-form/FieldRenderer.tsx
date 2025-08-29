@@ -2535,11 +2535,12 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     }),
                                 };
 
-                                // If field is hidden, render empty div to maintain hook consistency
+                                // Don't return early - let the component render but conditionally show content
+                                // This maintains hook consistency
+
+                                // Conditionally render the field content based on isFieldHidden
                                 if (isFieldHidden) {
-                                    return (
-                                        <div style={{ display: "none" }}></div>
-                                    );
+                                    return <div style={{ display: "none" }}></div>;
                                 }
 
                                 return (
@@ -2788,10 +2789,8 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 config.placeholder ||
                                 "Click and drag to sign here";
 
-                            // If field is hidden, render empty div to maintain hook consistency
-                            if (isFieldHidden) {
-                                return <div style={{ display: "none" }}></div>;
-                            }
+                            // Don't return early - let the component render but conditionally show content
+                            // This maintains hook consistency
 
                             // Initialize canvas context
                             React.useEffect(() => {
@@ -2967,6 +2966,11 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 stopDrawing();
                             };
 
+                            // Conditionally render the field content based on isFieldHidden
+                            if (isFieldHidden) {
+                                return <div style={{ display: "none" }}></div>;
+                            }
+
                             return (
                                 <div>
                                     <Label className='text-primary font-semibold'>
@@ -3128,10 +3132,8 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                 ? field.isRequired(dependentValues)
                                 : field.required;
 
-                            // If field is hidden, render empty div to maintain hook consistency
-                            if (isFieldHidden) {
-                                return <div style={{ display: "none" }}></div>;
-                            }
+                            // Don't return early - let the component render but conditionally show content
+                            // This maintains hook consistency
 
                             // Validate required configuration
                             if (!apiEndpoint || !valueKey || !labelKey) {
@@ -3589,6 +3591,11 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                     );
                                 };
                             }, []);
+
+                            // Conditionally render the field content based on isFieldHidden
+                            if (isFieldHidden) {
+                                return <div style={{ display: "none" }}></div>;
+                            }
 
                             return (
                                 <div className='relative' ref={dropdownRef}>

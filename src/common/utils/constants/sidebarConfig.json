@@ -26,18 +26,7 @@
           "icon": "MessageCircleWarning",
           "label": "Complaint",
           "route": "/users/features/complaint/list",
-          "children": [
-            {
-              "icon": "create",
-              "label": "new",
-              "route": "/users/features/complaint/new"
-            },
-            {
-              "icon": "list",
-              "label": "list",
-              "route": "/users/features/complaint/list"
-            }
-          ]
+          "children": []
         }
       ]
     }
