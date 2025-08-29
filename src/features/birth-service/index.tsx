@@ -4,7 +4,7 @@ import { RootState } from "@/redux/store";
 // import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 // import { birthFormConfig } from "./birth-form-fields";
 // import { hcBirthFormConfig as birthFormConfig } from "./components/birth-hc-form-fields";
-import {birthRegistrationFormConfig} from "./components//birth-registration-fields";
+import { birthRegistrationFormConfig } from "./components//birth-registration-fields";
 import { useEffect, useState } from "react";
 // import { processFormSubmission } from "@/utils/formSubmissionUtils";
 import { toast } from "sonner";
@@ -34,20 +34,150 @@ export default function BirthNew() {
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
+    const mapDataModel = (value: any) => {
+        console.log("chile registration value", value);
+        let body = {};
+        if (value.birthType === "Registered in hospital") {
+            body = {
+                requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                actionType: "NEW",
+                "births": {
+                    "registrationOfficeNumber": "RO-2025-002",
+                    "hospitalNotificationId": "HN-1755913119386",
+                    "childResidentId": null,
+                    "fatherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "motherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "declarantResidentId": null,
+                    "withOld": false,
+                    "bloodType": "123e4567-e89b-12d3-a456-426614174004",
+                    "nationality": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+                    "localizations": [
+                        {
+                            "childFirstName": "Abel",
+                            "languageCode": "en",
+                            "placeOfBirth": {
+                                "type": "HEALTH_FACILITY",
+                                "facilityName": "Addis Ababa Hospital",
+                                "facilityType": "Hospital",
+                                "facilityOwnership": "Government"
+                            },
+                            "birthType": "Single",
+                            "childBirthOrder": "1st",
+                            "issuedDate": "2025-08-21",
+                            "reason": "Normal",
+                            "childWeight": 3.2,
+                            "childHeight": 50.5,
+                            "birthDate": "2025-05-20",
+                            "birthTime": "10:15",
+                            "gender": "Male",
+                            "declarantRelation": "",
+                            "attendantName": "Dr. Solomon",
+                            "attendantQualification": "Doctor"
+                        }
+                    ]
+                }
+
+            };
+        } else if (value.birthType === "Is new child") {
+            body = {
+                requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                actionType: "NEW",
+                "births": {
+                    "registrationOfficeNumber": "RO-2025-002",
+                    "hospitalNotificationId": null,
+                    "childResidentId": null,
+                    "fatherResidentId": value.familyResidentId?.id,
+                    "motherResidentId": value.familyResidentId?.id,
+                    "declarantResidentId": null,
+                    "withOld": false,
+                    "bloodType": "123e4567-e89b-12d3-a456-426614174004",
+                    "nationality": value.nationality.id,
+                    "localizations": [
+                        {
+                            "childFirstName": value.firstName,
+                            "languageCode": "en",
+                            "placeOfBirth": {
+                                "type": "HEALTH_FACILITY",
+                                "facilityName": "Addis Ababa Hospital",
+                                "facilityType": "Hospital",
+                                "facilityOwnership": "Government"
+                            },
+                            "birthType": "Single",
+                            "childBirthOrder": "1st",
+                            "issuedDate": "2025-08-21",
+                            "reason": "Normal",
+                            "childWeight": value.birthTimeWeight,
+                            "childHeight": 50.5,
+                            "birthDate": value.dateOfBirth,
+                            "birthTime": "10:15",
+                            "gender": value.gender,
+                            "declarantRelation": "",
+                            "attendantName": "Dr. Solomon",
+                            "attendantQualification": "Doctor"
+                        }
+                    ]
+                }
+
+            };
+        } else if (value.birthType === "Already registered as family member") {
+            body = {
+                requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                actionType: "NEW",
+                "births": {
+                    "registrationOfficeNumber": "RO-2025-002",
+                    "hospitalNotificationId": "HN-1755913119386",
+                    "childResidentId": null,
+                    "fatherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "motherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "declarantResidentId": null,
+                    "withOld": false,
+                    "bloodType": "123e4567-e89b-12d3-a456-426614174004",
+                    "nationality": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+                    "localizations": [
+                        {
+                            "childFirstName": "Abel",
+                            "languageCode": "en",
+                            "placeOfBirth": {
+                                "type": "HEALTH_FACILITY",
+                                "facilityName": "Addis Ababa Hospital",
+                                "facilityType": "Hospital",
+                                "facilityOwnership": "Government"
+                            },
+                            "birthType": "Single",
+                            "childBirthOrder": "1st",
+                            "issuedDate": "2025-08-21",
+                            "reason": "Normal",
+                            "childWeight": 3.2,
+                            "childHeight": 50.5,
+                            "birthDate": "2025-05-20",
+                            "birthTime": "10:15",
+                            "gender": "Male",
+                            "declarantRelation": "",
+                            "attendantName": "Dr. Solomon",
+                            "attendantQualification": "Doctor"
+                        }
+                    ]
+                }
+
+            };
+        }
+        return body;
+    };
 
     const handleCreateBirth = (value: any) => {
         const result = processFormSubmission(value, birthRegistrationFormConfig);
         console.log("result", result);
         if (result.success) {
+            const bodyMapped = mapDataModel(value);
             // Form is ready for submission
-            console.log("Form is ready! API Payload:", result.apiPayload);
-            console.log(
-                "Cleans form values for display:",
-                result.cleanFormValues
-            );
+            console.log("Form is ready! API Payload:", bodyMapped);
+            // console.log(
+            //     "Cleans form values for display:",
+            //     result.cleanFormValues
+            // );
 
             // Here you can make your API call
-            submitBirthRegistration(result.apiPayload, result.data);
+            submitBirthRegistration(bodyMapped, result.data);
         } else {
             // Form is not ready - validation errors are already shown
             console.log("Form is not ready:", result.data);
