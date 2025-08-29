@@ -112,10 +112,12 @@ export interface FieldConfig {
     // InputSearch specific properties
     inputSearchConfig?: {
         isExternal?: boolean; // Whether to use external API or local API route
+        baseUrl?: string; // Custom base URL for the API endpoint (overrides environment variable)
         apiEndpoint: string;
         method?: "GET" | "POST";
         headers?: Record<string, string>;
         searchKey?: string; // Default: 'search'
+        searchFormat?: "query" | "path"; // Default: 'query' - whether to send search term as query parameter or path parameter
         valueKey?: string; // Default: 'id'
         labelKey?: string; // Default: 'name'
         minSearchLength?: number; // Minimum characters before searching (default: 3)

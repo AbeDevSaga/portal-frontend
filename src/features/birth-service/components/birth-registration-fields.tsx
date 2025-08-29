@@ -55,9 +55,11 @@ export const birthRegistrationFormConfig: FormConfig = {
                     gridCols: 6,
                     inputSearchConfig: {
                         isExternal: true,
-                        apiEndpoint: "/resident/residents",
+                        baseUrl: `${process.env.NEXT_PUBLIC_IDX_BACKEND1}	`, // Custom base URL - overrides environment variable
+                        apiEndpoint: "/hosital-notifications",
                         method: "GET",
                         searchKey: "search",
+                        searchFormat: "query", // Query parameter format: /resident/residents?search="term"
                         valueKey: "id",
                         labelKey: "name",
                         minSearchLength: 3,
