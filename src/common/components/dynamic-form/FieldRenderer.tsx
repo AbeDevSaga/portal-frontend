@@ -940,269 +940,463 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
 
             case "fileUpload":
                 return (
-                    <div>
-                        <Label className='text-primary font-semibold'>
-                            {field.label}
-                            {field.required && (
-                                <span className='pl-2 text-red-600'>*</span>
-                            )}
-                        </Label>
-                        <Field name={field.key}>
-                            {({ field: _, form }: any) => {
-                                const currentFiles =
-                                    form.values[field.key] || [];
-                                const isMultiple = field.multiple || false;
+                    <Field name={field.key}>
+                        {({ field: _, form }: any) => {
+                            try {
+                                // Add ref for the file input to clear it when files are removed
+                                const fileInputRef = React.useRef<HTMLInputElement>(null);
+                                
+                                // Get dependent field values if callback is provided
+                                const dependentValues = field.getDependentValue
+                                    ? field.getDependentValue(form.values)
+                                    : null;
+
+                                // Dynamic field properties based on dependent values
+                                const dynamicDescription = field.getDescription
+                                    ? field.getDescription(dependentValues)
+                                    : field.description;
+                                const isFieldDisabled = field.isDisabled
+                                    ? field.isDisabled(dependentValues)
+                                    : field.disabled;
+                                const isFieldHidden = field.isHide
+                                    ? field.isHide(dependentValues)
+                                    : false;
+                                const isFieldRequired = field.isRequired
+                                    ? field.isRequired(dependentValues)
+                                    : field.required;
 
                                 // Get file constraints from field properties
                                 const maxFileSize =
                                     field.maxFileSize || 5 * 1024 * 1024; // 5MB default
                                 const minFiles = field.minFiles || 0;
-                                const maxFiles =
-                                    field.maxFiles || (isMultiple ? 10 : 1);
-                                const allowedTypes = field.allowedTypes || [
-                                    "*",
-                                ];
+                                const maxFiles = field.maxFiles || 10;
+                                const allowedTypes = field.allowedTypes || ["*"];
+                                const isMultiple = field.multiple || false;
+
+                                // DEBUG: Monitor form validation state changes - with safer dependency handling
+                                // IMPORTANT: This hook must be called before any conditional returns
+                                React.useEffect(() => {
+                                    try {
+                                        // Only log if field is visible to avoid unnecessary logging
+                                        if (!isFieldHidden) {
+                                            const currentFiles = form.values[field.key] || (isMultiple ? [] : null);
+                                            console.log(`[DEBUG] FileUpload ${field.key} - Form state changed:`, {
+                                                fieldKey: field.key,
+                                                fieldValue: form.values[field.key],
+                                                fieldTouched: form.touched[field.key],
+                                                fieldErrors: form.errors[field.key],
+                                                formIsValid: form.isValid,
+                                                formIsValidating: form.isValidating,
+                                                formDirty: form.dirty,
+                                                isFieldRequired: isFieldRequired,
+                                                hasFiles: !!currentFiles,
+                                                dependentValues: dependentValues
+                                            });
+                                        }
+                                    } catch (error) {
+                                        console.error(`[ERROR] FileUpload ${field.key} - Debug logging failed:`, error);
+                                    }
+                                }, [
+                                    field.key,
+                                    form.values[field.key],
+                                    form.touched[field.key],
+                                    form.errors[field.key],
+                                    form.isValid,
+                                    form.isValidating,
+                                    form.dirty,
+                                    isFieldRequired,
+                                    isMultiple,
+                                    dependentValues,
+                                    isFieldHidden
+                                ]);
+
+                                // If field is hidden, render empty div to maintain hook consistency
+                                if (isFieldHidden) {
+                                    return <div style={{ display: "none" }}></div>;
+                                }
+
+                                const currentFiles =
+                                    form.values[field.key] || (isMultiple ? [] : null);
 
                                 const handleFileChange = (
                                     e: React.ChangeEvent<HTMLInputElement>
                                 ) => {
-                                    const files = Array.from(
-                                        e.target.files || []
-                                    );
-
-                                    // Validate file count
-                                    if (files.length < minFiles) {
-                                        alert(
-                                            `Please select at least ${minFiles} file(s)`
+                                    try {
+                                        const files = Array.from(
+                                            e.target.files || []
                                         );
-                                        return;
-                                    }
 
-                                    if (files.length > maxFiles) {
-                                        alert(
-                                            `Please select no more than ${maxFiles} file(s)`
-                                        );
-                                        return;
-                                    }
-
-                                    // Validate file sizes
-                                    const oversizedFiles = files.filter(
-                                        (file) => file.size > maxFileSize
-                                    );
-                                    if (oversizedFiles.length > 0) {
-                                        const maxSizeMB = Math.round(
-                                            maxFileSize / (1024 * 1024)
-                                        );
-                                        alert(
-                                            `File(s) too large. Maximum size is ${maxSizeMB}MB`
-                                        );
-                                        return;
-                                    }
-
-                                    // Validate file types
-                                    const invalidFiles = files.filter(
-                                        (file) => {
-                                            if (allowedTypes.includes("*"))
-                                                return false;
-                                            return !allowedTypes.some(
-                                                (type: string) =>
-                                                    file.type.startsWith(
-                                                        type
-                                                    ) ||
-                                                    file.name.endsWith(type)
+                                        // Validate file count
+                                        if (files.length < minFiles) {
+                                            alert(
+                                                `Please select at least ${minFiles} file(s)`
                                             );
+                                            return;
                                         }
-                                    );
 
-                                    if (invalidFiles.length > 0) {
-                                        alert(
-                                            `Invalid file type(s). Allowed: ${allowedTypes.join(
-                                                ", "
-                                            )}`
+                                        if (files.length > maxFiles) {
+                                            alert(
+                                                `Please select no more than ${maxFiles} file(s)`
+                                            );
+                                            return;
+                                        }
+
+                                        // Validate file sizes
+                                        const oversizedFiles = files.filter(
+                                            (file) => file.size > maxFileSize
                                         );
-                                        return;
-                                    }
+                                        if (oversizedFiles.length > 0) {
+                                            const maxSizeMB = Math.round(
+                                                maxFileSize / (1024 * 1024)
+                                            );
+                                            alert(
+                                                `File(s) too large. Maximum size is ${maxSizeMB}MB`
+                                            );
+                                            return;
+                                        }
 
-                                    // Store only serializable metadata in Redux
-                                    const fileMetadata: FileMetadata[] =
-                                        files.map((file) => ({
-                                            name: file.name,
-                                            size: file.size,
-                                            type: file.type,
-                                            lastModified: file.lastModified,
-                                            id: `${file.name}-${file.lastModified}-${file.size}`, // Unique identifier
-                                        }));
+                                        // Validate file types
+                                        const invalidFiles = files.filter(
+                                            (file) => {
+                                                if (allowedTypes.includes("*"))
+                                                    return false;
+                                                return !allowedTypes.some(
+                                                    (type: string) =>
+                                                        file.type.startsWith(
+                                                            type
+                                                        ) ||
+                                                        file.name.endsWith(type)
+                                                );
+                                            }
+                                        );
 
-                                    const selectedFiles = isMultiple
-                                        ? fileMetadata
-                                        : fileMetadata[0];
-                                    form.setFieldValue(
-                                        field.key,
-                                        selectedFiles
-                                    );
-                                    dispatch(
-                                        updateField({
-                                            key: field.key,
-                                            value: selectedFiles,
-                                        })
-                                    );
+                                        if (invalidFiles.length > 0) {
+                                            alert(
+                                                `Invalid file type(s). Allowed: ${allowedTypes.join(
+                                                    ", "
+                                                )}`
+                                            );
+                                            return;
+                                        }
 
-                                    // Store actual File objects in a separate storage for upload
-                                    // This prevents serialization issues while keeping files accessible
-                                    if (isMultiple) {
-                                        files.forEach((file, index) => {
-                                            const fileId =
-                                                fileMetadata[index].id;
-                                            // Store in sessionStorage or a separate state management
+                                        // CRITICAL: Store the actual File objects in Formik for validation
+                                        // This ensures Formik recognizes the field as having a valid value
+                                        const selectedFiles = isMultiple ? files : files[0];
+                                        
+                                        // First set the field value with actual File objects
+                                        form.setFieldValue(
+                                            field.key,
+                                            selectedFiles
+                                        );
+                                        
+                                        // CRITICAL FIX: Mark field as touched and trigger validation
+                                        // Use setTimeout to ensure the field value is set before marking as touched
+                                        setTimeout(() => {
+                                            // Mark field as touched
+                                            form.setFieldTouched(field.key, true, false);
+                                            
+                                            // Trigger field validation
+                                            form.validateField(field.key);
+                                            
+                                            // Force entire form validation to update submit button state
+                                            form.validateForm();
+                                            
+                                            // ENHANCED DEBUG: Check why form is still invalid
+                                            setTimeout(() => {
+                                                console.log(`[DEBUG] FileUpload ${field.key} - Deep validation check:`, {
+                                                    fieldKey: field.key,
+                                                    fieldValue: form.values[field.key],
+                                                    fieldTouched: form.touched[field.key],
+                                                    fieldErrors: form.errors[field.key],
+                                                    formIsValid: form.isValid,
+                                                    formIsValidating: form.isValidating,
+                                                    formDirty: form.dirty,
+                                                    formErrors: form.errors,
+                                                    formTouched: form.touched,
+                                                    formValues: form.values,
+                                                    // Check if there are other fields with errors
+                                                    allFieldErrors: Object.keys(form.errors).filter(key => form.errors[key]),
+                                                    allTouchedFields: Object.keys(form.touched).filter(key => form.touched[key]),
+                                                    // Check if this field is actually required
+                                                    isFieldRequired: isFieldRequired,
+                                                    // Check if the field value is truthy
+                                                    hasValidValue: !!form.values[field.key],
+                                                    // Check if the field value is a File object
+                                                    isFileObject: form.values[field.key] instanceof File,
+                                                    // Check if the field value has the expected properties
+                                                    valueProperties: form.values[field.key] ? Object.getOwnPropertyNames(form.values[field.key]) : 'null'
+                                                });
+                                            }, 100); // Small delay to ensure validation completes
+                                            
+                                            // DEBUG: Log the touch state after setting it
+                                            console.log(`[DEBUG] FileUpload ${field.key} - After setting touched:`, {
+                                                fieldTouched: form.touched[field.key],
+                                                formIsValid: form.isValid,
+                                                formIsValidating: form.isValidating
+                                            });
+                                        }, 0);
+                                        
+                                        // DEBUG: Log validation state after file selection
+                                        console.log(`[DEBUG] FileUpload ${field.key} - After file selection:`, {
+                                            fieldKey: field.key,
+                                            fieldValue: form.values[field.key],
+                                            fieldValueType: typeof form.values[field.key],
+                                            fieldValueIsArray: Array.isArray(form.values[field.key]),
+                                            fieldValueKeys: form.values[field.key] ? Object.keys(form.values[field.key]) : 'null',
+                                            fieldTouched: form.touched[field.key],
+                                            fieldErrors: form.errors[field.key],
+                                            formIsValid: form.isValid,
+                                            formIsValidating: form.isValidating,
+                                            formDirty: form.dirty,
+                                            formValues: form.values,
+                                            isFieldRequired: isFieldRequired,
+                                            hasFiles: !!selectedFiles,
+                                            selectedFilesType: typeof selectedFiles,
+                                            selectedFilesIsArray: Array.isArray(selectedFiles),
+                                            selectedFilesKeys: selectedFiles ? Object.keys(selectedFiles) : 'null'
+                                        });
+                                        
+                                        dispatch(
+                                            updateField({
+                                                key: field.key,
+                                                value: selectedFiles,
+                                            })
+                                        );
+
+                                        // Also store metadata for display purposes
+                                        const fileMetadata: FileMetadata[] =
+                                            files.map((file) => ({
+                                                name: file.name,
+                                                size: file.size,
+                                                type: file.type,
+                                                lastModified: file.lastModified,
+                                                id: `${file.name}-${file.lastModified}-${file.size}`, // Unique identifier
+                                            }));
+
+                                        // Store metadata in sessionStorage for display purposes
+                                        if (isMultiple) {
+                                            files.forEach((file, index) => {
+                                                const fileId = fileMetadata[index].id;
+                                                sessionStorage.setItem(
+                                                    `file_${fileId}`,
+                                                    JSON.stringify({
+                                                        name: file.name,
+                                                        size: file.size,
+                                                        type: file.type,
+                                                        lastModified: file.lastModified,
+                                                    })
+                                                );
+                                            });
+                                        } else {
+                                            const fileId = fileMetadata[0].id;
                                             sessionStorage.setItem(
                                                 `file_${fileId}`,
                                                 JSON.stringify({
-                                                    name: file.name,
-                                                    size: file.size,
-                                                    type: file.type,
-                                                    lastModified:
-                                                        file.lastModified,
+                                                    name: files[0].name,
+                                                    size: files[0].size,
+                                                    type: files[0].type,
+                                                    lastModified: files[0].lastModified,
                                                 })
                                             );
-                                        });
-                                    } else {
-                                        const fileId = fileMetadata[0].id;
-                                        sessionStorage.setItem(
-                                            `file_${fileId}`,
-                                            JSON.stringify({
-                                                name: files[0].name,
-                                                size: files[0].size,
-                                                type: files[0].type,
-                                                lastModified:
-                                                    files[0].lastModified,
-                                            })
-                                        );
+                                        }
+                                    } catch (error) {
+                                        console.error(`[ERROR] FileUpload ${field.key} - File change handling failed:`, error);
+                                        alert(`Error processing file: ${error instanceof Error ? error.message : 'Unknown error'}`);
                                     }
                                 };
 
                                 const removeFile = (index: number) => {
-                                    if (isMultiple) {
-                                        const fileToRemove = (
-                                            currentFiles as FileMetadata[]
-                                        )[index];
-                                        if (fileToRemove && fileToRemove.id) {
-                                            sessionStorage.removeItem(
-                                                `file_${fileToRemove.id}`
+                                    try {
+                                        if (isMultiple) {
+                                            // Get the file to remove from the current files array
+                                            const currentFilesArray = Array.isArray(currentFiles) ? currentFiles : [];
+                                            const fileToRemove = currentFilesArray[index];
+                                            
+                                            // Remove from sessionStorage if it has metadata
+                                            if (fileToRemove && typeof fileToRemove === 'object' && 'id' in fileToRemove) {
+                                                sessionStorage.removeItem(
+                                                    `file_${(fileToRemove as any).id}`
+                                                );
+                                            }
+                                            
+                                            // Remove the file from the array
+                                            const updatedFiles = currentFilesArray.filter((_, i) => i !== index);
+                                            form.setFieldValue(
+                                                field.key,
+                                                updatedFiles
                                             );
-                                        }
-                                        const updatedFiles = Array.from(
-                                            currentFiles as FileMetadata[]
-                                        ).filter((_, i) => i !== index);
-                                        form.setFieldValue(
-                                            field.key,
-                                            updatedFiles
-                                        );
-                                        dispatch(
-                                            updateField({
-                                                key: field.key,
-                                                value: updatedFiles,
-                                            })
-                                        );
-                                    } else {
-                                        if (
-                                            currentFiles &&
-                                            (currentFiles as FileMetadata).id
-                                        ) {
-                                            sessionStorage.removeItem(
-                                                `file_${
-                                                    (
-                                                        currentFiles as FileMetadata
-                                                    ).id
-                                                }`
+                                            
+                                            // Mark field as touched and trigger validation
+                                            form.setFieldTouched(field.key, true, false);
+                                            
+                                            // Trigger form validation to update submit button state
+                                            form.validateField(field.key);
+                                            
+                                            // DEBUG: Log validation state after file removal (multiple)
+                                            console.log(`[DEBUG] FileUpload ${field.key} - After file removal (multiple):`, {
+                                                fieldKey: field.key,
+                                                fieldValue: form.values[field.key],
+                                                fieldTouched: form.touched[field.key],
+                                                fieldErrors: form.errors[field.key],
+                                                formIsValid: form.isValid,
+                                                formIsValidating: form.isValidating,
+                                                formDirty: form.dirty,
+                                                remainingFiles: updatedFiles.length,
+                                                isFieldRequired: isFieldRequired
+                                            });
+                                            
+                                            dispatch(
+                                                updateField({
+                                                    key: field.key,
+                                                    value: updatedFiles,
+                                                })
                                             );
+                                            
+                                            // Clear the file input if no files remain
+                                            if (updatedFiles.length === 0 && fileInputRef.current) {
+                                                fileInputRef.current.value = '';
+                                            }
+                                        } else {
+                                            // Single file case - clear the field
+                                            if (currentFiles && typeof currentFiles === 'object' && 'id' in currentFiles) {
+                                                sessionStorage.removeItem(
+                                                    `file_${(currentFiles as any).id}`
+                                                );
+                                            }
+                                            form.setFieldValue(field.key, null);
+                                            
+                                            // Mark field as touched and trigger validation
+                                            form.setFieldTouched(field.key, true, false);
+                                            
+                                            // Trigger form validation to update submit button state
+                                            form.validateField(field.key);
+                                            
+                                            // DEBUG: Log validation state after file removal (single)
+                                            console.log(`[DEBUG] FileUpload ${field.key} - After file removal (single):`, {
+                                                fieldKey: field.key,
+                                                fieldValue: form.values[field.key],
+                                                fieldTouched: form.touched[field.key],
+                                                fieldErrors: form.errors[field.key],
+                                                formIsValid: form.isValid,
+                                                formIsValidating: form.isValidating,
+                                                formDirty: form.dirty,
+                                                isFieldRequired: isFieldRequired
+                                            });
+                                            
+                                            dispatch(
+                                                updateField({
+                                                    key: field.key,
+                                                    value: null,
+                                                })
+                                            );
+                                            
+                                            // Clear the file input
+                                            if (fileInputRef.current) {
+                                                fileInputRef.current.value = '';
+                                            }
                                         }
-                                        form.setFieldValue(field.key, null);
-                                        dispatch(
-                                            updateField({
-                                                key: field.key,
-                                                value: null,
-                                            })
-                                        );
+                                    } catch (error) {
+                                        console.error(`[ERROR] FileUpload ${field.key} - File removal failed:`, error);
+                                        alert(`Error removing file: ${error instanceof Error ? error.message : 'Unknown error'}`);
                                     }
                                 };
 
                                 const formatFileSize = (bytes: number) => {
-                                    if (bytes === 0) return "0 Bytes";
-                                    const k = 1024;
-                                    const sizes = ["Bytes", "KB", "MB", "GB"];
-                                    const i = Math.floor(
-                                        Math.log(bytes) / Math.log(k)
-                                    );
-                                    return (
-                                        parseFloat(
-                                            (bytes / Math.pow(k, i)).toFixed(2)
-                                        ) +
-                                        " " +
-                                        sizes[i]
-                                    );
+                                    try {
+                                        if (bytes === 0) return "0 Bytes";
+                                        const k = 1024;
+                                        const sizes = ["Bytes", "KB", "MB", "GB"];
+                                        const i = Math.floor(
+                                            Math.log(bytes) / Math.log(k)
+                                        );
+                                        return (
+                                            parseFloat(
+                                                (bytes / Math.pow(k, i)).toFixed(2)
+                                            ) +
+                                            " " +
+                                            sizes[i]
+                                        );
+                                    } catch (error) {
+                                        console.error(`[ERROR] FileUpload ${field.key} - File size formatting failed:`, error);
+                                        return "Unknown size";
+                                    }
                                 };
 
                                 return (
-                                    <div className='space-y-2'>
-                                        {/* File Input */}
-                                        <div className='relative'>
-                                            <Input
-                                                type='file'
-                                                onChange={handleFileChange}
-                                                placeholder={field.placeholder}
-                                                multiple={isMultiple}
-                                                accept={allowedTypes.join(",")}
-                                                className='cursor-pointer'
-                                            />
+                                    <div>
+                                        <Label className='text-primary font-semibold'>
+                                            {field.label}
+                                            {isFieldRequired ? (
+                                                <span className='pl-2 text-red-600'>*</span>
+                                            ) : null}
+                                        </Label>
+                                        <div className='space-y-2'>
+                                            {/* File Input */}
+                                            <div className='relative'>
+                                                <Input
+                                                    ref={fileInputRef}
+                                                    type='file'
+                                                    onChange={handleFileChange}
+                                                    placeholder={field.placeholder}
+                                                    multiple={isMultiple}
+                                                    accept={allowedTypes.join(",")}
+                                                    className={`cursor-pointer ${isFieldRequired && !currentFiles ? 'border-red-500 focus:border-red-500' : ''}`}
+                                                    disabled={isFieldDisabled}
+                                                />
 
-                                            {/* File Constraints Info */}
-                                            <div className='text-xs text-gray-500 mt-1'>
-                                                <div>
-                                                    Max file size:{" "}
-                                                    {formatFileSize(
-                                                        maxFileSize
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    Files: {minFiles} -{" "}
-                                                    {maxFiles}
-                                                </div>
-                                                {allowedTypes.length > 0 &&
-                                                    allowedTypes[0] !== "*" && (
-                                                        <div>
-                                                            Allowed types:{" "}
-                                                            {allowedTypes.join(
-                                                                ", "
-                                                            )}
+                                                {/* File Constraints Info */}
+                                                <div className='text-xs text-gray-500 mt-1'>
+                                                    <div>
+                                                        Max file size:{" "}
+                                                        {formatFileSize(
+                                                            maxFileSize
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        Files: {minFiles} -{" "}
+                                                        {maxFiles}
+                                                    </div>
+                                                    {allowedTypes.length > 0 &&
+                                                        allowedTypes[0] !== "*" && (
+                                                            <div>
+                                                                Allowed types:{" "}
+                                                                {allowedTypes.join(
+                                                                    ", "
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    {isFieldRequired && (
+                                                        <div className='text-red-500 font-medium'>
+                                                            * This field is required
                                                         </div>
                                                     )}
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {/* Selected Files Display */}
-                                        {currentFiles && (
-                                            <div className='space-y-2'>
-                                                {isMultiple
-                                                    ? Array.from(
-                                                          currentFiles as FileMetadata[]
-                                                      ).map(
-                                                          (
-                                                              file: FileMetadata,
-                                                              index: number
-                                                          ) => (
-                                                              <div
-                                                                  key={
-                                                                      file.id ||
-                                                                      index
-                                                                  }
-                                                                  className='flex items-center justify-between p-2 bg-gray-50 rounded border'
-                                                              >
-                                                                  <div className='flex-1 min-w-0'>
-                                                                      <div className='text-sm font-medium text-gray-900 truncate'>
-                                                                          {
-                                                                              file.name
-                                                                          }
-                                                                      </div>
+                                            {/* Selected Files Display */}
+                                            {currentFiles && (
+                                                <div className='space-y-2'>
+                                                    {isMultiple
+                                                        ? Array.from(
+                                                              currentFiles as File[]
+                                                          ).map(
+                                                              (
+                                                                  file: File,
+                                                                  index: number
+                                                              ) => (
+                                                                  <div
+                                                                      key={
+                                                                          `${file.name}-${file.lastModified}-${file.size}` ||
+                                                                          index
+                                                                      }
+                                                                      className='flex items-center justify-between p-2 bg-gray-50 rounded border'
+                                                                  >
+                                                                      <div className='flex-1 min-w-0'>
+                                                                          <div className='text-sm font-medium text-gray-900 truncate'>
+                                                                              {
+                                                                                  file.name
+                                                                              }
+                                                                          </div>
                                                                       <div className='text-xs text-gray-500'>
                                                                           {formatFileSize(
                                                                               file.size
@@ -1228,64 +1422,139 @@ export const FieldRenderer: React.FC<Props> = ({ field }) => {
                                                                   </Button>
                                                               </div>
                                                           )
-                                                      )
-                                                    : currentFiles && (
-                                                          <div className='flex items-center justify-between p-2 bg-gray-50 rounded border'>
-                                                              <div className='flex-1 min-w-0'>
-                                                                  <div className='text-sm font-medium text-gray-900 truncate'>
-                                                                      {
-                                                                          (
-                                                                              currentFiles as FileMetadata
-                                                                          ).name
-                                                                      }
+                                                        )
+                                                        : currentFiles && (
+                                                              <div className='flex items-center justify-between p-2 bg-gray-50 rounded border'>
+                                                                  <div className='flex-1 min-w-0'>
+                                                                      <div className='text-sm font-medium text-gray-900 truncate'>
+                                                                          {
+                                                                              (
+                                                                                  currentFiles as File
+                                                                              ).name
+                                                                          }
+                                                                      </div>
+                                                                      <div className='text-xs text-gray-500'>
+                                                                          {formatFileSize(
+                                                                              (
+                                                                                  currentFiles as File
+                                                                              ).size
+                                                                          )}{" "}
+                                                                          •{" "}
+                                                                          {
+                                                                              (
+                                                                                  currentFiles as File
+                                                                              ).type
+                                                                          }
+                                                                      </div>
                                                                   </div>
-                                                                  <div className='text-xs text-gray-500'>
-                                                                      {formatFileSize(
-                                                                          (
-                                                                              currentFiles as FileMetadata
-                                                                          ).size
-                                                                      )}{" "}
-                                                                      •{" "}
-                                                                      {
-                                                                          (
-                                                                              currentFiles as FileMetadata
-                                                                          ).type
+                                                                  <Button
+                                                                      type='button'
+                                                                      variant='outline'
+                                                                      size='sm'
+                                                                      onClick={() =>
+                                                                          removeFile(
+                                                                              0
+                                                                          )
                                                                       }
-                                                                  </div>
+                                                                      className='ml-2 text-red-600 hover:text-red-700'
+                                                                  >
+                                                                      Remove
+                                                                  </Button>
                                                               </div>
-                                                              <Button
-                                                                  type='button'
-                                                                  variant='outline'
-                                                                  size='sm'
-                                                                  onClick={() =>
-                                                                      removeFile(
-                                                                          0
-                                                                      )
-                                                                  }
-                                                                  className='ml-2 text-red-600 hover:text-red-700'
-                                                              >
-                                                                  Remove
-                                                              </Button>
-                                                          </div>
-                                                      )}
+                                                          )}
+                                                </div>
+                                            )}
+                                            
+                                            {/* Required field validation message */}
+                                            {isFieldRequired && !currentFiles && (
+                                                <div className='text-red-500 text-sm'>
+                                                    Please select a file. This field is required.
+                                                </div>
+                                            )}
+                                            
+                                            {/* DEBUG: Validation Status Display */}
+                                            <div className='mt-4 p-3 bg-gray-100 rounded border text-xs'>
+                                                <div className='font-semibold mb-2 text-gray-700'>🔍 Validation Debug Info:</div>
+                                                <div className='grid grid-cols-2 gap-2'>
+                                                    <div>
+                                                        <span className='font-medium'>Field Key:</span> {field.key}
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Required:</span> 
+                                                        <span className={isFieldRequired ? 'text-red-600' : 'text-green-600'}>
+                                                            {isFieldRequired ? 'Yes' : 'No'}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Has Files:</span> 
+                                                        <span className={currentFiles ? 'text-green-600' : 'text-red-600'}>
+                                                            {currentFiles ? 'Yes' : 'No'}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Field Value:</span> 
+                                                        <span className='text-gray-600'>
+                                                            {currentFiles ? (Array.isArray(currentFiles) ? `${currentFiles.length} file(s)` : '1 file') : 'null'}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Field Touched:</span> 
+                                                        <span className={form.touched[field.key] ? 'text-blue-600' : 'text-red-600'}>
+                                                            {form.touched[field.key] ? 'Yes' : 'No'}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Field Errors:</span> 
+                                                        <span className={form.errors[field.key] ? 'text-red-600' : 'text-green-600'}>
+                                                            {form.errors[field.key] || 'None'}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Form Valid:</span> 
+                                                        <span className={form.isValid ? 'text-green-600' : 'text-red-600'}>
+                                                            {form.isValid ? 'Yes' : 'No'}
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className='font-medium'>Form Validating:</span> 
+                                                        <span className={form.isValidating ? 'text-yellow-600' : 'text-gray-600'}>
+                                                            {form.isValidating ? 'Yes' : 'No'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className='mt-2 pt-2 border-t border-gray-300'>
+                                                    <div className='font-medium text-gray-700'>Current Form Values:</div>
+                                                    <pre className='text-xs bg-white p-2 rounded border mt-1 overflow-auto max-h-20'>
+                                                        {JSON.stringify(form.values, null, 2)}
+                                                    </pre>
+                                                </div>
                                             </div>
-                                        )}
+                                        </div>
+                                        {dynamicDescription &&
+                                            dynamicDescription.trim() !== "" && (
+                                                <p className='text-[#7D7D7D] text-sm mt-1'>
+                                                    {dynamicDescription}
+                                                </p>
+                                            )}
+                                        <ErrorMessage
+                                            name={field.key}
+                                            component='div'
+                                            className='text-red-500'
+                                        />
                                     </div>
                                 );
-                            }}
-                        </Field>
-                        {field.description &&
-                            field.description.trim() !== "" && (
-                                <p className='text-[#7D7D7D] text-sm mt-1'>
-                                    {field.description}
-                                </p>
-                            )}
-                        <ErrorMessage
-                            name={field.key}
-                            component='div'
-                            className='text-red-500'
-                        />
-                    </div>
+                            } catch (error) {
+                                console.error(`[ERROR] FileUpload ${field.key} - Rendering failed:`, error);
+                                return (
+                                    <div className='p-4 border border-red-200 rounded bg-red-50 text-red-600'>
+                                        <strong>Error:</strong> Failed to render file upload field "{field.label}". 
+                                        <br />
+                                        <small>Error details: {error instanceof Error ? error.message : 'Unknown error'}</small>
+                                    </div>
+                                );
+                            }
+                        }}
+                    </Field>
                 );
 
             case "lookup":
