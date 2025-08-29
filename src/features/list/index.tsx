@@ -65,7 +65,7 @@ export default function List() {
     //     perPage: pageDetail.pageSize,
     // });
     const { isLoading, isError, data } = useGetListQuery({
-        page: pageDetail.pageIndex,
+        page: pageDetail.pageIndex + 1,
         perPage: pageDetail.pageSize,
         type: statusValue,
         languageCode: "en",
@@ -73,12 +73,12 @@ export default function List() {
 
     useEffect(() => {
         if (!isError && !isLoading && data) {
-            setResponse(data.response);
+            setResponse(data.data);
             setPageDetail({
                 ...pageDetail,
-                pageCount: data.metadata.totalPages,
+                pageCount: data.total_page,
             });
-            console.log("data", data.response);
+            console.log("data", data);
         }
     }, [data]);
     return (

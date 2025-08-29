@@ -3,5 +3,8 @@ export const MARRIAGE_LIST_ENDPOINT = "/marriage";
 export const MARRIAGE_CREATE_ENDPOINT = "marriage/create";
 export const BIRTH_LIST_ENDPOINT = "/birth";
 export const MARRAIGE_ACCOUNCEMENT_ENDPOINT = "marriage/marriage_announcement";
-export const LIST_ENDPOINT =
-    "vital/fetch_vital_service_event_by_date_range_and_type";
+export const LIST_ENDPOINT = "vital/vital_event_list_by_type?";
+export const MARRIAGE_GET_BY_REGISTRATION_FORM_NUMBER =
+    "marriage/fetch_vital_service_marriage_by_registration_form_number?registrationFormNumber=";
+export const MARRIAGE_GET_BY_BRIDE_OR_GROOM =
+    "marriage/fetch_marriage_by_bride_or_groom?id=";
