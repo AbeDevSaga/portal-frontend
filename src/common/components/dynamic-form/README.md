@@ -12,6 +12,49 @@ This directory contains reusable form components with live preview functionality
 - ✅ **Seamless switching** - can switch between different form types
 - ✅ **Type-safe** - full TypeScript support for all configurations
 
+## 🆕 **NEW: Dynamic Grid System for Hidden Fields**
+
+The form system now includes an **intelligent grid layout** that automatically adjusts when fields are hidden:
+
+- **🚫 No Grid Space Wasted**: Hidden fields don't take up grid space
+- **🔄 Automatic Reflow**: Grid automatically adjusts when fields appear/disappear
+- **⚡ CSS Grid Auto-flow**: Uses modern CSS Grid for optimal performance
+- **🎨 Seamless Integration**: Works with existing form configurations
+
+**Usage:**
+```tsx
+import { getGridContainerClasses } from "@/common/utils/dynamic-form/dynamicGridLayout";
+
+<div className={getGridContainerClasses()}>
+    {fields.map((field) => (
+        <FieldRenderer
+            key={field.key}
+            field={field}
+            formValues={formValues} // Required for dynamic behavior
+        />
+    ))}
+</div>
+```
+
+**Field Configuration:**
+```tsx
+const fieldConfig: FieldConfig = {
+    type: "input",
+    key: "conditionalField",
+    gridCols: 6,
+    isHide: (dependentValues: any) => {
+        return dependentValues?.fieldType !== "type1";
+    },
+    getDependentValue: (formValues: any) => ({
+        fieldType: formValues.fieldType,
+    }),
+};
+```
+
+See the [Dynamic Grid Layout documentation](../utils/dynamic-form/README.md) for complete details.
+
+---
+
 ## 🆕 **NEW: Enhanced Live Preview with Step-Based Display & Accordion Support**
 
 The `LivePreview` component now supports **three display modes** with automatic accordion support:
@@ -586,6 +629,7 @@ const handleReset = () => {
 - **🔄 Dynamic**: Redux adapts to each form structure
 - **♻️ Reusable**: Same components work across different pages
 - **🧠 Smart**: Automatically handles stepper vs single form logic
+- **🚫 Smart Grid**: Hidden fields automatically don't take up grid space
 - **📱 Responsive**: Proper stepper positioning and layout
 - **⚡ Real-time**: Form values sync across all components
 - **🔄 Persistent**: State persists between form steps

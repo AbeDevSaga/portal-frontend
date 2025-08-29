@@ -46,29 +46,20 @@ import {
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { FormArrayField } from "./FormArrayField";
+import { getAutoFlowGridClasses } from "@/common/utils/dynamic-form/dynamicGridLayout";
 
 interface Props {
     field: FieldConfig;
+    formValues?: Record<string, any>; // Add formValues prop for dynamic grid calculation
 }
 
-export const FieldRenderer: React.FC<Props> = ({ field }) => {
+export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
     const t = useTranslations();
     const dispatch = useDispatch();
 
-    // Generate grid classes based on field configuration
+    // Generate grid classes based on field configuration with dynamic visibility
     const getGridClasses = (field: FieldConfig) => {
-        if (!field.gridCols) return "";
-
-        const gridMap: Record<number, string> = {
-            1: "col-span-1",
-            2: "col-span-2",
-            3: "col-span-3",
-            4: "col-span-4",
-            6: "col-span-6",
-            12: "col-span-12",
-        };
-
-        return gridMap[field.gridCols] || "";
+        return getAutoFlowGridClasses(field, formValues);
     };
 
     // Render the field content

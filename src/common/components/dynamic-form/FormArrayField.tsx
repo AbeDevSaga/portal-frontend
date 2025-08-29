@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { FieldConfig, FormArrayConfig } from "@/common/types/formType";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { getAutoFlowGridClasses } from "@/common/utils/dynamic-form/dynamicGridLayout";
 
 interface FormArrayFieldProps {
     field: FieldConfig;
@@ -263,26 +264,11 @@ export const FormArrayField: React.FC<FormArrayFieldProps> = ({
                                 // Create a unique key for each field in the group
                                 const fieldKey = `${field.key}.${groupIndex}.${groupField.key}`;
 
-                                // Get grid classes for the group field
+                                // Get grid classes for the group field with dynamic visibility
                                 const getGroupFieldGridClasses = (
                                     fieldConfig: FieldConfig
                                 ) => {
-                                    if (!fieldConfig.gridCols)
-                                        return "col-span-12"; // Default to full width
-
-                                    const gridMap: Record<number, string> = {
-                                        1: "col-span-1",
-                                        2: "col-span-2",
-                                        3: "col-span-3",
-                                        4: "col-span-4",
-                                        6: "col-span-6",
-                                        12: "col-span-12",
-                                    };
-
-                                    return (
-                                        gridMap[fieldConfig.gridCols] ||
-                                        "col-span-12"
-                                    );
+                                    return getAutoFlowGridClasses(fieldConfig, form.values);
                                 };
 
                                 // Create a modified field config with the new key

@@ -569,7 +569,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                     },
                     isHide: (dependentValues: any) => {
                         console.log("dependentValues father resident", dependentValues);
-                        if(!dependentValues?.fatherResidentId && dependentValues?.birthType !== "Is new child") {
+                        if(dependentValues?.birthType !== "Is new child" && !dependentValues?.fatherResidentId ) {
                             return true;
                         }
                         return false;
