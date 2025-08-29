@@ -115,7 +115,7 @@ const Sidebar = () => {
                                         {/* Main route button */}
                                         <Button
                                             asChild
-                                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none w-full ${isActive || isChildActive
+                                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none text-lg font-semibold shadow-none w-full ${isActive || isChildActive
                                                 ? "bg-[#073954] text-white"
                                                 : "text-[#073954] hover:text-[#073954] hover:bg-[#073954]/10 bg-transparent"
                                                 }`}
@@ -157,7 +157,7 @@ const Sidebar = () => {
                                                         <Button
                                                             asChild
                                                             key={subChild.label}
-                                                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none font-semibold w-full text-sm ${isSubActive
+                                                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none font-bold w-full text-lg ${isSubActive
                                                                 ? "bg-[#073954]/80 text-white"
                                                                 : "text-[#073954]/70 hover:text-[#073954] hover:bg-[#073954]/10 bg-transparent"
                                                                 }`}
