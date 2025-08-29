@@ -18,7 +18,7 @@ const DetailBlock = ({
 }) => {
     return (
         <div>
-            <p className='font-semibold text-xl mb-2 text-[#204D66]'>
+        <p className='font-semibold text-xl mb-2 text-[#204D66]'>
                 {blockData.title}
             </p>
             <div>

@@ -16,7 +16,7 @@ export interface MarriageData {
     husbandWetnessTwo: string;
     supporting_doc_url: string | null;
     localization: Localization[];
-    objections: any[]; // Adjust the type if you know what an objection contains
+    objections: any[];
 }
 
 export interface MarriageResponse {

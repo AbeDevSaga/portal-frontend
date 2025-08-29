@@ -4,13 +4,14 @@ import { Plus } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useGetMarriagesListQuery } from "@/redux/api/marriageApi";
+// import { useGetMarriagesListQuery } from "@/redux/api/marriageApi";
 
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import { DataTable } from "@/common/components/common/CrrsaTable";
 import SelectComponent from "@/common/components/common/SelectComponent";
 import { Marriagecolumns } from "./tableColumns";
+import { useGetMarriagesListQuery } from "../api/marriageApi";
 
 export default function MarriageList() {
     const [response, setResponse] = useState([]);
