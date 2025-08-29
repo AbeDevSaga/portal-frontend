@@ -1,5 +1,7 @@
 import {
     MARRIAGE_CREATE_ENDPOINT,
+    MARRIAGE_GET_BY_BRIDE_OR_GROOM,
+    MARRIAGE_GET_BY_REGISTRATION_FORM_NUMBER,
     MARRIAGE_LIST_ENDPOINT,
 } from "@/common/utils/constants/EndPoints";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -7,7 +9,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const marriageApi = createApi({
     reducerPath: "marriageApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_IDX_BACKEND,
+        baseUrl: process.env.NEXT_PUBLIC_IDX_BACKEND2,
     }),
     endpoints: (builder) => ({
         getMarriagesList: builder.query<
@@ -20,15 +22,27 @@ export const marriageApi = createApi({
         }),
         getMarriageBySlug: builder.query({
             query: ({ id }) => {
-                return `${MARRIAGE_LIST_ENDPOINT}/${id}`;
+                return `${MARRIAGE_GET_BY_REGISTRATION_FORM_NUMBER}${id}`;
             },
         }),
-        submitForm: builder.mutation<any, Record<string, any>>({
-            query: (formData) => ({
-                url: MARRIAGE_CREATE_ENDPOINT,
-                method: "POST",
-                body: formData,
-            }),
+        getResidentData: builder.query({
+            query: ({ id }) => {
+                return `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}/resident/resident?search=${id}`;
+            },
+        }),
+
+        submitForm: builder.mutation<any, { data: any; file: File }>({
+            query: ({ data, file }) => {
+                const formData = new FormData();
+                formData.append("data", JSON.stringify(data)); // the marriage details JSON
+                formData.append("supportingDoc", file); // the uploaded file
+
+                return {
+                    url: MARRIAGE_CREATE_ENDPOINT,
+                    method: "POST",
+                    body: formData,
+                };
+            },
         }),
     }),
 });
@@ -37,4 +51,5 @@ export const {
     useSubmitFormMutation,
     useGetMarriagesListQuery,
     useGetMarriageBySlugQuery,
+    useGetResidentDataQuery,
 } = marriageApi;

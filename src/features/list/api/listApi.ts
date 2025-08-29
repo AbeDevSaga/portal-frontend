@@ -17,12 +17,12 @@ export const listApi = createApi({
             }
         >({
             query: ({
-                page = 1,
+                page = 0,
                 perPage = 10,
                 type = "MARRIAGE",
                 languageCode = "en",
             }) => {
-                return `${LIST_ENDPOINT}?from=2025-08-22&to=2025-08-22&type=MARRIAGE&languageCode=en&page=0&size=1&sort=%5B%22string%22%5D`;
+                return `${LIST_ENDPOINT}type=${type}&page=${page}&size=${perPage}`;
             },
         }),
     }),

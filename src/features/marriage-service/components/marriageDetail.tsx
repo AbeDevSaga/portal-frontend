@@ -8,15 +8,21 @@ import HeroSection from "@/common/components/common/HeroSection";
 import DetailBlock from "@/common/components/common/detailBlock";
 import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
 import { formConfig } from "./marraige-form-fields";
-import { useGetMarriageBySlugQuery } from "../api/marriageApi";
+import {
+    useGetMarriageByBrideOrGroomQuery,
+    useGetMarriageBySlugQuery,
+} from "../api/marriageApi";
+import MarriageDetailComponent from "./marriageDetailComponent";
 
 // Define the type for the mapped response data
-type MappedResponseData = {
-    title: string;
-    data: { label: string; key: string; value: string; status?: string }[];
-}[];
+// type MappedResponseData = {
+//     title: string;
+//     data: { label: string; key: string; value: string; status?: string }[];
+// }[];
 
 export default function MarriageDetail() {
+    const [response, setResponse] = useState<MappedResponseData>(null);
+
     const [copied, setCopied] = useState(false);
     const [showTimer, setShowTimer] = useState(false);
     const params = useParams();
@@ -24,15 +30,10 @@ export default function MarriageDetail() {
     const { isLoading, isError, data } = useGetMarriageBySlugQuery({
         id: slug,
     });
-    const [response, setResponse] = useState<MappedResponseData>([]);
 
     useEffect(() => {
         if (!isError && !isLoading && data) {
-            const mappedData = mapApiResponseToFormFields(
-                data.response[0],
-                formConfig
-            );
-            setResponse(mappedData);
+            setResponse(data.data);
         }
     }, [data]);
 
@@ -88,7 +89,10 @@ export default function MarriageDetail() {
 
             <div className='flex flex-wrap xl:flex-nowrap gap-10'>
                 <Card className='py-5 px-5 w-full flex flex-col h-fit min-h-[500px]'>
-                    {!isError &&
+                    {response ? (
+                        <MarriageDetailComponent id={response.husband} />
+                    ) : null}
+                    {/* {!isError &&
                     !isLoading &&
                     response.length !== 0 &&
                     data !== null &&
@@ -98,7 +102,7 @@ export default function MarriageDetail() {
                                   <DetailBlock blockData={item} />
                               </div>
                           ))
-                        : null}
+                        : null} */}
 
                     {isLoading ? (
                         <div className='flex-1 flex items-center justify-center'>
@@ -159,7 +163,7 @@ export default function MarriageDetail() {
                             Requirements and Actions
                         </p>
                         <div className='space-y-3'>
-                            {requirementsandaction.map(
+                            {/* {requirementsandaction.map(
                                 (requirementsandactionItem) => (
                                     <Card
                                         key={requirementsandactionItem.title}
@@ -205,7 +209,7 @@ export default function MarriageDetail() {
                                         </Button>
                                     </Card>
                                 )
-                            )}
+                            )} */}
                         </div>
                     </Card>{" "}
                 </div>

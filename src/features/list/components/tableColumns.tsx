@@ -8,15 +8,16 @@ const statusColorMapping = {
 };
 export const Birthcolumns: ColumnDef<unknown>[] = [
     {
-        accessorKey: "id",
+        accessorKey: "requester_name",
         header: "Applied For",
     },
     {
-        accessorKey: "requestType",
+        accessorKey: "eventType",
         header: "Request Type",
     },
     {
         accessorKey: "requestDate",
+        accessorFn: (row: any) => row.localizatoin[0]?.submissionDate || "N/A",
         header: "Request Date",
     },
     {
@@ -27,11 +28,11 @@ export const Birthcolumns: ColumnDef<unknown>[] = [
         id: "actions",
         header: "Action",
         cell: ({ row }: any) => {
-            const recordId = row?.original?.id;
+            const recordId = row.original.registrationFormNumber || "N/A";
             return (
                 <Link
                     className=''
-                    href={`/users/features/birth-registration/detail/${recordId}`}
+                    href={`/application/marriage/detail/${recordId}`}
                 >
                     <Eye />
                 </Link>

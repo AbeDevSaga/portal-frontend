@@ -15,27 +15,6 @@ import HeroSection from "@/common/components/common/HeroSection";
 import { useSubmitFormMutation } from "./api/marriageApi";
 import { toast } from "sonner";
 
-const data = {
-    dateOfMarriage: "2025-08-06T21:00:00.000Z",
-    groomPlaceOfBirth: "Ethiopia",
-    groomCurrentResidence: "Ethiopia",
-    groomWitnessFirstResidence: "Ethiopia",
-    groomWitnessSecondResidence: "Ethiopia",
-    groomFullName: "",
-    groomNationality: "",
-    groomDateOfBirth: "",
-    earlierMaritalStatusGroom: "",
-    bridePlaceOfBirth: "Ethiopia",
-    brideCurrentResidence: "Ethiopia",
-    brideWitnessFirstResidence: "Ethiopia",
-    brideWitnessSecondResidence: "Ethiopia",
-    brideFullName: "",
-    brideNationality: "",
-    brideDateOfBirth: "",
-    earlierMaritalStatusBride: "",
-    groomSpecialApproval: "crrsa.jpg",
-    brideSpecialApproval: "crrsa.jpg",
-};
 export default function MarriageNew() {
     const formValues = useSelector((state: RootState) => state.birthSlice);
     const { allFields, groupMap } = generateFieldGrouping(formConfig);
@@ -53,14 +32,14 @@ export default function MarriageNew() {
     };
     const mapDataModel = (value: any) => {
         const body = {
-            wifeId: value.brideResidentId.id,
-            husbandId: value.groomResidentId.id,
+            wifeId: value.brideResidentId?.id,
+            husbandId: value.groomResidentId?.id,
             supportingDoc: "string",
-            registryOfficeCode: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            husbandWetnessOne: value.groomWitnessFirstResidentId.id,
-            husbandWetnessTwo: value.groomWitnessSecondResidentId.id,
-            wifeWetnessOne: value.brideWitnessFirstResidentId.id,
-            wifeWetnessTwo: value.brideWitnessSecondResidentId.id,
+            registryOfficeId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // ✅ Changed registryOfficeCode → registryOfficeId
+            husbandWetnessOne: value.groomWitnessFirstResidentId?.id,
+            husbandWetnessTwo: value.groomWitnessSecondResidentId?.id,
+            wifeWetnessOne: value.brideWitnessFirstResidentId?.id,
+            wifeWetnessTwo: value.brideWitnessSecondResidentId?.id,
             marriageLocalization: [
                 {
                     languageCode: "string",
@@ -73,7 +52,7 @@ export default function MarriageNew() {
                 requesterId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 eventType: "BIRTH",
                 status: "NEW",
-                registrarOfficeId: "string",
+                oldRequesterId: null, // ✅ Added to match original request
                 localisation: [
                     {
                         languageCode: "string",
