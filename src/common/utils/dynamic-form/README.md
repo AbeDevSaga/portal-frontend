@@ -194,3 +194,114 @@ Enable grid debugging in CSS:
 ## 📚 **Examples**
 
 See `DynamicGridDemo.tsx` for a complete working example of the dynamic grid system.
+
+# InputSearch BaseURL Configuration
+
+The `inputSearch` field type now supports a custom `baseUrl` property that allows you to override the default environment variable base URL for API calls.
+
+## Usage
+
+### 1. Using Custom Base URL
+```typescript
+{
+    type: "inputSearch",
+    key: "hospitalNotificationId",
+    label: "Hospital Notification ID",
+    inputSearchConfig: {
+        isExternal: true,
+        baseUrl: "https://api.example.com", // Custom base URL
+        apiEndpoint: "/resident/residents",
+        // ... other config
+    }
+}
+```
+**Result:** API calls will be made to `https://api.example.com/resident/residents`
+
+### 2. Using Environment Variable (Default Behavior)
+```typescript
+{
+    type: "inputSearch",
+    key: "hospitalNotificationId",
+    label: "Hospital Notification ID",
+    inputSearchConfig: {
+        isExternal: true,
+        // No baseUrl specified - uses environment variable
+        apiEndpoint: "/resident/residents",
+        // ... other config
+    }
+}
+```
+**Result:** API calls will be made to `${NEXT_PUBLIC_CRRSA_BACKEND_API_URL}/resident/residents`
+
+### 3. Using Local API Routes
+```typescript
+{
+    type: "inputSearch",
+    key: "localSearch",
+    label: "Local Search",
+    inputSearchConfig: {
+        isExternal: false, // Use local API routes
+        apiEndpoint: "search/residents",
+        // ... other config
+    }
+}
+```
+**Result:** API calls will be made to `/api/search/residents`
+
+## Search Format Options
+
+The `inputSearch` field now supports two different search formats through the `searchFormat` property:
+
+### Query Parameter Format (Default)
+```typescript
+{
+    type: "inputSearch",
+    key: "searchQuery",
+    label: "Search Query",
+    inputSearchConfig: {
+        searchFormat: "query", // Default behavior
+        apiEndpoint: "/hospital-notifications",
+        searchKey: "search",
+        // ... other config
+    }
+}
+```
+**Result:** API calls will be made to `/hospital-notifications?search="search_term"`
+
+### Path Parameter Format
+```typescript
+{
+    type: "inputSearch",
+    key: "searchPath",
+    label: "Search Path",
+    inputSearchConfig: {
+        searchFormat: "path", // Path parameter format
+        apiEndpoint: "/hospital-notifications/{search}", // With placeholder
+        searchKey: "search",
+        // ... other config
+    }
+}
+```
+**Result:** API calls will be made to `/hospital-notifications/search_term`
+
+#### Path Format Placeholders
+The path format supports several placeholder patterns that will be automatically replaced with the search term:
+- `{search}` - Generic search placeholder
+- `{id}` - ID placeholder
+- `{term}` - Term placeholder
+- `{query}` - Query placeholder
+- `{value}` - Value placeholder
+
+If no placeholder is found, the search term will be appended to the endpoint.
+
+## Priority Order
+1. **Custom baseUrl** (if specified in inputSearchConfig)
+2. **Environment variable** (NEXT_PUBLIC_CRRSA_BACKEND_API_URL)
+3. **Local API route** (/api/...)
+
+## Benefits
+- **Flexibility**: Override base URLs per field without changing environment variables
+- **Multiple APIs**: Use different external APIs for different fields
+- **Development**: Easily switch between development, staging, and production APIs
+- **Testing**: Test with mock APIs or different endpoints
+- **Search Formats**: Support both query parameter and path parameter search patterns

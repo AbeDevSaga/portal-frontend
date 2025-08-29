@@ -240,6 +240,68 @@ const demoFields: FieldConfig[] = [
             },
         },
     },
+    {
+        type: "inputSearch",
+        key: "demoSearch",
+        label: "Demo Search (Query Format)",
+        inputSearchConfig: {
+            isExternal: false,
+            apiEndpoint: "demo/search",
+            method: "GET",
+            searchKey: "search",
+            searchFormat: "query", // Query parameter format: /api/demo/search?search="term"
+            valueKey: "id",
+            labelKey: "name",
+            minSearchLength: 2,
+            debounceMs: 300,
+            cacheResults: true,
+            placeholder: "Search with query format...",
+            noOptionsMessage: "No results found",
+            loadingMessage: "Searching...",
+            additionalParams: {},
+            transformResponse: (data: any) => {
+                if (Array.isArray(data)) {
+                    return data.map((item) => ({
+                        value: item.id,
+                        label: item.name,
+                        data: item,
+                    }));
+                }
+                return [];
+            },
+        },
+    },
+    {
+        type: "inputSearch",
+        key: "demoSearchPath",
+        label: "Demo Search (Path Format)",
+        inputSearchConfig: {
+            isExternal: false,
+            apiEndpoint: "demo/search/{search}", // Path format with placeholder
+            method: "GET",
+            searchKey: "search",
+            searchFormat: "path", // Path parameter format: /api/demo/search/search_term
+            valueKey: "id",
+            labelKey: "name",
+            minSearchLength: 2,
+            debounceMs: 300,
+            cacheResults: true,
+            placeholder: "Search with path format...",
+            noOptionsMessage: "No results found",
+            loadingMessage: "Searching...",
+            additionalParams: {},
+            transformResponse: (data: any) => {
+                if (Array.isArray(data)) {
+                    return data.map((item) => ({
+                        value: item.id,
+                        label: item.name,
+                        data: item,
+                    }));
+                }
+                return [];
+            },
+        },
+    },
 ];
 
 export default function DemoPage() {

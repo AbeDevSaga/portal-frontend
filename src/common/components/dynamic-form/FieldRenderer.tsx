@@ -3111,9 +3111,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                             const inputSearchConfig = field.inputSearchConfig;
                             const {
                                 isExternal = true,
+                                baseUrl,
                                 apiEndpoint,
                                 method = "GET",
                                 searchKey = "search",
+                                searchFormat = "query", // Default to query parameter format
                                 valueKey = "id",
                                 labelKey = "name",
                                 minSearchLength = 3,
@@ -3204,10 +3206,17 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                                     }
                                                 }
 
-                                                // Prepare request parameters - start with just the search term
-                                                let requestParams = {
-                                                    [searchKey]: searchTerm,
-                                                };
+                                                // Prepare request parameters based on search format
+                                                let requestParams: Record<string, any> = {};
+                                                
+                                                // Add search term based on format
+                                                if (searchFormat === "path") {
+                                                    // For path format, don't add search term to query params
+                                                    // It will be inserted into the URL path later
+                                                } else {
+                                                    // Default query format - add search term as query parameter
+                                                    requestParams[searchKey] = searchTerm;
+                                                }
 
                                                 // Add additional query parameters from config if provided
                                                 if (
@@ -3222,7 +3231,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                                 // Add dependent values to request if transformRequest is provided
                                                 let modifiedEndpoint =
                                                     isExternal
-                                                        ? `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${apiEndpoint}`
+                                                        ? `${baseUrl || process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}${apiEndpoint}`
                                                         : `/api/${apiEndpoint}`;
 
                                                 if (
@@ -3273,19 +3282,20 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                                     try {
                                                         // For external APIs, we need to construct the full URL
                                                         if (isExternal) {
-                                                            // Start with the base URL
-                                                            let baseUrl =
+                                                            // Start with the base URL (use custom baseUrl if provided, otherwise fall back to environment variable)
+                                                            let effectiveBaseUrl =
+                                                                baseUrl ||
                                                                 process.env
                                                                     .NEXT_PUBLIC_CRRSA_BACKEND_API_URL ||
                                                                 "";
                                                             // Remove trailing slash if present
                                                             if (
-                                                                baseUrl.endsWith(
+                                                                effectiveBaseUrl.endsWith(
                                                                     "/"
                                                                 )
                                                             ) {
-                                                                baseUrl =
-                                                                    baseUrl.slice(
+                                                                effectiveBaseUrl =
+                                                                    effectiveBaseUrl.slice(
                                                                         0,
                                                                         -1
                                                                     );
@@ -3304,8 +3314,37 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                                                     );
                                                             }
 
+                                                            // Handle path format search - insert search term into the endpoint
+                                                            if (searchFormat === "path") {
+                                                                // Replace any placeholder in the endpoint with the search term
+                                                                // Common patterns: /{search}, /{id}, /{term}, etc.
+                                                                const searchPlaceholders = [
+                                                                    "{search}",
+                                                                    "{id}",
+                                                                    "{term}",
+                                                                    "{query}",
+                                                                    "{value}"
+                                                                ];
+                                                
+                                                                for (const placeholder of searchPlaceholders) {
+                                                                    if (cleanEndpoint.includes(placeholder)) {
+                                                                        cleanEndpoint = cleanEndpoint.replace(placeholder, encodeURIComponent(searchTerm));
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                
+                                                                // If no placeholder found, append the search term to the endpoint
+                                                                if (!searchPlaceholders.some(p => cleanEndpoint.includes(p))) {
+                                                                    // Remove trailing slash if present
+                                                                    if (cleanEndpoint.endsWith("/")) {
+                                                                        cleanEndpoint = cleanEndpoint.slice(0, -1);
+                                                                    }
+                                                                    cleanEndpoint = `${cleanEndpoint}/${encodeURIComponent(searchTerm)}`;
+                                                                }
+                                                            }
+
                                                             // Construct the full URL
-                                                            let fullUrl = `${baseUrl}/${cleanEndpoint}`;
+                                                            let fullUrl = `${effectiveBaseUrl}/${cleanEndpoint}`;
 
                                                             // Add query parameters
                                                             const queryParams =
@@ -3350,44 +3389,77 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                                             modifiedEndpoint =
                                                                 fullUrl;
                                                         } else {
-                                                            // For local API routes, just append query parameters
-                                                            const queryParams =
-                                                                Object.entries(
-                                                                    requestParams
-                                                                )
-                                                                    .filter(
-                                                                        ([
-                                                                            _,
-                                                                            value,
-                                                                        ]) =>
-                                                                            value !==
-                                                                                undefined &&
-                                                                            value !==
+                                                            // For local API routes, handle both query and path formats
+                                                            if (searchFormat === "path") {
+                                                                // Handle path format for local API routes
+                                                                let localEndpoint = apiEndpoint;
+                                                                
+                                                                // Replace any placeholder in the endpoint with the search term
+                                                                const searchPlaceholders = [
+                                                                    "{search}",
+                                                                    "{id}",
+                                                                    "{term}",
+                                                                    "{query}",
+                                                                    "{value}"
+                                                                ];
+                                                
+                                                                for (const placeholder of searchPlaceholders) {
+                                                                    if (localEndpoint.includes(placeholder)) {
+                                                                        localEndpoint = localEndpoint.replace(placeholder, encodeURIComponent(searchTerm));
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                
+                                                                // If no placeholder found, append the search term to the endpoint
+                                                                if (!searchPlaceholders.some(p => localEndpoint.includes(p))) {
+                                                                    // Remove trailing slash if present
+                                                                    if (localEndpoint.endsWith("/")) {
+                                                                        localEndpoint = localEndpoint.slice(0, -1);
+                                                                    }
+                                                                    localEndpoint = `${localEndpoint}/${encodeURIComponent(searchTerm)}`;
+                                                                }
+                                                                
+                                                                modifiedEndpoint = `/api/${localEndpoint}`;
+                                                            } else {
+                                                                // Default query format - append query parameters
+                                                                const queryParams =
+                                                                    Object.entries(
+                                                                        requestParams
+                                                                    )
+                                                                        .filter(
+                                                                            ([
+                                                                                _,
+                                                                                value,
+                                                                            ]) =>
+                                                                                value !==
+                                                                                    undefined &&
+                                                                                value !==
                                                                                 null &&
-                                                                            value !==
+                                                                                value !==
                                                                                 ""
-                                                                    )
-                                                                    .map(
-                                                                        ([
-                                                                            key,
-                                                                            value,
-                                                                        ]) =>
-                                                                            `${key}=${encodeURIComponent(
-                                                                                String(
-                                                                                    value
-                                                                                )
-                                                                            )}`
-                                                                    )
-                                                                    .join("&");
+                                                                        )
+                                                                        .map(
+                                                                            ([
+                                                                                key,
+                                                                                value,
+                                                                            ]) =>
+                                                                                `${key}=${encodeURIComponent(
+                                                                                    String(
+                                                                                        value
+                                                                                    )
+                                                                                )}`
+                                                                        )
+                                                                        .join("&");
 
-                                                            if (queryParams) {
-                                                                const separator =
-                                                                    modifiedEndpoint.includes(
-                                                                        "?"
-                                                                    )
-                                                                        ? "&"
+                                                                if (queryParams) {
+                                                                    const separator =
+                                                                        modifiedEndpoint.includes(
+                                                                            "?"
+                                                                        )
+                                                                            ? "&"
                                                                         : "?";
-                                                                modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
+                                                                    modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
+                                                                }
                                                             }
                                                         }
                                                     } catch (error) {

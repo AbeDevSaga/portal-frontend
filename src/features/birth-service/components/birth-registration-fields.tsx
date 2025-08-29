@@ -55,9 +55,11 @@ export const birthRegistrationFormConfig: FormConfig = {
                     gridCols: 6,
                     inputSearchConfig: {
                         isExternal: true,
-                        apiEndpoint: "/resident/residents",
+                        baseUrl: `${process.env.NEXT_PUBLIC_IDX_BACKEND1}	`, // Custom base URL - overrides environment variable
+                        apiEndpoint: "/hosital-notifications",
                         method: "GET",
                         searchKey: "search",
+                        searchFormat: "query", // Query parameter format: /resident/residents?search="term"
                         valueKey: "id",
                         labelKey: "name",
                         minSearchLength: 3,
@@ -568,11 +570,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                         return dependentValues?.fatherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        console.log("dependentValues father resident", dependentValues);
-                        if(dependentValues?.birthType !== "Is new child" && !dependentValues?.fatherResidentId ) {
-                            return true;
-                        }
-                        return false;
+                        return dependentValues?.birthType !== "Is new child" && !dependentValues?.fatherResidentId
                     },
                 },
                 {
@@ -607,7 +605,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                         return dependentValues?.fatherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.fatherResidentId || dependentValues?.birthType !== "Is new child";
+                        return dependentValues?.birthType !== "Is new child" && !dependentValues?.fatherResidentId
                     },
                 },
                 {
@@ -642,7 +640,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                         return dependentValues?.fatherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.fatherResidentId || dependentValues?.birthType !== "Is new child";
+                        return dependentValues?.birthType !== "Is new child" && !dependentValues?.fatherResidentId
                     },
                 },
                 {
@@ -755,7 +753,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                         return dependentValues?.motherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.motherResidentId || dependentValues?.birthType !== "Is new child";
+                        return dependentValues?.birthType !== "Is new child" && !dependentValues?.motherResidentId
                     },
                 },
                 {
@@ -790,7 +788,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                         return dependentValues?.motherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.motherResidentId || dependentValues?.birthType !== "Is new child";
+                        return dependentValues?.birthType !== "Is new child" && !dependentValues?.motherResidentId
                     },
                 },
                 {
@@ -825,7 +823,7 @@ export const birthRegistrationFormConfig: FormConfig = {
                         return dependentValues?.motherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.motherResidentId || dependentValues?.birthType !== "Is new child";
+                        return dependentValues?.birthType !== "Is new child" && !dependentValues?.motherResidentId
                     },
                 },
             ],
