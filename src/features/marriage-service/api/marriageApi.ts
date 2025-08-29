@@ -26,8 +26,8 @@ export const marriageApi = createApi({
             },
         }),
         getResidentData: builder.query({
-            query: ({ id }) => {
-                return `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}/resident/resident?search=${id}`;
+            query: ({ id, type = "search" }) => {
+                return `${process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL}/resident/residents?${type}=${id}`;
             },
         }),
 

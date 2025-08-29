@@ -95,7 +95,10 @@ export default function MarriageNew() {
         submissionData: any
     ) => {
         try {
-            const response = await submitForm(apiPayload).unwrap();
+            const response = await submitForm({
+                data: apiPayload,
+                file: null,
+            }).unwrap();
             // const response2 = await new Promise((resolve) =>
             //     setTimeout(resolve, 1000)
             // );

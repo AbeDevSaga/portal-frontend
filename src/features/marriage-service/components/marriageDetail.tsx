@@ -8,10 +8,7 @@ import HeroSection from "@/common/components/common/HeroSection";
 import DetailBlock from "@/common/components/common/detailBlock";
 import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
 import { formConfig } from "./marraige-form-fields";
-import {
-    useGetMarriageByBrideOrGroomQuery,
-    useGetMarriageBySlugQuery,
-} from "../api/marriageApi";
+import { useGetMarriageBySlugQuery } from "../api/marriageApi";
 import MarriageDetailComponent from "./marriageDetailComponent";
 
 // Define the type for the mapped response data
@@ -88,11 +85,88 @@ export default function MarriageDetail() {
             />
 
             <div className='flex flex-wrap xl:flex-nowrap gap-10'>
-                <Card className='py-5 px-5 w-full flex flex-col h-fit min-h-[500px]'>
-                    {response ? (
-                        <MarriageDetailComponent id={response.husband} />
-                    ) : null}
-                    {/* {!isError &&
+                <div className='grid grid-cols-2 gap-5 w-full'>
+                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
+                        {response ? (
+                            <MarriageDetailComponent
+                                title='Husband Information'
+                                id={response.husband}
+                            />
+                        ) : null}
+                        {isLoading ? (
+                            <div className='flex-1 flex items-center justify-center'>
+                                <Loader className='animate-spin' />
+                            </div>
+                        ) : null}
+                    </Card>
+                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
+                        {response ? (
+                            <MarriageDetailComponent
+                                title='Wife Information'
+                                id={response.wife}
+                            />
+                        ) : null}
+                        {isLoading ? (
+                            <div className='flex-1 flex items-center justify-center'>
+                                <Loader className='animate-spin' />
+                            </div>
+                        ) : null}
+                    </Card>
+                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
+                        {response ? (
+                            <MarriageDetailComponent
+                                title='Husband Witness One Information'
+                                id={response.husbandWetnessOne}
+                            />
+                        ) : null}
+                        {isLoading ? (
+                            <div className='flex-1 flex items-center justify-center'>
+                                <Loader className='animate-spin' />
+                            </div>
+                        ) : null}
+                    </Card>
+                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
+                        {response ? (
+                            <MarriageDetailComponent
+                                title='Husband Witness Two Information'
+                                id={response.husbandWetnessTwo}
+                            />
+                        ) : null}
+                        {isLoading ? (
+                            <div className='flex-1 flex items-center justify-center'>
+                                <Loader className='animate-spin' />
+                            </div>
+                        ) : null}
+                    </Card>
+
+                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
+                        {response ? (
+                            <MarriageDetailComponent
+                                title='Wife Witness One Information'
+                                id={response.wifeWetnessOne}
+                            />
+                        ) : null}
+                        {isLoading ? (
+                            <div className='flex-1 flex items-center justify-center'>
+                                <Loader className='animate-spin' />
+                            </div>
+                        ) : null}
+                    </Card>
+                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
+                        {response ? (
+                            <MarriageDetailComponent
+                                title='Wife Witness One Information'
+                                id={response.wifeWetnessTwo}
+                            />
+                        ) : null}
+                        {isLoading ? (
+                            <div className='flex-1 flex items-center justify-center'>
+                                <Loader className='animate-spin' />
+                            </div>
+                        ) : null}
+                    </Card>
+                </div>
+                {/* {!isError &&
                     !isLoading &&
                     response.length !== 0 &&
                     data !== null &&
@@ -104,12 +178,11 @@ export default function MarriageDetail() {
                           ))
                         : null} */}
 
-                    {isLoading ? (
-                        <div className='flex-1 flex items-center justify-center'>
-                            <Loader className='animate-spin' />
-                        </div>
-                    ) : null}
-                </Card>
+                {isLoading ? (
+                    <div className='flex-1 flex items-center justify-center'>
+                        <Loader className='animate-spin' />
+                    </div>
+                ) : null}
                 <div className='w-fit min-w-[350px] 2xl:min-w-[500px] flex-1 flex flex-col md:flex-row xl:flex-col gap-5'>
                     {showTimer ? (
                         <Card
@@ -163,7 +236,7 @@ export default function MarriageDetail() {
                             Requirements and Actions
                         </p>
                         <div className='space-y-3'>
-                            {/* {requirementsandaction.map(
+                            {requirementsandaction.map(
                                 (requirementsandactionItem) => (
                                     <Card
                                         key={requirementsandactionItem.title}
@@ -209,7 +282,7 @@ export default function MarriageDetail() {
                                         </Button>
                                     </Card>
                                 )
-                            )} */}
+                            )}
                         </div>
                     </Card>{" "}
                 </div>
