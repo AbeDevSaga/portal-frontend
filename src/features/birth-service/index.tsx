@@ -1,11 +1,11 @@
 "use client";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 // import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 // import { birthFormConfig } from "./birth-form-fields";
 // import { hcBirthFormConfig as birthFormConfig } from "./components/birth-hc-form-fields";
 import { birthRegistrationFormConfig } from "./components//birth-registration-fields";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 // import { processFormSubmission } from "@/utils/formSubmissionUtils";
 import { toast } from "sonner";
 import { generateFieldGrouping } from "@/common/utils/dynamic-form/fieldGrouping";
@@ -18,11 +18,15 @@ import {
 
 import HeroSection from "@/common/components/common/HeroSection";
 import { useSubmitFormMutation } from "./api/birthApi";
+import { removeFields, updateField } from "@/redux/feature/birthSlice";
 
 export default function BirthNew() {
+    const dispatch = useDispatch();
     const formValues = useSelector((state: RootState) => state.birthSlice);
     const { allFields, groupMap } = generateFieldGrouping(birthRegistrationFormConfig);
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
+    const prevBirthTypeRef = useRef<string | null>(null);
+    
     useEffect(() => {
         const initialExpanded = birthRegistrationFormConfig.steps
             .map((step, index) =>
@@ -31,6 +35,64 @@ export default function BirthNew() {
             .filter(Boolean) as string[];
         setExpandedSections(initialExpanded);
     }, [birthRegistrationFormConfig.steps]);
+
+    // Watch for birth type changes and reset dependent fields when it changes
+    useEffect(() => {
+        const currentBirthType = formValues.birthType;
+        
+        // Only reset dependent fields if birth type has actually changed and is not the initial load
+        if (currentBirthType && prevBirthTypeRef.current && prevBirthTypeRef.current !== currentBirthType) {
+            console.log('Birth type changed from', prevBirthTypeRef.current, 'to', currentBirthType);
+            console.log('Current form values before reset:', formValues);
+            console.log('Resetting dependent fields...');
+            
+            // Reset only the dependent fields based on birth type
+            const fieldsToReset = [
+                'hospitalNotificationId',
+                'familyResidentId', 
+                'firstName',
+                'gender',
+                'nationality',
+                'dateOfBirth',
+                'birthTimeWeight',
+                'isBornInHealthCenter',
+                'healthCenterName',
+                'healthCenterType',
+                'healthCenterOwner',
+                'fatherResidentId',
+                'fatherFullName',
+                'fatherDateOfBirth',
+                'fatherPhoneNumber',
+                'motherResidentId',
+                'motherFullName',
+                'motherDateOfBirth',
+                'motherPhoneNumber'
+            ];
+            
+            // First remove the fields completely, then re-add them with empty values
+            console.log('Removing fields completely...');
+            dispatch(removeFields({ keys: fieldsToReset }));
+            
+            // Then re-add them with empty values after a short delay
+            setTimeout(() => {
+                console.log('Re-adding fields with empty values...');
+                fieldsToReset.forEach(fieldKey => {
+                    // Handle complex fields (resident IDs) differently
+                    if (fieldKey === 'fatherResidentId' || fieldKey === 'motherResidentId' || fieldKey === 'familyResidentId') {
+                        console.log('Setting complex field:', fieldKey, 'to null');
+                        dispatch(updateField({ key: fieldKey, value: null }));
+                    } else {
+                        console.log('Setting field:', fieldKey, 'to empty string');
+                        dispatch(updateField({ key: fieldKey, value: '' }));
+                    }
+                });
+                console.log('Field reset complete');
+            }, 50);
+        }
+        
+        // Update the ref with current value
+        prevBirthTypeRef.current = currentBirthType;
+    }, [formValues.birthType, dispatch]);
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
