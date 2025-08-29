@@ -68,7 +68,7 @@
     "hello": "Hello!",
     "new": "New",
     "list": "List",
-    "vitalRegistration": "Vital Registration",
+    "`Vital Registration": "Vital Registration",
     "residentService": "Resident Service",
     "documentAuthentication": "Document Authentication",
     "Compliant": "Compliant"

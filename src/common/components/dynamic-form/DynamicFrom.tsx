@@ -109,7 +109,8 @@ export default function DynamicForm({
         fields: any[],
         stepTitle: string,
         defaultExpanded: boolean = false,
-        stepIndex: number = 0
+        stepIndex: number = 0,
+        formValues: any = {}
     ) => {
         const accordionValue = `step-${stepIndex}`;
         return (
@@ -125,7 +126,7 @@ export default function DynamicForm({
                 <AccordionContent className='pt-4'>
                     <div className={`${formStyle} space-y-4`}>
                         {fields.map((field: any) => (
-                            <FieldRenderer key={field.key} field={field} />
+                            <FieldRenderer key={field.key} field={field} formValues={formValues} />
                         ))}
                     </div>
                 </AccordionContent>
@@ -134,11 +135,11 @@ export default function DynamicForm({
     };
 
     // Function to render fields normally
-    const renderNormalFields = (fields: any[]) => {
+    const renderNormalFields = (fields: any[], formValues: any = {}) => {
         return (
             <div className={`${formStyle}`}>
                 {fields.map((field: any) => (
-                    <FieldRenderer key={field.key} field={field} />
+                    <FieldRenderer key={field.key} field={field} formValues={formValues} />
                 ))}
             </div>
         );
@@ -204,10 +205,12 @@ export default function DynamicForm({
                                                   currentStep.fields,
                                                   currentStep.title,
                                                   currentStep.defaultExpanded,
-                                                  stepIndex
+                                                  stepIndex,
+                                                  values
                                               )
                                             : renderNormalFields(
-                                                  currentStep.fields
+                                                  currentStep.fields,
+                                                  values
                                               )}
                                         {/* ************************************************ NOTE: for debugging purpose only *********************************** */}
                                         {/* Validation Status */}
@@ -327,7 +330,8 @@ export default function DynamicForm({
                                                                       step.fields,
                                                                       step.title,
                                                                       step.defaultExpanded,
-                                                                      stepIndex
+                                                                      stepIndex,
+                                                                      values
                                                                   )
                                                                 : renderNormalFields(
                                                                       step.fields
@@ -347,7 +351,8 @@ export default function DynamicForm({
                                                             {step.title}
                                                         </h3>
                                                         {renderNormalFields(
-                                                            step.fields
+                                                            step.fields,
+                                                            values
                                                         )}
                                                     </div>
                                                 )

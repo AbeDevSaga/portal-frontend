@@ -128,7 +128,7 @@ const Sidebar = () => {
                                                     color={isActive || isChildActive ? getIconColor('active') : getIconColor('default')}
 
                                                 />
-                                                <span className="flex-1 text-left">{t(child.label)}</span>
+                                                <span className="flex-1 text-left">{child.label}</span>
                                                 {hasChildren && (
                                                     <button
                                                         onClick={(e) => {
