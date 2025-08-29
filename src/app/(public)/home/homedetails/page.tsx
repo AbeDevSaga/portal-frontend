@@ -1,6 +1,4 @@
 "use client";
-import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import { useTranslations } from "next-intl";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
@@ -68,36 +66,33 @@ export default function Home() {
                     <div>
                         <p className='font-bold text-2xl'>Birth</p>
                         <p className='text-lg'>
-                            This is the birth registration and
-                            certificate seciton
+                            This is the birth registration and certificate
+                            seciton
                         </p>
                     </div>
                     <div className='flex flex-wrap items-center gap-2 min-w-fit'>
                         <div className='py-2 px-3 rounded-md border-2 border-black gap-4 w-fit flex flex-wrap'>
-                            {filterStatus.map(
-                                (filterStatusOption) => (
-                                    <Button
-                                        onClick={() =>
-                                            setSearchParams(
-                                                filterStatusOption,
-                                                "status"
-                                            )
-                                        }
-                                        className={`${
-                                            statusValue ===
-                                            filterStatusOption
-                                                ? "bg-[#2C566A] shadow-md"
-                                                : "bg-transparent border-none shadow-none text-primary hover:text-secondary"
-                                        }`}
-                                        key={filterStatusOption}
-                                        size='lg'
-                                    >
-                                        <p className='capitalize py-2'>
-                                            {filterStatusOption}
-                                        </p>
-                                    </Button>
-                                )
-                            )}
+                            {filterStatus.map((filterStatusOption) => (
+                                <Button
+                                    onClick={() =>
+                                        setSearchParams(
+                                            filterStatusOption,
+                                            "status"
+                                        )
+                                    }
+                                    className={`${
+                                        statusValue === filterStatusOption
+                                            ? "bg-[#2C566A] shadow-md"
+                                            : "bg-transparent border-none shadow-none text-primary hover:text-secondary"
+                                    }`}
+                                    key={filterStatusOption}
+                                    size='lg'
+                                >
+                                    <p className='capitalize py-2'>
+                                        {filterStatusOption}
+                                    </p>
+                                </Button>
+                            ))}
                         </div>
                         <div>
                             <SelectComponent

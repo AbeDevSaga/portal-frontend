@@ -2,13 +2,13 @@
 import { useParams } from "next/navigation";
 import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useGetBirthBySlugQuery } from "@/redux/api/birthApi";
 import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
 import { birthFormConfig } from "./birth-form-fields";
 import HeroSection from "@/common/components/common/HeroSection";
 import { Button } from "@/common/components/ui/button";
 import { Card } from "@/common/components/ui/card";
 import DetailBlock from "@/common/components/common/detailBlock";
-import { useGetBirthBySlugQuery } from "../api/birthApi";
 
 // Define the type for the mapped response data
 type MappedResponseData = {

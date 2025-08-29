@@ -1,10 +1,13 @@
-import { marriageListEndpoint } from "@/common/utils/constants/EndPoints";
+import {
+    MARRIAGE_CREATE_ENDPOINT,
+    MARRIAGE_LIST_ENDPOINT,
+} from "@/common/utils/constants/EndPoints";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const marriageApi = createApi({
     reducerPath: "marriageApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3000",
+        baseUrl: process.env.NEXT_PUBLIC_IDX_BACKEND,
     }),
     endpoints: (builder) => ({
         getMarriagesList: builder.query<
@@ -12,17 +15,17 @@ export const marriageApi = createApi({
             { page?: number; perPage?: number }
         >({
             query: ({ page = 1, perPage = 10 } = {}) => {
-                return `${marriageListEndpoint}?page=${page}&perPage=${perPage}`;
+                return `${MARRIAGE_LIST_ENDPOINT}?page=${page}&perPage=${perPage}`;
             },
         }),
         getMarriageBySlug: builder.query({
             query: ({ id }) => {
-                return `${marriageListEndpoint}/${id}`;
+                return `${MARRIAGE_LIST_ENDPOINT}/${id}`;
             },
         }),
         submitForm: builder.mutation<any, Record<string, any>>({
             query: (formData) => ({
-                url: marriageListEndpoint,
+                url: MARRIAGE_CREATE_ENDPOINT,
                 method: "POST",
                 body: formData,
             }),
