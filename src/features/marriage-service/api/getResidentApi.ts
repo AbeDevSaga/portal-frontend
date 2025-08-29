@@ -14,6 +14,4 @@ export const residentApi = createApi({
     }),
 });
 
-export const {
-    useGetResidentDataQuery,
-} = residentApi;
+export const { useGetResidentDataQuery } = residentApi;

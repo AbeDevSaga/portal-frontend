@@ -5,6 +5,7 @@ import { birthApi } from "./api/birthApi";
 import { marriageApi } from "@/features/marriage-service/api/marriageApi";
 
 import { listApi } from "@/features/list/api/listApi";
+import { applicationApi } from "@/features/application-service/api/applicationApi";
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,8 @@ export const store = configureStore({
         [birthApi.reducerPath]: birthApi.reducer,
         [marriageApi.reducerPath]: marriageApi.reducer,
         [listApi.reducerPath]: listApi.reducer,
+        [applicationApi.reducerPath]: applicationApi.reducer,
+
         // [marriageApi.reducerPath]: marriageApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
@@ -21,7 +24,8 @@ export const store = configureStore({
         }).concat(
             birthApi.middleware,
             marriageApi.middleware,
-            listApi.middleware
+            listApi.middleware,
+            applicationApi.middleware
             // marriageApi.middleware
         ),
 });

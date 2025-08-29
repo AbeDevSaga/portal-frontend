@@ -11,6 +11,13 @@ import { formConfig } from "./marraige-form-fields";
 import { useGetMarriageBySlugQuery } from "../api/marriageApi";
 import MarriageDetailComponent from "./marriageDetailComponent";
 import { MarriageData, MarriageResponse } from "../types";
+import {
+    useGetVitalServiceEventQuery,
+    useSubmitResolutionFormMutation,
+} from "@/features/application-service/api/applicationApi";
+import { useFormik } from "formik";
+import RejectionModal from "./rejectionModal";
+import GeneralInformation from "./generalInformation";
 
 // Define the type for the mapped response data
 // type MappedResponseData = {
@@ -20,6 +27,8 @@ import { MarriageData, MarriageResponse } from "../types";
 
 export default function MarriageDetail() {
     const [response, setResponse] = useState<MarriageData | null>(null);
+    const [openModal, setOpenModal] = useState(false);
+    const [openRejectModal, setOpenRejectModal] = useState(false);
 
     const [copied, setCopied] = useState(false);
     const [showTimer, setShowTimer] = useState(false);
@@ -70,21 +79,162 @@ export default function MarriageDetail() {
         }
     };
 
-    return (
-        <>
-            <HeroSection
-                title='Marriage Detail'
-                description='This is the marriage detail of a family member section'
-                action={
+    const [
+        submitResolutionForm,
+        {
+            isLoading: resolutionIsLoading,
+            isError: resolutionIsError,
+            data: resolutionData,
+        },
+    ] = useSubmitResolutionFormMutation();
+    const handleValidateApplication = async (values: {
+        status: string;
+        reason: string;
+    }) => {
+        try {
+            const data = {
+                registration_number: slug,
+                reviewerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                approverId: null,
+                status: values.status,
+                localisation: [
+                    {
+                        languageCode: "en",
+                        reviewDate: "2025-08-29T18:13:13.672Z",
+                        approvedDate: null,
+                        reviewerNotes: values.reason,
+                        approverNotes: null,
+                    },
+                ],
+            };
+            const response = await submitResolutionForm({
+                data,
+            });
+            // if (!isError) {
+            //     window.location.reload();
+            // }
+            console.log(response);
+        } catch (error) {}
+    };
+
+    const {
+        data: vitalData,
+        isLoading: isVitalLoading,
+        isError: isVitalError,
+    } = useGetVitalServiceEventQuery({ id: slug });
+
+    console.log("vital data", vitalData);
+    const [displayData, setDisplayData] = useState("general");
+    const marriageDetailOptions = [
+        {
+            label: "General Info",
+            component: <GeneralInformation data={null} />,
+            value: "general",
+        },
+        {
+            label: "Bridal Info",
+            component: <></>,
+            value: "bridal",
+        },
+        {
+            label: "Witness",
+            component: <></>,
+            value: "witness",
+        },
+    ];
+
+    const handleRenderApplicationDecisionButtons = (status: string) => {
+        if (status === "SUBMITTED")
+            return (
+                <>
+                    <Button
+                        onClick={() =>
+                            handleValidateApplication({
+                                status: "UNDER_REVIEW",
+                                reason: "",
+                            })
+                        }
+                    >
+                        Validate Application
+                    </Button>
+                    <Button onClick={() => setOpenRejectModal(true)}>
+                        Reject Application
+                    </Button>
+                </>
+            );
+        if (status === "UNDER_REVIEW")
+            return (
+                <>
+                    <Button
+                        onClick={() =>
+                            handleValidateApplication({
+                                status: "APPROVED",
+                                reason: "",
+                            })
+                        }
+                    >
+                        Approve Application
+                    </Button>
+                    <Button onClick={() => setOpenRejectModal(true)}>
+                        Reject Application
+                    </Button>
+                </>
+            );
+        if (status === "APPROVED")
+            return (
+                <div className='flex flex-wrap items-center gap-3'>
+                    <div className='px-5 text-center py-2 rounded-sm bg-green-400/50'>
+                        APPROVED
+                    </div>
+
                     <Button
                         className='bg-[#073954]'
                         onClick={() => setShowTimer(true)}
                     >
                         Request Certificate
                     </Button>
+                </div>
+            );
+        if (status === "REJECTED")
+            return (
+                <div className='px-5 text-center py-2 rounded-sm bg-red-400/50'>
+                    REJECTED
+                </div>
+            );
+        return null;
+    };
+
+    return (
+        <>
+            <HeroSection
+                title='Marriage Detail'
+                description='This is the marriage detail of a family member section'
+                action={
+                    <>
+                        {handleRenderApplicationDecisionButtons(
+                            vitalData ? vitalData.data.status : ""
+                        )}
+                    </>
                 }
             />
+            <Card className='space-x-2 w-fit bg-gray-200 py-4 px-10'>
+                {marriageDetailOptions.map((component) => (
+                    <Button
+                        onClick={() => setDisplayData(component.value)}
+                        key={component.value}
+                        variant={
+                            component.value === displayData ? "default" : "bare"
+                        }
+                    >
+                        {component.label}{" "}
+                    </Button>
+                ))}
+            </Card>
 
+            {
+                marriageDetailOptions.find((item) => item.value === displayData)
+                    ?.component
+            }
             <div className='flex flex-wrap xl:flex-nowrap gap-10'>
                 <div className='grid grid-cols-2 gap-5 w-full'>
                     <Card className='py-5 px-5 w-full flex flex-col h-fit'>
@@ -288,6 +438,10 @@ export default function MarriageDetail() {
                     </Card>{" "}
                 </div>
             </div>
+            <RejectionModal
+                open={openRejectModal}
+                handleCancel={setOpenRejectModal}
+            />
         </>
     );
 }
