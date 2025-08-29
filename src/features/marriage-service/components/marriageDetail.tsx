@@ -10,6 +10,7 @@ import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicA
 import { formConfig } from "./marraige-form-fields";
 import { useGetMarriageBySlugQuery } from "../api/marriageApi";
 import MarriageDetailComponent from "./marriageDetailComponent";
+import { MarriageData, MarriageResponse } from "../types";
 
 // Define the type for the mapped response data
 // type MappedResponseData = {
@@ -18,7 +19,7 @@ import MarriageDetailComponent from "./marriageDetailComponent";
 // }[];
 
 export default function MarriageDetail() {
-    const [response, setResponse] = useState<MappedResponseData>(null);
+    const [response, setResponse] = useState<MarriageData | null>(null);
 
     const [copied, setCopied] = useState(false);
     const [showTimer, setShowTimer] = useState(false);
@@ -87,7 +88,7 @@ export default function MarriageDetail() {
             <div className='flex flex-wrap xl:flex-nowrap gap-10'>
                 <div className='grid grid-cols-2 gap-5 w-full'>
                     <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response ? (
+                        {response && response !== null ? (
                             <MarriageDetailComponent
                                 title='Husband Information'
                                 id={response.husband}

@@ -14,8 +14,14 @@ import { useEffect, useState } from "react";
 import HeroSection from "@/common/components/common/HeroSection";
 import { useSubmitFormMutation } from "./api/marriageApi";
 import { toast } from "sonner";
-
+import { useRouter } from "next/navigation";
+const handleConvertDate = (date: string) => {
+    const dateOnly = date.split("T")[0];
+    return dateOnly;
+};
 export default function MarriageNew() {
+    const router = useRouter();
+
     const formValues = useSelector((state: RootState) => state.birthSlice);
     const { allFields, groupMap } = generateFieldGrouping(formConfig);
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
@@ -34,7 +40,7 @@ export default function MarriageNew() {
         const body = {
             wifeId: value.brideResidentId?.id,
             husbandId: value.groomResidentId?.id,
-            supportingDoc: "string",
+            // supportingDoc: "string",
             registryOfficeId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // ✅ Changed registryOfficeCode → registryOfficeId
             husbandWetnessOne: value.groomWitnessFirstResidentId?.id,
             husbandWetnessTwo: value.groomWitnessSecondResidentId?.id,
@@ -42,21 +48,21 @@ export default function MarriageNew() {
             wifeWetnessTwo: value.brideWitnessSecondResidentId?.id,
             marriageLocalization: [
                 {
-                    languageCode: "string",
-                    marriageDate: "2025-08-23",
-                    marriageType: "string",
+                    languageCode: "en",
+                    marriageDate: handleConvertDate(value.dateOfMarriage),
+                    marriageType: "NATIONAL",
                     reason: "string",
                 },
             ],
             vitalEventsRequest: {
                 requesterId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                eventType: "BIRTH",
+                eventType: "MARRIAGE",
                 status: "NEW",
                 oldRequesterId: null, // ✅ Added to match original request
                 localisation: [
                     {
-                        languageCode: "string",
-                        submissionDate: value.dateOfMarriage,
+                        languageCode: "en",
+                        submissionDate: handleConvertDate(value.dateOfMarriage),
                     },
                 ],
             },
@@ -97,13 +103,17 @@ export default function MarriageNew() {
         try {
             const response = await submitForm({
                 data: apiPayload,
-                file: null,
             }).unwrap();
             // const response2 = await new Promise((resolve) =>
             //     setTimeout(resolve, 1000)
             // );
             if (response) {
                 toast.success("Marriage registration submitted successfully!");
+                // data.
+                router.push(
+                    `/application/marriage/detail/${response.registration_form_number}`
+                );
+              
             } else {
                 toast.error("Failed to create Marriage registration");
             }

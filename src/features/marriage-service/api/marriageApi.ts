@@ -31,11 +31,25 @@ export const marriageApi = createApi({
             },
         }),
 
-        submitForm: builder.mutation<any, { data: any; file: File }>({
-            query: ({ data, file }) => {
+        submitForm: builder.mutation<any, { data: any; file?: File }>({
+            query: ({ data, file = null }) => {
                 const formData = new FormData();
-                formData.append("data", JSON.stringify(data)); // the marriage details JSON
-                formData.append("supportingDoc", file); // the uploaded file
+                const jsonBlob = new Blob([JSON.stringify(data)], {
+                    type: "application/json",
+                });
+
+                formData.append("data", jsonBlob);
+
+                if (file) {
+                    const docBlob = new Blob([file], {
+                        type: "application/pdf",
+                    }); // set MIME type as needed
+                    formData.append(
+                        "supportingDoc",
+                        docBlob,
+                        "supportingDoc.pdf"
+                    ); // filename is optional
+                }
 
                 return {
                     url: MARRIAGE_CREATE_ENDPOINT,
