@@ -541,6 +541,26 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
+                        defaultValue: (dependentValues: any) => {
+                            if (
+                                dependentValues?.groomResidentId &&
+                                typeof dependentValues.groomResidentId ===
+                                    "object"
+                            ) {
+                                console.log(
+                                    "dependentValues.groomResidentId.nationality",
+                                    dependentValues.groomResidentId.nationality
+                                );
+                                return (
+                                    dependentValues.groomResidentId
+                                        .nationality || ""
+                                );
+                            }
+                            return "";
+                        },
+                        getDependentValue: (formValues: any) => ({
+                            groomResidentId: formValues.groomResidentId,
+                        }),
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"

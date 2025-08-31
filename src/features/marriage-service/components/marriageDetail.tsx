@@ -5,20 +5,24 @@ import { useEffect, useState } from "react";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import HeroSection from "@/common/components/common/HeroSection";
-import DetailBlock from "@/common/components/common/detailBlock";
-import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
-import { formConfig } from "./marraige-form-fields";
 import { useGetMarriageBySlugQuery } from "../api/marriageApi";
-import MarriageDetailComponent from "./marriageDetailComponent";
-import { MarriageData, MarriageResponse } from "../types";
+import { MarriageData } from "../types";
 import {
     useGetVitalServiceEventQuery,
     useSubmitResolutionFormMutation,
 } from "@/features/application-service/api/applicationApi";
-import { useFormik } from "formik";
 import RejectionModal from "./rejectionModal";
 import GeneralInformation from "./generalInformation";
+import BridalInformation from "./bridalInformation";
+import general from "@/public/images/general.svg";
+import witness from "@/public/images/witness.svg";
+import marriage from "@/public/images/marraige2.svg";
+import generalActive from "@/public/images/generalActive.svg";
+import marriageActive from "@/public/images/marraigeActive.svg";
+import witnessActive from "@/public/images/witnessActive.svg";
 
+import Image from "next/image";
+import WitnessInformation from "./witnessInformation";
 // Define the type for the mapped response data
 // type MappedResponseData = {
 //     title: string;
@@ -116,30 +120,39 @@ export default function MarriageDetail() {
             console.log(response);
         } catch (error) {}
     };
-
     const {
         data: vitalData,
         isLoading: isVitalLoading,
         isError: isVitalError,
     } = useGetVitalServiceEventQuery({ id: slug });
 
-    console.log("vital data", vitalData);
     const [displayData, setDisplayData] = useState("general");
     const marriageDetailOptions = [
         {
             label: "General Info",
-            component: <GeneralInformation data={null} />,
+            component: (
+                <GeneralInformation
+                    data={data?.data || null}
+                    status={vitalData ? vitalData.data.status : ""}
+                />
+            ),
             value: "general",
+            image: general.src,
+            imageActive: generalActive.src,
         },
         {
             label: "Bridal Info",
-            component: <></>,
+            component: <BridalInformation data={data?.data || null} />,
             value: "bridal",
+            image: marriage.src,
+            imageActive: marriageActive.src,
         },
         {
-            label: "Witness",
-            component: <></>,
-            value: "witness",
+            label: "Witnessess",
+            component: <WitnessInformation data={data?.data || null} />,
+            value: "witnessess",
+            image: witness.src,
+            imageActive: witnessActive.src,
         },
     ];
 
@@ -207,131 +220,81 @@ export default function MarriageDetail() {
     return (
         <>
             <HeroSection
+                redirectTo='/application'
                 title='Marriage Detail'
                 description='This is the marriage detail of a family member section'
                 action={
-                    <>
+                    <div className='space-y-5 space-x-5'>
                         {handleRenderApplicationDecisionButtons(
                             vitalData ? vitalData.data.status : ""
                         )}
-                    </>
+                    </div>
                 }
             />
-            <Card className='space-x-2 w-fit bg-gray-200 py-4 px-10'>
-                {marriageDetailOptions.map((component) => (
-                    <Button
-                        onClick={() => setDisplayData(component.value)}
-                        key={component.value}
-                        variant={
-                            component.value === displayData ? "default" : "bare"
-                        }
-                    >
-                        {component.label}{" "}
-                    </Button>
-                ))}
-            </Card>
 
-            {
-                marriageDetailOptions.find((item) => item.value === displayData)
-                    ?.component
-            }
             <div className='flex flex-wrap xl:flex-nowrap gap-10'>
-                <div className='grid grid-cols-2 gap-5 w-full'>
-                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response && response !== null ? (
-                            <MarriageDetailComponent
-                                title='Husband Information'
-                                id={response.husband}
-                            />
-                        ) : null}
-                        {isLoading ? (
-                            <div className='flex-1 flex items-center justify-center'>
-                                <Loader className='animate-spin' />
-                            </div>
-                        ) : null}
-                    </Card>
-                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response ? (
-                            <MarriageDetailComponent
-                                title='Wife Information'
-                                id={response.wife}
-                            />
-                        ) : null}
-                        {isLoading ? (
-                            <div className='flex-1 flex items-center justify-center'>
-                                <Loader className='animate-spin' />
-                            </div>
-                        ) : null}
-                    </Card>
-                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response ? (
-                            <MarriageDetailComponent
-                                title='Husband Witness One Information'
-                                id={response.husbandWetnessOne}
-                            />
-                        ) : null}
-                        {isLoading ? (
-                            <div className='flex-1 flex items-center justify-center'>
-                                <Loader className='animate-spin' />
-                            </div>
-                        ) : null}
-                    </Card>
-                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response ? (
-                            <MarriageDetailComponent
-                                title='Husband Witness Two Information'
-                                id={response.husbandWetnessTwo}
-                            />
-                        ) : null}
-                        {isLoading ? (
-                            <div className='flex-1 flex items-center justify-center'>
-                                <Loader className='animate-spin' />
-                            </div>
-                        ) : null}
-                    </Card>
-
-                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response ? (
-                            <MarriageDetailComponent
-                                title='Wife Witness One Information'
-                                id={response.wifeWetnessOne}
-                            />
-                        ) : null}
-                        {isLoading ? (
-                            <div className='flex-1 flex items-center justify-center'>
-                                <Loader className='animate-spin' />
-                            </div>
-                        ) : null}
-                    </Card>
-                    <Card className='py-5 px-5 w-full flex flex-col h-fit'>
-                        {response ? (
-                            <MarriageDetailComponent
-                                title='Wife Witness One Information'
-                                id={response.wifeWetnessTwo}
-                            />
-                        ) : null}
-                        {isLoading ? (
-                            <div className='flex-1 flex items-center justify-center'>
-                                <Loader className='animate-spin' />
-                            </div>
-                        ) : null}
-                    </Card>
-                </div>
                 {/* {!isError &&
-                    !isLoading &&
-                    response.length !== 0 &&
-                    data !== null &&
-                    data !== undefined
-                        ? response.map((item, index) => (
-                              <div className='py-5' key={item.title + index}>
-                                  <DetailBlock blockData={item} />
-                              </div>
-                          ))
-                        : null} */}
+                !isLoading &&
+                response.length !== 0 &&
+                data !== null &&
+                data !== undefined
+                    ? response.map((item, index) => (
+                          <div className='py-5' key={item.title + index}>
+                              <DetailBlock blockData={item} />
+                          </div>
+                      ))
+                    : null}
 
                 {isLoading ? (
                     <div className='flex-1 flex items-center justify-center'>
                         <Loader className='animate-spin' />
+                    </div>
+                ) : null} */}
+
+                {isLoading ? (
+                    <Card className='flex-1 flex items-center justify-center min-h-[350px] h-fit'>
+                        <Loader className='animate-spin' />
+                    </Card>
+                ) : null}
+
+                {!isError && !isLoading ? (
+                    <div className='grid grid-cols-2 gap-5 w-full h-fit'>
+                        <Card className='p-5 pb-10 space-y-5 w-full col-span-2 h-fit'>
+                            <Card className='md:space-x-2 w-full md:w-fit bg-gray-200 py-2 px-5 rounded-sm flex flex-col md:flex-row'>
+                                {marriageDetailOptions.map((component) => (
+                                    <Button
+                                        onClick={() =>
+                                            setDisplayData(component.value)
+                                        }
+                                        key={component.value}
+                                        variant={
+                                            component.value === displayData
+                                                ? "default"
+                                                : "bare"
+                                        }
+                                        className='w-full px-10 py-2.5 flex items-center gap-2'
+                                    >
+                                        <Image
+                                            src={
+                                                component.value === displayData
+                                                    ? component.imageActive
+                                                    : component.image
+                                            }
+                                            width={25}
+                                            height={25}
+                                            alt={component.label}
+                                        />
+                                        {component.label}
+                                    </Button>
+                                ))}
+                            </Card>
+
+                            {
+                                marriageDetailOptions.find(
+                                    (item) => item.value === displayData
+                                )?.component
+                            }
+                        </Card>
                     </div>
                 ) : null}
                 <div className='w-fit min-w-[350px] 2xl:min-w-[500px] flex-1 flex flex-col md:flex-row xl:flex-col gap-5'>
