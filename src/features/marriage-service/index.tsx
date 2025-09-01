@@ -47,6 +47,7 @@ export default function MarriageNew() {
             husbandWetnessTwo: value.groomWitnessSecondResidentId?.id,
             wifeWetnessOne: value.brideWitnessFirstResidentId?.id,
             wifeWetnessTwo: value.brideWitnessSecondResidentId?.id,
+            groomSpecialApproval: value.groomSpecialApproval,
             marriageLocalization: [
                 {
                     languageCode: "en",
@@ -104,6 +105,7 @@ export default function MarriageNew() {
         try {
             const response = await submitForm({
                 data: apiPayload,
+                file: apiPayload.groomSpecialApproval,
             }).unwrap();
             // const response2 = await new Promise((resolve) =>
             //     setTimeout(resolve, 1000)

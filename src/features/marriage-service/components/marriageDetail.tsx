@@ -20,9 +20,11 @@ import marriage from "@/public/images/marraige2.svg";
 import generalActive from "@/public/images/generalActive.svg";
 import marriageActive from "@/public/images/marraigeActive.svg";
 import witnessActive from "@/public/images/witnessActive.svg";
-
 import Image from "next/image";
 import WitnessInformation from "./witnessInformation";
+import check from "@/public/images/check.svg";
+import FileViewer from "@/common/components/common/FileViewer";
+import FileViewerModal from "@/common/components/common/FileModalCompoennt";
 // Define the type for the mapped response data
 // type MappedResponseData = {
 //     title: string;
@@ -31,7 +33,7 @@ import WitnessInformation from "./witnessInformation";
 
 export default function MarriageDetail() {
     const [response, setResponse] = useState<MarriageData | null>(null);
-    const [openModal, setOpenModal] = useState(false);
+    const [openFileModal, setOpenFileModal] = useState(false);
     const [openRejectModal, setOpenRejectModal] = useState(false);
 
     const [copied, setCopied] = useState(false);
@@ -294,6 +296,34 @@ export default function MarriageDetail() {
                                     (item) => item.value === displayData
                                 )?.component
                             }
+
+                            <div className='flex flex-col justify-between w-full shadow-sm'>
+                                <p>Attachment</p>
+                                <div
+                                    onClick={() => setOpenFileModal(true)}
+                                    className='cursor-pointer shadow-md rounded-sm overflow-clip flex w-full max-w-[300px] border border-[#004EAD]'
+                                >
+                                    <div className='p-2 w-full'>
+                                        <p>file name</p>
+                                        <p>2mb</p>
+                                    </div>
+                                    <div className='bg-[#4CAF50] p-5'>
+                                        <Image
+                                            src={check.src}
+                                            width={30}
+                                            height={30}
+                                            alt='check'
+                                        />
+                                    </div>
+                                </div>
+                                {openFileModal ? (
+                                    <FileViewerModal
+                                        file={data.data.supporting_doc_url}
+                                        open={openFileModal}
+                                        handleCancel={setOpenFileModal}
+                                    />
+                                ) : null}
+                            </div>
                         </Card>
                     </div>
                 ) : null}

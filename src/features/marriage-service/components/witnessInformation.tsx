@@ -131,7 +131,7 @@ const WitnessInformation = ({ data }: { data: MarriageData }) => {
 
             <div className='w-full overflow-y-scroll max-h-[500px]'>
                 {witnesses.map((witness) => (
-                    <WitnessComponent id={witness} />
+                    <WitnessComponent id={witness} key={witness} />
                 ))}
             </div>
         </div>

@@ -85,6 +85,7 @@ export const formConfig: FormConfig = {
                     key: "dateOfMarriage",
                     label: "Date of Marriage",
                     placeholder: "",
+                    gridCols: 6,
                     description:
                         "Select your marraige date. Future dates are not acceptable.",
                     validators: [
@@ -105,6 +106,7 @@ export const formConfig: FormConfig = {
                     label: "Type of Marriage",
                     placeholder: "Search for marriage type.",
                     description: "Select the marriage type",
+                    gridCols: 6,
                     validators: [
                         // {
                         //     type: "required",
@@ -261,16 +263,16 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.groomResidentId;
                     },
                 },
-                // {
-                //     type: "fileUpload",
-                //     key: "groomBirthCertificate",
-                //     label: "Groom's Birth Certificate",
-                //     placeholder: "",
-                //     description: "Upload the Groom's Birth Certificate",
-                //     required: false,
-                //     group: "Groom's Information",
-                //     groupOrder: 2,
-                // },
+                {
+                    type: "fileUpload",
+                    key: "groomBirthCertificate",
+                    label: "Groom's Birth Certificate",
+                    placeholder: "",
+                    description: "Upload the Groom's Birth Certificate",
+                    required: false,
+                    group: "Groom's Information",
+                    groupOrder: 2,
+                },
                 {
                     type: "input",
                     key: "groomNationality",
@@ -374,45 +376,45 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.groomResidentId;
                     },
                 },
-                // {
-                //     type: "fileUpload",
-                //     key: "groomSpecialApproval",
-                //     label: "Groom's Special Approval Document",
-                //     placeholder: "",
-                //     description: "Upload the Grooms Special Approval Document",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Special Approval Document is required",
-                //         },
-                //     ],
-                //     isRequired: (dependentValue) => {
-                //         const checkIfValidBirthDate = isValidBirthday(
-                //             dependentValue.groomDateOfBirth
-                //         );
-                //         return !checkIfValidBirthDate;
-                //     },
-                //     // required:  (dependentValues: any) => {
-                //     //     // Make required if birth type is twin
-                //     //     return dependentValues?.birthType === 'twin';
-                //     // },
-                //     group: "Groom's Information",
-                //     groupOrder: 2,
-                //     getDependentValue: (formValues: any) => ({
-                //         groomResidentId: formValues.groomDateOfBirth,
-                //     }),
-                //     isDisabled: (dependentValues: any) => {
-                //         return isValidBirthday(
-                //             dependentValues.groomDateOfBirth
-                //         );
-                //     },
-                //     isHide: (dependentValues: any) => {
-                //         const checkIfValidBirthDate = isValidBirthday(
-                //             dependentValues.groomDateOfBirth
-                //         );
-                //         return checkIfValidBirthDate;
-                //     },
-                // },
+                {
+                    type: "fileUpload",
+                    key: "groomSpecialApproval",
+                    label: "Groom's Special Approval Document",
+                    placeholder: "",
+                    description: "Upload the Grooms Special Approval Document",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Special Approval Document is required",
+                        },
+                    ],
+                    isRequired: (dependentValue) => {
+                        const checkIfValidBirthDate = isValidBirthday(
+                            dependentValue.groomDateOfBirth
+                        );
+                        return !checkIfValidBirthDate;
+                    },
+                    // required:  (dependentValues: any) => {
+                    //     // Make required if birth type is twin
+                    //     return dependentValues?.birthType === 'twin';
+                    // },
+                    group: "Groom's Information",
+                    groupOrder: 2,
+                    getDependentValue: (formValues: any) => ({
+                        groomResidentId: formValues.groomDateOfBirth,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return isValidBirthday(
+                            dependentValues.groomDateOfBirth
+                        );
+                    },
+                    isHide: (dependentValues: any) => {
+                        const checkIfValidBirthDate = isValidBirthday(
+                            dependentValues.groomDateOfBirth
+                        );
+                        return checkIfValidBirthDate;
+                    },
+                },
                 {
                     type: "lookup",
                     key: "groomPlaceOfBirth",
@@ -695,29 +697,29 @@ export const formConfig: FormConfig = {
                 //         );
                 //     },
                 // },
-                // {
-                //     type: "fileUpload",
-                //     key: "groomPhoto",
-                //     label: "Groom's Photo",
-                //     placeholder: "",
-                //     description: "Upload the Grooms 3*4 Photo",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Groom's Photo is required",
-                //         },
-                //     ],
-                //     required: true,
-                //     // required:  (dependentValues: any) => {
-                //     //     // Make required if birth type is twin
-                //     //     return dependentValues?.birthType === 'twin';
-                //     // },
-                //     group: "Groom's Information",
-                //     groupOrder: 2,
-                //     isDisabled: (dependentValues: any) => {
-                //         return dependentValues?.groomPhoto;
-                //     },
-                // },
+                {
+                    type: "fileUpload",
+                    key: "groomPhoto",
+                    label: "Groom's Photo",
+                    placeholder: "",
+                    description: "Upload the Grooms 3*4 Photo",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Groom's Photo is required",
+                        },
+                    ],
+                    required: true,
+                    // required:  (dependentValues: any) => {
+                    //     // Make required if birth type is twin
+                    //     return dependentValues?.birthType === 'twin';
+                    // },
+                    group: "Groom's Information",
+                    groupOrder: 2,
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.groomPhoto;
+                    },
+                },
                 // {
                 //     type: "fileUpload",
                 //     key: "residentIdGroom",
@@ -1334,45 +1336,46 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.brideResidentId;
                     },
                 },
-                // {
-                //     type: "fileUpload",
-                //     key: "brideSpecialApproval",
-                //     label: "Bride's Special Approval Document",
-                //     placeholder: "",
-                //     description: "Upload the Brides Special Approval Document",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Special Approval Document is required",
-                //         },
-                //     ],
-                //     isRequired: (dependentValue) => {
-                //         const checkIfValidBirthDate = isValidBirthday(
-                //             dependentValue.brideDateOfBirth
-                //         );
-                //         return !checkIfValidBirthDate;
-                //     },
-                //     // required:  (dependentValues: any) => {
-                //     //     // Make required if birth type is twin
-                //     //     return dependentValues?.birthType === 'twin';
-                //     // },
-                //     group: "Bride's Information",
-                //     groupOrder: 2,
-                //     getDependentValue: (formValues: any) => ({
-                //         brideResidentId: formValues.brideDateOfBirth,
-                //     }),
-                //     isDisabled: (dependentValues: any) => {
-                //         return isValidBirthday(
-                //             dependentValues.brideDateOfBirth
-                //         );
-                //     },
-                //     isHide: (dependentValues: any) => {
-                //         const checkIfValidBirthDate = isValidBirthday(
-                //             dependentValues.brideDateOfBirth
-                //         );
-                //         return checkIfValidBirthDate;
-                //     },
-                // },
+                {
+                    type: "fileUpload",
+                    key: "brideSpecialApproval",
+                    label: "Bride's Special Approval Document",
+                    placeholder: "",
+                    description: "Upload the Brides Special Approval Document",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Special Approval Document is required",
+                        },
+                    ],
+                    isRequired: (dependentValue) => {
+                        const checkIfValidBirthDate = isValidBirthday(
+                            dependentValue.brideDateOfBirth
+                        );
+                        console.log("is valid date", checkIfValidBirthDate);
+                        return !checkIfValidBirthDate;
+                    },
+                    // required:  (dependentValues: any) => {
+                    //     // Make required if birth type is twin
+                    //     return dependentValues?.birthType === 'twin';
+                    // },
+                    group: "Bride's Information",
+                    groupOrder: 2,
+                    getDependentValue: (formValues: any) => ({
+                        brideResidentId: formValues.brideDateOfBirth,
+                    }),
+                    isDisabled: (dependentValues: any) => {
+                        return isValidBirthday(
+                            dependentValues.brideDateOfBirth
+                        );
+                    },
+                    isHide: (dependentValues: any) => {
+                        const checkIfValidBirthDate = isValidBirthday(
+                            dependentValues.brideDateOfBirth
+                        );
+                        return checkIfValidBirthDate;
+                    },
+                },
                 {
                     type: "lookup",
                     key: "bridePlaceOfBirth",
@@ -1636,29 +1639,29 @@ export const formConfig: FormConfig = {
                 //         );
                 //     },
                 // },
-                // {
-                //     type: "fileUpload",
-                //     key: "bridePhoto",
-                //     label: "Bride's Photo",
-                //     placeholder: "",
-                //     description: "Upload the Brides 3*4 Photo",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Bride's Photo is required",
-                //         },
-                //     ],
-                //     required: true,
-                //     // required:  (dependentValues: any) => {
-                //     //     // Make required if birth type is twin
-                //     //     return dependentValues?.birthType === 'twin';
-                //     // },
-                //     group: "Bride's Information",
-                //     groupOrder: 2,
-                //     isDisabled: (dependentValues: any) => {
-                //         return dependentValues?.bridePhoto;
-                //     },
-                // },
+                {
+                    type: "fileUpload",
+                    key: "bridePhoto",
+                    label: "Bride's Photo",
+                    placeholder: "",
+                    description: "Upload the Brides 3*4 Photo",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Bride's Photo is required",
+                        },
+                    ],
+                    required: true,
+                    // required:  (dependentValues: any) => {
+                    //     // Make required if birth type is twin
+                    //     return dependentValues?.birthType === 'twin';
+                    // },
+                    group: "Bride's Information",
+                    groupOrder: 2,
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.bridePhoto;
+                    },
+                },
                 // {
                 //     type: "fileUpload",
                 //     key: "residentIdBride",
