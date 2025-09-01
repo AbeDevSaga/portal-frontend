@@ -78,13 +78,35 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                 ? field.getDependentValue(form.values)
                                 : null;
 
-                            // Handle default values for dependent fields (like father/mother info auto-populate)
-                            // Track specific dependency values to prevent infinite loops
-                            const fatherResidentId = form.values.fatherResidentId;
-                            const motherResidentId = form.values.motherResidentId;
+                            // Handle default values for dependent fields - DYNAMIC SOLUTION
+                            // Auto-detect and track dependency changes from getDependentValue function
+                            const getDependencyKeys = useMemo(() => {
+                                if (!field.getDependentValue) return [];
+                                
+                                try {
+                                    // Call getDependentValue to see what keys it accesses
+                                    const sampleResult = field.getDependentValue(form.values);
+                                    return Object.keys(sampleResult || {});
+                                } catch (error) {
+                                    // Fallback: extract potential keys from function string
+                                    const functionStr = field.getDependentValue.toString();
+                                    const matches = functionStr.match(/formValues\.(\w+)/g) || [];
+                                    return matches.map(match => match.replace('formValues.', ''));
+                                }
+                            }, [field.getDependentValue]);
+
+                            // Create a stable dependency tracker using useRef
+                            const dependencyTracker = React.useRef('');
+                            const currentDependencyString = getDependencyKeys.map(key => {
+                                const value = form.values[key];
+                                return `${key}:${value?.id || value?.value || JSON.stringify(value) || ''}`;
+                            }).join('|');
                             
                             React.useEffect(() => {
-                                if (field.defaultValue && typeof field.defaultValue === "function") {
+                                // Check if dependencies have actually changed
+                                const hasChanged = dependencyTracker.current !== currentDependencyString;
+                                
+                                if (hasChanged && field.defaultValue && typeof field.defaultValue === "function") {
                                     const newDefaultValue = field.defaultValue(dependentValues, form.values);
                                     
                                     // Only set if the value is meaningful and different from current field value
@@ -92,14 +114,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                         form.setFieldValue(field.key, newDefaultValue, false);
                                         dispatch(updateField({ key: field.key, value: newDefaultValue }));
                                     }
+                                    
+                                    // Update the tracker
+                                    dependencyTracker.current = currentDependencyString;
                                 }
-                            }, [
-                                // Only track the specific dependencies that matter for auto-population
-                                fatherResidentId?.id || fatherResidentId?.value, // Track father selection changes
-                                motherResidentId?.id || motherResidentId?.value, // Track mother selection changes
-                                field.defaultValue,
-                                field.key
-                            ]);
+                            }, [currentDependencyString, field.defaultValue, field.key, form.values[field.key]]); // Track only what matters
 
                             // Dynamic field properties based on dependent values
                             const dynamicDescription = field.getDescription
