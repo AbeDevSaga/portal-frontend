@@ -9,7 +9,7 @@ export default function FileViewer({ fileUrl }: { fileUrl: string }) {
 
     if (isPdf) {
         return (
-            <div style={{ height: "350px" }}>
+            <div className='h-full max-h-[700px] w-full'>
                 <Worker
                     // Hardcode your installed version of pdfjs-dist here
                     workerUrl='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js'

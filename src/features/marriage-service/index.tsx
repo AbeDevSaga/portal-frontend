@@ -38,6 +38,28 @@ export default function MarriageNew() {
         setExpandedSections(expandedItems);
     };
     const mapDataModel = (value: any) => {
+        const files = [
+            // value.groomSpecialApproval && {
+            //     type: "GROOM_SPECIAL_APPROVAL",
+            //     file: value.groomSpecialApproval,
+            // },
+            value.groomBirthCertificate && {
+                type: "BIRTH_NOTICE",
+                file: value.groomBirthCertificate,
+            },
+            value.groomPhoto && {
+                type: "ID_PROOF",
+                file: value.groomPhoto,
+            },
+            // value.brideSpecialApproval && {
+            //     type: "BRIDE_SPECIAL_APPROVAL",
+            //     file: value.brideSpecialApproval,
+            // },
+            // value.bridePhoto && {
+            //     type: "BRIDE_PHOTO",
+            //     file: value.bridePhoto,
+            // },
+        ].filter(Boolean);
         const body = {
             wifeId: value.brideResidentId?.id,
             husbandId: value.groomResidentId?.id,
@@ -47,7 +69,12 @@ export default function MarriageNew() {
             husbandWetnessTwo: value.groomWitnessSecondResidentId?.id,
             wifeWetnessOne: value.brideWitnessFirstResidentId?.id,
             wifeWetnessTwo: value.brideWitnessSecondResidentId?.id,
-            groomSpecialApproval: value.groomSpecialApproval,
+            // groomSpecialApproval: value.groomSpecialApproval || null,
+            BIRTH_NOTICE: value.groomBirthCertificate || null,
+            ID_PROOF: value.groomPhoto || null,
+            // brideSpecialApproval: value.brideSpecialApproval || null,
+            // bridePhoto: value.bridePhoto || null,
+            files,
             marriageLocalization: [
                 {
                     languageCode: "en",
@@ -105,7 +132,7 @@ export default function MarriageNew() {
         try {
             const response = await submitForm({
                 data: apiPayload,
-                file: apiPayload.groomSpecialApproval,
+                files: apiPayload.files,
             }).unwrap();
             // const response2 = await new Promise((resolve) =>
             //     setTimeout(resolve, 1000)

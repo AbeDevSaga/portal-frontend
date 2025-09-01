@@ -31,8 +31,11 @@ export const marriageApi = createApi({
             },
         }),
 
-        submitForm: builder.mutation<any, { data: any; file?: File }>({
-            query: ({ data, file = null }) => {
+        submitForm: builder.mutation<
+            any,
+            { data: any; files?: { file: File }[] }
+        >({
+            query: ({ data, files = null }) => {
                 const formData = new FormData();
                 const jsonBlob = new Blob([JSON.stringify(data)], {
                     type: "application/json",
@@ -40,15 +43,11 @@ export const marriageApi = createApi({
 
                 formData.append("data", jsonBlob);
 
-                if (file) {
-                    const docBlob = new Blob([file], {
-                        type: "application/pdf",
-                    }); // set MIME type as needed
-                    formData.append(
-                        "supportingDoc",
-                        docBlob,
-                        "supportingDoc.pdf"
-                    ); // filename is optional
+                if (files) {
+                    files.forEach((doc, index) => {
+                        formData.append(`documents[${index}].file`, doc.file);
+                        formData.append(`documents[${index}].type`, doc.type);
+                    });
                 }
 
                 return {

@@ -11,3 +11,5 @@ export const MARRIAGE_GET_BY_BRIDE_OR_GROOM =
 export const APPLICATION_STATUS_UPDATE = "vital/change_status";
 export const GET_VITAL_SERVICE_EVENT =
     "vital/fetch_vital_service_event?registrationFormNumber=";
+export const GET_MARRIAGE_CERTIFICATE_ENDPOINT =
+    "/marriage/marriageCertificate/generateUploadCert";

@@ -15,7 +15,7 @@ export default function FileViewerModal({
 }) {
     return (
         <Dialog open={open} onOpenChange={handleCancel}>
-            <DialogContent className='rounded-2xl max-w-3xl px-6 py-8'>
+            <DialogContent className='rounded-2xl max-w-[1200px] w-full px-6 py-8'>
                 <FileViewer fileUrl={file} />
             </DialogContent>
         </Dialog>

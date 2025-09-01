@@ -7,6 +7,7 @@ import { marriageApi } from "@/features/marriage-service/api/marriageApi";
 import { listApi } from "@/features/list/api/listApi";
 import { applicationApi } from "@/features/application-service/api/applicationApi";
 import { residentApi } from "@/features/application-service/api/residentApi";
+import { certificateApi } from "@/features/application-service/api/certificateApi";
 
 export const store = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
         [listApi.reducerPath]: listApi.reducer,
         [applicationApi.reducerPath]: applicationApi.reducer,
         [residentApi.reducerPath]: residentApi.reducer,
+        [certificateApi.reducerPath]: certificateApi.reducer,
 
         // [marriageApi.reducerPath]: marriageApi.reducer,
     },
@@ -28,7 +30,8 @@ export const store = configureStore({
             marriageApi.middleware,
             listApi.middleware,
             applicationApi.middleware,
-            residentApi.middleware
+            residentApi.middleware,
+            certificateApi.middleware
             // marriageApi.middleware
         ),
 });

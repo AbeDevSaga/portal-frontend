@@ -25,6 +25,54 @@ import WitnessInformation from "./witnessInformation";
 import check from "@/public/images/check.svg";
 import FileViewer from "@/common/components/common/FileViewer";
 import FileViewerModal from "@/common/components/common/FileModalCompoennt";
+import { useSubmitCertificateRequestMutation } from "@/features/application-service/api/certificateApi";
+
+const body = {
+    request: {
+        registrationId: "11111111-2222-3333-4444-555555555555",
+        certificateType: "MARRIAGE",
+        versionNumber: 1,
+        data: {
+            wifeFullName: "Martha Bekele",
+            husbandFullName: "Samuel Tesfaye",
+            dateofBirthMonthHusb: "06",
+            dateofDayHusb: "15",
+            dateofYearHusb: "1990",
+            dateofYearHusb_amh: "1997",
+            dateofBirthMonthWife: "09",
+            dateofDayWife: "02",
+            dateofDayWife_amh: "06",
+            dateofYearWife: "1994",
+            dateofYearWife_amh: "1999",
+            citeznshipHusb: "Ethiopian",
+            citeznshipWife: "Ethiopian",
+            dateofMarriageMonth: "12",
+            dateofMarriageDay: "20",
+            dateofMarriageYear: "2020",
+            regionCityAdmin: "Addis Ababa",
+            zoneCityAdmin: "Bole Sub-city",
+            city: "Addis Ababa",
+            subCity: "Bole",
+            woreda: "05",
+            kebele: "12",
+            kebele_amh: "12",
+            marriageRegDateMonth: "12",
+            marriageRegDateDay: "22",
+            marriageRegDateYear: "2020",
+            certificateIssuedDateMonth: "01",
+            certificateIssuedDateDay: "05",
+            certificateIssuedDateYear: "2021",
+            fullNameOfTheOfficerOfCivilStatus: "Alemu Getachew",
+            signature: "Alemu G.",
+            marriageRegistrationFormNumber: "MRF-2020-12345",
+            marriageRegistrationUniqueIdentificationNumber: "MARR-0000123456",
+            wifeBirthRegistrationUniqueIdentificationNumber: "BIRTH-0000987654",
+            husbandBirthRegistrationUniqueIdentificationNumber:
+                "BIRTH-0000123987",
+        },
+    },
+};
+
 // Define the type for the mapped response data
 // type MappedResponseData = {
 //     title: string;
@@ -43,6 +91,7 @@ export default function MarriageDetail() {
     const { isLoading, isError, data } = useGetMarriageBySlugQuery({
         id: slug,
     });
+    const [displayDoc, setDisplayDoc] = useState("");
 
     useEffect(() => {
         if (!isError && !isLoading && data) {
@@ -50,32 +99,6 @@ export default function MarriageDetail() {
         }
     }, [data]);
 
-    const requirementsandaction = [
-        {
-            title: "Correction",
-            details: [
-                "For Name Change, the person must provide court letter",
-                "For age correction if the new age is two years less than or greater than current age, court letter must be provided",
-                "For Spelling correction, user consent is enough",
-            ],
-            buttonTitle: "Request Correction",
-            paymentAmount: 250,
-        },
-        {
-            title: "Lost",
-            details: [
-                "Confirmation letter from woreda police department is required",
-            ],
-            buttonTitle: "Request Lost Certificate",
-            paymentAmount: 250,
-        },
-        {
-            title: "Damaged",
-            details: ["The Damaged certificate must be presented"],
-            buttonTitle: "Request Damaged Certificate",
-            paymentAmount: 250,
-        },
-    ];
     const handleCopy = async (value: string) => {
         try {
             await navigator.clipboard.writeText(value);
@@ -83,6 +106,20 @@ export default function MarriageDetail() {
         } catch (err) {
             console.error("Failed to copy: ", err);
         }
+    };
+
+    const [
+        submitCertificateRequest,
+        {
+            isLoading: certificateIsLoading,
+            isError: certificateIsError,
+            data: certificateData,
+        },
+    ] = useSubmitCertificateRequestMutation();
+    const handleRequestCertificate = async () => {
+        try {
+            const response = await submitCertificateRequest({ data: body });
+        } catch (err) {}
     };
 
     const [
@@ -219,6 +256,47 @@ export default function MarriageDetail() {
         return null;
     };
 
+    const handleConvertSupportingDocStringToArray = (value: string) => {
+        const result = JSON.parse(value);
+        return result || [];
+    };
+
+    const supportingDocsArray = data?.data?.supporting_doc_url
+        ? handleConvertSupportingDocStringToArray(
+              data?.data?.supporting_doc_url
+          )
+        : [];
+
+    const requirementsandaction = [
+        {
+            title: "Correction",
+            details: [
+                "For Name Change, the person must provide court letter",
+                "For age correction if the new age is two years less than or greater than current age, court letter must be provided",
+                "For Spelling correction, user consent is enough",
+            ],
+            buttonTitle: "Request Correction",
+            paymentAmount: 250,
+            action: handleRequestCertificate,
+        },
+        {
+            title: "Lost",
+            details: [
+                "Confirmation letter from woreda police department is required",
+            ],
+            buttonTitle: "Request Lost Certificate",
+            paymentAmount: 250,
+            action: handleRequestCertificate,
+        },
+        {
+            title: "Damaged",
+            details: ["The Damaged certificate must be presented"],
+            buttonTitle: "Request Damaged Certificate",
+            paymentAmount: 250,
+            action: handleRequestCertificate,
+        },
+    ];
+
     return (
         <>
             <HeroSection
@@ -299,26 +377,46 @@ export default function MarriageDetail() {
 
                             <div className='flex flex-col justify-between w-full shadow-sm'>
                                 <p>Attachment</p>
-                                <div
-                                    onClick={() => setOpenFileModal(true)}
-                                    className='cursor-pointer shadow-md rounded-sm overflow-clip flex w-full max-w-[300px] border border-[#004EAD]'
-                                >
-                                    <div className='p-2 w-full'>
-                                        <p>file name</p>
-                                        <p>2mb</p>
-                                    </div>
-                                    <div className='bg-[#4CAF50] p-5'>
-                                        <Image
-                                            src={check.src}
-                                            width={30}
-                                            height={30}
-                                            alt='check'
-                                        />
-                                    </div>
+                                <div className='space-y-2'>
+                                    {Array.isArray(supportingDocsArray) &&
+                                    supportingDocsArray.length > 0
+                                        ? supportingDocsArray.map(
+                                              (item, index) => (
+                                                  <div
+                                                      key={index}
+                                                      onClick={() => {
+                                                          setDisplayDoc(
+                                                              item.fileUrl
+                                                          );
+                                                          setOpenFileModal(
+                                                              true
+                                                          );
+                                                      }}
+                                                      className='cursor-pointer shadow-md rounded-sm overflow-clip flex w-full max-w-[300px] border border-[#004EAD]'
+                                                  >
+                                                      <div className='p-2 w-full text-sm'>
+                                                          <p className='line-clamp-1'>
+                                                              {item.fileName}
+                                                          </p>
+                                                          <p>2mb</p>
+                                                      </div>
+                                                      <div className='bg-[#4CAF50] p-5'>
+                                                          <Image
+                                                              src={check.src}
+                                                              width={30}
+                                                              height={30}
+                                                              alt='check'
+                                                          />
+                                                      </div>
+                                                  </div>
+                                              )
+                                          )
+                                        : null}
                                 </div>
+
                                 {openFileModal ? (
                                     <FileViewerModal
-                                        file={data.data.supporting_doc_url}
+                                        file={displayDoc}
                                         open={openFileModal}
                                         handleCancel={setOpenFileModal}
                                     />
@@ -419,7 +517,12 @@ export default function MarriageDetail() {
                                                 Br for this service
                                             </p>
                                         </div>{" "}
-                                        <Button className='bg-[#073954]'>
+                                        <Button
+                                            onClick={
+                                                requirementsandactionItem.action
+                                            }
+                                            className='bg-[#073954]'
+                                        >
                                             {
                                                 requirementsandactionItem.buttonTitle
                                             }
