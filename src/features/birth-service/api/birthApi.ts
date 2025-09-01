@@ -1,6 +1,7 @@
 import {
     BIRTH_CREATE_ENDPOINT,
     BIRTH_LIST_ENDPOINT,
+    BIRTH_SLUG_ENDPOINT,
 } from "@/common/utils/constants/EndPoints";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -17,7 +18,7 @@ export const birthApi = createApi({
         }),
         getBirthBySlug: builder.query({
             query: ({ id }) => {
-                return `${BIRTH_LIST_ENDPOINT}/${id}`;
+                return `${BIRTH_SLUG_ENDPOINT}/${id}`;
             },
         }),
         submitForm: builder.mutation<any, Record<string, any>>({

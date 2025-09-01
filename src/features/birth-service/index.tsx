@@ -165,7 +165,7 @@ export default function BirthNew() {
                 actionType: "NEW",
                 "births": {
                     "registrationOfficeNumber": "RO-2025-002",
-                    "hospitalNotificationId": value.hospitalNotificationId || "HN-1755913119386",
+                    "hospitalNotificationId": null,
                     "childResidentId": null,
                     "fatherResidentId": value.familyResidentId?.id || "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                     "motherResidentId": value.familyResidentId?.id || "d0a09819-4b8a-4a8f-8552-31d79e3302cb",

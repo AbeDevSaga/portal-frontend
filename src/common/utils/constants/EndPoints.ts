@@ -2,6 +2,7 @@ export const BIRTH_CREATE_ENDPOINT = "/birth-registrations";
 export const MARRIAGE_LIST_ENDPOINT = "/marriage";
 export const MARRIAGE_CREATE_ENDPOINT = "marriage/create";
 export const BIRTH_LIST_ENDPOINT = "/birth";
+export const BIRTH_SLUG_ENDPOINT = "/birth-registrations/vital-request";
 export const MARRAIGE_ACCOUNCEMENT_ENDPOINT = "marriage/marriage_announcement";
 export const LIST_ENDPOINT = "vital/vital_event_list?";
 export const MARRIAGE_GET_BY_REGISTRATION_FORM_NUMBER =

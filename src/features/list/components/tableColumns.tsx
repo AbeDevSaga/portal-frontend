@@ -1,3 +1,4 @@
+import { EventTypes } from "@/common/utils/enums/enum";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
 import Link from "next/link";
@@ -6,7 +7,7 @@ const statusColorMapping = {
     rejected: "text-red-500 bg-red-500/30",
     inprogress: "text-yellow-500 bg-yellow-500/30",
 };
-export const Birthcolumns: ColumnDef<unknown>[] = [
+export const TableColumns: ColumnDef<unknown>[] = [
     {
         accessorKey: "requester_name",
         header: "Applied For",
@@ -28,11 +29,20 @@ export const Birthcolumns: ColumnDef<unknown>[] = [
         id: "actions",
         header: "Action",
         cell: ({ row }: any) => {
-            const recordId = row.original.registrationFormNumber || "N/A";
+            const recordId = row.original?.registrationFormNumber || "N/A";
+            const theEventType = row.original?.eventType;
+            let linkPage = "";
+            if(theEventType === EventTypes.BIRTH) {
+                linkPage = `/application/birth/detail/${recordId}`;
+            } else if (theEventType === EventTypes.MARRIAGE) {
+                linkPage = `/application/marriage/detail/${recordId}`;
+            }
+            console.log("theEventType", theEventType);
+
             return (
                 <Link
                     className=''
-                    href={`/application/marriage/detail/${recordId}`}
+                    href={`${linkPage}`}
                 >
                     <Eye />
                 </Link>
