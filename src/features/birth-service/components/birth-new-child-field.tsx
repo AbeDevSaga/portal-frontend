@@ -106,8 +106,7 @@ export const formConfig: FormConfig = {
 
                             return transformedData;
                         },
-                        // Use a value that will match the transformed response
-                        defaultValue: "73ab3776-30c1-4176-9506-c3fcb0e3d5de", // ETH ID from your API response
+                        defaultValue: "73ab3776-30c1-4176-9506-c3fcb0e3d5de", // TODO: change to dynamic concept
                     },
                 },
                 {
