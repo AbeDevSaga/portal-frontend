@@ -1,4 +1,4 @@
-export const birthCreateEndpoint = "/birth/create";
+export const BIRTH_CREATE_ENDPOINT = "/birth-registrations";
 export const MARRIAGE_LIST_ENDPOINT = "/marriage";
 export const MARRIAGE_CREATE_ENDPOINT = "marriage/create";
 export const BIRTH_LIST_ENDPOINT = "/birth";
