@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import { Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { updateField } from "@/redux/feature/birthSlice";
@@ -48,6 +48,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { FormArrayField } from "./FormArrayField";
 import { getAutoFlowGridClasses } from "@/common/utils/dynamic-form/dynamicGridLayout";
 
+
+
 interface Props {
     field: FieldConfig;
     formValues?: Record<string, any>; // Add formValues prop for dynamic grid calculation
@@ -62,6 +64,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
         return getAutoFlowGridClasses(field, formValues);
     };
 
+
+
     // Render the field content
     const renderFieldContent = () => {
         switch (field.type) {
@@ -74,40 +78,28 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                 ? field.getDependentValue(form.values)
                                 : null;
 
-                            // Handle default value logic without hooks
-                            if (
-                                !form.values[field.key] &&
-                                field.defaultValue !== undefined
-                            ) {
-                                const getDefaultValue = () => {
-                                    if (
-                                        typeof field.defaultValue === "function"
-                                    ) {
-                                        return field.defaultValue(
-                                            dependentValues,
-                                            form.values
-                                        );
+                            // Handle default values for dependent fields (like father/mother info auto-populate)
+                            // Track specific dependency values to prevent infinite loops
+                            const fatherResidentId = form.values.fatherResidentId;
+                            const motherResidentId = form.values.motherResidentId;
+                            
+                            React.useEffect(() => {
+                                if (field.defaultValue && typeof field.defaultValue === "function") {
+                                    const newDefaultValue = field.defaultValue(dependentValues, form.values);
+                                    
+                                    // Only set if the value is meaningful and different from current field value
+                                    if (newDefaultValue && newDefaultValue !== form.values[field.key]) {
+                                        form.setFieldValue(field.key, newDefaultValue, false);
+                                        dispatch(updateField({ key: field.key, value: newDefaultValue }));
                                     }
-                                    return field.defaultValue;
-                                };
-
-                                const defaultVal = getDefaultValue();
-                                if (defaultVal !== undefined) {
-                                    // Use setTimeout to avoid calling setState during render
-                                    setTimeout(() => {
-                                        form.setFieldValue(
-                                            field.key,
-                                            defaultVal
-                                        );
-                                        dispatch(
-                                            updateField({
-                                                key: field.key,
-                                                value: defaultVal,
-                                            })
-                                        );
-                                    }, 0);
                                 }
-                            }
+                            }, [
+                                // Only track the specific dependencies that matter for auto-population
+                                fatherResidentId?.id || fatherResidentId?.value, // Track father selection changes
+                                motherResidentId?.id || motherResidentId?.value, // Track mother selection changes
+                                field.defaultValue,
+                                field.key
+                            ]);
 
                             // Dynamic field properties based on dependent values
                             const dynamicDescription = field.getDescription
@@ -146,7 +138,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                     </Label>
                                     <Input
                                         {...formikField}
-                                        value={formikField.value || ''}
                                         placeholder={dynamicPlaceholder}
                                         disabled={isFieldDisabled}
                                         onChange={(e) => {
@@ -399,7 +390,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                         )}
                                     </Label>
                                     <Select
-                                        value={formikField.value || ''}
+                                        value={formikField.value}
                                         onValueChange={(value) => {
                                             form.setFieldValue(
                                                 field.key,
@@ -652,7 +643,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                     </Label>
                                     <Input
                                         {...formikField}
-                                        value={formikField.value || ''}
                                         type='number'
                                         placeholder={dynamicPlaceholder}
                                         disabled={isFieldDisabled}
@@ -694,6 +684,101 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 );
 
             case "date":
+                // Create an isolated date picker component to prevent re-render issues
+                const IsolatedDatePicker = React.memo(({ 
+                    fieldKey, 
+                    fieldLabel, 
+                    currentValue, 
+                    onValueChange,
+                    isRequired,
+                    isDisabled,
+                    description 
+                }: any) => {
+                    const [isOpen, setIsOpen] = React.useState(false);
+                    
+                    const handleDateSelect = useCallback((date: Date | undefined) => {
+                        const isoDate = date ? date.toISOString() : null;
+                        onValueChange(isoDate);
+                        setIsOpen(false); // Close the popover after selection
+                    }, [onValueChange]);
+
+                    const displayDate = useMemo(() => {
+                        if (!currentValue) return "Select date";
+                        try {
+                            return new Date(currentValue).toLocaleDateString();
+                        } catch {
+                            return "Select date";
+                        }
+                    }, [currentValue]);
+
+                    const selectedDate = useMemo(() => {
+                        if (!currentValue) return undefined;
+                        try {
+                            return new Date(currentValue);
+                        } catch {
+                            return undefined;
+                        }
+                    }, [currentValue]);
+
+                    return (
+                        <div className='space-y-1 flex flex-col gap-2'>
+                            <Label
+                                className='text-primary font-semibold'
+                                htmlFor={fieldKey}
+                            >
+                                {fieldLabel}
+                                {isRequired && (
+                                    <span className='pl-2 text-red-600'>*</span>
+                                )}
+                            </Label>
+                            <Popover open={isOpen} onOpenChange={setIsOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant='outline'
+                                        className='!text-left w-full md:min-w-[250px]'
+                                        id={fieldKey}
+                                        disabled={isDisabled}
+                                        onClick={() => setIsOpen(!isOpen)}
+                                    >
+                                        {displayDate}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent 
+                                    className='w-auto p-0' 
+                                    align='start'
+                                    side='bottom'
+                                    sideOffset={5}
+                                >
+                                    <Calendar
+                                        mode='single'
+                                        selected={selectedDate}
+                                        onSelect={handleDateSelect}
+                                        disabled={(date) =>
+                                            date > new Date() || date < new Date("1900-01-01")
+                                        }
+                                        initialFocus
+                                        captionLayout='dropdown'
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            {description && description.trim() !== "" && (
+                                <p className='text-[#7D7D7D] text-sm mt-1'>
+                                    {description}
+                                </p>
+                            )}
+                        </div>
+                    );
+                }, (prevProps, nextProps) => {
+                    // Only re-render if these specific props change
+                    return (
+                        prevProps.currentValue === nextProps.currentValue &&
+                        prevProps.isRequired === nextProps.isRequired &&
+                        prevProps.isDisabled === nextProps.isDisabled &&
+                        prevProps.description === nextProps.description &&
+                        prevProps.fieldLabel === nextProps.fieldLabel
+                    );
+                });
+
                 return (
                     <Field name={field.key}>
                         {({ field: _, form }: any) => {
@@ -718,76 +803,30 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
                             // If field is hidden, render empty div to maintain hook consistency
                             if (isFieldHidden) {
-                                return <div style={{ display: "none" }}></div>;
+                                return <div key={field.key} style={{ display: "none" }}></div>;
                             }
 
+                            const handleValueChange = useCallback((isoDate: string | null) => {
+                                form.setFieldValue(field.key, isoDate);
+                                dispatch(
+                                    updateField({
+                                        key: field.key,
+                                        value: isoDate,
+                                    })
+                                );
+                            }, [form, field.key, dispatch]);
+
                             return (
-                                <div className='space-y-1 flex flex-col gap-2'>
-                                    <Label
-                                        className='text-primary font-semibold'
-                                        htmlFor={field.key}
-                                    >
-                                        {field.label}
-                                        {isFieldRequired && (
-                                            <span className='pl-2 text-red-600'>
-                                                *
-                                            </span>
-                                        )}
-                                    </Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant='outline'
-                                                className='!text-left w-full md:min-w-[250px]'
-                                            >
-                                                {form.values[field.key]
-                                                    ? new Date(
-                                                          form.values[field.key]
-                                                      ).toLocaleDateString()
-                                                    : "Select date"}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className='w-auto p-0'>
-                                            <Calendar
-                                                mode='single'
-                                                selected={
-                                                    form.values[field.key]
-                                                        ? new Date(
-                                                              form.values[
-                                                                  field.key
-                                                              ]
-                                                          )
-                                                        : undefined
-                                                }
-                                                onSelect={(date) => {
-                                                    const isoDate = date
-                                                        ? date.toISOString()
-                                                        : null;
-                                                    form.setFieldValue(
-                                                        field.key,
-                                                        isoDate
-                                                    );
-
-                                                    dispatch(
-                                                        updateField({
-                                                            key: field.key,
-                                                            value: isoDate,
-                                                        })
-                                                    );
-                                                }}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-
-                                    {/* Dynamic description */}
-                                    {dynamicDescription &&
-                                        dynamicDescription.trim() !== "" && (
-                                            <p className='text-[#7D7D7D] text-sm mt-1'>
-                                                {dynamicDescription}
-                                            </p>
-                                        )}
-
-                                    {/* Formik validation errors */}
+                                <div>
+                                    <IsolatedDatePicker
+                                        fieldKey={field.key}
+                                        fieldLabel={field.label}
+                                        currentValue={form.values[field.key]}
+                                        onValueChange={handleValueChange}
+                                        isRequired={isFieldRequired}
+                                        isDisabled={isFieldDisabled}
+                                        description={dynamicDescription}
+                                    />
                                     <ErrorMessage
                                         name={field.key}
                                         component='div'
@@ -1488,7 +1527,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                             )}
                                             
                                             {/* DEBUG: Validation Status Display */}
-                                            <div className='mt-4 p-3 bg-gray-100 rounded border text-xs'>
+                                            {/* <div className='mt-4 p-3 bg-gray-100 rounded border text-xs'>
                                                 <div className='font-semibold mb-2 text-gray-700'>🔍 Validation Debug Info:</div>
                                                 <div className='grid grid-cols-2 gap-2'>
                                                     <div>
@@ -1543,7 +1582,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                                         {JSON.stringify(form.values, null, 2)}
                                                     </pre>
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </div>
                                         {dynamicDescription &&
                                             dynamicDescription.trim() !== "" && (
@@ -3109,6 +3148,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                             const dropdownRef =
                                 React.useRef<HTMLDivElement>(null);
 
+                            // Get dependent field values if callback is provided
+                            const dependentValues = field.getDependentValue
+                                ? field.getDependentValue(form.values)
+                                : null;
+
                             // Get inputSearch configuration
                             const inputSearchConfig = field.inputSearchConfig;
                             const {
@@ -3129,11 +3173,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                 transformResponse,
                                 transformRequest,
                             } = inputSearchConfig || {};
-
-                            // Get dependent field values if callback is provided
-                            const dependentValues = field.getDependentValue
-                                ? field.getDependentValue(form.values)
-                                : null;
 
                             // Dynamic field properties based on dependent values
                             const dynamicDescription = field.getDescription

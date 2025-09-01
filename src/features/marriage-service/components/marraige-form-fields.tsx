@@ -203,8 +203,12 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
+                                name: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -233,13 +237,8 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description:
                         "Groom legal Full Name as it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Groom Full name is required",
-                        },
-                    ],
-                    required: true,
+                    validators: [],
+                    required: false,
                     group: "Groom's Information",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
@@ -280,13 +279,8 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description:
                         "Groom Nationality it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Groom Nationality is required",
-                        },
-                    ],
-                    required: true,
+                    validators: [],
+                    required: false,
                     group: "Groom's Information",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
@@ -345,13 +339,8 @@ export const formConfig: FormConfig = {
                     label: "Groom's Date of Birth",
                     placeholder: "",
                     description: "Birth Date it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Birth Date is required",
-                        },
-                    ],
-                    required: true,
+                    validators: [],
+                    required: false,
                     group: "Groom's Information",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
@@ -547,7 +536,7 @@ export const formConfig: FormConfig = {
                             if (
                                 dependentValues?.groomResidentId &&
                                 typeof dependentValues.groomResidentId ===
-                                    "object"
+                                "object"
                             ) {
                                 console.log(
                                     "dependentValues.groomResidentId.nationality",
@@ -589,13 +578,8 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description:
                         "Earlier Marital Status it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Earlier Marital Status is required",
-                        },
-                    ],
-                    required: true,
+                    validators: [],
+                    required: false,
                     group: "Groom's Information",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
@@ -919,8 +903,12 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
+                                name: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -949,15 +937,20 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description:
                         "Groom's First Witness Full Name as it appears on official documents",
-                    validators: [],
-                    required: false,
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Groom's first Witness ID is required",
+                        },
+                    ],
+                    required: true,
                     group: "Groom's Information",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
                             dependentValues?.groomWitnessFirstResidentId &&
                             typeof dependentValues.groomWitnessFirstResidentId ===
-                                "object"
+                            "object"
                         ) {
                             return (
                                 dependentValues.groomWitnessFirstResidentId
@@ -984,8 +977,13 @@ export const formConfig: FormConfig = {
                     placeholder: "Enter at least 3 characters to search...",
                     description:
                         "Search for a resident by entering their ID. The system will search as you type.",
-                    validators: [],
-                    required: false,
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Groom's Second Witness ID is required",
+                        },
+                    ],
+                    required: true,
                     group: "Groom's Information",
                     groupOrder: 1,
                     inputSearchConfig: {
@@ -1018,8 +1016,12 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
+                                name: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -1056,7 +1058,7 @@ export const formConfig: FormConfig = {
                         if (
                             dependentValues?.groomWitnessSecondResidentId &&
                             typeof dependentValues.groomWitnessSecondResidentId ===
-                                "object"
+                            "object"
                         ) {
                             return (
                                 dependentValues.groomWitnessSecondResidentId
@@ -1168,8 +1170,12 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
+                                name: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -1531,13 +1537,8 @@ export const formConfig: FormConfig = {
                     placeholder: "",
                     description:
                         "Earlier Marital Status it appears on official documents",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Earlier Marital Status is required",
-                        },
-                    ],
-                    required: true,
+                    validators: [],
+                    required: false,
                     group: "Bride's Information",
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
@@ -1861,8 +1862,12 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
+                                name: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -1899,7 +1904,7 @@ export const formConfig: FormConfig = {
                         if (
                             dependentValues?.brideWitnessFirstResidentId &&
                             typeof dependentValues.brideWitnessFirstResidentId ===
-                                "object"
+                            "object"
                         ) {
                             return (
                                 dependentValues.brideWitnessFirstResidentId
@@ -1960,8 +1965,12 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName || "Unknown",
-                                name: resident.firstName || "Unknown",
+                                label: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
+                                name: resident.firstName + " " +
+                                    resident.middleName + " " +
+                                    resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
                                 lastName: resident.lastName,
@@ -1998,7 +2007,7 @@ export const formConfig: FormConfig = {
                         if (
                             dependentValues?.brideWitnessSecondResidentId &&
                             typeof dependentValues.brideWitnessSecondResidentId ===
-                                "object"
+                            "object"
                         ) {
                             return (
                                 dependentValues.brideWitnessSecondResidentId
