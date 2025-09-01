@@ -81,18 +81,17 @@ export const formConfig: FormConfig = {
                         debounceMs: 300,
                         minSearchLength: 0,
                         cacheResults: true,
-                        defaultValue: {
-                            value: "ET",
-                            label: "Ethiopia",
-                            id: 1,
-                            name: "Ethiopia",
-                        },
                         transformResponse: (
                             response,
                             locale: "en" | "am" = "en"
                         ) => {
                             console.log("response data", response);
-                            return response.content.map((res: any) => ({
+                            
+                            if (!response?.content) {
+                                return [];
+                            }
+
+                            const transformedData = response.content.map((res: any) => ({
                                 id: res.id,
                                 value: res.id,
                                 name:
@@ -102,8 +101,13 @@ export const formConfig: FormConfig = {
                                     res.localizedContent?.[locale]?.name ??
                                     res.code,
                                 isDisabled: false,
+                                code: res.code,
                             }));
+
+                            return transformedData;
                         },
+                        // Use a value that will match the transformed response
+                        defaultValue: "73ab3776-30c1-4176-9506-c3fcb0e3d5de", // ETH ID from your API response
                     },
                 },
                 {
