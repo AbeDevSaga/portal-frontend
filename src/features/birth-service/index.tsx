@@ -4,8 +4,11 @@ import { RootState } from "@/redux/store";
 // import FormWithSidePreview from "@/components/dynamic-form/FormWithSidePreview";
 // import { birthFormConfig } from "./birth-form-fields";
 // import { hcBirthFormConfig as birthFormConfig } from "./components/birth-hc-form-fields";
-import { birthRegistrationFormConfig } from "./components//birth-registration-fields";
-import { useEffect, useState, useRef } from "react";
+// import { birthRegistrationFormConfig } from "./components//birth-registration-fields";
+import { formConfig as birthNewChildConfig } from "./components/birth-new-child-field";
+import { formConfig as birthRegisteredHospitalConfig } from "./components/birth-registered-hospital-fields";
+import { formConfig as birthRegisteredFamilyConfig } from "./components/birth-registered-family-field";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 // import { processFormSubmission } from "@/utils/formSubmissionUtils";
 import { toast } from "sonner";
 import { generateFieldGrouping } from "@/common/utils/dynamic-form/fieldGrouping";
@@ -19,96 +22,70 @@ import {
 import HeroSection from "@/common/components/common/HeroSection";
 import { useSubmitFormMutation } from "./api/birthApi";
 import { removeFields, updateField } from "@/redux/feature/birthSlice";
-
+import { RadioGroup, RadioGroupItem } from "@/common/components/ui/radio-group";
+import { Label } from "@/common/components/ui/label";
+const handleConvertDate = (date: string) => {
+    const dateOnly = date.split("T")[0];
+    return dateOnly;
+};
 export default function BirthNew() {
-    const dispatch = useDispatch();
     const formValues = useSelector((state: RootState) => state.birthSlice);
-    const { allFields, groupMap } = generateFieldGrouping(birthRegistrationFormConfig);
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     const prevBirthTypeRef = useRef<string | null>(null);
+    const [selected, setSelected] = React.useState<string>("newChild");
     
+    // Dynamically select form configuration based on selected option
+    const currentFormConfig = useMemo(() => {
+        switch (selected) {
+            case "newChild":
+                return birthNewChildConfig;
+            case "registeredHospital":
+                return birthRegisteredHospitalConfig;
+            case "registeredFamily":
+                return birthRegisteredFamilyConfig;
+            default:
+                return birthNewChildConfig;
+        }
+    }, [selected]);
+
+    const { allFields, groupMap } = generateFieldGrouping(currentFormConfig);
+    
+    const handleChange = (value: string) => {
+        console.log("Selected:", value);
+        setSelected(value);
+    };
+    
+    // Reset expanded sections when form configuration changes
     useEffect(() => {
-        const initialExpanded = birthRegistrationFormConfig.steps
+        const initialExpanded = currentFormConfig.steps
             .map((step, index) =>
                 step.defaultExpanded ? `step-${index}` : null
             )
             .filter(Boolean) as string[];
         setExpandedSections(initialExpanded);
-    }, [birthRegistrationFormConfig.steps]);
+    }, [currentFormConfig.steps]);
 
-    // Watch for birth type changes and reset dependent fields when it changes
-    useEffect(() => {
-        const currentBirthType = formValues.birthType;
-        
-        // Only reset dependent fields if birth type has actually changed and is not the initial load
-        if (currentBirthType && prevBirthTypeRef.current && prevBirthTypeRef.current !== currentBirthType) {
-            console.log('Birth type changed from', prevBirthTypeRef.current, 'to', currentBirthType);
-            console.log('Current form values before reset:', formValues);
-            console.log('Resetting dependent fields...');
-            
-            // Reset only the dependent fields based on birth type
-            const fieldsToReset = [
-                'hospitalNotificationId',
-                'familyResidentId', 
-                'firstName',
-                'gender',
-                'nationality',
-                'dateOfBirth',
-                'birthTimeWeight',
-                'isBornInHealthCenter',
-                'healthCenterName',
-                'healthCenterType',
-                'healthCenterOwner',
-                'fatherResidentId',
-                'fatherFullName',
-                'fatherDateOfBirth',
-                'fatherPhoneNumber',
-                'motherResidentId',
-                'motherFullName',
-                'motherDateOfBirth',
-                'motherPhoneNumber'
-            ];
-            
-            // First remove the fields completely, then re-add them with empty values
-            console.log('Removing fields completely...');
-            dispatch(removeFields({ keys: fieldsToReset }));
-            
-            // Then re-add them with empty values after a short delay
-            setTimeout(() => {
-                console.log('Re-adding fields with empty values...');
-                fieldsToReset.forEach(fieldKey => {
-                    // Handle complex fields (resident IDs) differently
-                    if (fieldKey === 'fatherResidentId' || fieldKey === 'motherResidentId' || fieldKey === 'familyResidentId') {
-                        console.log('Setting complex field:', fieldKey, 'to null');
-                        dispatch(updateField({ key: fieldKey, value: null }));
-                    } else {
-                        console.log('Setting field:', fieldKey, 'to empty string');
-                        dispatch(updateField({ key: fieldKey, value: '' }));
-                    }
-                });
-                console.log('Field reset complete');
-            }, 50);
-        }
-        
-        // Update the ref with current value
-        prevBirthTypeRef.current = currentBirthType;
-    }, [formValues.birthType, dispatch]);
+
     const handleAccordionStateChange = (expandedItems: string[]) => {
         setExpandedSections(expandedItems);
     };
     const mapDataModel = (value: any) => {
-        console.log("chile registration value", value);
+        console.log("Child registration value:", value);
+        console.log("Current selected birth type:", selected);
+        
         let body = {};
-        if (value.birthType === "Registered in hospital") {
+        
+        // Use the selected radio option instead of value.birthType
+        if (selected === "registeredHospital") {
             body = {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
                 "births": {
                     "registrationOfficeNumber": "RO-2025-002",
-                    "hospitalNotificationId": "HN-1755913119386",
+                    "hospitalNotificationId": value.hospitalNotificationId || "HN-1755913119386",
                     "childResidentId": null,
-                    "fatherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
-                    "motherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "fatherResidentId": value.fatherResidentId?.id || "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "motherResidentId": value.motherResidentId?.id || "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                     "declarantResidentId": null,
                     "withOld": false,
                     "bloodType": "123e4567-e89b-12d3-a456-426614174004",
@@ -140,7 +117,8 @@ export default function BirthNew() {
                 }
 
             };
-        } else if (value.birthType === "Is new child") {
+        } else if (selected === "newChild") {
+            console.log("this is the new child value", value)
             body = {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
@@ -148,12 +126,12 @@ export default function BirthNew() {
                     "registrationOfficeNumber": "RO-2025-002",
                     "hospitalNotificationId": null,
                     "childResidentId": null,
-                    "fatherResidentId": value.familyResidentId?.id,
-                    "motherResidentId": value.familyResidentId?.id,
+                    "fatherResidentId": value.fatherResidentId,
+                    "motherResidentId": value.motherResidentId,
                     "declarantResidentId": null,
                     "withOld": false,
                     "bloodType": "123e4567-e89b-12d3-a456-426614174004",
-                    "nationality": value.nationality.id,
+                    "nationality": value.nationality?.id || "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
                     "localizations": [
                         {
                             "childFirstName": value.firstName,
@@ -169,28 +147,28 @@ export default function BirthNew() {
                             "issuedDate": "2025-08-21",
                             "reason": "Normal",
                             "childWeight": value.birthTimeWeight,
-                            "childHeight": 50.5,
-                            "birthDate": value.dateOfBirth,
+                            "childHeight": value.birthTimeHeight,
+                            "birthDate": handleConvertDate(value.childDateOfBirth),
                             "birthTime": "10:15",
                             "gender": value.gender,
                             "declarantRelation": "",
-                            "attendantName": "Dr. Solomon",
-                            "attendantQualification": "Doctor"
+                            "attendantName": value.birthAttendantName,
+                            "attendantQualification": value.birthAttendantQualification
                         }
                     ]
                 }
 
             };
-        } else if (value.birthType === "Already registered as family member") {
+        } else if (selected === "registeredFamily") {
             body = {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
                 "births": {
                     "registrationOfficeNumber": "RO-2025-002",
-                    "hospitalNotificationId": "HN-1755913119386",
+                    "hospitalNotificationId": value.hospitalNotificationId || "HN-1755913119386",
                     "childResidentId": null,
-                    "fatherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
-                    "motherResidentId": "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "fatherResidentId": value.familyResidentId?.id || "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    "motherResidentId": value.familyResidentId?.id || "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                     "declarantResidentId": null,
                     "withOld": false,
                     "bloodType": "123e4567-e89b-12d3-a456-426614174004",
@@ -223,11 +201,13 @@ export default function BirthNew() {
 
             };
         }
+        
+        console.log("Generated API payload:", body);
         return body;
     };
 
     const handleCreateBirth = (value: any) => {
-        const result = processFormSubmission(value, birthRegistrationFormConfig);
+        const result = processFormSubmission(value, currentFormConfig);
         console.log("result", result);
         if (result.success) {
             const bodyMapped = mapDataModel(value);
@@ -277,8 +257,32 @@ export default function BirthNew() {
 
     const formContent = (
         <Card className='p-5'>
+            <div className="mb-4">
+                {/* <p className="font-bold pb-2">Birth Type</p> */}
+                <RadioGroup
+                    value={selected}
+                    onValueChange={handleChange}
+                    className="space-y-3"
+                >
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="newChild" id="newChild" />
+                        <Label htmlFor="newChild" className="text-[#0c4a6b] text-md font-medium">Is new child?</Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="registeredHospital" id="registeredHospital" />
+                        <Label htmlFor="registeredHospital" className="text-[#0c4a6b] text-md font-medium">Registered in hospital?</Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="registeredFamily" id="registeredFamily" />
+                        <Label htmlFor="registeredFamily" className="text-[#0c4a6b] text-md font-medium">Already registered as family member?</Label>
+                    </div>
+                </RadioGroup>
+            </div>
             <DynamicForm
-                config={birthRegistrationFormConfig}
+                key={selected}
+                config={currentFormConfig}
                 handleSubmit={handleCreateBirth}
                 initialValues={formValues}
                 formStyle='grid grid-cols-12 gap-5'
@@ -303,7 +307,7 @@ export default function BirthNew() {
                 allFields={allFields}
                 previewTitle='New Birth Registrations'
                 layout='2-1'
-                config={birthRegistrationFormConfig}
+                config={currentFormConfig}
                 expandedSections={expandedSections}
                 onAccordionStateChange={handleAccordionStateChange}
             />

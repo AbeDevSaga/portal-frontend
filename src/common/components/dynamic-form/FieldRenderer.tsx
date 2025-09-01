@@ -146,6 +146,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                     </Label>
                                     <Input
                                         {...formikField}
+                                        value={formikField.value || ''}
                                         placeholder={dynamicPlaceholder}
                                         disabled={isFieldDisabled}
                                         onChange={(e) => {
@@ -398,7 +399,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                         )}
                                     </Label>
                                     <Select
-                                        value={formikField.value}
+                                        value={formikField.value || ''}
                                         onValueChange={(value) => {
                                             form.setFieldValue(
                                                 field.key,
@@ -651,6 +652,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                     </Label>
                                     <Input
                                         {...formikField}
+                                        value={formikField.value || ''}
                                         type='number'
                                         placeholder={dynamicPlaceholder}
                                         disabled={isFieldDisabled}
