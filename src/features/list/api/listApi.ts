@@ -22,7 +22,8 @@ export const listApi = createApi({
                 type = "MARRIAGE",
                 languageCode = "en",
             }) => {
-                return `${LIST_ENDPOINT}type=${type}&page=${page}&size=${perPage}`;
+                // return `${LIST_ENDPOINT}type=${type}&page=${page}&size=${perPage}`;
+                return `${LIST_ENDPOINT}page=${page}&size=${perPage}`;
             },
         }),
     }),
