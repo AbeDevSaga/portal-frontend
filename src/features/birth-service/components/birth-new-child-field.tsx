@@ -93,8 +93,8 @@ export const formConfig: FormConfig = {
                         ) => {
                             console.log("response data", response);
                             return response.content.map((res: any) => ({
-                                id: res.code,
-                                value: res.code,
+                                id: res.id,
+                                value: res.id,
                                 name:
                                     res.localizedContent?.[locale]?.name ??
                                     res.code,
@@ -194,13 +194,17 @@ export const formConfig: FormConfig = {
                             message: "Health center name is required",
                         },
                     ],
-                    required: true,
+                    required: false, // Set to false, will be dynamically required
                     group: "Child Details",
                     groupOrder: 8,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
+                    isRequired: (dependentValues: any) => {
+                        // Only required when the field is visible
+                        return dependentValues?.isBornInHealthCenter;
+                    },
                     isHide: (dependentValues: any) => {
                         return !dependentValues?.isBornInHealthCenter
                     },
@@ -217,13 +221,17 @@ export const formConfig: FormConfig = {
                             message: "Health center type is required",
                         },
                     ],
-                    required: true,
+                    required: false, // Set to false, will be dynamically required
                     group: "Child Details",
                     groupOrder: 9,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
+                    isRequired: (dependentValues: any) => {
+                        // Only required when the field is visible
+                        return dependentValues?.isBornInHealthCenter;
+                    },
                     isHide: (dependentValues: any) => {
                         return !dependentValues?.isBornInHealthCenter
                     },
@@ -240,13 +248,17 @@ export const formConfig: FormConfig = {
                             message: "Health center owner is required",
                         },
                     ],
-                    required: true,
+                    required: false, // Set to false, will be dynamically required
                     group: "Child Details",
                     groupOrder: 10,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
                     }),
+                    isRequired: (dependentValues: any) => {
+                        // Only required when the field is visible
+                        return dependentValues?.isBornInHealthCenter;
+                    },
                     isHide: (dependentValues: any) => {
                         return !dependentValues?.isBornInHealthCenter
                     },
