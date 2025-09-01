@@ -270,11 +270,29 @@ export function generateEnhancedSchema(config: FormConfig) {
 
                             case "maxDate":
                                 if (field.type === "date") {
-                                    const maxDate = validator.value ? new Date(validator.value as string) : undefined;
-                                    if (maxDate && !isNaN(maxDate.getTime())) {
-                                        schema = (schema as Yup.DateSchema).max(maxDate, validator.message);
+                                    if (validator.value === "dynamic") {
+                                        // For dynamic max date, use a custom test that calculates current date at validation time
+                                        schema = (schema as Yup.DateSchema).test(
+                                            `dynamic-max-date-${field.key}`,
+                                            validator.message,
+                                            function (value: any) {
+                                                if (!value) return true; // Let required validation handle empty values
+                                                const maxDate = new Date();
+                                                maxDate.setHours(23, 59, 59, 999); // Set to end of today
+                                                const selectedDate = new Date(value);
+                                                if (selectedDate > maxDate) {
+                                                    return this.createError({ message: validator.message });
+                                                }
+                                                return true;
+                                            }
+                                        );
                                     } else {
-                                        console.warn(`Invalid maxDate value for ${field.key}:`, validator.value);
+                                        const maxDate = validator.value ? new Date(validator.value as string) : undefined;
+                                        if (maxDate && !isNaN(maxDate.getTime())) {
+                                            schema = (schema as Yup.DateSchema).max(maxDate, validator.message);
+                                        } else {
+                                            console.warn(`Invalid maxDate value for ${field.key}:`, validator.value);
+                                        }
                                     }
                                 }
                                 break;
@@ -333,6 +351,99 @@ export function generateEnhancedSchema(config: FormConfig) {
                     if (field.validators) {
                         field.validators.forEach((validator) => {
                             try {
+                                // Check if validator has a condition function
+                                if (validator.condition) {
+                                    // For conditional validators, we need to check the condition at validation time
+                                    // We'll wrap the validator in a test that checks the condition first
+                                    const originalValidator = validator;
+                                    
+                                    dynamicSchema = dynamicSchema.test(
+                                        `conditional-${validator.type}-${field.key}`,
+                                        validator.message,
+                                        function (value: any) {
+                                            try {
+                                                const formValues = this.parent;
+                                                const shouldApplyValidator = originalValidator.condition!(formValues);
+                                                
+                                                // If condition is false, skip this validator (return true)
+                                                if (!shouldApplyValidator) {
+                                                    return true;
+                                                }
+                                                
+                                                // If condition is true, apply the original validator logic
+                                                switch (originalValidator.type) {
+                                                    case "maxDate":
+                                                        if (field.type === "date" && value) {
+                                                            let maxDate: Date | undefined;
+                                                            
+                                                            // Handle dynamic date calculation
+                                                            if (originalValidator.value === "dynamic") {
+                                                                maxDate = new Date();
+                                                                maxDate.setHours(23, 59, 59, 999); // Set to end of today
+                                                            } else {
+                                                                maxDate = originalValidator.value ? new Date(originalValidator.value as string) : undefined;
+                                                            }
+                                                            
+                                                            if (maxDate && !isNaN(maxDate.getTime())) {
+                                                                const selectedDate = new Date(value);
+                                                                if (selectedDate > maxDate) {
+                                                                    return this.createError({ message: originalValidator.message });
+                                                                }
+                                                            }
+                                                        }
+                                                        return true;
+                                                    case "minDate":
+                                                        if (field.type === "date" && value) {
+                                                            const minDate = originalValidator.value ? new Date(originalValidator.value as string) : undefined;
+                                                            if (minDate && !isNaN(minDate.getTime())) {
+                                                                const selectedDate = new Date(value);
+                                                                if (selectedDate < minDate) {
+                                                                    return this.createError({ message: originalValidator.message });
+                                                                }
+                                                            }
+                                                        }
+                                                        return true;
+                                                    case "required":
+                                                        if (!value || (typeof value === 'string' && value.trim() === '')) {
+                                                            return this.createError({ message: originalValidator.message });
+                                                        }
+                                                        return true;
+                                                    case "min":
+                                                        if (field.type === "number") {
+                                                            if (value < (originalValidator.value as number)) {
+                                                                return this.createError({ message: originalValidator.message });
+                                                            }
+                                                        } else if (["input", "textarea", "password"].includes(field.type)) {
+                                                            if (value && value.length < (originalValidator.value as number)) {
+                                                                return this.createError({ message: originalValidator.message });
+                                                            }
+                                                        }
+                                                        return true;
+                                                    case "max":
+                                                        if (field.type === "number") {
+                                                            if (value > (originalValidator.value as number)) {
+                                                                return this.createError({ message: originalValidator.message });
+                                                            }
+                                                        } else if (["input", "textarea", "password"].includes(field.type)) {
+                                                            if (value && value.length > (originalValidator.value as number)) {
+                                                                return this.createError({ message: originalValidator.message });
+                                                            }
+                                                        }
+                                                        return true;
+                                                    default:
+                                                        return true;
+                                                }
+                                            } catch (error) {
+                                                console.warn(`Error in conditional validator ${originalValidator.type} for field ${field.key}:`, error);
+                                                return true; // Don't fail validation on errors
+                                            }
+                                        }
+                                    );
+                                    
+                                    return; // Skip the normal validator processing for conditional validators
+                                }
+                                
+                                // Normal validator processing for non-conditional validators
                                 switch (validator.type) {
                                     case "required":
                                         // Only apply required validation if field is not hidden
@@ -385,9 +496,27 @@ export function generateEnhancedSchema(config: FormConfig) {
                                         break;
                                     case "maxDate":
                                         if (field.type === "date") {
-                                            const maxDate = validator.value ? new Date(validator.value as string) : undefined;
-                                            if (maxDate && !isNaN(maxDate.getTime())) {
-                                                dynamicSchema = (dynamicSchema as Yup.DateSchema).max(maxDate, validator.message);
+                                            if (validator.value === "dynamic") {
+                                                // For dynamic max date, use a custom test that calculates current date at validation time
+                                                dynamicSchema = dynamicSchema.test(
+                                                    `dynamic-max-date-${field.key}`,
+                                                    validator.message,
+                                                    function (value: any) {
+                                                        if (!value) return true; // Let required validation handle empty values
+                                                        const maxDate = new Date();
+                                                        maxDate.setHours(23, 59, 59, 999); // Set to end of today
+                                                        const selectedDate = new Date(value);
+                                                        if (selectedDate > maxDate) {
+                                                            return this.createError({ message: validator.message });
+                                                        }
+                                                        return true;
+                                                    }
+                                                );
+                                            } else {
+                                                const maxDate = validator.value ? new Date(validator.value as string) : undefined;
+                                                if (maxDate && !isNaN(maxDate.getTime())) {
+                                                    dynamicSchema = (dynamicSchema as Yup.DateSchema).max(maxDate, validator.message);
+                                                }
                                             }
                                         }
                                         break;

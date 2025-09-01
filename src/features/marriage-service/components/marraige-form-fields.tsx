@@ -81,26 +81,6 @@ export const formConfig: FormConfig = {
             defaultExpanded: true,
             fields: [
                 {
-                    type: "date",
-                    key: "dateOfMarriage",
-                    label: "Date of Marriage",
-                    placeholder: "",
-                    gridCols: 6,
-                    description:
-                        "Select your marraige date. Future dates are not acceptable.",
-                    validators: [
-                        { type: "required", message: "Date is required" },
-                        {
-                            type: "maxDate",
-                            value: new Date().toISOString().split("T")[0],
-                            message: "Date cannot be in the future",
-                        },
-                    ],
-                    required: true,
-                    group: "General Information",
-                    groupOrder: 1,
-                },
-                {
                     type: "lookup",
                     key: "marriageType",
                     label: "Type of Marriage",
@@ -108,17 +88,16 @@ export const formConfig: FormConfig = {
                     description: "Select the marriage type",
                     gridCols: 6,
                     validators: [
-                        // {
-                        //     type: "required",
-                        //     message: "Mariage type is required",
-                        // },
+                        {
+                            type: "required",
+                            message: "Marriage type is required",
+                        },
                     ],
-                    required: false,
+                    required: true,
                     group: "General Information",
                     groupOrder: 1,
                     clearable: false,
                     searchable: true,
-
                     lookupConfig: {
                         isExternal: true,
                         apiEndpoint: "/reference-data/marriage-types",
@@ -147,6 +126,38 @@ export const formConfig: FormConfig = {
                             }));
                         },
                     },
+                },
+                {
+                    type: "date",
+                    key: "dateOfMarriage",
+                    label: "Date of Marriage",
+                    placeholder: "",
+                    gridCols: 6,
+                    description:
+                        "Select your marriage date. Future dates are allowed for National marriage type only.",
+                    getDependentValue: (formValues: any) => ({
+                        marriageType: formValues.marriageType
+                    }),
+                    validators: [
+                        { type: "required", message: "Date is required" },
+                        {
+                            type: "maxDate",
+                            value: "dynamic", // Will be calculated at validation time
+                            message: "Date cannot be in the future for this marriage type",
+                            // Adding a conditional property to make this validator conditional
+                            condition: (formValues: any) => {
+                                const marriageType = formValues?.marriageType;
+                                
+                                const typeName = marriageType?.name || marriageType?.label;
+                                const shouldRestrictFutureDate = typeName !== "National";
+                                                                
+                                return shouldRestrictFutureDate;
+                            }
+                        },
+                    ],
+                    required: true,
+                    group: "General Information",
+                    groupOrder: 1
                 },
             ],
         },

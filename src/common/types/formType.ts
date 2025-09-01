@@ -40,8 +40,9 @@ export interface ValidatorConfig {
         | "minDate"
         | "maxDate"
         | "minAge";
-    value?: number | string | Date;
+    value?: number | string | Date | "dynamic";
     message: string;
+    condition?: (formValues: any) => boolean; // Optional condition function to make validator conditional
 }
 
 export interface OptionConfig {
@@ -86,6 +87,7 @@ export interface FieldConfig {
     getPlaceholder?: (dependentValue: any) => string; // Dynamic placeholder based on dependent value
     isHide?: (dependentValue: any) => boolean; // Dynamic visibility based on dependent value
     isRequired?: (dependentValue: any) => boolean; // Dynamic requirement based on dependent value
+
     // Lookup specific properties
     lookupConfig?: {
         isExternal?: boolean;

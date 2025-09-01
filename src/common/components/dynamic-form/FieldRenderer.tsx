@@ -772,9 +772,32 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                         mode='single'
                                         selected={selectedDate}
                                         onSelect={handleDateSelect}
-                                        disabled={(date) =>
-                                            date > new Date() || date < new Date("1900-01-01")
-                                        }
+                                        disabled={(date) => {
+                                            // Always disable dates before 1900
+                                            if (date < new Date("1900-01-01")) {
+                                                return true;
+                                            }
+                                            
+                                            // Check if this is the dateOfMarriage field and if we should conditionally disable future dates
+                                            if (field.key === "dateOfMarriage" && formValues) {
+                                                const marriageType = formValues?.marriageType;
+                                                const typeName = marriageType?.name || marriageType?.label;
+                                                
+                                                // Only disable future dates for non-National marriage types
+                                                const shouldDisableFutureDates = typeName !== "National";
+                                                
+                                                if (shouldDisableFutureDates && date > new Date()) {
+                                                    return true;
+                                                }
+                                            } else if (field.key !== "dateOfMarriage") {
+                                                // For other date fields (not dateOfMarriage), keep the original behavior
+                                                if (date > new Date()) {
+                                                    return true;
+                                                }
+                                            }
+                                            
+                                            return false;
+                                        }}
                                         initialFocus
                                         captionLayout='dropdown'
                                     />

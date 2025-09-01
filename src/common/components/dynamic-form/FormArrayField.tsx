@@ -190,10 +190,20 @@ export const FormArrayField: React.FC<FormArrayFieldProps> = ({
                                 onSelect={(date) =>
                                     form.setFieldValue(fieldConfig.key, date)
                                 }
-                                disabled={(date) =>
-                                    date > new Date() ||
-                                    date < new Date("1900-01-01")
-                                }
+                                disabled={(date) => {
+                                    // Always disable dates before 1900
+                                    if (date < new Date("1900-01-01")) {
+                                        return true;
+                                    }
+                                    
+                                    // For FormArray fields, keep the original behavior of disabling future dates
+                                    // This is typically used for birth dates, etc. where future dates don't make sense
+                                    if (date > new Date()) {
+                                        return true;
+                                    }
+                                    
+                                    return false;
+                                }}
                                 initialFocus
                             />
                         </PopoverContent>
