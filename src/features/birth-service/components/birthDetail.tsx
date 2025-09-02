@@ -22,12 +22,66 @@ import general from "@/public/images/general.svg";
 import generalActive from "@/public/images/generalActive.svg";
 import FatherGeneralInformation from "./FatherGeneralInformation";
 import MotherGeneralInformation from "./MotherGeneralInformation";
+import { useSubmitBirthCertificateRequestMutation } from "@/features/application-service/api/certificateApi";
 
 // Define the type for the mapped response data
 // type MappedResponseData = {
 //     title: string;
 //     data: { label: string; key: string; value: string; status?: string }[];
 // }[];
+
+const body = {
+    request: {
+        registrationId: "11111111-2222-3333-4444-555555555555",
+        certificateType: "BIRTH",
+        versionNumber: 1,
+        data: {
+            childName: "John Doe",
+            childName_amh: "ጆን ዶ",
+            fatherName: "Michael Doe",
+            fatherName_amh: "ሚካኤል ዶ",
+            grandFatherName: "Michael",
+            grandFatherName_amh: "ሚካኤ",
+            dobDay: "15",
+            dobMonth: "Aug",
+            dobYear: "2025",
+            dobDay_amh: "15",
+            dobMonth_amh: "Aug",
+            dobYear_amh: "2025",
+            sex: "Male",
+            sex_amh: "ወንድ",
+            placeOfBirth: "Addis Ababa",
+            placeOfBirth_amh: "አዲስ አበባ",
+            citizenship: "Ethiopian",
+            citizenship_amh: "ኢትዮጵያዊ",
+            motherFullName: "Anna Doe",
+            motherFullName_amh: "አና ዶ",
+            motherCitizenship: "Ethiopian",
+            motherCitizenship_amh: "ኢትዮጵያዊ",
+            fatherFullName: "Michael Doe",
+            fatherFullName_amh: "ሚካኤል ዶ",
+            fatherCitizenship: "Ethiopian",
+            fatherCitizenship_amh: "ኢትዮጵያዊ",
+            birthRegFormNo: "12345",
+            birthRegUIN: "BRU-2025-001",
+            birthRegDateDay: "16",
+            birthRegDateDay_amh: "፲፮",
+            birthRegDateMonth: "Aug",
+            birthRegDateMonth_amh: "ነሐሴ",
+            birthRegDateYear: "2025",
+            birthRegDateYear_amh: "2017",
+            officerFullName: "Registrar Kassa",
+            officerFullName_amh: "ካሳ መዝገብ",
+            certIssuedDateDay: "20",
+            certIssuedDateDay_amh: "፳",
+            certIssuedDateMonth: "Aug",
+            certIssuedDateMonth_amh: "ነሐሴ",
+            certIssuedDateYear: "2025",
+            certIssuedDateYear_amh: "2017",
+            birthRegUin: "bc-100001",
+        },
+    },
+};
 
 export default function BirthDetail() {
     const [response, setResponse] = useState<BirthResponse | null>(null);
@@ -81,6 +135,20 @@ export default function BirthDetail() {
             console.error("Failed to copy: ", err);
         }
     };
+    const [
+        submitCertificateRequest,
+        {
+            isLoading: certificateIsLoading,
+            isError: certificateIsError,
+            data: certificateData,
+        },
+    ] = useSubmitBirthCertificateRequestMutation();
+    const handleRequestCertificate = async () => {
+        try {
+            const response = await submitCertificateRequest({ data: body });
+        } catch (err) {}
+    };
+
     const {
         data: vitalData,
         isLoading: isVitalLoading,
@@ -214,7 +282,7 @@ export default function BirthDetail() {
 
                     <Button
                         className='bg-[#073954]'
-                        onClick={() => setShowTimer(true)}
+                        onClick={() => handleRequestCertificate()}
                         disabled={resolutionIsLoading}
                     >
                         Request Certificate
