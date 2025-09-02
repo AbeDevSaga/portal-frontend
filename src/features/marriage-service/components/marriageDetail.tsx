@@ -159,9 +159,9 @@ export default function MarriageDetail() {
             const response = await submitResolutionForm({
                 data,
             });
-            // if (!isError) {
-            //     window.location.reload();
-            // }
+            if (!isError) {
+                window.location.reload();
+            }
             console.log(response);
         } catch (error) {}
     };
@@ -251,7 +251,7 @@ export default function MarriageDetail() {
 
                     <Button
                         className='bg-[#073954]'
-                        onClick={() => setShowTimer(true)}
+                        onClick={() => handleRequestCertificate()}
                         disabled={resolutionIsLoading}
                     >
                         Request Certificate
