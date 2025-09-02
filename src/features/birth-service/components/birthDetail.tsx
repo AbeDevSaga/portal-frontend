@@ -12,7 +12,7 @@ import { useGetBirthBySlugQuery } from "../api/birthApi";
 import { BirthResponse } from "../types";
 import {
     useGetVitalServiceEventQuery,
-    useSubmitResolutionFormMutation
+    useSubmitResolutionFormMutation,
 } from "@/features/application-service/api/applicationApi";
 import Image from "next/image";
 import FileViewerModal from "@/common/components/common/FileModalCompoennt";
@@ -40,7 +40,7 @@ export default function BirthDetail() {
     const { isLoading, isError, data } = useGetBirthBySlugQuery({
         id: slug,
     });
-    
+
     useEffect(() => {
         if (!isError && !isLoading && data) {
             setResponse(data.data);
@@ -86,14 +86,15 @@ export default function BirthDetail() {
         isLoading: isVitalLoading,
         isError: isVitalError,
     } = useGetVitalServiceEventQuery({ id: slug });
-console.log("the vital data for birth", data);
     const [displayData, setDisplayData] = useState("child");
     const marriageDetailOptions = [
         {
             label: "Child Info",
             component: (
-                <ChildGeneralInformation data={data?.data || null}
-                    status={vitalData ? vitalData.data.registrationStatus : ""} />
+                <ChildGeneralInformation
+                    data={data?.data || null}
+                    status={vitalData ? vitalData.data.registrationStatus : ""}
+                />
             ),
             value: "child",
             image: general.src,
@@ -101,14 +102,18 @@ console.log("the vital data for birth", data);
         },
         {
             label: "Father Info",
-            component: <FatherGeneralInformation fatherData={data?.data || null} />,
+            component: (
+                <FatherGeneralInformation fatherData={data?.data || null} />
+            ),
             value: "father",
             image: general.src,
             imageActive: generalActive.src,
         },
         {
             label: "Mother Info",
-            component: <MotherGeneralInformation motherData={data?.data || null} />,
+            component: (
+                <MotherGeneralInformation motherData={data?.data || null} />
+            ),
             value: "mother",
             image: general.src,
             imageActive: generalActive.src,
@@ -126,30 +131,36 @@ console.log("the vital data for birth", data);
         status: string;
         reason: string;
     }) => {
+        const data = {
+            registration_number: slug,
+            reviewerId:
+                values.status === "UNDER_REVIEW"
+                    ? "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    : null,
+            approverId:
+                values.status === "APPROVED"
+                    ? "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    : null,
+            status: values.status,
+            localisation: [
+                {
+                    languageCode: "en",
+                    reviewDate: "2025-08-29T18:13:13.672Z",
+                    approvedDate: null,
+                    reviewerNotes: values.reason,
+                    approverNotes: null,
+                },
+            ],
+        };
         try {
-            const data = {
-                registration_number: slug,
-                reviewerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                approverId: null,
-                status: values.status,
-                localisation: [
-                    {
-                        languageCode: "en",
-                        reviewDate: "2025-08-29T18:13:13.672Z",
-                        approvedDate: null,
-                        reviewerNotes: values.reason,
-                        approverNotes: null,
-                    },
-                ],
-            };
             const response = await submitResolutionForm({
                 data,
             });
-            // if (!isError) {
-            //     window.location.reload();
-            // }
+            if (!resolutionIsError) {
+                window.location.reload();
+            }
             console.log(response);
-        } catch (error) { }
+        } catch (error) {}
     };
 
     const handleRenderApplicationDecisionButtons = (status: string) => {
@@ -163,6 +174,7 @@ console.log("the vital data for birth", data);
                                 reason: "",
                             })
                         }
+                        disabled={resolutionIsLoading}
                     >
                         Validate Application
                     </Button>
@@ -181,10 +193,14 @@ console.log("the vital data for birth", data);
                                 reason: "",
                             })
                         }
+                        disabled={resolutionIsLoading}
                     >
                         Approve Application
                     </Button>
-                    <Button onClick={() => setOpenRejectModal(true)}>
+                    <Button
+                        onClick={() => setOpenRejectModal(true)}
+                        disabled={resolutionIsLoading}
+                    >
                         Reject Application
                     </Button>
                 </>
@@ -199,6 +215,7 @@ console.log("the vital data for birth", data);
                     <Button
                         className='bg-[#073954]'
                         onClick={() => setShowTimer(true)}
+                        disabled={resolutionIsLoading}
                     >
                         Request Certificate
                     </Button>

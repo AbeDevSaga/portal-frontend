@@ -39,8 +39,8 @@ const RejectionModal = ({
         try {
             const data = {
                 registration_number: slug,
-                reviewerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                approverId: null,
+                reviewerId: null,
+                approverId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
                 status: values.status,
                 localisation: [
                     {
@@ -57,9 +57,10 @@ const RejectionModal = ({
             const response = await submitResolutionForm({
                 data,
             });
-            // if (!isError) {
-            //     window.location.reload();
-            // }
+            if (!resolutionIsError) {
+                handleCancel(true);
+                window.location.reload();
+            }
             console.log("response", response);
         } catch (error) {
             console.log("error", error);
