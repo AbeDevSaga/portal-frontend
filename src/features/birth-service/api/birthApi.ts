@@ -1,25 +1,29 @@
-import { birthListEndpoint } from "@/common/utils/constants/EndPoints";
+import {
+    BIRTH_CREATE_ENDPOINT,
+    BIRTH_LIST_ENDPOINT,
+    BIRTH_SLUG_ENDPOINT,
+} from "@/common/utils/constants/EndPoints";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const birthApi = createApi({
     reducerPath: "birthApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3000",
+        baseUrl: process.env.NEXT_PUBLIC_IDX_BACKEND1,
     }),
     endpoints: (builder) => ({
         getBirthsList: builder.query<any, { page?: number; perPage?: number }>({
             query: ({ page = 1, perPage = 10 } = {}) => {
-                return `${birthListEndpoint}?page=${page}&perPage=${perPage}`;
+                return `${BIRTH_LIST_ENDPOINT}?page=${page}&perPage=${perPage}`;
             },
         }),
         getBirthBySlug: builder.query({
             query: ({ id }) => {
-                return `${birthListEndpoint}/${id}`;
+                return `${BIRTH_SLUG_ENDPOINT}/${id}`;
             },
         }),
         submitForm: builder.mutation<any, Record<string, any>>({
             query: (formData) => ({
-                url: birthListEndpoint,
+                url: BIRTH_CREATE_ENDPOINT,
                 method: "POST",
                 body: formData,
             }),

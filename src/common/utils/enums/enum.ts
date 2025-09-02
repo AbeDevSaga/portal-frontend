@@ -7,3 +7,8 @@ export enum Roles {
   CASE_TWO = "case_two",
   CASHIER = "cashier"
 }
+
+export enum EventTypes {
+  MARRIAGE = "MARRIAGE",
+  BIRTH = "BIRTH"
+}

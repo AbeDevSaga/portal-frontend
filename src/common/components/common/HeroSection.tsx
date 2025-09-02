@@ -5,10 +5,12 @@ import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const HeroSection = ({
+    redirectTo = null,
     action,
     title,
     description,
 }: {
+    redirectTo?: string | null;
     action?: React.ReactNode;
     title: string;
     description: string;
@@ -20,7 +22,11 @@ const HeroSection = ({
             <div className=''>
                 <div className='flex items-center text-[#073954] -ml-4'>
                     <Button
-                        onClick={() => router.back()}
+                        onClick={
+                            redirectTo
+                                ? () => router.replace(redirectTo)
+                                : () => router.back()
+                        }
                         className='bg-transparent hover:bg-transparent border-none shadow-none text-[#073954] px-2'
                     >
                         <ChevronLeft size={32} />

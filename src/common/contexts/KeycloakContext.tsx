@@ -79,7 +79,7 @@ export const KeycloakProvider: React.FC<KeycloakProviderProps> = ({ children }) 
     const login = () => {
         // Use redirect flow instead of popup to avoid iframe issues
         keycloak.login({
-            redirectUri: window.location.origin + '/home/birth',
+            redirectUri: window.location.origin + '/application',
             prompt: 'login', // Force login prompt
         });
     };
