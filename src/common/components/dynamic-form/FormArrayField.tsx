@@ -276,9 +276,10 @@ export const FormArrayField: React.FC<FormArrayFieldProps> = ({
 
                                 // Get grid classes for the group field with dynamic visibility
                                 const getGroupFieldGridClasses = (
-                                    fieldConfig: FieldConfig
+                                    fieldConfig: FieldConfig,
+                                    formValues: any
                                 ) => {
-                                    return getAutoFlowGridClasses(fieldConfig, form.values);
+                                    return getAutoFlowGridClasses(fieldConfig, formValues);
                                 };
 
                                 // Create a modified field config with the new key
@@ -293,7 +294,8 @@ export const FormArrayField: React.FC<FormArrayFieldProps> = ({
                                     <div
                                         key={fieldIndex}
                                         className={getGroupFieldGridClasses(
-                                            groupField
+                                            groupField,
+                                            values
                                         )}
                                     >
                                         <Field name={fieldKey}>

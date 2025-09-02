@@ -15,7 +15,7 @@ import { useGetListQuery } from "@/features/list/api/listApi";
 
 const Page = () => {
     const [openComplaintModalOpen, setOpenComplaintModal] = useState(false);
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState<any[]>([]);
     const [pageDetail, setPageDetail] = useState({
         pageIndex: 1,
         pageCount: 1,

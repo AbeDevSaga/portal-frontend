@@ -33,7 +33,7 @@ export const marriageApi = createApi({
 
         submitForm: builder.mutation<
             any,
-            { data: any; files?: { file: File }[] }
+            { data: any; files?: { file: File; type?: string }[] }
         >({
             query: ({ data, files = null }) => {
                 const formData = new FormData();
@@ -46,7 +46,9 @@ export const marriageApi = createApi({
                 if (files) {
                     files.forEach((doc, index) => {
                         formData.append(`documents[${index}].file`, doc.file);
-                        formData.append(`documents[${index}].type`, doc.type);
+                        if (doc.type) {
+                            formData.append(`documents[${index}].type`, doc.type);
+                        }
                     });
                 }
 

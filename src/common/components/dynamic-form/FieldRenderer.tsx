@@ -820,6 +820,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         prevProps.fieldLabel === nextProps.fieldLabel
                     );
                 });
+                
+                IsolatedDatePicker.displayName = 'IsolatedDatePicker';
 
                 return (
                     <Field name={field.key}>

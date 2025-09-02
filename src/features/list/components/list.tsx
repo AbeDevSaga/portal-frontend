@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Birthcolumns } from "./tableColumns";
+import { TableColumns } from "./tableColumns";
 import { useGetBirthsListQuery } from "@/redux/api/birthApi";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
@@ -134,7 +134,7 @@ export default function BirthList() {
                 </div>
 
                 <DataTable
-                    columns={Birthcolumns}
+                    columns={TableColumns}
                     data={response}
                     handlePagination={handlePagination}
                     tablePageSize={pageDetail.pageSize}
