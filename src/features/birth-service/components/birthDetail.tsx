@@ -20,6 +20,8 @@ import check from "@/public/images/check.svg";
 import ChildGeneralInformation from "./ChildGeneralInformation";
 import general from "@/public/images/general.svg";
 import generalActive from "@/public/images/generalActive.svg";
+import FatherGeneralInformation from "./FatherGeneralInformation";
+import MotherGeneralInformation from "./MotherGeneralInformation";
 
 // Define the type for the mapped response data
 // type MappedResponseData = {
@@ -38,16 +40,7 @@ export default function BirthDetail() {
     const { isLoading, isError, data } = useGetBirthBySlugQuery({
         id: slug,
     });
-
-    // useEffect(() => {
-    //     if (!isError && !isLoading && data) {
-    //         const mappedData = mapApiResponseToFormFields(
-    //             data.response[0],
-    //             birthFormConfig
-    //         );
-    //         setResponse(mappedData);
-    //     }
-    // }, [data]);
+    
     useEffect(() => {
         if (!isError && !isLoading && data) {
             setResponse(data.data);
@@ -93,33 +86,33 @@ export default function BirthDetail() {
         isLoading: isVitalLoading,
         isError: isVitalError,
     } = useGetVitalServiceEventQuery({ id: slug });
-
+console.log("the vital data for birth", data);
     const [displayData, setDisplayData] = useState("child");
     const marriageDetailOptions = [
         {
             label: "Child Info",
             component: (
                 <ChildGeneralInformation data={data?.data || null}
-                    status={vitalData ? vitalData.data.status : ""} />
+                    status={vitalData ? vitalData.data.registrationStatus : ""} />
             ),
             value: "child",
             image: general.src,
             imageActive: generalActive.src,
         },
-        // {
-        //     label: "Father Info",
-        //     // component: <BridalInformation data={data?.data || null} />,
-        //     value: "father",
-        //     // image: marriage.src,
-        //     // imageActive: marriageActive.src,
-        // },
-        // {
-        //     label: "Mother Info",
-        //     // component: <WitnessInformation data={data?.data || null} />,
-        //     value: "mother",
-        //     // image: witness.src,
-        //     // imageActive: witnessActive.src,
-        // },
+        {
+            label: "Father Info",
+            component: <FatherGeneralInformation fatherData={data?.data || null} />,
+            value: "father",
+            image: general.src,
+            imageActive: generalActive.src,
+        },
+        {
+            label: "Mother Info",
+            component: <MotherGeneralInformation motherData={data?.data || null} />,
+            value: "mother",
+            image: general.src,
+            imageActive: generalActive.src,
+        },
     ];
     const [
         submitResolutionForm,
@@ -280,7 +273,7 @@ export default function BirthDetail() {
                                 )?.component
                             }
 
-                            <div className='flex flex-col justify-between w-full shadow-sm'>
+                            {/* <div className='flex flex-col justify-between w-full shadow-sm'>
                                 <p>Attachment</p>
                                 <div
                                     onClick={() => setOpenFileModal(true)}
@@ -306,7 +299,7 @@ export default function BirthDetail() {
                                         handleCancel={setOpenFileModal}
                                     />
                                 ) : null}
-                            </div>
+                            </div> */}
                         </Card>
                     </div>
                 ) : null}

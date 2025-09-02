@@ -3,6 +3,7 @@ export interface Localization {
     marriageType: string;
     reason: string;
     issueDate: string | null;
+    marriageDate: string;
 }
 
 export interface MarriageData {
