@@ -15,7 +15,7 @@ interface PaginationProps {
     itemsPerPage: number;
     onPageChange?: (page: number) => void;
     currentPage: number;
-    setCurrentPage: Dispatch<SetStateAction<number>>;
+    setCurrentPage: (arg1: number) => void;
 }
 
 export function PaginationComponent({

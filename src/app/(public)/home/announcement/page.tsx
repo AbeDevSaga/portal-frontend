@@ -3,7 +3,7 @@ import LandingNavBar from "@/common/components/layout/landingNavBar";
 import { Button } from "@/common/components/ui/button";
 import { Card } from "@/common/components/ui/card";
 import { Gem } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ComplaintModal from "./components/complaintModal";
 import MarriageAvatar from "./components/marriageAvatar";
 import ellipse from "@/public/images/Ellipse-25.svg";
@@ -11,11 +11,22 @@ import looper from "@/public/images/Looper-bg.svg";
 import Image from "next/image";
 import marriage from "@/public/images/sidebar/marriage.svg";
 import { PaginationComponent } from "@/common/components/ui/paginationComponent";
+import { useGetListQuery } from "@/features/list/api/listApi";
 
 const Page = () => {
     const [openComplaintModalOpen, setOpenComplaintModal] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-
+    const [response, setResponse] = useState(null);
+    const [pageDetail, setPageDetail] = useState({
+        pageIndex: 1,
+        pageCount: 1,
+        pageSize: 10,
+    });
+    const handleSetCurrentPage = (index: number) => {
+        setPageDetail({
+            ...pageDetail,
+            pageIndex: index,
+        });
+    };
     const [showTab, setShowTab] = useState("marriage");
     const tabOptions = [
         {
@@ -87,6 +98,23 @@ const Page = () => {
             // setIsLoading(false);
         }
     };
+    const { isLoading, isError, data } = useGetListQuery({
+        page: pageDetail.pageIndex + 1,
+        perPage: pageDetail.pageSize,
+        type: "MARRIAGE",
+        languageCode: "en",
+    });
+
+    useEffect(() => {
+        if (!isError && !isLoading && data) {
+            setResponse(data.data);
+            setPageDetail({
+                ...pageDetail,
+                pageCount: data.total_page,
+            });
+            console.log("data", data);
+        }
+    }, [data]);
 
     return (
         <div
@@ -127,8 +155,11 @@ const Page = () => {
                         ))}
                     </div>
                     <div className='grid md:grid-cols-2 xl:grid-cols-4 gap-10'>
-                        {marriageData.map((married, index) => (
-                            <Card key={index} className='pt-3.5 pb-2 px-5 rounded-md shadow-md'>
+                        {response.map((married, index) => (
+                            <Card
+                                key={index}
+                                className='pt-3.5 pb-2 px-5 rounded-md shadow-md'
+                            >
                                 <div className='px-5 space-y-2 pb-3 border-b'>
                                     <div className='flex flex-col items-center justify-center'>
                                         <Image
@@ -186,11 +217,11 @@ const Page = () => {
                 </div>
                 <div className='flex justify-end w-full max-w-[1700px] mx-auto px-5 z-30'>
                     <PaginationComponent
-                        totalItems={100}
-                        itemsPerPage={10}
+                        totalItems={pageDetail.pageCount * pageDetail.pageSize}
+                        itemsPerPage={pageDetail.pageSize}
                         onPageChange={handlePageChange}
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
+                        currentPage={pageDetail.pageIndex}
+                        setCurrentPage={handleSetCurrentPage}
                     />
                 </div>
             </div>

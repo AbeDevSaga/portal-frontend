@@ -39,7 +39,6 @@ const GeneralInformation = ({
     data: MarriageData;
     status: string;
 }) => {
-    console.log("herer", data);
     const {
         data: husbandData,
         isLoading: isHusbandLoading,
