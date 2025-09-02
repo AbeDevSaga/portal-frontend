@@ -26,52 +26,7 @@ import check from "@/public/images/check.svg";
 import FileViewer from "@/common/components/common/FileViewer";
 import FileViewerModal from "@/common/components/common/FileModalCompoennt";
 import { useSubmitCertificateRequestMutation } from "@/features/application-service/api/certificateApi";
-
-const body = {
-    request: {
-        registrationId: "11111111-2222-3333-4444-555555555555",
-        certificateType: "MARRIAGE",
-        versionNumber: 1,
-        data: {
-            wifeFullName: "Martha Bekele",
-            husbandFullName: "Samuel Tesfaye",
-            dateofBirthMonthHusb: "06",
-            dateofDayHusb: "15",
-            dateofYearHusb: "1990",
-            dateofYearHusb_amh: "1997",
-            dateofBirthMonthWife: "09",
-            dateofDayWife: "02",
-            dateofDayWife_amh: "06",
-            dateofYearWife: "1994",
-            dateofYearWife_amh: "1999",
-            citeznshipHusb: "Ethiopian",
-            citeznshipWife: "Ethiopian",
-            dateofMarriageMonth: "12",
-            dateofMarriageDay: "20",
-            dateofMarriageYear: "2020",
-            regionCityAdmin: "Addis Ababa",
-            zoneCityAdmin: "Bole Sub-city",
-            city: "Addis Ababa",
-            subCity: "Bole",
-            woreda: "05",
-            kebele: "12",
-            kebele_amh: "12",
-            marriageRegDateMonth: "12",
-            marriageRegDateDay: "22",
-            marriageRegDateYear: "2020",
-            certificateIssuedDateMonth: "01",
-            certificateIssuedDateDay: "05",
-            certificateIssuedDateYear: "2021",
-            fullNameOfTheOfficerOfCivilStatus: "Alemu Getachew",
-            signature: "Alemu G.",
-            marriageRegistrationFormNumber: "MRF-2020-12345",
-            marriageRegistrationUniqueIdentificationNumber: "MARR-0000123456",
-            wifeBirthRegistrationUniqueIdentificationNumber: "BIRTH-0000987654",
-            husbandBirthRegistrationUniqueIdentificationNumber:
-                "BIRTH-0000123987",
-        },
-    },
-};
+import { useGetResidentDataByIdQuery } from "@/features/application-service/api/residentApi";
 
 // Define the type for the mapped response data
 // type MappedResponseData = {
@@ -108,6 +63,29 @@ export default function MarriageDetail() {
         }
     };
 
+    const {
+        data: husbandData,
+        isLoading: isHusbandLoading,
+        isError: isHusbandError,
+    } = useGetResidentDataByIdQuery(
+        { id: data?.data?.husband! },
+        {
+            skip: !data?.data?.husband,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+    const {
+        data: wifeData,
+        isLoading: isWifeLoading,
+        isError: isWifeError,
+    } = useGetResidentDataByIdQuery(
+        { id: data?.data?.wife! },
+        {
+            skip: !data?.data?.wife,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
     const [
         submitCertificateRequest,
         {
@@ -117,6 +95,88 @@ export default function MarriageDetail() {
         },
     ] = useSubmitCertificateRequestMutation();
     const handleRequestCertificate = async () => {
+        const husband = husbandData.content[0];
+        const wife = wifeData.content[0];
+        console.log("husband", husband, "wife", wife);
+        const body = {
+            request: {
+                registrationId: "11111111-2222-3333-4444-555555555555",
+                certificateType: "MARRIAGE",
+                versionNumber: 1,
+                data: {
+                    wifeFullName: wife.firstName + " " + wife.middleName,
+                    wifeFullName_amh: "ማርታ በቀለ",
+                    husbandFullName:
+                        husband.firstName + " " + husband.middleName,
+                    husbandFullName_amh: "ሳሙኤል ተስፋዬ",
+                    dateofBirthMonthHusb: "06",
+                    dateofBirthMonthHusb_amh: "ሰኔ",
+                    dateofDayHusb: "15",
+                    dateofDayHusb_amh: "17",
+                    dateofYearHusb: "1990",
+                    dateofYearHusb_amh: "1997",
+                    dateofBirthMonthWife: "09",
+                    dateofBirthMonthWife_amh: "መስከረም",
+                    dateofDayWife: "02",
+                    dateofDayWife_amh: "06",
+                    dateofYearWife: "1994",
+                    dateofYearWife_amh: "1999",
+                    citeznshipHusb: "Ethiopian",
+                    citeznshipHusb_amh: "ኢትዮጵያዊ",
+                    citeznshipWife: "Ethiopian",
+                    citeznshipWife_amh: "ኢትዮጵያዊት",
+                    dateofMarriageMonth: "12",
+                    dateofMarriageMonth_amh: "ታህሳስ",
+                    dateofMarriageDay: "20",
+                    dateofMarriageDay_amh: "07",
+                    dateofMarriageYear: "2020",
+                    dateofMarriageYear_amh: "2006",
+                    regionCityAdmin: "Addis Ababa",
+                    regionCityAdmin_amh: "አዲስ አበባ",
+                    zoneCityAdmin: "Bole Sub-city",
+                    zoneCityAdmin_amh: "ቦሌ ክፍለ ከተማ",
+                    city: "Addis Ababa",
+                    city_amh: "አዲስ አበባ",
+                    subCity: "Bole",
+                    subCity_amh: "ቦሌ",
+                    woreda: "05",
+                    woreda_amh: "05",
+                    kebele: "12",
+                    kebele_amh: "12",
+                    marriageRegDateMonth: "12",
+                    marriageRegDateMonth_amh: "ታህሳስ",
+                    marriageRegDateDay: "22",
+                    marriageRegDateDay_amh: "20",
+                    marriageRegDateYear: "2020",
+                    marriageRegDateYear_amh: "1988",
+                    certificateIssuedDateMonth: "01",
+                    certificateIssuedDateMonth_amh: "ጥር",
+                    certificateIssuedDateDay: "05",
+                    certificateIssuedDateDay_amh: "፭",
+                    certificateIssuedDateYear: "2021",
+                    certificateIssuedDateYear_amh: "1999",
+                    fullNameOfTheOfficerOfCivilStatus: "Alemu Getachew",
+                    fullNameOfTheOfficerOfCivilStatus_amh: "አለሙ ጌታቸው",
+                    signature: "Alemu G.",
+                    signature_amh: "አ.ጌ.",
+                    marriageRegistrationFormNumber: "MRF-2020-12345",
+                    marriageRegistrationFormNumber_amh: "MRF-2020-12345",
+                    marriageRegistrationUniqueIdentificationNumber:
+                        "MARR-0000123456",
+                    marriageRegistrationUniqueIdentificationNumber_amh:
+                        "MARR-0000123456",
+                    wifeBirthRegistrationUniqueIdentificationNumber:
+                        "BIRTH-0000987654",
+                    wifeBirthRegistrationUniqueIdentificationNumber_amh:
+                        "BIRTH-0000987654",
+                    husbandBirthRegistrationUniqueIdentificationNumber:
+                        "BIRTH-0000123987",
+                    husbandBirthRegistrationUniqueIdentificationNumber_amh:
+                        "BIRTH-0000123987",
+                },
+            },
+        };
+
         try {
             const response = await submitCertificateRequest({ data: body });
         } catch (err) {}
@@ -263,6 +323,20 @@ export default function MarriageDetail() {
                 <div className='px-5 text-center py-2 rounded-sm bg-red-400/50'>
                     REJECTED
                 </div>
+            );
+
+        if (certificateData?.data?.url)
+            return (
+                <>
+                    <Button
+                        onClick={() => {
+                            setDisplayDoc(certificateData.data.url);
+                            setOpenFileModal(true);
+                        }}
+                    >
+                        View Certificate
+                    </Button>
+                </>
             );
         return null;
     };
