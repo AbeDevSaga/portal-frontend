@@ -100,8 +100,14 @@ export default function MarriageDetail() {
         try {
             const data = {
                 registration_number: slug,
-                reviewerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                approverId: null,
+                reviewerId:
+                    values.status === "UNDER_REVIEW"
+                        ? "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        : null,
+                approverId:
+                    values.status === "APPROVED"
+                        ? "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        : null,
                 status: values.status,
                 localisation: [
                     {
@@ -169,10 +175,14 @@ export default function MarriageDetail() {
                                 reason: "",
                             })
                         }
+                        disabled={resolutionIsLoading}
                     >
                         Validate Application
                     </Button>
-                    <Button onClick={() => setOpenRejectModal(true)}>
+                    <Button
+                        onClick={() => setOpenRejectModal(true)}
+                        disabled={resolutionIsLoading}
+                    >
                         Reject Application
                     </Button>
                 </>
@@ -205,6 +215,7 @@ export default function MarriageDetail() {
                     <Button
                         className='bg-[#073954]'
                         onClick={() => setShowTimer(true)}
+                        disabled={resolutionIsLoading}
                     >
                         Request Certificate
                     </Button>
