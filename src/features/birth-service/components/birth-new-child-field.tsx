@@ -193,7 +193,7 @@ export const formConfig: FormConfig = {
                 {
                     type: "number",
                     key: "birthTimeWeight",
-                    label: "Birth Time Weight",
+                    label: "Birth Time Weight(in KG)",
                     placeholder: "",
                     description:
                         "Please insert the weight of the child during the birth time.",
@@ -216,7 +216,7 @@ export const formConfig: FormConfig = {
                 {
                     type: "number",
                     key: "birthTimeHeight",
-                    label: "Birth Time Height",
+                    label: "Birth Time Height(in CM)",
                     placeholder: "",
                     description:
                         "Please insert the height of the child during the birth time.",
