@@ -13,7 +13,7 @@ export const residentApi = createApi({
         }),
         getResidentDataById: builder.query({
             query: ({ id = "" }) => {
-                return `/resident/residents?id=${id}`;
+                return `/resident/residents/${id}`;
             },
         }),
         getReligionData: builder.query({

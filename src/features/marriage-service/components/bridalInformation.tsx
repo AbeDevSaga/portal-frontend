@@ -43,27 +43,29 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
             refetchOnMountOrArgChange: true,
         }
     );
+    console.log("data", data);
 
     const {
         data: religionData,
         isLoading: isReligionLoading,
         isError: isReligionError,
     } = useGetReligionDataByIdQuery(
-        { id: data?.content[0]?.religion! },
+        { id: data?.personalInfo.religion! },
         {
-            skip: !data?.content[0]?.religion,
+            skip: !data?.personalInfo.religion,
             refetchOnMountOrArgChange: true,
         }
     );
+    console.log("data?.religion", data?.religion);
 
     const {
         data: nationalityData,
         isLoading: isNationalityLoading,
         isError: isNationalityError,
     } = useGetNationalityDataByIdQuery(
-        { id: data?.content[0]?.nationality! },
+        { id: data?.personalInfo?.nationality! },
         {
-            skip: !data?.content[0]?.nationality,
+            skip: !data?.personalInfo?.nationality,
             refetchOnMountOrArgChange: true,
         }
     );
@@ -73,11 +75,11 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                 <ProfileCompnent
                     name={
                         data
-                            ? data.content[0].firstName +
+                            ? data.personalInfo.localizedContent.en.firstName +
                               " " +
-                              data.content[0].middleName +
+                              data.personalInfo.localizedContent.en.middleName +
                               " " +
-                              data.content[0].lastName
+                              data.personalInfo.localizedContent.en.lastName
                             : ""
                     }
                     bridalType={type}
@@ -100,7 +102,9 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Date of Birth</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {data.content[0].dateOfBirth}
+                            {data?.personalInfo?.dateOfBirth
+                                ? data?.personalInfo?.dateOfBirth
+                                : null}
                         </p>
                     </div>{" "}
                     {/* <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
@@ -137,13 +141,13 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                     <div className='flex justify-between border-b'>
                         <p className='text-sm'>City / Region </p>
                         <p className='text-sm font-semibold w-fit text-right'>
-                            Addis Ababa
+                            ----{" "}
                         </p>
                     </div>
                     <div className='flex justify-between border-b'>
                         <p className='text-sm'>Sub-city</p>
                         <p className='text-sm font-semibold w-fit text-right'>
-                            Kirkos
+                            ----
                         </p>
                     </div>
                     <div className='flex justify-between'>

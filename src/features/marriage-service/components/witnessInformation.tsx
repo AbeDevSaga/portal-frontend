@@ -66,6 +66,7 @@ const WitnessInformation = ({ data }: { data: MarriageData }) => {
                 refetchOnMountOrArgChange: true,
             }
         );
+        console.log("witness data", data);
         return (
             <div className='flex flex-col lg:flex-row w-full py-2' key={id}>
                 <Card className='rounded-sm py-5 px-5 gap-2 w-full flex bg-[#F8F8F8]'>
@@ -79,11 +80,14 @@ const WitnessInformation = ({ data }: { data: MarriageData }) => {
                             <p className='text-sm'>Full Name</p>
                             <p className='text-sm font-semibold w-fit'>
                                 {data
-                                    ? data.content[0].firstName +
+                                    ? data.personalInfo.localizedContent.en
+                                          .firstName +
                                       " " +
-                                      data.content[0].middleName +
+                                      data.personalInfo.localizedContent.en
+                                          .middleName +
                                       " " +
-                                      data.content[0].lastName
+                                      data.personalInfo.localizedContent.en
+                                          .lastName
                                     : ""}{" "}
                             </p>
                         </div>

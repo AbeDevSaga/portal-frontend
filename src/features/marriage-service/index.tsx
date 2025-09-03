@@ -52,6 +52,22 @@ export default function MarriageNew() {
                 type: "ID_PROOF",
                 file: value.groomPhoto,
             },
+            value.groomBirthCertificate && {
+                type: "BIRTH_NOTICE",
+                file: value.groomBirthCertificate,
+            },
+            value.groomPhoto && {
+                type: "ID_PROOF",
+                file: value.groomPhoto,
+            },
+            value.groomBirthCertificate && {
+                type: "BIRTH_NOTICE",
+                file: value.groomBirthCertificate,
+            },
+            value.groomPhoto && {
+                type: "ID_PROOF",
+                file: value.groomPhoto,
+            },
             // value.brideSpecialApproval && {
             //     type: "BRIDE_SPECIAL_APPROVAL",
             //     file: value.brideSpecialApproval,
@@ -135,26 +151,17 @@ export default function MarriageNew() {
                 data: apiPayload,
                 files: apiPayload.files,
             }).unwrap();
-            // const response2 = await new Promise((resolve) =>
-            //     setTimeout(resolve, 1000)
-            // );
-            if (response) {
+            if (!isError) {
                 showSuccess("Marriage registration submitted successfully!");
-                // data.
                 router.push(
                     `/application/marriage/detail/${response.registration_form_number}`
                 );
             } else {
-                showError("Failed to create Marriage registration");
+                showError(response.message);
             }
-        } catch (error) {
-            console.error("Error creating birth registration:", error);
-            showError(
-                "An error occurred while creating the birth registration"
-            );
+        } catch (error: any) {
+            showError(error?.data?.message);
         }
-
-        showError("Error submitting Marriage registration. Please try again.");
     };
 
     const formContent = (

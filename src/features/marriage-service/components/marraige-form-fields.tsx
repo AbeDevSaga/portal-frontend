@@ -38,10 +38,6 @@ export const formConfig: FormConfig = {
             label: "Step 3",
             content: "Bride's Information",
         },
-        {
-            label: "Step 4",
-            content: "Honor Information",
-        },
         // {
         //     label: "Step 5",
         //     content: "Groom Witness Information",
@@ -1017,6 +1013,21 @@ export const formConfig: FormConfig = {
                     },
                 },
                 {
+                    type: "fileUpload",
+                    key: "groomFirstWitnessId",
+                    label: "Groom's First Witness ID",
+                    placeholder: "",
+                    description: "Witness's proof of identity (ID, Passport)",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Groom's First witness ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Groom's Information",
+                },
+                {
                     type: "inputSearch",
                     key: "groomWitnessSecondResidentId",
                     label: "Groom's Second Witness resident ID",
@@ -1132,42 +1143,26 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.groomWitnessSecondResidentId;
                     },
                 },
-                // {
-                //     type: "fileUpload",
-                //     key: "groomFirstWitnessId",
-                //     label: "Groom's First Witness ID",
-                //     placeholder: "",
-                //     description: "Witness's proof of identity (ID, Passport)",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Groom's First witness ID is required",
-                //         },
-                //     ],
-                //     required: true,
-                //     group: "Groom's Information",
 
-                // },
+                {
+                    type: "fileUpload",
+                    key: "groomSecondWitnessId",
+                    label: "Groom's Second Witness ID",
+                    placeholder: "",
+                    description: "Witness's proof of identity (ID, Passport)",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Groom's Second witness ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Groom's Information",
 
-                // {
-                //     type: "fileUpload",
-                //     key: "groomSecondWitnessId",
-                //     label: "Groom's Second Witness ID",
-                //     placeholder: "",
-                //     description: "Witness's proof of identity (ID, Passport)",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Groom's Second witness ID is required",
-                //         },
-                //     ],
-                //     required: true,
-                //     group: "Groom's Information",
-
-                //     isDisabled: (dependentValues: any) => {
-                //         return dependentValues?.groomPhoto;
-                //     },
-                // },
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.groomPhoto;
+                    },
+                },
             ],
         },
 
@@ -1296,16 +1291,17 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.brideResidentId;
                     },
                 },
-                // {
-                //     type: "fileUpload",
-                //     key: "brideBirthCertificate",
-                //     label: "Bride's Birth Certificate",
-                //     placeholder: "",
-                //     description: "Upload the Bride's Birth Certificate",
-                //     required: false,
-                //     group: "Bride's Information",
-
-                // },
+                {
+                    type: "fileUpload",
+                    key: "brideBirthCertificate",
+                    label: "Bride's Birth Certificate",
+                    placeholder: "",
+                    description: "Upload the Bride's Birth Certificate",
+                    required: false,
+                    group: "Bride's Information",
+                    gridCols: 6,
+                    groupOrder: 2,
+                },
                 {
                     type: "input",
                     key: "brideNationality",
@@ -2007,6 +2003,25 @@ export const formConfig: FormConfig = {
                     },
                 },
                 {
+                    type: "fileUpload",
+                    key: "brideSecondWitnessId",
+                    label: "Bride's Second Witness ID",
+                    placeholder: "",
+                    description: "Witness's proof of identity (ID, Passport)",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Bride's Second witness ID is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Bride's Information",
+
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.bridePhoto;
+                    },
+                },
+                {
                     type: "inputSearch",
                     key: "brideWitnessSecondResidentId",
                     label: "Bride's Second Witness resident ID",
@@ -2117,66 +2132,24 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.brideWitnessSecondResidentId;
                     },
                 },
-            ],
-        },
-        {
-            title: "Honor Information",
-            group: "Honor Information",
-            groupOrder: 4,
-            tabular: false,
-            defaultExpanded: true,
-            fields: [
                 {
-                    type: "input",
-                    key: "honorRecordNumber",
-                    label: "Marriage Honor Record Number",
+                    type: "fileUpload",
+                    key: "brideSecondWitnessId",
+                    label: "Bride's Second Witness ID",
                     placeholder: "",
-                    description: "Enter the Marriage Honor Record Number",
+                    description: "Witness's proof of identity (ID, Passport)",
                     validators: [
                         {
                             type: "required",
-                            message: "Marriage Honor Record Number is required",
+                            message: "Bride's Second witness ID is required",
                         },
                     ],
                     required: true,
-                    group: "Honor Information",
-                    gridCols: 6,
-                    groupOrder: 4,
-                },
-                {
-                    type: "input",
-                    key: "uniqueRegistrationOfficeNumber",
-                    label: "Registration Office Number",
-                    placeholder: "",
-                    description:
-                        "Enter the Unique number of the registration office",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Registration Office Number is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Honor Information",
-                    gridCols: 6,
-                    groupOrder: 4,
-                },
-                {
-                    type: "input",
-                    key: "uniqueMarriageCertificateNumber",
-                    label: "Marriage Certificate Number",
-                    placeholder: "",
-                    description: "Enter the Unique Marraige Certificate Number",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Marriage Certificate Number is required",
-                        },
-                    ],
-                    required: true,
-                    group: "Honor Information",
-                    gridCols: 6,
-                    groupOrder: 4,
+                    group: "Bride's Information",
+
+                    isDisabled: (dependentValues: any) => {
+                        return dependentValues?.bridePhoto;
+                    },
                 },
             ],
         },

@@ -39,6 +39,7 @@ const GeneralInformation = ({
     data: MarriageData;
     status: string;
 }) => {
+    console.log("data", data);
     const {
         data: husbandData,
         isLoading: isHusbandLoading,
@@ -61,7 +62,7 @@ const GeneralInformation = ({
             refetchOnMountOrArgChange: true,
         }
     );
-    console.log("wifeData", wifeData);
+
     return (
         <div className=''>
             <p className='text-xl font-semibold border-b pb-7'>
@@ -71,11 +72,14 @@ const GeneralInformation = ({
                 <ProfileCompnent
                     name={
                         husbandData
-                            ? husbandData.content[0].firstName +
+                            ? husbandData.personalInfo.localizedContent.en
+                                  .firstName +
                               " " +
-                              husbandData.content[0].middleName +
+                              husbandData.personalInfo.localizedContent.en
+                                  .middleName +
                               " " +
-                              husbandData.content[0].lastName
+                              husbandData.personalInfo.localizedContent.en
+                                  .lastName
                             : ""
                     }
                     bridalType='Groom'
@@ -147,11 +151,13 @@ const GeneralInformation = ({
                 <ProfileCompnent
                     name={
                         wifeData
-                            ? wifeData.content[0].firstName +
+                            ? wifeData.personalInfo.localizedContent.en
+                                  .firstName +
                               " " +
-                              wifeData.content[0].middleName +
+                              wifeData.personalInfo.localizedContent.en
+                                  .middleName +
                               " " +
-                              wifeData.content[0].lastName
+                              wifeData.personalInfo.localizedContent.en.lastName
                             : ""
                     }
                     bridalType='Bride'

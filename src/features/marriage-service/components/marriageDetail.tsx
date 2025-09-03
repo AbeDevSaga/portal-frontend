@@ -86,6 +86,7 @@ export default function MarriageDetail() {
         }
     );
 
+    console.log("wifeData", wifeData);
     const [
         submitCertificateRequest,
         {
@@ -95,8 +96,12 @@ export default function MarriageDetail() {
         },
     ] = useSubmitCertificateRequestMutation();
     const handleRequestCertificate = async () => {
-        const husband = husbandData.content[0];
-        const wife = wifeData.content[0];
+        const husband = husbandData?.content?.find(
+            (item: { id: string }) => item?.id === data?.data?.husband
+        );
+        const wife = wifeData.content?.find(
+            (item: { id: string }) => item?.id === data?.data?.wife
+        );
         console.log("husband", husband, "wife", wife);
         const body = {
             request: {
