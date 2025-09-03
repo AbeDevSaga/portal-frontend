@@ -391,49 +391,49 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.groomResidentId;
                     },
                 },
-                {
-                    type: "fileUpload",
-                    key: "groomSpecialApproval",
-                    label: "Groom's Special Approval Document",
-                    placeholder: "",
-                    description: "Upload the Grooms Special Approval Document",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Special Approval Document is required",
-                        },
-                    ],
-                    isRequired: (dependentValue) => {
-                        const checkIfValidBirthDate = isValidBirthday(
-                            dependentValue.groomDateOfBirth
-                        );
-                        console.log(
-                            isValidBirthday(dependentValue.groomDateOfBirth)
-                        );
-                        return !checkIfValidBirthDate;
-                    },
-                    // required:  (dependentValues: any) => {
-                    //     // Make required if birth type is twin
-                    //     return dependentValues?.birthType === 'twin';
-                    // },
-                    group: "Groom's Information",
-                    gridCols: 6,
-                    groupOrder: 2,
-                    getDependentValue: (formValues: any) => ({
-                        groomResidentId: formValues.groomDateOfBirth,
-                    }),
-                    isDisabled: (dependentValues: any) => {
-                        return isValidBirthday(
-                            dependentValues.groomDateOfBirth
-                        );
-                    },
-                    isHide: (dependentValues: any) => {
-                        const checkIfValidBirthDate = isValidBirthday(
-                            dependentValues.groomDateOfBirth
-                        );
-                        return !checkIfValidBirthDate;
-                    },
-                },
+                // {
+                //     type: "fileUpload",
+                //     key: "groomSpecialApproval",
+                //     label: "Groom's Special Approval Document",
+                //     placeholder: "",
+                //     description: "Upload the Grooms Special Approval Document",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Special Approval Document is required",
+                //         },
+                //     ],
+                //     isRequired: (dependentValue) => {
+                //         const checkIfValidBirthDate = isValidBirthday(
+                //             dependentValue.groomDateOfBirth
+                //         );
+                //         console.log(
+                //             isValidBirthday(dependentValue.groomDateOfBirth)
+                //         );
+                //         return checkIfValidBirthDate;
+                //     },
+                //     // required:  (dependentValues: any) => {
+                //     //     // Make required if birth type is twin
+                //     //     return dependentValues?.birthType === 'twin';
+                //     // },
+                //     group: "Groom's Information",
+                //     gridCols: 6,
+                //     groupOrder: 2,
+                //     getDependentValue: (formValues: any) => ({
+                //         groomResidentId: formValues.groomDateOfBirth,
+                //     }),
+                //     isDisabled: (dependentValues: any) => {
+                //         return isValidBirthday(
+                //             dependentValues.groomDateOfBirth
+                //         );
+                //     },
+                //     isHide: (dependentValues: any) => {
+                //         const checkIfValidBirthDate = isValidBirthday(
+                //             dependentValues.groomDateOfBirth
+                //         );
+                //         return !checkIfValidBirthDate;
+                //     },
+                // },
                 {
                     type: "lookup",
                     key: "groomPlaceOfBirth",
@@ -1407,47 +1407,47 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.brideResidentId;
                     },
                 },
-                {
-                    type: "fileUpload",
-                    key: "brideSpecialApproval",
-                    label: "Bride's Special Approval Document",
-                    placeholder: "",
-                    description: "Upload the Brides Special Approval Document",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Special Approval Document is required",
-                        },
-                    ],
-                    isRequired: (dependentValue) => {
-                        const checkIfValidBirthDate = isValidBirthday(
-                            dependentValue.brideDateOfBirth
-                        );
-                        console.log("is valid date", checkIfValidBirthDate);
-                        return !checkIfValidBirthDate;
-                    },
-                    // required:  (dependentValues: any) => {
-                    //     // Make required if birth type is twin
-                    //     return dependentValues?.birthType === 'twin';
-                    // },
-                    group: "Bride's Information",
-                    gridCols: 6,
-                    groupOrder: 2,
-                    getDependentValue: (formValues: any) => ({
-                        brideResidentId: formValues.brideDateOfBirth,
-                    }),
-                    isDisabled: (dependentValues: any) => {
-                        return isValidBirthday(
-                            dependentValues.brideDateOfBirth
-                        );
-                    },
-                    isHide: (dependentValues: any) => {
-                        const checkIfValidBirthDate = isValidBirthday(
-                            dependentValues.brideDateOfBirth
-                        );
-                        return !checkIfValidBirthDate;
-                    },
-                },
+                // {
+                //     type: "fileUpload",
+                //     key: "brideSpecialApproval",
+                //     label: "Bride's Special Approval Document",
+                //     placeholder: "",
+                //     description: "Upload the Brides Special Approval Document",
+                //     validators: [
+                //         {
+                //             type: "required",
+                //             message: "Special Approval Document is required",
+                //         },
+                //     ],
+                //     isRequired: (dependentValue) => {
+                //         const checkIfValidBirthDate = isValidBirthday(
+                //             dependentValue.brideDateOfBirth
+                //         );
+                //         console.log("is valid date", checkIfValidBirthDate);
+                //         return checkIfValidBirthDate;
+                //     },
+                //     // required:  (dependentValues: any) => {
+                //     //     // Make required if birth type is twin
+                //     //     return dependentValues?.birthType === 'twin';
+                //     // },
+                //     group: "Bride's Information",
+                //     gridCols: 6,
+                //     groupOrder: 2,
+                //     getDependentValue: (formValues: any) => ({
+                //         brideResidentId: formValues.brideDateOfBirth,
+                //     }),
+                //     isDisabled: (dependentValues: any) => {
+                //         return isValidBirthday(
+                //             dependentValues.brideDateOfBirth
+                //         );
+                //     },
+                //     isHide: (dependentValues: any) => {
+                //         const checkIfValidBirthDate = isValidBirthday(
+                //             dependentValues.brideDateOfBirth
+                //         );
+                //         return !checkIfValidBirthDate;
+                //     },
+                // },
                 {
                     type: "lookup",
                     key: "bridePlaceOfBirth",

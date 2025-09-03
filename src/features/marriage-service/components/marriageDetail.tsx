@@ -94,7 +94,6 @@ export default function MarriageDetail() {
             data: certificateData,
         },
     ] = useSubmitCertificateRequestMutation();
-    console.log("certificateData", certificateData?.data?.url);
     const handleRequestCertificate = async () => {
         const husband = husbandData.content[0];
         const wife = wifeData.content[0];
