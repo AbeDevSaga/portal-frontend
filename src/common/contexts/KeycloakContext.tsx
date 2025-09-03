@@ -86,7 +86,7 @@ export const KeycloakProvider: React.FC<KeycloakProviderProps> = ({ children }) 
 
     const logout = () => {
         keycloak.logout({
-            redirectUri: window.location.origin + '/home',
+            redirectUri: window.location.origin + '/',
         });
     };
 
