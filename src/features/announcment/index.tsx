@@ -13,6 +13,7 @@ import { useGetListQuery } from "@/features/list/api/listApi";
 import MarriageCard from "./components/MarriageCard";
 import { useGetVitalServiceEventQuery } from "../application-service/api/applicationApi";
 import { complaintType } from "./types/type";
+import { useGetAccouncementsQuery } from "./api/announcementApi";
 
 const Announcement = () => {
     const [openComplaintModalOpen, setOpenComplaintModal] = useState(false);
@@ -86,11 +87,9 @@ const Announcement = () => {
             // setIsLoading(false);
         }
     };
-    const { isLoading, isError, data } = useGetListQuery({
+    const { isLoading, isError, data } = useGetAccouncementsQuery({
         page: pageDetail.pageIndex,
         perPage: pageDetail.pageSize,
-        type: "MARRIAGE",
-        languageCode: "en",
     });
 
     useEffect(() => {
@@ -143,19 +142,26 @@ const Announcement = () => {
                     </div>
                     <div className='grid md:grid-cols-2 xl:grid-cols-4 gap-10'>
                         {data !== null && data !== undefined
-                            ? data?.data?.map((married, index) => (
-                                  <MarriageCard
-                                      key={married.registrationFormNumber}
-                                      setOpenComplaintModal={
-                                          setOpenComplaintModal
-                                      }
-                                      setComplaintModalData={
-                                          setComplaintModalData
-                                      }
-                                      data={married}
-                                      isLoading={isLoading}
-                                  />
-                              ))
+                            ? data?.data?.map(
+                                  (married: {
+                                      registrationFormNumber: string;
+                                      wife: string;
+                                      husband: string;
+                                      marriageRequestId: string;
+                                  }) => (
+                                      <MarriageCard
+                                          key={married.registrationFormNumber}
+                                          setOpenComplaintModal={
+                                              setOpenComplaintModal
+                                          }
+                                          setComplaintModalData={
+                                              setComplaintModalData
+                                          }
+                                          data={married}
+                                          isLoading={isLoading}
+                                      />
+                                  )
+                              )
                             : null}
                     </div>
                 </div>

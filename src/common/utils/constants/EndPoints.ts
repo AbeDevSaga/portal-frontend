@@ -17,3 +17,4 @@ export const GET_MARRIAGE_CERTIFICATE_ENDPOINT =
 export const GET_BIRTH_CERTIFICATE_ENDPOINT =
     "/birth/birthCertificate/generateUploadCert";
 export const GET_MARRIAGE_ANNOUNCEMENT = "marriage/marriage_announcement";
+export const CREATE_MARRIAGE_COMPLAINT = "marriage/create_objection";

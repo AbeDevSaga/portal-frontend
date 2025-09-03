@@ -86,7 +86,6 @@ export const formConfig: FormConfig = {
                     label: "Type of Marriage",
                     placeholder: "Search for marriage type.",
                     description: "Select the marriage type",
-                    gridCols: 6,
                     validators: [
                         {
                             type: "required",
@@ -95,6 +94,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "General Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     clearable: false,
                     searchable: true,
@@ -136,28 +136,31 @@ export const formConfig: FormConfig = {
                     description:
                         "Select your marriage date. Future dates are allowed for National marriage type only.",
                     getDependentValue: (formValues: any) => ({
-                        marriageType: formValues.marriageType
+                        marriageType: formValues.marriageType,
                     }),
                     validators: [
                         { type: "required", message: "Date is required" },
                         {
                             type: "maxDate",
                             value: "dynamic", // Will be calculated at validation time
-                            message: "Date cannot be in the future for this marriage type",
+                            message:
+                                "Date cannot be in the future for this marriage type",
                             // Adding a conditional property to make this validator conditional
                             condition: (formValues: any) => {
                                 const marriageType = formValues?.marriageType;
-                                
-                                const typeName = marriageType?.name || marriageType?.label;
-                                const shouldRestrictFutureDate = typeName !== "National";
-                                                                
+
+                                const typeName =
+                                    marriageType?.name || marriageType?.label;
+                                const shouldRestrictFutureDate =
+                                    typeName !== "National";
+
                                 return shouldRestrictFutureDate;
-                            }
+                            },
                         },
                     ],
                     required: true,
                     group: "General Information",
-                    groupOrder: 1
+                    groupOrder: 1,
                 },
             ],
         },
@@ -183,6 +186,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     inputSearchConfig: {
                         isExternal: true,
@@ -214,11 +218,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -251,6 +261,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -281,6 +292,7 @@ export const formConfig: FormConfig = {
                     description: "Upload the Groom's Birth Certificate",
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                 },
                 {
@@ -293,6 +305,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -339,6 +352,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -353,6 +367,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -392,6 +407,9 @@ export const formConfig: FormConfig = {
                         const checkIfValidBirthDate = isValidBirthday(
                             dependentValue.groomDateOfBirth
                         );
+                        console.log(
+                            isValidBirthday(dependentValue.groomDateOfBirth)
+                        );
                         return !checkIfValidBirthDate;
                     },
                     // required:  (dependentValues: any) => {
@@ -399,6 +417,7 @@ export const formConfig: FormConfig = {
                     //     return dependentValues?.birthType === 'twin';
                     // },
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     getDependentValue: (formValues: any) => ({
                         groomResidentId: formValues.groomDateOfBirth,
@@ -412,7 +431,7 @@ export const formConfig: FormConfig = {
                         const checkIfValidBirthDate = isValidBirthday(
                             dependentValues.groomDateOfBirth
                         );
-                        return checkIfValidBirthDate;
+                        return !checkIfValidBirthDate;
                     },
                 },
                 {
@@ -429,6 +448,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -479,6 +499,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -530,6 +551,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -547,7 +569,7 @@ export const formConfig: FormConfig = {
                             if (
                                 dependentValues?.groomResidentId &&
                                 typeof dependentValues.groomResidentId ===
-                                "object"
+                                    "object"
                             ) {
                                 console.log(
                                     "dependentValues.groomResidentId.nationality",
@@ -592,6 +614,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -640,7 +663,7 @@ export const formConfig: FormConfig = {
                 //     //     return dependentValues?.birthType === 'twin';
                 //     // },
                 //     group: "Groom's Information",
-                //     groupOrder: 2,
+
                 //     getDependentValue: (formValues: any) => ({
                 //         groomResidentId: formValues.earlierMaritalStatusGroom,
                 //     }),
@@ -678,7 +701,7 @@ export const formConfig: FormConfig = {
                 //     //     return dependentValues?.birthType === 'twin';
                 //     // },
                 //     group: "Groom's Information",
-                //     groupOrder: 2,
+
                 //     getDependentValue: (formValues: any) => ({
                 //         groomResidentId: formValues.earlierMaritalStatusGroom,
                 //     }),
@@ -710,6 +733,7 @@ export const formConfig: FormConfig = {
                     //     return dependentValues?.birthType === 'twin';
                     // },
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     isDisabled: (dependentValues: any) => {
                         return dependentValues?.groomPhoto;
@@ -733,7 +757,7 @@ export const formConfig: FormConfig = {
                 //     //     return dependentValues?.birthType === 'twin';
                 //     // },
                 //     group: "Groom's Information",
-                //     groupOrder: 2,
+
                 // },
                 {
                     type: "lookup",
@@ -749,6 +773,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -795,6 +820,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -841,6 +867,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     clearable: false,
                     searchable: true,
@@ -883,6 +910,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     inputSearchConfig: {
                         isExternal: true,
@@ -914,11 +942,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -956,12 +990,13 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
                             dependentValues?.groomWitnessFirstResidentId &&
                             typeof dependentValues.groomWitnessFirstResidentId ===
-                            "object"
+                                "object"
                         ) {
                             return (
                                 dependentValues.groomWitnessFirstResidentId
@@ -996,6 +1031,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     inputSearchConfig: {
                         isExternal: true,
@@ -1027,11 +1063,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -1064,12 +1106,13 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Groom's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
                             dependentValues?.groomWitnessSecondResidentId &&
                             typeof dependentValues.groomWitnessSecondResidentId ===
-                            "object"
+                                "object"
                         ) {
                             return (
                                 dependentValues.groomWitnessSecondResidentId
@@ -1103,7 +1146,7 @@ export const formConfig: FormConfig = {
                 //     ],
                 //     required: true,
                 //     group: "Groom's Information",
-                //     groupOrder: 2,
+
                 // },
 
                 // {
@@ -1120,7 +1163,7 @@ export const formConfig: FormConfig = {
                 //     ],
                 //     required: true,
                 //     group: "Groom's Information",
-                //     groupOrder: 2,
+
                 //     isDisabled: (dependentValues: any) => {
                 //         return dependentValues?.groomPhoto;
                 //     },
@@ -1150,6 +1193,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     inputSearchConfig: {
                         isExternal: true,
@@ -1181,11 +1225,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -1223,6 +1273,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -1253,7 +1304,7 @@ export const formConfig: FormConfig = {
                 //     description: "Upload the Bride's Birth Certificate",
                 //     required: false,
                 //     group: "Bride's Information",
-                //     groupOrder: 2,
+
                 // },
                 {
                     type: "input",
@@ -1270,6 +1321,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -1312,6 +1364,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1330,6 +1383,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -1377,6 +1431,7 @@ export const formConfig: FormConfig = {
                     //     return dependentValues?.birthType === 'twin';
                     // },
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     getDependentValue: (formValues: any) => ({
                         brideResidentId: formValues.brideDateOfBirth,
@@ -1390,7 +1445,7 @@ export const formConfig: FormConfig = {
                         const checkIfValidBirthDate = isValidBirthday(
                             dependentValues.brideDateOfBirth
                         );
-                        return checkIfValidBirthDate;
+                        return !checkIfValidBirthDate;
                     },
                 },
                 {
@@ -1407,6 +1462,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1458,6 +1514,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1509,6 +1566,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1551,6 +1609,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
@@ -1599,7 +1658,7 @@ export const formConfig: FormConfig = {
                 //     //     return dependentValues?.birthType === 'twin';
                 //     // },
                 //     group: "Bride's Information",
-                //     groupOrder: 2,
+
                 //     getDependentValue: (formValues: any) => ({
                 //         brideResidentId: formValues.earlierMaritalStatusBride,
                 //     }),
@@ -1637,7 +1696,7 @@ export const formConfig: FormConfig = {
                 //     //     return dependentValues?.birthType === 'twin';
                 //     // },
                 //     group: "Bride's Information",
-                //     groupOrder: 2,
+
                 //     getDependentValue: (formValues: any) => ({
                 //         brideResidentId: formValues.earlierMaritalStatusBride,
                 //     }),
@@ -1669,6 +1728,7 @@ export const formConfig: FormConfig = {
                     //     return dependentValues?.birthType === 'twin';
                     // },
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     isDisabled: (dependentValues: any) => {
                         return dependentValues?.bridePhoto;
@@ -1692,7 +1752,7 @@ export const formConfig: FormConfig = {
                 //     //     return dependentValues?.birthType === 'twin';
                 //     // },
                 //     group: "Bride's Information",
-                //     groupOrder: 2,
+
                 // },
                 {
                     type: "lookup",
@@ -1708,6 +1768,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1754,6 +1815,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1800,6 +1862,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 3,
                     clearable: false,
                     searchable: true,
@@ -1842,6 +1905,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     inputSearchConfig: {
                         isExternal: true,
@@ -1873,11 +1937,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -1910,12 +1980,13 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
                             dependentValues?.brideWitnessFirstResidentId &&
                             typeof dependentValues.brideWitnessFirstResidentId ===
-                            "object"
+                                "object"
                         ) {
                             return (
                                 dependentValues.brideWitnessFirstResidentId
@@ -1945,6 +2016,7 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 1,
                     inputSearchConfig: {
                         isExternal: true,
@@ -1976,11 +2048,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName + " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -2013,12 +2091,13 @@ export const formConfig: FormConfig = {
                     validators: [],
                     required: false,
                     group: "Bride's Information",
+                    gridCols: 6,
                     groupOrder: 2,
                     defaultValue: (dependentValues: any) => {
                         if (
                             dependentValues?.brideWitnessSecondResidentId &&
                             typeof dependentValues.brideWitnessSecondResidentId ===
-                            "object"
+                                "object"
                         ) {
                             return (
                                 dependentValues.brideWitnessSecondResidentId
@@ -2038,43 +2117,6 @@ export const formConfig: FormConfig = {
                         return !dependentValues?.brideWitnessSecondResidentId;
                     },
                 },
-
-                // {
-                //     type: "fileUpload",
-                //     key: "brideFirstWitnessId",
-                //     label: "Bride's First Witness ID",
-                //     placeholder: "",
-                //     description: "Witness's proof of identity (ID, Passport)",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Bride's First witness ID is required",
-                //         },
-                //     ],
-                //     required: true,
-                //     group: "Bride's Information",
-                //     groupOrder: 2,
-                // },
-
-                // {
-                //     type: "fileUpload",
-                //     key: "brideSecondWitnessId",
-                //     label: "Bride's Second Witness ID",
-                //     placeholder: "",
-                //     description: "Witness's proof of identity (ID, Passport)",
-                //     validators: [
-                //         {
-                //             type: "required",
-                //             message: "Bride's Second witness ID is required",
-                //         },
-                //     ],
-                //     required: true,
-                //     group: "Bride's Information",
-                //     groupOrder: 2,
-                //     isDisabled: (dependentValues: any) => {
-                //         return dependentValues?.groomPhoto;
-                //     },
-                // },
             ],
         },
         {
@@ -2098,6 +2140,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Honor Information",
+                    gridCols: 6,
                     groupOrder: 4,
                 },
                 {
@@ -2115,6 +2158,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Honor Information",
+                    gridCols: 6,
                     groupOrder: 4,
                 },
                 {
@@ -2131,6 +2175,7 @@ export const formConfig: FormConfig = {
                     ],
                     required: true,
                     group: "Honor Information",
+                    gridCols: 6,
                     groupOrder: 4,
                 },
             ],
@@ -2138,7 +2183,6 @@ export const formConfig: FormConfig = {
         // {
         //     title: "Groom Witness Information",
         //     group: "Groom Witness Information",
-        //     groupOrder: 5,
         //     tabular: false,
         //     defaultExpanded: true,
         //     fields: [
@@ -2158,7 +2202,6 @@ export const formConfig: FormConfig = {
         //             required: true,
         //             group: "Groom Witness Information",
 
-        //             groupOrder: 1,
         //             inputSearchConfig: {
         //                 isExternal: true,
         //                 apiEndpoint: "/resident/residents",
@@ -2227,7 +2270,7 @@ export const formConfig: FormConfig = {
         //             ],
         //             required: true,
         //             group: "Groom Witness Information",
-        //             groupOrder: 2,
+
         //             defaultValue: (dependentValues: any) => {
         //                 if (
         //                     dependentValues?.witnessResidentIdGroom &&
@@ -2260,7 +2303,7 @@ export const formConfig: FormConfig = {
         //                 "Please sign below to confirm the information provided is accurate and complete",
         //             required: true,
         //             group: "Account Details",
-        //             groupOrder: 6,
+
         //             validators: [
         //                 {
         //                     type: "required",
@@ -2286,7 +2329,7 @@ export const formConfig: FormConfig = {
         // {
         //     title: "Bride Witness Information",
         //     group: "Bride Witness Information",
-        //     groupOrder: 6,
+
         //     tabular: false,
         //     defaultExpanded: true,
         //     fields: [
@@ -2306,7 +2349,6 @@ export const formConfig: FormConfig = {
         //             required: true,
         //             group: "Bride Witness Information",
 
-        //             groupOrder: 1,
         //             inputSearchConfig: {
         //                 isExternal: true,
         //                 apiEndpoint: "/resident/residents",
@@ -2375,7 +2417,7 @@ export const formConfig: FormConfig = {
         //             ],
         //             required: true,
         //             group: "Bride Witness Information",
-        //             groupOrder: 2,
+
         //             defaultValue: (dependentValues: any) => {
         //                 if (
         //                     dependentValues?.witnessResidentIdBride &&
@@ -2409,7 +2451,7 @@ export const formConfig: FormConfig = {
         //                 "Please sign below to confirm the information provided is accurate and complete",
         //             required: true,
         //             group: "Account Details",
-        //             groupOrder: 6,
+
         //             validators: [
         //                 {
         //                     type: "required",
