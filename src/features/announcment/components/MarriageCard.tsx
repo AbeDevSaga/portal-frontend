@@ -18,7 +18,12 @@ const MarriageCard = ({
     isLoading,
 }: {
     setOpenComplaintModal: Dispatch<SetStateAction<boolean>>;
-    data: { registrationFormNumber: string };
+    data: {
+        registrationFormNumber: string;
+        wife: string;
+        husband: string;
+        marriageRequestId: string;
+    };
     setComplaintModalData: Dispatch<SetStateAction<complaintType | null>>;
     isLoading: boolean;
 }) => {
@@ -35,26 +40,15 @@ const MarriageCard = ({
     //         refetchOnMountOrArgChange: true,
     //     }
     // );
-    const {
-        isLoading: isLoadingMarriageData,
-        isError,
-        data: marriageData,
-    } = useGetMarriageBySlugQuery(
-        { id: data.registrationFormNumber },
-        {
-            skip: !data.registrationFormNumber,
-            refetchOnMountOrArgChange: true,
-        }
-    );
-    console.log("marriageData", marriageData);
+
     const {
         data: HusbandData,
         isLoading: isHusbandLoading,
         isError: isHusbandError,
     } = useGetResidentDataByIdQuery(
-        { id: marriageData?.data?.husband! },
+        { id: data?.husband! },
         {
-            skip: !marriageData?.data?.husband,
+            skip: !data?.husband,
             refetchOnMountOrArgChange: true,
         }
     );
@@ -64,9 +58,9 @@ const MarriageCard = ({
         isLoading: isWifeLoading,
         isError: isWifeError,
     } = useGetResidentDataByIdQuery(
-        { id: marriageData?.data?.wife! },
+        { id: data?.wife! },
         {
-            skip: !marriageData?.data?.wife,
+            skip: !data?.wife,
             refetchOnMountOrArgChange: true,
         }
     );
@@ -87,7 +81,7 @@ const MarriageCard = ({
 
     const handleShowComplaintModalData = () => {
         setComplaintModalData({
-            id: data.registrationFormNumber,
+            id: data.marriageRequestId,
             info: [
                 {
                     name:
@@ -105,10 +99,7 @@ const MarriageCard = ({
     };
     return (
         <Card className='pt-3.5 pb-2 px-5 rounded-md shadow-md min-h-[250px] flex flex-col'>
-            {isLoading ||
-            isLoadingMarriageData ||
-            isWifeLoading ||
-            isHusbandLoading ? (
+            {isLoading || isWifeLoading || isHusbandLoading ? (
                 <div className='flex-1 flex items-center justify-center'>
                     <Loader className='animate-spin' />
                 </div>
@@ -159,7 +150,6 @@ const MarriageCard = ({
                                 isLoading ||
                                 isHusbandLoading ||
                                 isWifeLoading ||
-                                isError ||
                                 isHusbandError ||
                                 isWifeError
                             }
