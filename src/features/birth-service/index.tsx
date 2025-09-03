@@ -87,8 +87,7 @@ export default function BirthNew() {
                 births: [
                     {
                         registrationOfficeNumber: "RO-2025-002",
-                        hospitalNotificationId:
-                            value.hospitalNotificationId.hospitalNotificationId,
+                        hospitalNotificationId: value.hospitalNotificationId?.name || null,
                         childResidentId: null,
                         fatherResidentId: value.fatherResidentId?.id,
                         motherResidentId: value.motherResidentId?.id,

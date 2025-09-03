@@ -3,7 +3,7 @@ import father from "@/public/images/groom.svg";
 import { Card } from "@/common/components/ui/card";
 import { useGetNationalityDataByIdQuery, useGetReligionDataByIdQuery, useGetResidentDataByIdQuery } from "@/features/application-service/api/residentApi";
 import { BirthData } from "../types";
-import { Item } from "@radix-ui/react-accordion";
+// import { Item } from "@radix-ui/react-accordion";
 const handleConvertDate = (date: string) => {
     const dateOnly = date.split("T")[0];
     return dateOnly;
@@ -45,7 +45,10 @@ const FatherGeneralInformation = ({
             refetchOnMountOrArgChange: true,
         }
     );
-    const fatherDetailData: any = data?.content?.find((item: any) => item.id === fatherData.fatherId)
+    // const fatherDetailData: any = data?.content?.find((item: any) => item.id === fatherData.fatherId)
+    const fatherDetailData: any = data?.personalInfo;
+        console.log("Father data abo", fatherDetailData);
+
     const {
         data: religionData,
         isLoading: isReligionLoading,
@@ -80,51 +83,51 @@ const FatherGeneralInformation = ({
                 <ProfileCompnent
                     name={
                         data
-                            ? fatherDetailData?.firstName +
+                            ? fatherDetailData?.localizedContent.en.firstName +
                             " " +
-                            fatherDetailData?.middleName +
+                            fatherDetailData?.localizedContent.en.middleName +
                             " " +
-                            fatherDetailData?.lastName
+                            fatherDetailData?.localizedContent.en.lastName
                             : ""
                     }
                     // bridalType={type}
                     image={father}
                 />
                 <div className='rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full'>
-                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                    {/* <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Father's Registration Number</p>
                         <p className='text-sm text-right font-semibold w-fit'>
                             {fatherDetailData?.urid || "-"}
                         </p>
-                    </div>
+                    </div> */}
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Father's Date of Birth</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {fatherDetailData?.dateOfBirth || "-"}
+                            {fatherDetailData?.dateOfBirth || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Father's Phone number</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {fatherDetailData?.mobileNumber || "-"}
+                            {fatherDetailData?.mobileNumber || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Father's Email</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {fatherDetailData?.email || "-"}
+                            {fatherDetailData?.email || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Father's Nationality</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {nationalityDetailDataEn?.name || "-"}
+                            {nationalityDetailDataEn?.name || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Father's Religion</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {relegionDetailDataEn?.name || "-"}
+                            {relegionDetailDataEn?.name || "----"}
                         </p>
                     </div>
                 </div>
