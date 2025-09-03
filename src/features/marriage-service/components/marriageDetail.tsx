@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import HeroSection from "@/common/components/common/HeroSection";
@@ -94,6 +94,7 @@ export default function MarriageDetail() {
             data: certificateData,
         },
     ] = useSubmitCertificateRequestMutation();
+    console.log("certificateData", certificateData?.data?.url);
     const handleRequestCertificate = async () => {
         const husband = husbandData.content[0];
         const wife = wifeData.content[0];
@@ -260,8 +261,9 @@ export default function MarriageDetail() {
             imageActive: witnessActive.src,
         },
     ];
-
-    const handleRenderApplicationDecisionButtons = (status: string) => {
+    const handleRenderApplicationDecisionButtons = useMemo(() => {
+        const status = vitalData ? vitalData.data.status || "" : "";
+        console.log("certificateData?.data?.url", certificateData?.data?.url);
         if (status === "SUBMITTED")
             return (
                 <>
@@ -284,6 +286,7 @@ export default function MarriageDetail() {
                     </Button>
                 </>
             );
+
         if (status === "UNDER_REVIEW")
             return (
                 <>
@@ -302,6 +305,7 @@ export default function MarriageDetail() {
                     </Button>
                 </>
             );
+
         if (status === "APPROVED")
             return (
                 <div className='flex flex-wrap items-center gap-3'>
@@ -309,15 +313,27 @@ export default function MarriageDetail() {
                         APPROVED
                     </div>
 
-                    <Button
-                        className='bg-[#073954]'
-                        onClick={() => handleRequestCertificate()}
-                        disabled={resolutionIsLoading}
-                    >
-                        Request Certificate
-                    </Button>
+                    {certificateData?.data?.url ? (
+                        <Button
+                            onClick={() => {
+                                setDisplayDoc(certificateData.data.url);
+                                setOpenFileModal(true);
+                            }}
+                        >
+                            View Certificate
+                        </Button>
+                    ) : (
+                        <Button
+                            className='bg-[#073954]'
+                            onClick={() => handleRequestCertificate()}
+                            disabled={resolutionIsLoading}
+                        >
+                            Request Certificate
+                        </Button>
+                    )}
                 </div>
             );
+
         if (status === "REJECTED")
             return (
                 <div className='px-5 text-center py-2 rounded-sm bg-red-400/50'>
@@ -325,21 +341,8 @@ export default function MarriageDetail() {
                 </div>
             );
 
-        if (certificateData?.data?.url)
-            return (
-                <>
-                    <Button
-                        onClick={() => {
-                            setDisplayDoc(certificateData.data.url);
-                            setOpenFileModal(true);
-                        }}
-                    >
-                        View Certificate
-                    </Button>
-                </>
-            );
-        return null;
-    };
+        return <></>;
+    }, [vitalData, certificateData, resolutionIsLoading]);
 
     const handleConvertSupportingDocStringToArray = (value: string) => {
         const result = JSON.parse(value);
@@ -390,9 +393,7 @@ export default function MarriageDetail() {
                 description='This is the marriage detail of a family member section'
                 action={
                     <div className='space-y-5 space-x-5'>
-                        {handleRenderApplicationDecisionButtons(
-                            vitalData ? vitalData.data.status : ""
-                        )}
+                        {handleRenderApplicationDecisionButtons}
                     </div>
                 }
             />

@@ -12,13 +12,16 @@ import {
 import { Input } from "@/common/components/ui/input";
 import { Textarea } from "@/common/components/ui/textarea";
 import { Button } from "@/common/components/ui/button";
+import { complaintType } from "../types/type";
 
 export default function ComplaintModal({
     open,
     handleCancel,
+    complaintModalData,
 }: {
     open: boolean;
     handleCancel: Dispatch<SetStateAction<boolean>>;
+    complaintModalData: complaintType | null;
 }) {
     return (
         <Dialog open={open} onOpenChange={handleCancel}>
@@ -36,26 +39,22 @@ export default function ComplaintModal({
                 <div className='flex justify-center gap-12 items-center mb-6'>
                     <div className='flex flex-col items-center'>
                         <img
-                            src={`https://randomuser.me/api/portraits/men/${Math.floor(
-                                Math.random() * 200
-                            )}.jpg`}
+                            src={complaintModalData?.info[0].image}
                             alt='Male'
                             className='w-24 h-24 rounded-full object-cover border-4 border-white shadow-md'
                         />
                         <p className='mt-2 font-medium text-sm text-gray-700'>
-                            Ato Abebe Kebede
+                            {complaintModalData?.info[0].name}{" "}
                         </p>
                     </div>
                     <div className='flex flex-col items-center'>
                         <img
-                            src={`https://randomuser.me/api/portraits/men/${Math.floor(
-                                Math.random() * 100
-                            )}.jpg`}
+                            src={complaintModalData?.info[1].image}
                             alt='Female'
                             className='w-24 h-24 rounded-full object-cover border-4 border-white shadow-md'
                         />
                         <p className='mt-2 font-medium text-sm text-gray-700'>
-                            W/ro Selamawit Tsegaye
+                            {complaintModalData?.info[1].name}{" "}
                         </p>
                     </div>
                 </div>

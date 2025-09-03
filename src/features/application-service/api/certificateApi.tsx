@@ -17,22 +17,25 @@ export const certificateApi = createApi({
         //     },
         // }),
         submitCertificateRequest: builder.mutation<any, { data: object }>({
-            query: ({ data }) => {
-                return {
-                    url: GET_MARRIAGE_CERTIFICATE_ENDPOINT,
-                    method: "POST",
-                    body: data,
-                };
-            },
+            query: ({ data }) => ({
+                url: GET_MARRIAGE_CERTIFICATE_ENDPOINT,
+                method: "POST",
+                body: JSON.stringify(data), // Convert to JSON string
+                headers: {
+                    "Content-Type": "application/json", // Tell server it's JSON
+                },
+            }),
         }),
+
         submitBirthCertificateRequest: builder.mutation<any, { data: object }>({
-            query: ({ data }) => {
-                return {
-                    url: GET_BIRTH_CERTIFICATE_ENDPOINT,
-                    method: "POST",
-                    body: data,
-                };
-            },
+            query: ({ data }) => ({
+                url: GET_BIRTH_CERTIFICATE_ENDPOINT,
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
         }),
     }),
 });
