@@ -16,7 +16,7 @@ const RouteGuard = ({ children }: RouteGuardProps) => {
         if (loading) return;
         
         if (!authenticated || !user) {
-            router.replace('/home');
+            router.replace('/');
         }
     }, [authenticated, user, loading, router]);
 
