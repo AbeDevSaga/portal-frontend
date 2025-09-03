@@ -81,7 +81,7 @@ const MarriageCard = ({
 
     const handleShowComplaintModalData = () => {
         setComplaintModalData({
-            id: data.marriageRequestId,
+            id: data.registrationFormNumber,
             info: [
                 {
                     name:

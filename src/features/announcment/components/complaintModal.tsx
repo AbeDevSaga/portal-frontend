@@ -17,6 +17,8 @@ import { complaintSchema } from "@/common/forms/schemas/complaintSchema";
 import { useSubmitComplaintMutation } from "../api/announcementApi";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { showSuccess } from "@/common/components/common/CustomToast";
+import { Label } from "@/common/components/ui/label";
 
 const allowedTypes = [
     "image/png",
@@ -48,12 +50,14 @@ export default function ComplaintModal({
     handleCancel: Dispatch<SetStateAction<boolean>>;
     complaintModalData: complaintType | null;
 }) {
+    console.log("complaintModalData", complaintModalData);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [submitComplaint, { isLoading, isError, data }] =
         useSubmitComplaintMutation();
     const handleSubmitComplaint = async (data: ComplaintSubmitionModal) => {
         const body = {
-            marriageId: "94e06bdb-484f-4927-8d2f-83a9ac232295",
+            marriageId:
+                complaintModalData !== null ? complaintModalData?.id : "",
             objectorId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             localization: [
                 {
@@ -74,7 +78,7 @@ export default function ComplaintModal({
                 files,
             });
             if (!isError) {
-                toast.success("Marriage Objected");
+                showSuccess("Marriage complaint submitted!");
                 handleCancel(false);
             }
         } catch (err) {
@@ -150,6 +154,7 @@ export default function ComplaintModal({
                 >
                     <div className='flex flex-col gap-4'>
                         <div className='flex flex-col'>
+                            <Label>Resident Id</Label>
                             <Input
                                 placeholder='Enter your resident ID'
                                 name='residentId'
@@ -164,6 +169,7 @@ export default function ComplaintModal({
                             )}
                         </div>
                         <div className='flex flex-col'>
+                            <Label>Phone Number</Label>
                             <Input
                                 placeholder='Enter your phone number'
                                 name='phoneNumber'
@@ -178,6 +184,7 @@ export default function ComplaintModal({
                             )}
                         </div>
                         <div>
+                            <Label>Resident ID</Label>
                             <Input
                                 ref={fileInputRef}
                                 type='file'
@@ -195,6 +202,7 @@ export default function ComplaintModal({
                         </div>
                     </div>
                     <div className='row-span-2 md:row-span-1'>
+                        <Label>Complaint Reason</Label>
                         <Textarea
                             placeholder='Enter your complaint reason'
                             name='reason'

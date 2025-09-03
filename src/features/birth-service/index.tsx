@@ -25,6 +25,7 @@ import { useSubmitFormMutation } from "./api/birthApi";
 import { removeFields, updateField } from "@/redux/feature/birthSlice";
 import { RadioGroup, RadioGroupItem } from "@/common/components/ui/radio-group";
 import { Label } from "@/common/components/ui/label";
+import { showError, showSuccess } from "@/common/components/common/CustomToast";
 const handleConvertDate = (date: string) => {
     const dateOnly = date.split("T")[0];
     return dateOnly;
@@ -128,46 +129,50 @@ export default function BirthNew() {
             body = {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
-                births: {
-                    registrationOfficeNumber: "RO-2025-002",
-                    hospitalNotificationId: null,
-                    childResidentId: null,
-                    fatherResidentId: value.fatherResidentId?.id,
-                    motherResidentId: value.motherResidentId?.id,
-                    declarantResidentId: null,
-                    withOld: false,
-                    bloodType: "123e4567-e89b-12d3-a456-426614174004",
-                    nationality:
-                        value.nationality?.id ||
-                        "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
-                    localizations: [
-                        {
-                            childFirstName: value.firstName,
-                            languageCode: "en",
-                            placeOfBirth: {
-                                type: "HEALTH_FACILITY",
-                                facilityName: "Addis Ababa Hospital",
-                                facilityType: "Hospital",
-                                facilityOwnership: "Government",
+                birthType: "SINGLE", // SINGLE, TWIN, TRIPLET, QUADRUPLET
+
+                births: [
+                    {
+                        registrationOfficeNumber: "RO-2025-002",
+                        hospitalNotificationId: null,
+                        childResidentId: null,
+                        fatherResidentId: value.fatherResidentId?.id,
+                        motherResidentId: value.motherResidentId?.id,
+                        declarantResidentId: null,
+                        withOld: false,
+                        bloodType: "123e4567-e89b-12d3-a456-426614174004",
+                        nationality:
+                            value.nationality?.id ||
+                            "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+                        localizations: [
+                            {
+                                childFirstName: value.firstName,
+                                languageCode: "en",
+                                placeOfBirth: {
+                                    type: "HEALTH_FACILITY",
+                                    facilityName: "Addis Ababa Hospital",
+                                    facilityType: "Hospital",
+                                    facilityOwnership: "Government",
+                                },
+                                birthType: "Single",
+                                childBirthOrder: "1st",
+                                issuedDate: "2025-08-21",
+                                reason: "Normal",
+                                childWeight: value.birthTimeWeight,
+                                childHeight: value.birthTimeHeight,
+                                birthDate: handleConvertDate(
+                                    value.childDateOfBirth
+                                ),
+                                birthTime: "10:15",
+                                gender: value.gender,
+                                declarantRelation: "",
+                                attendantName: value.birthAttendantName,
+                                attendantQualification:
+                                    value.birthAttendantQualification,
                             },
-                            birthType: "Single",
-                            childBirthOrder: "1st",
-                            issuedDate: "2025-08-21",
-                            reason: "Normal",
-                            childWeight: value.birthTimeWeight,
-                            childHeight: value.birthTimeHeight,
-                            birthDate: handleConvertDate(
-                                value.childDateOfBirth
-                            ),
-                            birthTime: "10:15",
-                            gender: value.gender,
-                            declarantRelation: "",
-                            attendantName: value.birthAttendantName,
-                            attendantQualification:
-                                value.birthAttendantQualification,
-                        },
-                    ],
-                },
+                        ],
+                    },
+                ],
             };
         } else if (selected === "registeredFamily") {
             body = {
@@ -253,22 +258,19 @@ export default function BirthNew() {
             //     setTimeout(resolve, 1000)
             // );
             if (response) {
-                toast.success("Birth registration created successfully");
+                showSuccess("Birth registration created successfully");
                 router.push(
-                    `/application/birth/detail/${response.registration_form_number}`
+                    `/application/birth/detail/${response.data.registrations[0].registrationFormNumber}`
                 );
             } else {
-                toast.error("Failed to create birth registration");
+                showError("Failed to create birth registration");
             }
         } catch (error) {
             console.error("Error creating birth registration:", error);
-            toast.error(
+            showError(
                 "An error occurred while creating the birth registration"
             );
         }
-
-        console.log("Birth registration submitted successfully!");
-        alert("Birth registration submitted successfully!");
     };
 
     const formContent = (
@@ -286,7 +288,7 @@ export default function BirthNew() {
                             htmlFor='newChild'
                             className='text-[#0c4a6b] text-md font-medium'
                         >
-                            Is new child?
+                            Family Member but not registered yet?
                         </Label>
                     </div>
 

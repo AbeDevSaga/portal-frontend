@@ -16,6 +16,7 @@ import { useSubmitFormMutation } from "./api/marriageApi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/common/components/ui/button";
+import { showError, showSuccess } from "@/common/components/common/CustomToast";
 const handleConvertDate = (date: string) => {
     const dateOnly = date.split("T")[0];
     return dateOnly;
@@ -138,24 +139,22 @@ export default function MarriageNew() {
             //     setTimeout(resolve, 1000)
             // );
             if (response) {
-                toast.success("Marriage registration submitted successfully!");
+                showSuccess("Marriage registration submitted successfully!");
                 // data.
                 router.push(
                     `/application/marriage/detail/${response.registration_form_number}`
                 );
             } else {
-                toast.error("Failed to create Marriage registration");
+                showError("Failed to create Marriage registration");
             }
         } catch (error) {
             console.error("Error creating birth registration:", error);
-            toast.error(
+            showError(
                 "An error occurred while creating the birth registration"
             );
         }
 
-        toast.error(
-            "Error submitting Marriage registration. Please try again."
-        );
+        showError("Error submitting Marriage registration. Please try again.");
     };
 
     const formContent = (
