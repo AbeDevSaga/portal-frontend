@@ -27,6 +27,8 @@ import FileViewer from "@/common/components/common/FileViewer";
 import FileViewerModal from "@/common/components/common/FileModalCompoennt";
 import { useSubmitCertificateRequestMutation } from "@/features/application-service/api/certificateApi";
 import { useGetResidentDataByIdQuery } from "@/features/application-service/api/residentApi";
+import groom from "@/public/images/groom.svg";
+import bride from "@/public/images/bride.svg";
 
 // Define the type for the mapped response data
 // type MappedResponseData = {
@@ -86,7 +88,6 @@ export default function MarriageDetail() {
         }
     );
 
-    console.log("wifeData", wifeData);
     const [
         submitCertificateRequest,
         {
@@ -96,13 +97,11 @@ export default function MarriageDetail() {
         },
     ] = useSubmitCertificateRequestMutation();
     const handleRequestCertificate = async () => {
-        const husband = husbandData?.content?.find(
-            (item: { id: string }) => item?.id === data?.data?.husband
-        );
-        const wife = wifeData.content?.find(
-            (item: { id: string }) => item?.id === data?.data?.wife
-        );
-        console.log("husband", husband, "wife", wife);
+        console.log("husbandData", husbandData.personalInfo);
+        const husband = husbandData.personalInfo.localizedContent.en;
+        const wife = wifeData.personalInfo.localizedContent.en;
+        const husbandam = husbandData.personalInfo.localizedContent.am;
+        const wifeam = wifeData.personalInfo.localizedContent.am;
         const body = {
             request: {
                 registrationId: "11111111-2222-3333-4444-555555555555",
@@ -110,10 +109,12 @@ export default function MarriageDetail() {
                 versionNumber: 1,
                 data: {
                     wifeFullName: wife.firstName + " " + wife.middleName,
-                    wifeFullName_amh: "ማርታ በቀለ",
+                    wifeFullName_amh:
+                        wifeam.firstName + " " + wifeam.middleName,
                     husbandFullName:
                         husband.firstName + " " + husband.middleName,
-                    husbandFullName_amh: "ሳሙኤል ተስፋዬ",
+                    husbandFullName_amh:
+                        husbandam.firstName + " " + husbandam.middleName,
                     dateofBirthMonthHusb: "06",
                     dateofBirthMonthHusb_amh: "ሰኔ",
                     dateofDayHusb: "15",
@@ -237,6 +238,16 @@ export default function MarriageDetail() {
     } = useGetVitalServiceEventQuery({ id: slug });
 
     const [displayData, setDisplayData] = useState("general");
+    const handleConvertSupportingDocStringToArray = (value: string) => {
+        const result = JSON.parse(value);
+        return result || [];
+    };
+
+    const supportingDocsArray = data?.data?.supporting_doc_url
+        ? handleConvertSupportingDocStringToArray(
+              data?.data?.supporting_doc_url
+          )
+        : [];
     const marriageDetailOptions = [
         {
             label: "General Info",
@@ -244,6 +255,7 @@ export default function MarriageDetail() {
                 <GeneralInformation
                     data={data?.data || null}
                     status={vitalData ? vitalData.data.status : ""}
+                    supportingDocsArray={supportingDocsArray}
                 />
             ),
             value: "general",
@@ -252,7 +264,29 @@ export default function MarriageDetail() {
         },
         {
             label: "Bridal Info",
-            component: <BridalInformation data={data?.data || null} />,
+            component: (
+                <BridalInformation
+                    data={data?.data || null}
+                    husbandImage={
+                        supportingDocsArray !== undefined &&
+                        supportingDocsArray !== null &&
+                        supportingDocsArray.length !== 0
+                            ? supportingDocsArray?.find(
+                                  (item: any) => item.fileType === "GROOM_PHOTO"
+                              )?.fileUrl
+                            : groom
+                    }
+                    wifeImage={
+                        supportingDocsArray !== undefined &&
+                        supportingDocsArray !== null &&
+                        supportingDocsArray.length !== 0
+                            ? supportingDocsArray?.find(
+                                  (item: any) => item.fileType === "BRIDE_PHOTO"
+                              ).fileUrl
+                            : bride
+                    }
+                />
+            ),
             value: "bridal",
             image: marriage.src,
             imageActive: marriageActive.src,
@@ -347,17 +381,6 @@ export default function MarriageDetail() {
 
         return <></>;
     }, [vitalData, certificateData, resolutionIsLoading]);
-
-    const handleConvertSupportingDocStringToArray = (value: string) => {
-        const result = JSON.parse(value);
-        return result || [];
-    };
-
-    const supportingDocsArray = data?.data?.supporting_doc_url
-        ? handleConvertSupportingDocStringToArray(
-              data?.data?.supporting_doc_url
-          )
-        : [];
 
     const requirementsandaction = [
         {
@@ -466,8 +489,10 @@ export default function MarriageDetail() {
                             }
 
                             <div className='flex flex-col justify-between w-full shadow-sm'>
-                                <p>Attachment</p>
-                                <div className='space-y-2'>
+                                <p className='text-lg font-semibold pb-3'>
+                                    Attachment
+                                </p>
+                                <div className='gap-y-2 grid grid-cols-2 max-h-[200px] overflow-y-scroll'>
                                     {Array.isArray(supportingDocsArray) &&
                                     supportingDocsArray.length > 0
                                         ? supportingDocsArray.map(
@@ -482,15 +507,15 @@ export default function MarriageDetail() {
                                                               true
                                                           );
                                                       }}
-                                                      className='cursor-pointer shadow-md rounded-sm overflow-clip flex w-full max-w-[300px] border border-[#004EAD]'
+                                                      className='cursor-pointer shadow-md rounded-sm overflow-clip flex justify-between w-full max-w-[300px] border border-[#004EAD]'
                                                   >
-                                                      <div className='p-2 w-full text-sm'>
+                                                      <div className='p-2 flex-1 text-sm max-w-[200px]'>
                                                           <p className='line-clamp-1'>
                                                               {item.fileName}
                                                           </p>
                                                           <p>2mb</p>
                                                       </div>
-                                                      <div className='bg-[#4CAF50] p-5'>
+                                                      <div className='bg-[#4CAF50] p-5 min-w-fit'>
                                                           <Image
                                                               src={check.src}
                                                               width={30}
