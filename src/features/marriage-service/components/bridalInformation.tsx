@@ -35,7 +35,15 @@ const ProfileCompnent = ({
         </div>
     </div>
 );
-const InformationComponent = ({ id, type }: { type: string; id: string }) => {
+const InformationComponent = ({
+    id,
+    type,
+    image,
+}: {
+    type: string;
+    id: string;
+    image: string;
+}) => {
     const { data, isLoading, isError } = useGetResidentDataByIdQuery(
         { id: id! },
         {
@@ -43,27 +51,29 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
             refetchOnMountOrArgChange: true,
         }
     );
+    console.log("data", data);
 
     const {
         data: religionData,
         isLoading: isReligionLoading,
         isError: isReligionError,
     } = useGetReligionDataByIdQuery(
-        { id: data?.content[0]?.religion! },
+        { id: data?.personalInfo.religion! },
         {
-            skip: !data?.content[0]?.religion,
+            skip: !data?.personalInfo.religion,
             refetchOnMountOrArgChange: true,
         }
     );
+    console.log("data?.religion", data?.religion);
 
     const {
         data: nationalityData,
         isLoading: isNationalityLoading,
         isError: isNationalityError,
     } = useGetNationalityDataByIdQuery(
-        { id: data?.content[0]?.nationality! },
+        { id: data?.personalInfo?.nationality! },
         {
-            skip: !data?.content[0]?.nationality,
+            skip: !data?.personalInfo?.nationality,
             refetchOnMountOrArgChange: true,
         }
     );
@@ -73,15 +83,15 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                 <ProfileCompnent
                     name={
                         data
-                            ? data.content[0].firstName +
+                            ? data.personalInfo.localizedContent.en.firstName +
                               " " +
-                              data.content[0].middleName +
+                              data.personalInfo.localizedContent.en.middleName +
                               " " +
-                              data.content[0].lastName
+                              data.personalInfo.localizedContent.en.lastName
                             : ""
                     }
                     bridalType={type}
-                    image={type === "Groom" ? groom : bride}
+                    image={image}
                 />
 
                 <div className='rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full'>
@@ -100,7 +110,9 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Date of Birth</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {data.content[0].dateOfBirth}
+                            {data?.personalInfo?.dateOfBirth
+                                ? data?.personalInfo?.dateOfBirth
+                                : null}
                         </p>
                     </div>{" "}
                     {/* <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
@@ -137,13 +149,13 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                     <div className='flex justify-between border-b'>
                         <p className='text-sm'>City / Region </p>
                         <p className='text-sm font-semibold w-fit text-right'>
-                            Addis Ababa
+                            ----{" "}
                         </p>
                     </div>
                     <div className='flex justify-between border-b'>
                         <p className='text-sm'>Sub-city</p>
                         <p className='text-sm font-semibold w-fit text-right'>
-                            Kirkos
+                            ----
                         </p>
                     </div>
                     <div className='flex justify-between'>
@@ -158,14 +170,30 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
     );
 };
 
-const BridalInformation = ({ data }: { data: MarriageData }) => {
+const BridalInformation = ({
+    data,
+    husbandImage,
+    wifeImage,
+}: {
+    data: MarriageData;
+    husbandImage: string;
+    wifeImage: string;
+}) => {
     return (
         <div className=''>
             <p className='text-xl font-semibold border-b pb-7 text-[#073954]'>
                 Bridal Information
             </p>
-            <InformationComponent id={data.husband} type='Groom' />
-            <InformationComponent id={data.wife} type='Bride' />
+            <InformationComponent
+                id={data.husband}
+                image={husbandImage}
+                type='Groom'
+            />
+            <InformationComponent
+                id={data.wife}
+                image={wifeImage}
+                type='Bride'
+            />
         </div>
     );
 };

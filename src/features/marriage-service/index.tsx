@@ -44,13 +44,37 @@ export default function MarriageNew() {
             //     type: "GROOM_SPECIAL_APPROVAL",
             //     file: value.groomSpecialApproval,
             // },
-            value.groomBirthCertificate && {
-                type: "BIRTH_NOTICE",
-                file: value.groomBirthCertificate,
+            value.groomFirstWitnessId && {
+                type: "GROOM_FIRST_WITNESS",
+                file: value.groomFirstWitnessId,
+            },
+            value.groomSecondWitnessId && {
+                type: "GROOM_SECOND_WITNESS",
+                file: value.groomSecondWitnessId,
+            },
+            value.brideFirstWitnessId && {
+                type: "BRIDE_FIRST_WITNESS",
+                file: value.brideFirstWitnessId,
+            },
+            value.brideSecondWitnessId && {
+                type: "BRIDE_SECOND_WITNESS",
+                file: value.brideSecondWitnessId,
+            },
+            value.bridePhoto && {
+                type: "BRIDE_PHOTO",
+                file: value.bridePhoto,
             },
             value.groomPhoto && {
-                type: "ID_PROOF",
+                type: "GROOM_PHOTO",
                 file: value.groomPhoto,
+            },
+            value.groomBirthCertificate && {
+                type: "GROOM_BIRTH_CERTIFICATE",
+                file: value.groomBirthCertificate,
+            },
+            value.brideBirthCertificate && {
+                type: "BRIDE_BIRTH_CERTIFICATE",
+                file: value.brideBirthCertificate,
             },
             // value.brideSpecialApproval && {
             //     type: "BRIDE_SPECIAL_APPROVAL",
@@ -135,26 +159,17 @@ export default function MarriageNew() {
                 data: apiPayload,
                 files: apiPayload.files,
             }).unwrap();
-            // const response2 = await new Promise((resolve) =>
-            //     setTimeout(resolve, 1000)
-            // );
-            if (response) {
+            if (!isError) {
                 showSuccess("Marriage registration submitted successfully!");
-                // data.
                 router.push(
                     `/application/marriage/detail/${response.registration_form_number}`
                 );
             } else {
-                showError("Failed to create Marriage registration");
+                showError(response.message);
             }
-        } catch (error) {
-            console.error("Error creating birth registration:", error);
-            showError(
-                "An error occurred while creating the birth registration"
-            );
+        } catch (error: any) {
+            showError(error?.data?.message);
         }
-
-        showError("Error submitting Marriage registration. Please try again.");
     };
 
     const formContent = (

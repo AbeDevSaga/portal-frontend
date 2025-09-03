@@ -6,7 +6,14 @@ import groom from "@/public/images/groom.svg";
 import bride from "@/public/images/bride.svg";
 import { useGetResidentDataByIdQuery } from "../../application-service/api/residentApi";
 import { Loader } from "lucide-react";
-
+type supportDocType = {
+    documentId: string;
+    fileName: string;
+    fileType: string;
+    fileUrl: string;
+    status: string;
+    uploadedAt: null;
+};
 const ProfileCompnent = ({
     image,
     name,
@@ -35,10 +42,13 @@ const ProfileCompnent = ({
 const GeneralInformation = ({
     data,
     status,
+    supportingDocsArray,
 }: {
     data: MarriageData;
     status: string;
+    supportingDocsArray: supportDocType[];
 }) => {
+    console.log("supportingDocsArray", supportingDocsArray);
     const {
         data: husbandData,
         isLoading: isHusbandLoading,
@@ -61,7 +71,7 @@ const GeneralInformation = ({
             refetchOnMountOrArgChange: true,
         }
     );
-    console.log("wifeData", wifeData);
+
     return (
         <div className=''>
             <p className='text-xl font-semibold border-b pb-7'>
@@ -71,15 +81,26 @@ const GeneralInformation = ({
                 <ProfileCompnent
                     name={
                         husbandData
-                            ? husbandData.content[0].firstName +
+                            ? husbandData.personalInfo.localizedContent.en
+                                  .firstName +
                               " " +
-                              husbandData.content[0].middleName +
+                              husbandData.personalInfo.localizedContent.en
+                                  .middleName +
                               " " +
-                              husbandData.content[0].lastName
+                              husbandData.personalInfo.localizedContent.en
+                                  .lastName
                             : ""
                     }
                     bridalType='Groom'
-                    image={groom}
+                    image={
+                        supportingDocsArray !== undefined &&
+                        supportingDocsArray !== null &&
+                        supportingDocsArray.length !== 0
+                            ? supportingDocsArray?.find(
+                                  (item: any) => item.fileType === "GROOM_PHOTO"
+                              )?.fileUrl
+                            : groom
+                    }
                 />
 
                 {isHusbandLoading || isWifeLoading ? (
@@ -147,15 +168,25 @@ const GeneralInformation = ({
                 <ProfileCompnent
                     name={
                         wifeData
-                            ? wifeData.content[0].firstName +
+                            ? wifeData.personalInfo.localizedContent.en
+                                  .firstName +
                               " " +
-                              wifeData.content[0].middleName +
+                              wifeData.personalInfo.localizedContent.en
+                                  .middleName +
                               " " +
-                              wifeData.content[0].lastName
+                              wifeData.personalInfo.localizedContent.en.lastName
                             : ""
                     }
                     bridalType='Bride'
-                    image={bride}
+                    image={
+                        supportingDocsArray !== undefined &&
+                        supportingDocsArray !== null &&
+                        supportingDocsArray.length !== 0
+                            ? supportingDocsArray?.find(
+                                  (item: any) => item.fileType === "BRIDE_PHOTO"
+                              )?.fileUrl
+                            : bride
+                    }
                 />
             </div>
         </div>
