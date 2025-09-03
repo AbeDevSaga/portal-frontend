@@ -49,7 +49,7 @@ const Sidebar = () => {
         }
 
         // Check if current path starts with the route and has a sub-route
-        // This will match /home/birth/new, /home/birth/list, /home/birth/detail, etc.
+        // This will match /application/birth/new, /application/birth/list, /application/birth/detail, etc.
         if (currentPathLower.startsWith(routeLower + '/')) {
             return true;
         }

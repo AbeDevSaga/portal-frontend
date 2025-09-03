@@ -42,11 +42,11 @@ export default function LandingNavBar() {
             name: "FAQ",
         },
         {
-            link: "/home/announcement",
+            link: "/announcement",
             name: "Announcement",
         },
         {
-            link: "/home/checkstatus",
+            link: "/checkstatus",
             name: "Check Status",
         },
     ];
