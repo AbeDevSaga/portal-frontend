@@ -3,7 +3,6 @@ import mother from "@/public/images/bride.svg";
 import { Card } from "@/common/components/ui/card";
 import { useGetNationalityDataByIdQuery, useGetReligionDataByIdQuery, useGetResidentDataByIdQuery } from "@/features/application-service/api/residentApi";
 import { BirthData } from "../types";
-import { Item } from "@radix-ui/react-accordion";
 const handleConvertDate = (date: string) => {
     const dateOnly = date.split("T")[0];
     return dateOnly;
@@ -45,7 +44,9 @@ const MotherGeneralInformation = ({
             refetchOnMountOrArgChange: true,
         }
     );
-    const motherDetailData: any = data?.content?.find((item: any) => item.id === motherData.motherId)
+    // const motherDetailData: any = data?.content?.find((item: any) => item.id === motherData.motherId)
+    const motherDetailData: any = data?.personalInfo;
+
     const {
         data: religionData,
         isLoading: isReligionLoading,
@@ -80,33 +81,33 @@ const MotherGeneralInformation = ({
                 <ProfileCompnent
                     name={
                         data
-                            ? motherDetailData?.firstName +
+                            ? motherDetailData?.localizedContent.en.firstName +
                             " " +
-                            motherDetailData?.middleName +
+                            motherDetailData?.localizedContent.en.middleName +
                             " " +
-                            motherDetailData?.lastName
+                            motherDetailData?.localizedContent.en.lastName
                             : ""
                     }
                     // bridalType={type}
                     image={mother}
                 />
                 <div className='rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full'>
-                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                    {/* <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Mother's Registration Number</p>
                         <p className='text-sm text-right font-semibold w-fit'>
                             {motherDetailData?.urid || "-"}
                         </p>
-                    </div>
+                    </div> */}
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Mother's Date of Birth</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {motherDetailData?.dateOfBirth || "-"}
+                            {motherDetailData?.dateOfBirth || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Mother's Phone number</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {motherDetailData?.mobileNumber || "-"}
+                            {motherDetailData?.mobileNumber || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
@@ -118,13 +119,13 @@ const MotherGeneralInformation = ({
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Mother's Nationality</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {nationalityDetailDataEn?.name || "-"}
+                            {nationalityDetailDataEn?.name || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Mother's Religion</p>
                         <p className='text-sm text-right font-semibold w-fit'>
-                            {relegionDetailDataEn?.name || "-"}
+                            {relegionDetailDataEn?.name || "----"}
                         </p>
                     </div>
                 </div>

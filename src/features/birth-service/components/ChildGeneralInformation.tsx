@@ -27,56 +27,96 @@ const ChildGeneralInformation = ({
                         <Loader className='animate-spin' />
                     </div>
                 ) : ( */}
-                    <Card className='rounded-md py-5 px-5 gap-2 w-full flex flex-col justify-center bg-[#E8EEFD]'>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Birth Type</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.birthType || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's First Name</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.childFirstName || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's Gender</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.gender || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's Birth Date</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.birthDate || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's Birth Time Weight</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.childWeight || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's Birth Time Height</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.childHeight || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's Birth Attendant Name</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.attendantName || "-"}
-                            </p>
-                        </div>
-                        <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
-                            <p className='text-sm'>Child's Birth Attendant Qualification</p>
-                            <p className='text-sm font-semibold w-fit'>
-                                {localizedDataEn?.attendantQualification || "-"}
-                            </p>
-                        </div>
-                    </Card>
+                <Card className='rounded-md py-5 px-5 gap-2 w-full flex flex-col justify-center bg-[#E8EEFD]'>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Birth Type</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.birthType || "----"}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Child's First Name</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.childFirstName || "---"}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Child's Gender</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.gender || "----"}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Child's Birth Date</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.birthDate || "----"}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Child's Birth Time Weight</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.childWeight || "----"}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Child's Birth Time Height</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.childHeight || "----"}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Child's Place of Birth Type</p>
+                        <p className='text-sm font-semibold w-fit'>
+                            {localizedDataEn?.placeOfBirth?.type === 'HEALTH_FACILITY' ? 'Health Facility' : localizedDataEn?.placeOfBirth.type === 'NON_FACILITY' ? 'Not In Health Facility' : "----"}
+                        </p>
+                    </div>
+                    {localizedDataEn?.placeOfBirth?.type === 'HEALTH_FACILITY' && (
+                        <>
+                            <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                                <p className='text-sm'>Facility Name </p>
+                                <p className='text-sm font-semibold w-fit'>
+                                    {localizedDataEn?.placeOfBirth?.facilityName || "----"}
+                                </p>
+                            </div>
+                            <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                                <p className='text-sm'>Facility Type </p>
+                                <p className='text-sm font-semibold w-fit'>
+                                    {localizedDataEn?.placeOfBirth?.facilityType || "----"}
+                                </p>
+                            </div>
+                            <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                                <p className='text-sm'>Facility Ownership </p>
+                                <p className='text-sm font-semibold w-fit'>
+                                    {localizedDataEn?.placeOfBirth?.facilityOwnership || "----"}
+                                </p>
+                            </div>
+                            <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                                <p className='text-sm'>Child's Birth Attendant Name</p>
+                                <p className='text-sm font-semibold w-fit'>
+                                    {localizedDataEn?.attendantName || "----"}
+                                </p>
+                            </div>
+                            <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                                <p className='text-sm'>Child's Birth Attendant Qualification</p>
+                                <p className='text-sm font-semibold w-fit'>
+                                    {localizedDataEn?.attendantQualification || "----"}
+                                </p>
+                            </div>
+
+                        </>
+                    )}
+                    {localizedDataEn?.placeOfBirth?.type === 'NON_FACILITY' && (
+                        <>
+                            <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                                <p className='text-sm'>Child's Birth Place description </p>
+                                <p className='text-sm font-semibold w-fit'>
+                                    {localizedDataEn?.placeOfBirth?.locationDescription || "----"}
+                                </p>
+                            </div>
+
+                        </>
+                    )}
+                </Card>
 
                 {/* )} */}
             </div>
