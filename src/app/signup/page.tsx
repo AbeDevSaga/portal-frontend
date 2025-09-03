@@ -24,7 +24,7 @@ export default function SignupPage() {
                         </p>
                     </div>
                     <div className="text-center">
-                        <Link href="/home">
+                        <Link href="/">
                             <Button variant="outline">
                                 {t('Back to Home')}
                             </Button>

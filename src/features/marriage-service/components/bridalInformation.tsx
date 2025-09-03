@@ -35,7 +35,15 @@ const ProfileCompnent = ({
         </div>
     </div>
 );
-const InformationComponent = ({ id, type }: { type: string; id: string }) => {
+const InformationComponent = ({
+    id,
+    type,
+    image,
+}: {
+    type: string;
+    id: string;
+    image: string;
+}) => {
     const { data, isLoading, isError } = useGetResidentDataByIdQuery(
         { id: id! },
         {
@@ -83,7 +91,7 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
                             : ""
                     }
                     bridalType={type}
-                    image={type === "Groom" ? groom : bride}
+                    image={image}
                 />
 
                 <div className='rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full'>
@@ -162,14 +170,30 @@ const InformationComponent = ({ id, type }: { type: string; id: string }) => {
     );
 };
 
-const BridalInformation = ({ data }: { data: MarriageData }) => {
+const BridalInformation = ({
+    data,
+    husbandImage,
+    wifeImage,
+}: {
+    data: MarriageData;
+    husbandImage: string;
+    wifeImage: string;
+}) => {
     return (
         <div className=''>
             <p className='text-xl font-semibold border-b pb-7 text-[#073954]'>
                 Bridal Information
             </p>
-            <InformationComponent id={data.husband} type='Groom' />
-            <InformationComponent id={data.wife} type='Bride' />
+            <InformationComponent
+                id={data.husband}
+                image={husbandImage}
+                type='Groom'
+            />
+            <InformationComponent
+                id={data.wife}
+                image={wifeImage}
+                type='Bride'
+            />
         </div>
     );
 };

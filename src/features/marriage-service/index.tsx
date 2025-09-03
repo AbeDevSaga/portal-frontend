@@ -44,29 +44,37 @@ export default function MarriageNew() {
             //     type: "GROOM_SPECIAL_APPROVAL",
             //     file: value.groomSpecialApproval,
             // },
-            value.groomBirthCertificate && {
-                type: "BIRTH_NOTICE",
-                file: value.groomBirthCertificate,
+            value.groomFirstWitnessId && {
+                type: "GROOM_FIRST_WITNESS",
+                file: value.groomFirstWitnessId,
+            },
+            value.groomSecondWitnessId && {
+                type: "GROOM_SECOND_WITNESS",
+                file: value.groomSecondWitnessId,
+            },
+            value.brideFirstWitnessId && {
+                type: "BRIDE_FIRST_WITNESS",
+                file: value.brideFirstWitnessId,
+            },
+            value.brideSecondWitnessId && {
+                type: "BRIDE_SECOND_WITNESS",
+                file: value.brideSecondWitnessId,
+            },
+            value.bridePhoto && {
+                type: "BRIDE_PHOTO",
+                file: value.bridePhoto,
             },
             value.groomPhoto && {
-                type: "ID_PROOF",
+                type: "GROOM_PHOTO",
                 file: value.groomPhoto,
             },
             value.groomBirthCertificate && {
-                type: "BIRTH_NOTICE",
+                type: "GROOM_BIRTH_CERTIFICATE",
                 file: value.groomBirthCertificate,
             },
-            value.groomPhoto && {
-                type: "ID_PROOF",
-                file: value.groomPhoto,
-            },
-            value.groomBirthCertificate && {
-                type: "BIRTH_NOTICE",
-                file: value.groomBirthCertificate,
-            },
-            value.groomPhoto && {
-                type: "ID_PROOF",
-                file: value.groomPhoto,
+            value.brideBirthCertificate && {
+                type: "BRIDE_BIRTH_CERTIFICATE",
+                file: value.brideBirthCertificate,
             },
             // value.brideSpecialApproval && {
             //     type: "BRIDE_SPECIAL_APPROVAL",

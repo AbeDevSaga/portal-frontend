@@ -6,7 +6,14 @@ import groom from "@/public/images/groom.svg";
 import bride from "@/public/images/bride.svg";
 import { useGetResidentDataByIdQuery } from "../../application-service/api/residentApi";
 import { Loader } from "lucide-react";
-
+type supportDocType = {
+    documentId: string;
+    fileName: string;
+    fileType: string;
+    fileUrl: string;
+    status: string;
+    uploadedAt: null;
+};
 const ProfileCompnent = ({
     image,
     name,
@@ -35,11 +42,13 @@ const ProfileCompnent = ({
 const GeneralInformation = ({
     data,
     status,
+    supportingDocsArray,
 }: {
     data: MarriageData;
     status: string;
+    supportingDocsArray: supportDocType[];
 }) => {
-    console.log("data", data);
+    console.log("supportingDocsArray", supportingDocsArray);
     const {
         data: husbandData,
         isLoading: isHusbandLoading,
@@ -83,7 +92,15 @@ const GeneralInformation = ({
                             : ""
                     }
                     bridalType='Groom'
-                    image={groom}
+                    image={
+                        supportingDocsArray !== undefined &&
+                        supportingDocsArray !== null &&
+                        supportingDocsArray.length !== 0
+                            ? supportingDocsArray?.find(
+                                  (item: any) => item.fileType === "GROOM_PHOTO"
+                              )?.fileUrl
+                            : groom
+                    }
                 />
 
                 {isHusbandLoading || isWifeLoading ? (
@@ -161,7 +178,15 @@ const GeneralInformation = ({
                             : ""
                     }
                     bridalType='Bride'
-                    image={bride}
+                    image={
+                        supportingDocsArray !== undefined &&
+                        supportingDocsArray !== null &&
+                        supportingDocsArray.length !== 0
+                            ? supportingDocsArray?.find(
+                                  (item: any) => item.fileType === "BRIDE_PHOTO"
+                              )?.fileUrl
+                            : bride
+                    }
                 />
             </div>
         </div>
