@@ -84,19 +84,21 @@ export default function BirthNew() {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
                 birthType: "SINGLE",
-                births: [{
-                    registrationOfficeNumber: "RO-2025-002",
-                    hospitalNotificationId:
-                        value.hospitalNotificationId,
-                    childResidentId: null,
-                    fatherResidentId: value.fatherResidentId?.id,
-                    motherResidentId: value.motherResidentId?.id,
-                    declarantResidentId: null,
-                    withOld: false,
-                    bloodType: value.bloodType?.id,
-                    nationality: value.nationality?.id,
-                    localizations: [],
-                }],
+                births: [
+                    {
+                        registrationOfficeNumber: "RO-2025-002",
+                        hospitalNotificationId:
+                            value.hospitalNotificationId.hospitalNotificationId,
+                        childResidentId: null,
+                        fatherResidentId: value.fatherResidentId?.id,
+                        motherResidentId: value.motherResidentId?.id,
+                        declarantResidentId: null,
+                        withOld: false,
+                        bloodType: value.bloodType?.id,
+                        nationality: value.nationality?.id,
+                        localizations: null,
+                    },
+                ],
             };
         } else if (selected === "newChild") {
             console.log("this is the new child value", value);
@@ -114,17 +116,23 @@ export default function BirthNew() {
                         declarantResidentId: null,
                         withOld: false,
                         bloodType: value.bloodType?.id,
-                        nationality:
-                            value.nationality?.id || null,
+                        nationality: value.nationality?.id || null,
                         localizations: [
                             {
                                 childFirstName: value.firstName,
                                 languageCode: "en",
                                 placeOfBirth: {
-                                    type: value.isBornInHealthCenter ? "HEALTH_FACILITY" : "NON_FACILITY",
-                                    facilityName: value.healthCenterName || "" ,
+                                    type: value.isBornInHealthCenter
+                                        ? "HEALTH_FACILITY"
+                                        : "NON_FACILITY",
+                                    locationDescription:
+                                        !value.isBornInHealthCenter
+                                            ? value.locationDescription
+                                            : "",
+                                    facilityName: value.healthCenterName || "",
                                     facilityType: value.healthCenterType || "",
-                                    facilityOwnership: value.healthCenterOwner || "Government",
+                                    facilityOwnership:
+                                        value.healthCenterOwner || "",
                                 },
                                 birthType: "Single",
                                 childBirthOrder: "1st",

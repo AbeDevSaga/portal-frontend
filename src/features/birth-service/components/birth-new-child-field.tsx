@@ -26,10 +26,12 @@ export const formConfig: FormConfig = {
                     key: "firstName",
                     label: "Child's First Name",
                     placeholder: "",
-                    description:
-                        "Enter your child's first name.",
+                    description: "Enter your child's first name.",
                     validators: [
-                        { type: "required", message: "Child's First name is required" },
+                        {
+                            type: "required",
+                            message: "Child's First name is required",
+                        },
                     ],
                     required: true,
                     group: "Child Details",
@@ -52,7 +54,7 @@ export const formConfig: FormConfig = {
                     required: true,
                     group: "Child Details",
                     groupOrder: 2,
-                    gridCols: 6
+                    gridCols: 6,
                 },
                 {
                     type: "lookup",
@@ -86,23 +88,25 @@ export const formConfig: FormConfig = {
                             locale: "en" | "am" = "en"
                         ) => {
                             console.log("response data", response);
-                            
+
                             if (!response?.content) {
                                 return [];
                             }
 
-                            const transformedData = response.content.map((res: any) => ({
-                                id: res.id,
-                                value: res.id,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                                code: res.code,
-                            }));
+                            const transformedData = response.content.map(
+                                (res: any) => ({
+                                    id: res.id,
+                                    value: res.id,
+                                    name:
+                                        res.localizedContent?.[locale]?.name ??
+                                        res.code,
+                                    label:
+                                        res.localizedContent?.[locale]?.name ??
+                                        res.code,
+                                    isDisabled: false,
+                                    code: res.code,
+                                })
+                            );
 
                             return transformedData;
                         },
@@ -116,7 +120,10 @@ export const formConfig: FormConfig = {
                     description:
                         "Select child's date of birth. Future dates are not acceptable.",
                     validators: [
-                        { type: "required", message: "Date of birth is required" },
+                        {
+                            type: "required",
+                            message: "Date of birth is required",
+                        },
                         {
                             type: "maxDate",
                             value: new Date().toISOString().split("T")[0],
@@ -126,15 +133,14 @@ export const formConfig: FormConfig = {
                     required: true,
                     group: "Child Details",
                     groupOrder: 4,
-                    gridCols: 6
+                    gridCols: 6,
                 },
                 {
                     type: "lookup",
                     key: "bloodType",
                     label: "Child's Blood Type",
                     placeholder: "Search for a blood type...",
-                    description:
-                        "Select the blood type of the new born child",
+                    description: "Select the blood type of the new born child",
                     validators: [
                         {
                             type: "required",
@@ -160,23 +166,25 @@ export const formConfig: FormConfig = {
                             locale: "en" | "am" = "en"
                         ) => {
                             console.log("response data", response);
-                            
+
                             if (!response?.content) {
                                 return [];
                             }
 
-                            const transformedData = response.content.map((res: any) => ({
-                                id: res.id,
-                                value: res.id,
-                                name:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                label:
-                                    res.localizedContent?.[locale]?.name ??
-                                    res.code,
-                                isDisabled: false,
-                                code: res.code,
-                            }));
+                            const transformedData = response.content.map(
+                                (res: any) => ({
+                                    id: res.id,
+                                    value: res.id,
+                                    name:
+                                        res.localizedContent?.[locale]?.name ??
+                                        res.code,
+                                    label:
+                                        res.localizedContent?.[locale]?.name ??
+                                        res.code,
+                                    isDisabled: false,
+                                    code: res.code,
+                                })
+                            );
 
                             return transformedData;
                         },
@@ -262,7 +270,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.isBornInHealthCenter;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.isBornInHealthCenter
+                        return !dependentValues?.isBornInHealthCenter;
                     },
                 },
                 {
@@ -289,7 +297,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.isBornInHealthCenter;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.isBornInHealthCenter
+                        return !dependentValues?.isBornInHealthCenter;
                     },
                 },
                 {
@@ -316,7 +324,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.isBornInHealthCenter;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.isBornInHealthCenter
+                        return !dependentValues?.isBornInHealthCenter;
                     },
                 },
                 {
@@ -333,7 +341,7 @@ export const formConfig: FormConfig = {
                             message: "Birth attendant full name is required",
                         },
                     ],
-                    required: true,
+                    required: false,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
@@ -343,7 +351,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.isBornInHealthCenter;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.isBornInHealthCenter
+                        return !dependentValues?.isBornInHealthCenter;
                     },
                 },
                 {
@@ -357,10 +365,11 @@ export const formConfig: FormConfig = {
                     validators: [
                         {
                             type: "required",
-                            message: "Birth attendant qualification is required",
+                            message:
+                                "Birth attendant qualification is required",
                         },
                     ],
-                    required: true,
+                    required: false,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
@@ -370,7 +379,34 @@ export const formConfig: FormConfig = {
                         return dependentValues?.isBornInHealthCenter;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.isBornInHealthCenter
+                        return !dependentValues?.isBornInHealthCenter;
+                    },
+                },
+                {
+                    type: "input",
+                    key: "locationDescription",
+                    label: "Birth location description",
+                    placeholder: "",
+                    description: "Enter the birth location description.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Birth location description is required",
+                        },
+                    ],
+                    required: false, // Set to false, will be dynamically required
+                    group: "Child Details",
+                    groupOrder: 8,
+                    gridCols: 6,
+                    getDependentValue: (formValues: any) => ({
+                        isBornInHealthCenter: formValues.isBornInHealthCenter,
+                    }),
+                    isRequired: (dependentValues: any) => {
+                        // Only required when the field is visible
+                        return !dependentValues?.isBornInHealthCenter;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return dependentValues?.isBornInHealthCenter;
                     },
                 },
                 {
@@ -420,11 +456,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName+ " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName+ " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -461,19 +503,16 @@ export const formConfig: FormConfig = {
                     defaultValue: (dependentValues: any) => {
                         if (
                             dependentValues?.fatherResidentId &&
-                            typeof dependentValues.fatherResidentId ===
-                                "object"
+                            typeof dependentValues.fatherResidentId === "object"
                         ) {
                             return (
-                                dependentValues.fatherResidentId
-                                    .fullName || ""
+                                dependentValues.fatherResidentId.fullName || ""
                             );
                         }
                         return "";
                     },
                     getDependentValue: (formValues: any) => ({
-                        fatherResidentId:
-                            formValues.fatherResidentId,
+                        fatherResidentId: formValues.fatherResidentId,
                     }),
                     isDisabled: (dependentValues: any) => {
                         return dependentValues?.fatherResidentId;
@@ -512,7 +551,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.fatherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.fatherResidentId
+                        return !dependentValues?.fatherResidentId;
                     },
                 },
                 {
@@ -545,7 +584,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.fatherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.fatherResidentId
+                        return !dependentValues?.fatherResidentId;
                     },
                 },
                 {
@@ -595,11 +634,17 @@ export const formConfig: FormConfig = {
                             return data.content.map((resident: any) => ({
                                 id: resident.id,
                                 value: resident.id,
-                                label: resident.firstName + " " +
-                                    resident.middleName+ " " +
+                                label:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
-                                name: resident.firstName + " " +
-                                    resident.middleName+ " " +
+                                name:
+                                    resident.firstName +
+                                    " " +
+                                    resident.middleName +
+                                    " " +
                                     resident.lastName,
                                 firstName: resident.firstName,
                                 middleName: resident.middleName,
@@ -651,7 +696,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.motherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.motherResidentId
+                        return !dependentValues?.motherResidentId;
                     },
                 },
                 {
@@ -684,7 +729,7 @@ export const formConfig: FormConfig = {
                         return dependentValues?.motherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.motherResidentId
+                        return !dependentValues?.motherResidentId;
                     },
                 },
                 {
@@ -717,9 +762,9 @@ export const formConfig: FormConfig = {
                         return dependentValues?.motherResidentId;
                     },
                     isHide: (dependentValues: any) => {
-                        return !dependentValues?.motherResidentId
+                        return !dependentValues?.motherResidentId;
                     },
-                }
+                },
             ],
         },
     ],
