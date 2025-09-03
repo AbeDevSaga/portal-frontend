@@ -106,7 +106,6 @@ export const formConfig: FormConfig = {
 
                             return transformedData;
                         },
-                        defaultValue: "73ab3776-30c1-4176-9506-c3fcb0e3d5de", // TODO: change to dynamic concept
                     },
                 },
                 {
@@ -128,6 +127,60 @@ export const formConfig: FormConfig = {
                     group: "Child Details",
                     groupOrder: 4,
                     gridCols: 6
+                },
+                {
+                    type: "lookup",
+                    key: "bloodType",
+                    label: "Child's Blood Type",
+                    placeholder: "Search for a blood type...",
+                    description:
+                        "Select the blood type of the new born child",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Blood Type is required",
+                        },
+                    ],
+                    required: true,
+                    group: "Child Details",
+                    groupOrder: 3,
+                    gridCols: 6,
+                    clearable: false,
+                    lookupConfig: {
+                        apiEndpoint: "/reference-data/blood-types",
+                        method: "GET",
+                        valueKey: "id",
+                        labelKey: "name",
+                        searchKey: "name",
+                        debounceMs: 300,
+                        minSearchLength: 0,
+                        cacheResults: true,
+                        transformResponse: (
+                            response,
+                            locale: "en" | "am" = "en"
+                        ) => {
+                            console.log("response data", response);
+                            
+                            if (!response?.content) {
+                                return [];
+                            }
+
+                            const transformedData = response.content.map((res: any) => ({
+                                id: res.id,
+                                value: res.id,
+                                name:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                label:
+                                    res.localizedContent?.[locale]?.name ??
+                                    res.code,
+                                isDisabled: false,
+                                code: res.code,
+                            }));
+
+                            return transformedData;
+                        },
+                    },
                 },
                 {
                     type: "number",
@@ -254,6 +307,60 @@ export const formConfig: FormConfig = {
                     required: false, // Set to false, will be dynamically required
                     group: "Child Details",
                     groupOrder: 10,
+                    gridCols: 6,
+                    getDependentValue: (formValues: any) => ({
+                        isBornInHealthCenter: formValues.isBornInHealthCenter,
+                    }),
+                    isRequired: (dependentValues: any) => {
+                        // Only required when the field is visible
+                        return dependentValues?.isBornInHealthCenter;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.isBornInHealthCenter
+                    },
+                },
+                {
+                    group: "Child Details",
+                    groupOrder: 19,
+                    type: "input",
+                    key: "birthAttendantName",
+                    label: "Birth Attendant Full Name",
+                    placeholder: "",
+                    description: "Enter the name of the birth attendant.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Birth attendant full name is required",
+                        },
+                    ],
+                    required: true,
+                    gridCols: 6,
+                    getDependentValue: (formValues: any) => ({
+                        isBornInHealthCenter: formValues.isBornInHealthCenter,
+                    }),
+                    isRequired: (dependentValues: any) => {
+                        // Only required when the field is visible
+                        return dependentValues?.isBornInHealthCenter;
+                    },
+                    isHide: (dependentValues: any) => {
+                        return !dependentValues?.isBornInHealthCenter
+                    },
+                },
+                {
+                    group: "Child Details",
+                    groupOrder: 20,
+                    type: "input",
+                    key: "birthAttendantQualification",
+                    label: "Birth Attendant Qualification",
+                    placeholder: "",
+                    description: "Enter the birth attendant qualification.",
+                    validators: [
+                        {
+                            type: "required",
+                            message: "Birth attendant qualification is required",
+                        },
+                    ],
+                    required: true,
                     gridCols: 6,
                     getDependentValue: (formValues: any) => ({
                         isBornInHealthCenter: formValues.isBornInHealthCenter,
@@ -612,41 +719,7 @@ export const formConfig: FormConfig = {
                     isHide: (dependentValues: any) => {
                         return !dependentValues?.motherResidentId
                     },
-                },
-                {
-                    group: "Child Details",
-                    groupOrder: 19,
-                    type: "input",
-                    key: "birthAttendantName",
-                    label: "Birth Attendant Full Name",
-                    placeholder: "",
-                    description: "Enter the name of the birth attendant.",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Birth attendant full name is required",
-                        },
-                    ],
-                    required: true,
-                    gridCols: 6,
-                },
-                {
-                    group: "Child Details",
-                    groupOrder: 20,
-                    type: "input",
-                    key: "birthAttendantQualification",
-                    label: "Birth Attendant Qualification",
-                    placeholder: "",
-                    description: "Enter the birth attendant qualification.",
-                    validators: [
-                        {
-                            type: "required",
-                            message: "Birth attendant qualification is required",
-                        },
-                    ],
-                    required: true,
-                    gridCols: 6,
-                },
+                }
             ],
         },
     ],

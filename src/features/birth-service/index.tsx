@@ -83,46 +83,20 @@ export default function BirthNew() {
             body = {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
-                births: {
+                birthType: "SINGLE",
+                births: [{
                     registrationOfficeNumber: "RO-2025-002",
                     hospitalNotificationId:
-                        value.hospitalNotificationId || "HN-1755913119386",
+                        value.hospitalNotificationId,
                     childResidentId: null,
-                    fatherResidentId:
-                        value.fatherResidentId?.id ||
-                        "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
-                    motherResidentId:
-                        value.motherResidentId?.id ||
-                        "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+                    fatherResidentId: value.fatherResidentId?.id,
+                    motherResidentId: value.motherResidentId?.id,
                     declarantResidentId: null,
                     withOld: false,
-                    bloodType: "123e4567-e89b-12d3-a456-426614174004",
-                    nationality: "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
-                    localizations: [
-                        {
-                            childFirstName: "Abel",
-                            languageCode: "en",
-                            placeOfBirth: {
-                                type: "HEALTH_FACILITY",
-                                facilityName: "Addis Ababa Hospital",
-                                facilityType: "Hospital",
-                                facilityOwnership: "Government",
-                            },
-                            birthType: "Single",
-                            childBirthOrder: "1st",
-                            issuedDate: "2025-08-21",
-                            reason: "Normal",
-                            childWeight: 3.2,
-                            childHeight: 50.5,
-                            birthDate: "2025-05-20",
-                            birthTime: "10:15",
-                            gender: "Male",
-                            declarantRelation: "",
-                            attendantName: "Dr. Solomon",
-                            attendantQualification: "Doctor",
-                        },
-                    ],
-                },
+                    bloodType: value.bloodType?.id,
+                    nationality: value.nationality?.id,
+                    localizations: [],
+                }],
             };
         } else if (selected === "newChild") {
             console.log("this is the new child value", value);
@@ -130,7 +104,6 @@ export default function BirthNew() {
                 requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
                 actionType: "NEW",
                 birthType: "SINGLE", // SINGLE, TWIN, TRIPLET, QUADRUPLET
-
                 births: [
                     {
                         registrationOfficeNumber: "RO-2025-002",
@@ -140,19 +113,18 @@ export default function BirthNew() {
                         motherResidentId: value.motherResidentId?.id,
                         declarantResidentId: null,
                         withOld: false,
-                        bloodType: "123e4567-e89b-12d3-a456-426614174004",
+                        bloodType: value.bloodType?.id,
                         nationality:
-                            value.nationality?.id ||
-                            "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+                            value.nationality?.id || null,
                         localizations: [
                             {
                                 childFirstName: value.firstName,
                                 languageCode: "en",
                                 placeOfBirth: {
-                                    type: "HEALTH_FACILITY",
-                                    facilityName: "Addis Ababa Hospital",
-                                    facilityType: "Hospital",
-                                    facilityOwnership: "Government",
+                                    type: value.isBornInHealthCenter ? "HEALTH_FACILITY" : "NON_FACILITY",
+                                    facilityName: value.healthCenterName || "" ,
+                                    facilityType: value.healthCenterType || "",
+                                    facilityOwnership: value.healthCenterOwner || "Government",
                                 },
                                 birthType: "Single",
                                 childBirthOrder: "1st",
