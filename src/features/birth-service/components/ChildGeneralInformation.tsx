@@ -55,13 +55,13 @@ const ChildGeneralInformation = ({
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Child's Birth Time Weight</p>
                         <p className='text-sm font-semibold w-fit'>
-                            {localizedDataEn?.childWeight || "----"}
+                            {localizedDataEn?.childWeight + 'KG' || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
                         <p className='text-sm'>Child's Birth Time Height</p>
                         <p className='text-sm font-semibold w-fit'>
-                            {localizedDataEn?.childHeight || "----"}
+                            {localizedDataEn?.childHeight + 'CM' || "----"}
                         </p>
                     </div>
                     <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>

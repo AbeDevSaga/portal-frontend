@@ -242,7 +242,7 @@ export const formConfig: FormConfig = {
                 {
                     type: "input",
                     key: "birthWeight",
-                    label: "Child's Birth Weight",
+                    label: "Child's Birth Weight(in KG)",
                     placeholder: "",
                     description: "",
                     validators: [],
@@ -277,7 +277,7 @@ export const formConfig: FormConfig = {
                 {
                     type: "input",
                     key: "birthHeight",
-                    label: "Child's Birth Height",
+                    label: "Child's Birth Height(in CM)",
                     placeholder: "",
                     description: "",
                     validators: [],
