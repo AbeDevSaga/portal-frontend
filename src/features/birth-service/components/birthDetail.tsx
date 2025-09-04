@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 // import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
 // import { birthFormConfig } from "./birth-form-fields";
 import HeroSection from "@/common/components/common/HeroSection";
@@ -84,6 +84,7 @@ const body = {
 };
 
 export default function BirthDetail() {
+    const [displayDoc, setDisplayDoc] = useState("");
     const [response, setResponse] = useState<BirthResponse | null>(null);
     const [openFileModal, setOpenFileModal] = useState(false);
     const [openRejectModal, setOpenRejectModal] = useState(false);
@@ -231,7 +232,9 @@ export default function BirthDetail() {
         } catch (error) {}
     };
 
-    const handleRenderApplicationDecisionButtons = (status: string) => {
+    const handleRenderApplicationDecisionButtons = useMemo(() => {
+        const status = vitalData ? vitalData.data.status || "" : "";
+        console.log("certificateData?.data?.url", certificateData?.data?.url);
         if (status === "SUBMITTED")
             return (
                 <>
@@ -246,11 +249,15 @@ export default function BirthDetail() {
                     >
                         Validate Application
                     </Button>
-                    <Button onClick={() => setOpenRejectModal(true)}>
+                    <Button
+                        onClick={() => setOpenRejectModal(true)}
+                        disabled={resolutionIsLoading}
+                    >
                         Reject Application
                     </Button>
                 </>
             );
+
         if (status === "UNDER_REVIEW")
             return (
                 <>
@@ -261,18 +268,15 @@ export default function BirthDetail() {
                                 reason: "",
                             })
                         }
-                        disabled={resolutionIsLoading}
                     >
                         Approve Application
                     </Button>
-                    <Button
-                        onClick={() => setOpenRejectModal(true)}
-                        disabled={resolutionIsLoading}
-                    >
+                    <Button onClick={() => setOpenRejectModal(true)}>
                         Reject Application
                     </Button>
                 </>
             );
+
         if (status === "APPROVED")
             return (
                 <div className='flex flex-wrap items-center gap-3'>
@@ -280,23 +284,36 @@ export default function BirthDetail() {
                         APPROVED
                     </div>
 
-                    <Button
-                        className='bg-[#073954]'
-                        onClick={() => handleRequestCertificate()}
-                        disabled={resolutionIsLoading}
-                    >
-                        Request Certificate
-                    </Button>
+                    {certificateData?.data?.url ? (
+                        <Button
+                            onClick={() => {
+                                setDisplayDoc(certificateData.data.url);
+                                setOpenFileModal(true);
+                            }}
+                        >
+                            View Certificate
+                        </Button>
+                    ) : (
+                        <Button
+                            className='bg-[#073954]'
+                            onClick={() => handleRequestCertificate()}
+                            disabled={resolutionIsLoading}
+                        >
+                            Request Certificate
+                        </Button>
+                    )}
                 </div>
             );
+
         if (status === "REJECTED")
             return (
                 <div className='px-5 text-center py-2 rounded-sm bg-red-400/50'>
                     REJECTED
                 </div>
             );
-        return null;
-    };
+
+        return <></>;
+    }, [vitalData, certificateData, resolutionIsLoading]);
 
     return (
         <>
@@ -306,9 +323,7 @@ export default function BirthDetail() {
                 description='This is the birth detail of a new birth registration section'
                 action={
                     <div className='space-y-5 space-x-5'>
-                        {handleRenderApplicationDecisionButtons(
-                            vitalData ? vitalData.data.status : ""
-                        )}
+                        {handleRenderApplicationDecisionButtons}
                     </div>
                 }
             />
@@ -613,6 +628,14 @@ export default function BirthDetail() {
                         </div>
                     </Card>{" "}
                 </div> */}
+
+                {openFileModal ? (
+                    <FileViewerModal
+                        file={displayDoc}
+                        open={openFileModal}
+                        handleCancel={setOpenFileModal}
+                    />
+                ) : null}
             </div>
         </>
     );

@@ -65,17 +65,24 @@ const MarriageCard = ({
         }
     );
 
-    const husbandInfo = HusbandData?.content[0] || null;
-    const wifeInfo = wifeData?.content[0] || null;
+    console.log("HusbandData", HusbandData);
+    const husbandInfo = HusbandData?.personalInfo || null;
+    const wifeInfo = wifeData?.personalInfo || null;
 
     const coupleAvatar = [
         {
             image: husband.src,
-            name: husbandInfo?.firstName + " " + husbandInfo?.lastName || "",
+            name:
+                husbandInfo?.localizedContent?.en?.firstName +
+                    " " +
+                    husbandInfo?.localizedContent?.en?.lastName || "",
         },
         {
             image: wife.src,
-            name: wifeInfo?.firstName + " " + wifeInfo?.lastName || "",
+            name:
+                wifeInfo?.localizedContent?.en?.firstName +
+                    " " +
+                    wifeInfo?.localizedContent?.en?.lastName || "",
         },
     ];
 
@@ -85,12 +92,16 @@ const MarriageCard = ({
             info: [
                 {
                     name:
-                        husbandInfo?.firstName + " " + husbandInfo?.lastName ||
-                        "",
+                        husbandInfo?.localizedContent?.en?.firstName +
+                            " " +
+                            husbandInfo?.localizedContent?.en?.lastName || "",
                     image: husband.src,
                 },
                 {
-                    name: wifeInfo?.firstName + " " + wifeInfo?.lastName || "",
+                    name:
+                        wifeInfo?.localizedContent?.en?.firstName +
+                            " " +
+                            wifeInfo?.localizedContent?.en?.lastName || "",
                     image: wife.src,
                 },
             ],
