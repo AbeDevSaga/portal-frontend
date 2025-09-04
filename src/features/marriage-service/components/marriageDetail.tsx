@@ -388,7 +388,15 @@ export default function MarriageDetail() {
             );
 
         return <></>;
-    }, [status, certificateUrl, resolutionIsLoading]);
+    }, [
+        status,
+        certificateUrl,
+        resolutionIsLoading,
+        certificateData,
+        resolutionIsLoading,
+        wifeData,
+        husbandData,
+    ]);
 
     const requirementsandaction = [
         {
