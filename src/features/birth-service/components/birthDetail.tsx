@@ -154,6 +154,7 @@ export default function BirthDetail() {
         data: vitalData,
         isLoading: isVitalLoading,
         isError: isVitalError,
+        refetch,
     } = useGetVitalServiceEventQuery({ id: slug });
     const [displayData, setDisplayData] = useState("child");
     const marriageDetailOptions = [
@@ -226,15 +227,15 @@ export default function BirthDetail() {
                 data,
             });
             if (!resolutionIsError) {
-                window.location.reload();
+                refetch();
             }
             console.log(response);
         } catch (error) {}
     };
 
+    const status = vitalData?.data?.status || "";
+    const certificateUrl = certificateData?.data?.url || "";
     const handleRenderApplicationDecisionButtons = useMemo(() => {
-        const status = vitalData ? vitalData.data.status || "" : "";
-        console.log("certificateData?.data?.url", certificateData?.data?.url);
         if (status === "SUBMITTED")
             return (
                 <>
@@ -313,7 +314,7 @@ export default function BirthDetail() {
             );
 
         return <></>;
-    }, [vitalData, certificateData, resolutionIsLoading]);
+    }, [status, certificateUrl, resolutionIsLoading]);
 
     return (
         <>

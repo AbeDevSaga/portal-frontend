@@ -227,7 +227,7 @@ export default function MarriageDetail() {
                 data,
             });
             if (!isError) {
-                window.location.reload();
+                refetch();
             }
             console.log(response);
         } catch (error) {}
@@ -236,7 +236,11 @@ export default function MarriageDetail() {
         data: vitalData,
         isLoading: isVitalLoading,
         isError: isVitalError,
-    } = useGetVitalServiceEventQuery({ id: slug });
+        refetch,
+    } = useGetVitalServiceEventQuery(
+        { id: slug },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const [displayData, setDisplayData] = useState("general");
     const handleConvertSupportingDocStringToArray = (value: string) => {
@@ -302,9 +306,10 @@ export default function MarriageDetail() {
             imageActive: witnessActive.src,
         },
     ];
+
+    const status = vitalData?.data?.status || "";
+    const certificateUrl = certificateData?.data?.url || "";
     const handleRenderApplicationDecisionButtons = useMemo(() => {
-        const status = vitalData ? vitalData.data.status || "" : "";
-        console.log("certificateData?.data?.url", certificateData?.data?.url);
         if (status === "SUBMITTED")
             return (
                 <>
@@ -383,13 +388,7 @@ export default function MarriageDetail() {
             );
 
         return <></>;
-    }, [
-        vitalData,
-        certificateData,
-        resolutionIsLoading,
-        wifeData,
-        husbandData,
-    ]);
+    }, [status, certificateUrl, resolutionIsLoading]);
 
     const requirementsandaction = [
         {
