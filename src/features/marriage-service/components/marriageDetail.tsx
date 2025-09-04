@@ -96,6 +96,7 @@ export default function MarriageDetail() {
             data: certificateData,
         },
     ] = useSubmitCertificateRequestMutation();
+
     const handleRequestCertificate = async () => {
         console.log("husbandData", husbandData.personalInfo);
         const husband = husbandData.personalInfo.localizedContent.en;
@@ -248,6 +249,8 @@ export default function MarriageDetail() {
               data?.data?.supporting_doc_url
           )
         : [];
+
+    console.log("here");
     const marriageDetailOptions = [
         {
             label: "General Info",
@@ -380,7 +383,13 @@ export default function MarriageDetail() {
             );
 
         return <></>;
-    }, [vitalData, certificateData, resolutionIsLoading]);
+    }, [
+        vitalData,
+        certificateData,
+        resolutionIsLoading,
+        wifeData,
+        husbandData,
+    ]);
 
     const requirementsandaction = [
         {

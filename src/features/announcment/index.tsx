@@ -1,17 +1,13 @@
 "use client";
 import LandingNavBar from "@/common/components/layout/landingNavBar";
 import { Button } from "@/common/components/ui/button";
-import { Card } from "@/common/components/ui/card";
 import React, { useEffect, useState } from "react";
 import ComplaintModal from "./components/complaintModal";
-import MarriageAvatar from "./components/marriageAvatar";
 import ellipse from "@/public/images/Ellipse-25.svg";
 import looper from "@/public/images/Looper-bg.svg";
 import Image from "next/image";
 import { PaginationComponent } from "@/common/components/ui/paginationComponent";
-import { useGetListQuery } from "@/features/list/api/listApi";
 import MarriageCard from "./components/MarriageCard";
-import { useGetVitalServiceEventQuery } from "../application-service/api/applicationApi";
 import { complaintType } from "./types/type";
 import { useGetAccouncementsQuery } from "./api/announcementApi";
 
@@ -43,32 +39,6 @@ const Announcement = () => {
         {
             label: "Announcement",
             value: "announcement",
-        },
-    ];
-    const marriageData = [
-        {
-            subcity: "Bole Subcity",
-            woreda: "02",
-            daysRemaining: "5",
-            id: 123,
-        },
-        {
-            subcity: "Bole Subcity",
-            woreda: "02",
-            daysRemaining: "5",
-            id: 123,
-        },
-        {
-            subcity: "Bole Subcity",
-            woreda: "02",
-            daysRemaining: "5",
-            id: 123,
-        },
-        {
-            subcity: "Bole Subcity",
-            woreda: "02",
-            daysRemaining: "5",
-            id: 123,
         },
     ];
 

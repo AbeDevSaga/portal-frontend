@@ -70,6 +70,7 @@ const nextConfig = {
         port: '9000',
         pathname: '/vital-certificates/**',
       },
+
     ],
   },
   webpack: (config) => {
