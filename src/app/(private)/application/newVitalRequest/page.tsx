@@ -1,18 +1,20 @@
+"use client";
 import HeroSection from "@/common/components/common/HeroSection";
 import { Card, CardContent, CardHeader } from "@/common/components/ui/card";
 import { newVitalRequestOptions } from "@/common/utils/constants/vitalServices";
 import Image from "next/image";
 import Link from "next/link";
+import { ServiceList } from "../../components/ServiceCard";
 export default function Page() {
-    return (
-        <>
-            {" "}
-            <HeroSection
-                title='New Vital Request'
-                description='This is the New Vital Request Section'
-                action={<></>}
-            />
-            <div className='grid md:grid-cols-2 xl:grid-cols-4 gap-5 md:gap-7 xl:gap-10'>
+  return (
+    <>
+      {" "}
+      <HeroSection
+        title="New Vital Request"
+        description="This is the New Vital Request Section"
+        action={<></>}
+      />
+      {/* <div className='grid md:grid-cols-2 xl:grid-cols-4 gap-5 md:gap-7 xl:gap-10'>
                 {newVitalRequestOptions.map((option) => (
                     <Link
                         href={option.link}
@@ -37,7 +39,8 @@ export default function Page() {
                         </Card>
                     </Link>
                 ))}
-            </div>
-        </>
-    );
+            </div> */}
+      <ServiceList />
+    </>
+  );
 }
