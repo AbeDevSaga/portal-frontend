@@ -1,7 +1,12 @@
+import BirthDetail from "@/app/(private)/components/BirthDetail";
 import React from "react";
 
-function LostBirthForm() {
-  return <div>LostBirthForm</div>;
+function LostBirthRequest() {
+  return (
+    <>
+      <BirthDetail />
+    </>
+  );
 }
 
-export default LostBirthForm;
+export default LostBirthRequest;

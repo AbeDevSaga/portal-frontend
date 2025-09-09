@@ -21,7 +21,7 @@ export default function List() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const typeValue = searchParams.get("type") || "";
-    const statusValue = searchParams.get("status") || "MARRIAGE";
+    const statusValue = searchParams.get("status") || "BIRTH";
     const [pageDetail, setPageDetail] = useState({
         pageIndex: 0,
         pageCount: 1,
