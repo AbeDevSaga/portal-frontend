@@ -47,6 +47,8 @@ export default function BirthDetail() {
     }
   }, [data]);
 
+  
+
   const requirementsandaction = [
     {
       title: "Correction",

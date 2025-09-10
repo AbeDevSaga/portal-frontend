@@ -5,11 +5,14 @@ import divorce from "@/public/images/divorce.svg";
 import recognition from "@/public/images/recognition.svg";
 import adoption from "@/public/images/adoption.svg";
 import legitimation from "@/public/images/legitimation.svg";
+import vitalImage from "@/public/images/sidebar/vitalService.png";
+import residentImage from "@/public/images/sidebar/residentService.png";
+import docAuthentication from "@/public/images/sidebar/docAuthent.png";
 
 export const serviceList = [
   {
     name: "Vital Service",
-    icon: birth.src,
+    icon: vitalImage.src,
     description:
       "The is the description of vital service with their services. The is the description of vital service with their services. The is the description of vital service with their services.",
     subServices: [
@@ -17,77 +20,92 @@ export const serviceList = [
         name: "Birth",
         icon: birth.src,
         requests: [
-          { type: "New", link: "/application/birth/new" },
-          { type: "Lost", link: "/application/birth/lost" },
-          { type: "Damaged", link: "/application/birth/damaged" },
-          { type: "Correction", link: "/application/birth/correction" },
+          { type: "New", link: "/civil-registration/birth/new" },
+          { type: "Lost", link: "/civil-registration/birth/lost" },
+          { type: "Damaged", link: "/civil-registration/birth/damaged" },
+          { type: "Correction", link: "/civil-registration/birth/correction" },
         ],
       },
       {
         name: "Marriage",
         icon: marriage.src,
         requests: [
-          { type: "New", link: "/application/marriage/new" },
-          { type: "Lost", link: "/application/marriage/lost" },
-          { type: "Damaged", link: "/application/marriage/damaged" },
-          { type: "Correction", link: "/application/marriage/correction" },
+          { type: "New", link: "/civil-registration/marriage/new" },
+          { type: "Lost", link: "/civil-registration/marriage/lost" },
+          { type: "Damaged", link: "/civil-registration/marriage/damaged" },
+          {
+            type: "Correction",
+            link: "/civil-registration/marriage/correction",
+          },
         ],
       },
       {
         name: "Devorce",
         icon: divorce.src,
         requests: [
-          { type: "New", link: "/application/divorce/new" },
-          { type: "Lost", link: "/application/divorce/lost" },
-          { type: "Damaged", link: "/application/divorce/damaged" },
-          { type: "Correction", link: "/application/divorce/correction" },
+          { type: "New", link: "/civil-registration/divorce/new" },
+          { type: "Lost", link: "/civil-registration/divorce/lost" },
+          { type: "Damaged", link: "/civil-registration/divorce/damaged" },
+          {
+            type: "Correction",
+            link: "/civil-registration/divorce/correction",
+          },
         ],
       },
       {
         name: "Death",
         icon: death.src,
         requests: [
-          { type: "New", link: "/application/death/new" },
-          { type: "Lost", link: "/application/death/lost" },
-          { type: "Damaged", link: "/application/death/damaged" },
-          { type: "Correction", link: "/application/death/correction" },
+          { type: "New", link: "/civil-registration/death/new" },
+          { type: "Lost", link: "/civil-registration/death/lost" },
+          { type: "Damaged", link: "/civil-registration/death/damaged" },
+          { type: "Correction", link: "/civil-registration/death/correction" },
         ],
       },
       {
         name: "Adoption",
         icon: adoption.src,
         requests: [
-          { type: "New", link: "/application/adoption/new" },
-          { type: "Lost", link: "/application/adoption/lost" },
-          { type: "Damaged", link: "/application/adoption/damaged" },
-          { type: "Correction", link: "/application/adoption/correction" },
+          { type: "New", link: "/civil-registration/adoption/new" },
+          { type: "Lost", link: "/civil-registration/adoption/lost" },
+          { type: "Damaged", link: "/civil-registration/adoption/damaged" },
+          {
+            type: "Correction",
+            link: "/civil-registration/adoption/correction",
+          },
         ],
       },
       {
         name: "Legitimation of Fatherhood",
         icon: legitimation.src,
         requests: [
-          { type: "New", link: "/application/fatherhood/new" },
-          { type: "Lost", link: "/application/fatherhood/lost" },
-          { type: "Damaged", link: "/application/fatherhood/damaged" },
-          { type: "Correction", link: "/application/fatherhood/correction" },
+          { type: "New", link: "/civil-registration/fatherhood/new" },
+          { type: "Lost", link: "/civil-registration/fatherhood/lost" },
+          { type: "Damaged", link: "/civil-registration/fatherhood/damaged" },
+          {
+            type: "Correction",
+            link: "/civil-registration/fatherhood/correction",
+          },
         ],
       },
       {
         name: "Recognition of Child",
         icon: recognition.src,
         requests: [
-          { type: "New", link: "/application/childhood/new" },
-          { type: "Lost", link: "/application/childhood/lost" },
-          { type: "Damaged", link: "/application/childhood/damaged" },
-          { type: "Correction", link: "/application/childhood/correction" },
+          { type: "New", link: "/civil-registration/childhood/new" },
+          { type: "Lost", link: "/civil-registration/childhood/lost" },
+          { type: "Damaged", link: "/civil-registration/childhood/damaged" },
+          {
+            type: "Correction",
+            link: "/civil-registration/childhood/correction",
+          },
         ],
       },
     ],
   },
   {
     name: "Resident Service",
-    icon: birth.src,
+    icon: residentImage.src,
     description:
       "The is the description of resident service with their services. The is the description of resident service with their services. The is the description of resident service with their services.",
     subServices: [
@@ -150,7 +168,7 @@ export const serviceList = [
   },
   {
     name: "Document Authentication",
-    icon: birth.src,
+    icon: docAuthentication.src,
     description:
       "The is the description of document authentication with their services. The is the description of document authentication with their services.",
     subServices: [

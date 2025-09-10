@@ -129,7 +129,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-[#FFFFFF]">
       <CardHeader className="flex-row items-center gap-4">
         <div className="w-12 h-12 relative">
           <Image
@@ -143,7 +143,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
       </CardHeader>
 
       <CardContent>
-        <CardDescription className="mb-6">
+        <CardDescription className="mb-4 text-[16.64px]">
           {service.description}
         </CardDescription>
 
@@ -167,7 +167,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                     className="object-contain"
                   />
                 </div>
-                <span className="font-medium text-sm">{subService.name}</span>
+                <span className="font-medium text-[16.83px] text-[#073954]">
+                  {subService.name}
+                </span>
                 <div className="ml-auto transition-transform duration-300">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -281,12 +283,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         {service.subServices.length > maxVisibleSubServices ? (
           <button
             onClick={() => setShowAllSubServices(!showAllSubServices)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 mt-2"
+            className="w-full text-[16.81px] text-[#073954] text-bold hover:text-foreground transition-colors flex items-center justify-end py-2 mt-2"
           >
             {showAllSubServices ? (
               <>
-                <span>Show Less</span>
-                <svg
+                <span>Less</span>
+                {/* <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"
@@ -299,14 +301,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                   className="transform transition-transform duration-300"
                 >
                   <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
+                </svg> */}
               </>
             ) : (
               <>
-                <span>
-                  Show {service.subServices.length - maxVisibleSubServices} More
-                </span>
-                <svg
+                <span>More</span>
+                {/* <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"
@@ -319,22 +319,32 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                   className="transform transition-transform duration-300"
                 >
                   <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
+                </svg> */}
               </>
             )}
           </button>
         ) : (
-          <button className="text-sm text-muted-foreground hover:text-foreground transition-colors"></button>
+          <button className="w-full p-2">
+            <button className="w-full h-3 mt-3 gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"></button>
+          </button>
         )}
       </CardContent>
     </Card>
   );
 };
 
-// Main Service List Component
-const ServiceList: React.FC = () => {
+interface ServiceListProps {
+  gap?: string;
+}
+
+const ServiceList: React.FC<ServiceListProps> = ({ gap = "2" }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-start">
+    <div
+      className={cn(
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start",
+        `${gap}`
+      )}
+    >
       {serviceList.map((service) => (
         <ServiceCard key={service.name} service={service} />
       ))}

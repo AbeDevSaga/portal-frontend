@@ -1,38 +1,38 @@
 import {
-    BIRTH_CREATE_ENDPOINT,
-    BIRTH_LIST_ENDPOINT,
-    BIRTH_SLUG_ENDPOINT,
+  BIRTH_CREATE_ENDPOINT,
+  BIRTH_LIST_ENDPOINT,
 } from "@/common/utils/constants/EndPoints";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const birthApi = createApi({
-    reducerPath: "birthApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_IDX_BACKEND1,
+  reducerPath: "birthApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_IDX_BACKEND1,
+  }),
+  endpoints: (builder) => ({
+    getBirthsList: builder.query<any, { page?: number; perPage?: number }>({
+      query: ({ page = 1, perPage = 10 } = {}) =>
+        `${BIRTH_LIST_ENDPOINT}?page=${page}&perPage=${perPage}`,
     }),
-    endpoints: (builder) => ({
-        getBirthsList: builder.query<any, { page?: number; perPage?: number }>({
-            query: ({ page = 1, perPage = 10 } = {}) => {
-                return `${BIRTH_LIST_ENDPOINT}?page=${page}&perPage=${perPage}`;
-            },
-        }),
-        getBirthBySlug: builder.query({
-            query: ({ id }) => {
-                return `${BIRTH_SLUG_ENDPOINT}/${id}`;
-            },
-        }),
-        submitForm: builder.mutation<any, Record<string, any>>({
-            query: (formData) => ({
-                url: BIRTH_CREATE_ENDPOINT,
-                method: "POST",
-                body: formData,
-            }),
-        }),
+
+    // updated slug to use query param
+    getBirthBySlug: builder.query<any, { id: string }>({
+      query: ({ id }) =>
+        `/birth-registrations/vital-request?registrationFormNumber=${id}`,
     }),
+
+    submitForm: builder.mutation<any, Record<string, any>>({
+      query: (formData) => ({
+        url: BIRTH_CREATE_ENDPOINT,
+        method: "POST",
+        body: formData,
+      }),
+    }),
+  }),
 });
 
 export const {
-    useSubmitFormMutation,
-    useGetBirthsListQuery,
-    useGetBirthBySlugQuery,
+  useSubmitFormMutation,
+  useGetBirthsListQuery,
+  useGetBirthBySlugQuery,
 } = birthApi;

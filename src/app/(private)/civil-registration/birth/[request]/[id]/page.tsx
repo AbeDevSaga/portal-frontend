@@ -15,7 +15,7 @@ import { mockBirthResponse } from "@/common/utils/constants/mock/birth";
 import { BirthResponse } from "@/features/birth-service/types";
 import { useGetBirthBySlugQuery } from "@/redux/api/birthApi";
 
-export default function BirthDetail() {
+export default function RequestDetail() {
   const [response, setResponse] = useState<BirthResponse | null>(null);
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -43,16 +43,16 @@ export default function BirthDetail() {
   } = useGetVitalServiceEventQuery({ id: slug });
 
   const requirementsandaction = [
-    // {
-    //   title: "Correction",
-    //   details: [
-    //     "For Name Change, the person must provide court letter",
-    //     "For age correction if the new age is two years less than or greater than current age, court letter must be provided",
-    //     "For Spelling correction, user consent is enough",
-    //   ],
-    //   buttonTitle: "Request Correction",
-    //   paymentAmount: 250,
-    // },
+    {
+      title: "Correction",
+      details: [
+        "For Name Change, the person must provide court letter",
+        "For age correction if the new age is two years less than or greater than current age, court letter must be provided",
+        "For Spelling correction, user consent is enough",
+      ],
+      buttonTitle: "Request Correction",
+      paymentAmount: 250,
+    },
     {
       title: "Lost",
       details: [
@@ -61,12 +61,12 @@ export default function BirthDetail() {
       buttonTitle: "Request Lost Certificate",
       paymentAmount: 250,
     },
-    // {
-    //   title: "Damaged",
-    //   details: ["The Damaged certificate must be presented"],
-    //   buttonTitle: "Request Damaged Certificate",
-    //   paymentAmount: 250,
-    // },
+    {
+      title: "Damaged",
+      details: ["The Damaged certificate must be presented"],
+      buttonTitle: "Request Damaged Certificate",
+      paymentAmount: 250,
+    },
   ];
 
   const handleCopy = async (value: string) => {
@@ -185,135 +185,133 @@ export default function BirthDetail() {
     const child = d.localizations[0];
 
     return (
-      <div className="flex flex-col w-full">
-        <div className="flex flex-col md:flex-row w-full justify-between gap-4">
+      <div className="flex flex-col lg:flex-row w-full">
+        <Card className="flex flex-col md:flex-row w-full">
           {/* Profile (left) */}
-          <div className="flex flex-col space-y-2 items-center w-full md:w-1/3">
-            <div className="w-full p-4 pl-[0] flex items-center">
-              <div className="relative w-full max-w-[250px] aspect-square rounded-full overflow-hidden">
-                <Image
-                  src={child_image}
-                  alt="Child Profile"
-                  fill
-                  className="object-cover rounded-full"
-                />
-              </div>
+          <div className="p-5 flex flex-col items-center">
+            <Image
+              src={child_image}
+              alt="Child Profile"
+              width={150}
+              height={150}
+              className="rounded-sm overflow-clip mb-4"
+            />
+            <div className="rounded-full px-2 py-0.5 mx-auto text-sm text-[#073954]">
+              {child.childFirstName}
             </div>
-            <div className="w-full pr-4 flex flex-col items-center -justify-center">
-              <div className="text-sm text-[#073954] font-medium">
-                {child.childFirstName || "-"}
-              </div>
-              <div className="rounded-full py-1 px-4 bg-[#E8EEFD] text-[#073954] font-semibold text-sm">
-                Child
-              </div>
+            <div className="rounded-full py-0.5 mx-auto border text-sm px-8 bg-[#E8EEFD] text-[#073954] font-semibold">
+              Child
             </div>
           </div>
 
           {/* Info (right) */}
-          <div className="flex flex-col max-w-[250px] md:w-2/3 gap-3">
-            <span className="text-left font-semibold">Basic Information</span>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Child Name</p>
-              <p className="text-sm font-semibold">
+          <div className="rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full">
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Child Name</p>
+              <p className="text-sm text-right font-semibold w-fit">
                 {child.childFirstName || "-"}
               </p>
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Birth Date</p>
-              <p className="text-sm font-semibold">{child.birthDate || "-"}</p>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Birth Date</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.birthDate || "-"}
+              </p>
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Birth Time</p>
-              <p className="text-sm font-semibold">{child.birthTime || "-"}</p>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Birth Time</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.birthTime || "-"}
+              </p>
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Gender</p>
-              <p className="text-sm font-semibold">{child.gender || "-"}</p>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Gender</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.gender || "-"}
+              </p>
             </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Weight</p>
-              <p className="text-sm font-semibold">
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Weight</p>
+              <p className="text-sm text-right font-semibold w-fit">
                 {child.childWeight || "-"}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Height</p>
-              <p className="text-sm font-semibold">
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Height</p>
+              <p className="text-sm text-right font-semibold w-fit">
                 {child.childHeight || "-"}
               </p>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     );
   };
-
   const renderApplicationInfo = () => {
     const d = response?.data;
     if (!d) return null;
     const child = d.localizations[0];
 
     return (
-      <div className="flex flex-col w-full gap-3">
-        <span className="text-left font-semibold">Application</span>
-        <div className="flex flex-col md:flex-row w-full">
-          <div className="gap-2 max-w-[250px] flex flex-col justify-center w-full">
-            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Service</p>
-              <p className="text-sm text-right font-semibold w-fit">Birth</p>
+      <div className="flex flex-col lg:flex-row w-full">
+        <Card className="flex flex-col md:flex-row w-full">
+          {/* Profile (left) */}
+          <div className="p-5 flex flex-col items-center">
+            <Image
+              src={child_image}
+              alt="Child Profile"
+              width={150}
+              height={150}
+              className="rounded-sm overflow-clip mb-4"
+            />
+            <div className="rounded-full px-2 py-0.5 mx-auto text-sm text-[#073954]">
+              {child.childFirstName}
             </div>
-            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Service Type</p>
-              <p className="text-sm text-right font-semibold w-fit">Lost</p>
+            <div className="rounded-full py-0.5 mx-auto border text-sm px-8 bg-[#E8EEFD] text-[#073954] font-semibold">
+              Child
             </div>
+          </div>
+
+          {/* Info (right) */}
+          <div className="rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full">
             <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Appointment Date</p>
+              <p className="text-sm">Child Name</p>
               <p className="text-sm text-right font-semibold w-fit">
-                {child.issuedDate || "-"}
+                {child.childFirstName || "-"}
+              </p>
+            </div>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Birth Date</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.birthDate || "-"}
+              </p>
+            </div>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Birth Time</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.birthTime || "-"}
+              </p>
+            </div>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Gender</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.gender || "-"}
+              </p>
+            </div>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Weight</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.childWeight || "-"}
+              </p>
+            </div>
+            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Height</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {child.childHeight || "-"}
               </p>
             </div>
           </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderBirthInfo = () => {
-    const d = response?.data;
-    if (!d) return null;
-    const child = d.localizations[0];
-
-    return (
-      <div className="flex flex-col w-full gap-3">
-        <span className="text-left font-semibold">Birth Information</span>
-        <div className="gap-2 min-w-[250px] flex flex-col justify-center w-full">
-          <div className="flex justify-between space-x-5 border-b pb-2">
-            <p className="text-sm text-gray-600">Child Name</p>
-            <p className="text-sm font-semibold">
-              {child.childFirstName || "-"}
-            </p>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Birth Date</p>
-            <p className="text-sm font-semibold">{child.birthDate || "-"}</p>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Birth Time</p>
-            <p className="text-sm font-semibold">{child.birthTime || "-"}</p>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Gender</p>
-            <p className="text-sm font-semibold">{child.gender || "-"}</p>
-          </div>
-          <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Weight</p>
-            <p className="text-sm font-semibold">{child.childWeight || "-"}</p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-sm text-gray-600">Height</p>
-            <p className="text-sm font-semibold">{child.childHeight || "-"}</p>
-          </div>
-        </div>
+        </Card>
       </div>
     );
   };
@@ -339,40 +337,23 @@ export default function BirthDetail() {
     );
   };
 
-  const renderLineSeparator = () => {
-    return (
-      <div className="w-full py-4">
-        <div className="w-full h-[2px] bg-gray-200 rounded"></div>
-      </div>
-    );
-  };
-
   const renderEducationInfo = () => {
     const d = response?.data;
     if (!d) return null;
-    const child = d.localizations[0];
-
     return (
-      <div className="w-full flex flex-col gap-3">
-        <span className="text-left font-semibold">
-          Education and Work Information
-        </span>
-        <div className="w-full flex flex-col md:flex-row">
-          <div className="w-full min-w-[250px] gap-2 flex flex-col justify-center">
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Education Level</p>
-              <p className="text-sm text-right font-semibold w-fit">{"----"}</p>
-            </div>
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Occupation Type</p>
-              <p className="text-sm text-right font-semibold w-fit">{"----"}</p>
-            </div>
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Work Place Home</p>
-              <p className="text-sm text-right font-semibold w-fit">{"----"}</p>
-            </div>
-          </div>
-        </div>
+      <div className="space-y-3">
+        <p>
+          <b>Child Name:</b> {d.localizations[0].childFirstName}
+        </p>
+        <p>
+          <b>Birth Date:</b> {d.localizations[0].birthDate}
+        </p>
+        <p>
+          <b>Gender:</b> {d.localizations[0].gender}
+        </p>
+        <p>
+          <b>Weight:</b> {d.localizations[0].childWeight}
+        </p>
       </div>
     );
   };
@@ -392,36 +373,23 @@ export default function BirthDetail() {
         }
       />
 
-      <div className="w-full flex flex-wrap xl:flex-nowrap gap-4">
+      <div className="flex flex-wrap xl:flex-nowrap gap-10">
         {isLoading ? (
           <Card className="flex-1 flex items-center justify-center min-h-[350px] h-fit">
             <Loader className="animate-spin" />
           </Card>
         ) : null}
-        {/* Inofrmation Section */}
+
         {response ? (
-          <Card className="w-full w-2/3 flex flex-col p-5">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-10 h-fit">
-              <div className="w-full md:col-span-3 h-fit">{renderBasicInfo()}</div>
-              <div className="w-full md:col-span-2 h-fit">
-                {renderApplicationInfo()}
-              </div>
-            </div>
-            {renderLineSeparator()}
-            <div className="flex flex-cols item-center justify-between gap-5 h-fit">
-              <div className="h-fit">{renderBirthInfo()}</div>
-              <div className="h-fit">{renderBirthInfo()}</div>
-            </div>
-            {renderLineSeparator()}
-            <div className="flex flex-cols item-center justify-between gap-5 h-fit">
-              <div className="h-fit">{renderEducationInfo()}</div>
-              <div className="h-fit">{renderEducationInfo()}</div>
-            </div>
-          </Card>
+          <div className="grid grid-cols-2 gap-5 w-full h-fit">
+            <Card className="p-5 pb-10 space-y-5 w-full col-span-2 h-fit">
+              {renderBasicInfo()}
+            </Card>
+          </div>
         ) : null}
 
         {/* Sidebar */}
-        <div className="w-1/3 flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
+        <div className="w-fit min-w-[350px] 2xl:min-w-[500px] flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
           {showTimer ? (
             <Card
               className="p-5"

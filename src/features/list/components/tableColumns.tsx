@@ -33,9 +33,9 @@ export const TableColumns: ColumnDef<unknown>[] = [
             const theEventType = row.original?.eventType;
             let linkPage = "";
             if(theEventType === EventTypes.BIRTH) {
-                linkPage = `/application/birth/detail/${recordId}`;
+                linkPage = `/civil-registration/birth/detail/${recordId}`;
             } else if (theEventType === EventTypes.MARRIAGE) {
-                linkPage = `/application/marriage/detail/${recordId}`;
+                linkPage = `/civil-registration/marriage/detail/${recordId}`;
             }
             console.log("theEventType", theEventType);
 

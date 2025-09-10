@@ -1,0 +1,127 @@
+{
+  "requesterId": "123e4567-e89b-12d3-a456-426614174000",
+  "actionType": "NEW", // NEW,CORRECTION,LOST,DAMAGE,REPLACEMENT,DUPLICATE_ISSUE
+  "birthType": "TWIN", // SINGLE, TWIN, TRIPLET, QUADRUPLET
+  "births": [
+    {
+      "registrationOfficeNumber": "OFFICE123",
+      "hospitalNotificationId": null,
+      "childResidentId": "223e4567-e89b-12d3-a456-426614174001",
+      "fatherResidentId": "323e4567-e89b-12d3-a456-426614174002",
+      "motherResidentId": "423e4567-e89b-12d3-a456-426614174003",
+      "declarantResidentId": "523e4567-e89b-12d3-a456-426614174004",
+      "bloodType": "623e4567-e89b-12d3-a456-426614174005",
+      "nationality": "723e4567-e89b-12d3-a456-426614174006",
+      "localizations": [
+        {
+          "childFirstName": "Abel",
+          "languageCode": "en",
+          "placeOfBirth": {
+            "type": "HEALTH_FACILITY",
+            "facilityName": "Addis Ababa General Hospital",
+            "facilityType": "Hospital",
+            "facilityOwnership": "Government",
+            "facilityNotificationRef": "REF12345"
+          },
+          "birthType": "TWIN",
+          "birthDate": "2025-08-20T10:15:00.000Z",
+          "birthTime": "10:15",
+          "childWeight": 3.2,
+          "childHeight": 50.5,
+          "childHeadCircumference": "34.0",
+          "childBirthOrder": "1",
+          "issuedDate": "2025-08-20",
+          "reason": "Routine birth registration",
+          "gender": "Male",
+          "declarantRelation": "Mother",
+          "attendantName": "Dr. Alem",
+          "attendantQualification": "Pediatrician"
+        },
+        {
+          "childFirstName": "አቤል",
+          "languageCode": "am",
+          "placeOfBirth": {
+            "type": "HEALTH_FACILITY", // HEALTH_FACILITY,NON_FACILITY
+            "facilityName": "አዲስ አበባ ጠቅላላ ሆስፒታል",
+            "facilityType": "Hospital",
+            "facilityOwnership": "Government",
+            "facilityNotificationRef": "REF12345"
+          },
+          "birthType": "TWIN",
+          "birthDate": "2025-08-20T10:15:00.000Z",
+          "birthTime": "10:15",
+          "childWeight": 3.2,
+          "childHeight": 50.5,
+          "childHeadCircumference": "34.0",
+          "childBirthOrder": "1",
+          "issuedDate": "2025-08-20",
+          "reason": "Routine birth registration",
+          "gender": "Male",
+          "declarantRelation": "Mother",
+          "attendantName": "ዶ/ር አለም",
+          "attendantQualification": "ልጆች ሐኪም"
+        }
+      ]
+    },
+    {
+      "registrationOfficeNumber": "OFFICE123",
+      "hospitalNotificationId": null,
+      "childResidentId": "823e4567-e89b-12d3-a456-426614174007",
+      "fatherResidentId": "323e4567-e89b-12d3-a456-426614174002",
+      "motherResidentId": "423e4567-e89b-12d3-a456-426614174003",
+      "declarantResidentId": "523e4567-e89b-12d3-a456-426614174004",
+      "bloodType": "923e4567-e89b-12d3-a456-426614174008",
+      "nationality": "723e4567-e89b-12d3-a456-426614174006",
+      "localizations": [
+        {
+          "childFirstName": "Selam",
+          "languageCode": "en",
+          "placeOfBirth": {
+            "type": "HEALTH_FACILITY", // HEALTH_FACILITY,NON_FACILITY
+            "facilityName": "Addis Ababa General Hospital",
+            "facilityType": "Hospital",
+            "facilityOwnership": "Government",
+            "facilityNotificationRef": "REF12345"
+          },
+          "birthType": "TWIN",
+          "birthDate": "2025-08-20T10:15:00.000Z",
+          "birthTime": "10:15",
+          "childWeight": 3.0,
+          "childHeight": 49.0,
+          "childHeadCircumference": "33.5",
+          "childBirthOrder": "2",
+          "issuedDate": "2025-08-20",
+          "reason": "Routine birth registration",
+          "gender": "Female",
+          "declarantRelation": "Mother",
+          "attendantName": "Dr. Alem",
+          "attendantQualification": "Pediatrician"
+        },
+        {
+          "childFirstName": "ሰላም",
+          "languageCode": "am",
+          "placeOfBirth": {
+            "type": "HEALTH_FACILITY",
+            "facilityName": "አዲስ አበባ ጠቅላላ ሆስፒታል",
+            "facilityType": "Hospital",
+            "facilityOwnership": "Government",
+            "facilityNotificationRef": "REF12345"
+          },
+          "birthType": "TWIN",
+          "birthDate": "2025-08-20T10:15:00.000Z",
+          "birthTime": "10:15",
+          "childWeight": 3.0,
+          "childHeight": 49.0,
+          "childHeadCircumference": "33.5",
+          "childBirthOrder": "2",
+          "issuedDate": "2025-08-20",
+          "reason": "Routine birth registration",
+          "gender": "Female",
+          "declarantRelation": "Mother",
+          "attendantName": "ዶ/ር አለም",
+          "attendantQualification": "ልጆች ሐኪም"
+        }
+      ]
+    }
+  ]
+}
