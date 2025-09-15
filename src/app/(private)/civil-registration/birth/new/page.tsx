@@ -27,6 +27,8 @@ export default function NewBirthRegistrationPage() {
   // Dynamically select form configuration based on selected option
   const currentFormConfig = useMemo(() => {
     switch (selected) {
+      case "newChild":
+        return birthNewChildConfig;
       case "registeredHospital":
         return birthRegisteredHospitalConfig;
       case "registeredFamily":
@@ -39,12 +41,7 @@ export default function NewBirthRegistrationPage() {
   const { allFields, groupMap } = generateFieldGrouping(currentFormConfig);
 
   const handleChange = (value: string) => {
-    if (value === selected) {
-      setSelected("newChild");
-    } else {
-      setSelected(value);
-    }
-    console.log("Selected:", value);
+    setSelected(value);
   };
 
   // Reset expanded sections when form configuration changes
@@ -213,6 +210,7 @@ export default function NewBirthRegistrationPage() {
     console.log("result", result);
     if (result.success) {
       const bodyMapped = mapDataModel(value);
+      console.log("Mapped value: ", value)
       // Form is ready for submission
       // console.log("Form is ready! API Payload:", bodyMapped);
       // console.log(
@@ -221,7 +219,7 @@ export default function NewBirthRegistrationPage() {
       // );
 
       // Here you can make your API call
-      submitBirthRegistration(bodyMapped);
+      // submitBirthRegistration(bodyMapped);
     } else {
       // Form is not ready - validation errors are already shown
       console.log("Form is not ready:", result.data);
@@ -266,6 +264,19 @@ export default function NewBirthRegistrationPage() {
         <RadioGroup value={selected} className="space-y-3">
           <div className="flex items-center space-x-2">
             <RadioGroupItem
+              value="newChild"
+              id="newChild"
+              onClick={() => handleChange("newChild")}
+            />
+            <Label
+              htmlFor="newChild"
+              className="text-[#0c4a6b] text-md font-medium"
+            >
+              Family Member but not registered yet
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem
               value="registeredHospital"
               id="registeredHospital"
               onClick={() => handleChange("registeredHospital")}
@@ -274,7 +285,7 @@ export default function NewBirthRegistrationPage() {
               htmlFor="registeredHospital"
               className="text-[#0c4a6b] text-md font-medium"
             >
-              Registered in hospital?
+              Registered in hospital
             </Label>
           </div>
 
@@ -288,7 +299,7 @@ export default function NewBirthRegistrationPage() {
               htmlFor="registeredFamily"
               className="text-[#0c4a6b] text-md font-medium"
             >
-              Already registered as family member?
+              Already registered as family member
             </Label>
           </div>
         </RadioGroup>
