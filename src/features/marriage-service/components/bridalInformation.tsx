@@ -5,27 +5,28 @@ import groom from "@/public/images/groom.svg";
 import bride from "@/public/images/bride.svg";
 import { MarriageData } from "../types";
 
+
 const ProfileComponent = ({
   image,
   name,
   bridalType,
 }: {
-  name: string;
+  name?: string;
   bridalType: string;
   image: string;
 }) => (
-  <div className="p-5 flex flex-col items-center">
+  <div className="flex flex-col items-center justify-center w-fit px-5 mx-auto ">
     <Image
       src={image}
       alt={bridalType}
-      width={150}
-      height={150}
-      className="rounded-sm overflow-clip mb-4"
+      width={100}
+      height={100}
+      className="rounded-sm overflow-clip mb-1"
     />
-    <div className="rounded-full px-2 py-0.5 mx-auto text-sm text-[#073954]">
-      {name}
+    <div className="rounded-full text-center font-medium text-gray-800 text-sm px-2 py-0.5 mx-auto !min-w-fit">
+      {name || "N/A"}
     </div>
-    <div className="rounded-full py-0.5 mx-auto border text-sm px-8 bg-[#E8EEFD] text-[#073954] font-semibold">
+    <div className="rounded-full mt-2 py-0.5 mx-auto border text-sm px-8 bg-[#E8EEFD]">
       {bridalType}
     </div>
   </div>
@@ -62,8 +63,10 @@ const InformationComponent = ({
             </p>
           </div>
           <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-            <p className="text-sm">National ID Number</p>
-            <p className="text-sm text-right font-semibold w-fit">----</p>
+            <p className="text-sm">Marital Status</p>
+            <p className="text-sm text-right font-semibold w-fit">
+              {personal?.maritalStatus?.localizedContent?.en?.name ?? "Single"}
+            </p>
           </div>
           <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
             <p className="text-sm">Date of Birth</p>
@@ -121,7 +124,7 @@ const BridalInformation = ({ data }: { data: any }) => {
   return (
     <div>
       <p className="text-xl font-semibold border-b pb-7 text-[#073954]">
-        Bridal Information
+      Groom & Bridal Information
       </p>
       <InformationComponent person={data.husband} type="Groom" />
       <InformationComponent person={data.wife} type="Bride" />
