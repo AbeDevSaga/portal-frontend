@@ -1,9 +1,9 @@
-import MarriageDetail from "@/features/marriage-service/components/marriageDetail";
+import MarriageDetail from "@/app/(private)/components/MarriageDetail";
 
 export default function DetailPage() {
-    return (
-        <>
-            <MarriageDetail />
-        </>
-    );
+  return (
+    <>
+      <MarriageDetail />
+    </>
+  );
 }

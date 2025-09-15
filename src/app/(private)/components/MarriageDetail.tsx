@@ -5,15 +5,10 @@ import { useEffect, useState } from "react";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import HeroSection from "@/common/components/common/HeroSection";
-import { useGetMarriageBySlugQuery } from "../api/marriageApi";
-import { MarriageData } from "../types";
 import {
   useGetVitalServiceEventQuery,
   useSubmitResolutionFormMutation,
 } from "@/features/application-service/api/applicationApi";
-import RejectionModal from "./rejectionModal";
-import GeneralInformation from "./generalInformation";
-import BridalInformation from "./bridalInformation";
 import general from "@/public/images/general.svg";
 import witness from "@/public/images/witness.svg";
 import marriage from "@/public/images/marraige2.svg";
@@ -21,11 +16,15 @@ import generalActive from "@/public/images/generalActive.svg";
 import marriageActive from "@/public/images/marraigeActive.svg";
 import witnessActive from "@/public/images/witnessActive.svg";
 import Image from "next/image";
-import WitnessInformation from "./witnessInformation";
 import check from "@/public/images/check.svg";
 import FileViewer from "@/common/components/common/FileViewer";
 import FileViewerModal from "@/common/components/common/FileModalCompoennt";
 import { useSubmitCertificateRequestMutation } from "@/features/application-service/api/certificateApi";
+import BridalInformation from "@/features/marriage-service/components/bridalInformation";
+import WitnessInformation from "@/features/marriage-service/components/witnessInformation";
+import RejectionModal from "@/features/marriage-service/components/rejectionModal";
+import { useGetMarriageBySlugQuery } from "@/features/marriage-service/api/marriageApi";
+import GeneralInformation from "@/features/marriage-service/components/generalInformation";
 
 const body = {
   request: {
@@ -79,7 +78,6 @@ const body = {
 // }[];
 
 export default function MarriageDetail() {
-  const [response, setResponse] = useState<MarriageData | null>(null);
   const [openFileModal, setOpenFileModal] = useState(false);
   const [openRejectModal, setOpenRejectModal] = useState(false);
 
@@ -91,12 +89,6 @@ export default function MarriageDetail() {
     id: slug,
   });
   const [displayDoc, setDisplayDoc] = useState("");
-
-  useEffect(() => {
-    if (!isError && !isLoading && data) {
-      setResponse(data.data);
-    }
-  }, [data]);
 
   const handleCopy = async (value: string) => {
     try {
@@ -174,12 +166,7 @@ export default function MarriageDetail() {
   const marriageDetailOptions = [
     {
       label: "General Info",
-      component: (
-        <GeneralInformation
-          data={data?.data || null}
-          status={vitalData ? vitalData.data.status : ""}
-        />
-      ),
+      component: <GeneralInformation data={data?.data || null} />,
       value: "general",
       image: general.src,
       imageActive: generalActive.src,
@@ -193,7 +180,7 @@ export default function MarriageDetail() {
     },
     {
       label: "Witnessess",
-      component: <WitnessInformation data={data?.data || null} />,
+      component: <WitnessInformation data={data?.data.witness || null} />,
       value: "witnessess",
       image: witness.src,
       imageActive: witnessActive.src,

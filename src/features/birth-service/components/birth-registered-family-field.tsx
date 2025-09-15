@@ -177,7 +177,7 @@ export const formConfig: FormConfig = {
             return "";
           },
           getDependentValue: (formValues: any) => ({
-            childId: formValues.childId.fatherId,
+            childId: formValues.childId,
           }),
           isDisabled: (dependentValues: any) => {
             return dependentValues?.childId;
@@ -205,7 +205,7 @@ export const formConfig: FormConfig = {
             return "";
           },
           getDependentValue: (formValues: any) => ({
-            childId: formValues.childId.motherId,
+            childId: formValues.childId,
           }),
           isDisabled: (dependentValues: any) => {
             return dependentValues?.childId;
@@ -233,7 +233,7 @@ export const formConfig: FormConfig = {
             return "";
           },
           getDependentValue: (formValues: any) => ({
-            childId: formValues.childId.gender,
+            childId: formValues.childId,
           }),
           isDisabled: (dependentValues: any) => {
             return dependentValues?.childId;
@@ -261,7 +261,7 @@ export const formConfig: FormConfig = {
             return "";
           },
           getDependentValue: (formValues: any) => ({
-            childId: formValues.childId.birthDate,
+            childId: formValues.childId,
           }),
           isDisabled: (dependentValues: any) => {
             return dependentValues?.childId;

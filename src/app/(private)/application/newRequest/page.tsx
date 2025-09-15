@@ -9,7 +9,7 @@ export default function Page() {
         description="This is the New Request Section"
         action={<></>}
       />
-      <ServiceList />
+      <ServiceList gap="gap-[15px]" />
     </>
   );
 }
