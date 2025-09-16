@@ -13,18 +13,18 @@ const ProfileComponent = ({
   bridalType: string;
   image: string;
 }) => (
-  <div className="flex flex-col items-center justify-center w-fit px-5 mx-auto min-w-[200px]">
+  <div className="flex flex-col items-center justify-center w-fit mx-auto min-w-[150px]">
     <Image
       src={image}
       alt={bridalType}
-      width={150}
-      height={150}
-      className="rounded-sm overflow-clip mb-4"
+      width={100}
+      height={100}
+      className="rounded-sm overflow-clip mb-1"
     />
-    <div className="rounded-full px-2 py-0.5 mx-auto !min-w-fit text-sm">
+    <div className="rounded-full text-center font-medium text-gray-800 text-base px-2 py-0.5 mx-auto !min-w-fit">
       {name || "N/A"}
     </div>
-    <div className="rounded-full py-0.5 mx-auto border text-sm px-8 bg-[#E8EEFD]">
+    <div className="rounded-full mt-2 py-0.5 mx-auto border text-sm px-8 bg-[#E8EEFD]">
       {bridalType}
     </div>
   </div>
@@ -52,29 +52,29 @@ const GeneralInformation = ({
   return (
     <div>
       <p className="text-xl font-semibold border-b pb-7">General Information</p>
-      <div className="flex flex-col lg:flex-row w-full py-5 gap-y-5">
+      <div className="flex flex-col justify-between lg:flex-row w-full py-5 gap-y-5">
         {/* Groom */}
         <ProfileComponent name={husbandName} bridalType="Groom" image={groom} />
 
-        {/* Info Card */}
-        <Card className="rounded-md py-5 px-5 gap-2 w-full flex flex-col justify-center bg-[#E8EEFD]">
-          <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-            <p className="text-sm">Registration Form Number</p>
-            <p className="text-sm font-semibold w-fit">
+        {/* Info Section */}
+        <div className="py-6 px-5 gap-4 w-full flex flex-col justify-center bg-gradient-to-br from-slate-50 to-blue-50 ">
+          <div className="w-full flex justify-between items-center gap-x-5 gap-y-2 border-b border-gray-200 pb-3">
+            <p className="text-sm font-medium text-slate-700">Registration Form Number</p>
+            <p className="text-sm font-semibold text-slate-900 w-fit text-right">
               {data?.registrationFormNumber || "N/A"}
             </p>
           </div>
-          <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-            <p className="text-sm">Marriage Request ID</p>
-            <p className="text-sm font-semibold w-fit">
+          <div className="w-full flex justify-between items-center gap-x-5 gap-y-2 border-b border-gray-200 pb-3">
+            <p className="text-sm font-medium text-slate-700">Marriage Request ID</p>
+            <p className="text-sm font-semibold text-slate-900 w-fit text-right">
               {data?.marriageRequestId || "N/A"}
             </p>
           </div>
-          <div className="w-full flex justify-between gap-x-5 gap-y-2">
-            <p className="text-sm">Status</p>
-            <p className="text-sm font-semibold w-fit">{data?.status || "N/A"}</p>
+          <div className="w-full flex justify-between items-center gap-x-5 gap-y-2">
+            <p className="text-sm font-medium text-slate-700">Status</p>
+            <p className="text-sm font-semibold text-slate-900 w-fit text-right">{data?.status || "N/A"}</p>
           </div>
-        </Card>
+        </div>
 
         {/* Bride */}
         <ProfileComponent name={wifeName} bridalType="Bride" image={bride} />
