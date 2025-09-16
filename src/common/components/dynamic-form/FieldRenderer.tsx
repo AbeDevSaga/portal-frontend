@@ -36,6 +36,7 @@ import { Calendar } from "../ui/calendar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 import {
   Select,
   SelectContent,
@@ -166,8 +167,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 <div>
                   <Label
                     className="text-primary font-semibold"
-                    htmlFor={field.key}
-                  >
+                    htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -241,8 +241,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 <div className="space-y-1 relative">
                   <Label
                     htmlFor={field.key}
-                    className="text-primary font-semibold"
-                  >
+                    className="text-primary font-semibold">
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -271,8 +270,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                       variant="ghost"
                       size="sm"
                       className="absolute right-2 top-1/2 -translate-y-1/2"
-                      onClick={() => setShow(!show)}
-                    >
+                      onClick={() => setShow(!show)}>
                       {show ? (
                         <EyeOff className="h-4 w-4" />
                       ) : (
@@ -328,20 +326,20 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
+                <div className="space-y-2">
                   <Label
                     className="text-primary font-semibold"
-                    htmlFor={field.key}
-                  >
+                    htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
                     ) : null}
                   </Label>
-                  <textarea
+                  <Textarea
                     {...formikField}
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className="w-full border border-gray-300 rounded-md"
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -418,8 +416,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                           value,
                         })
                       );
-                    }}
-                  >
+                    }}>
                     <SelectTrigger className="w-full">
                       <SelectValue
                         placeholder={dynamicPlaceholder || "Select an option"}
@@ -427,7 +424,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     </SelectTrigger>
                     <SelectContent>
                       {field.options?.map((opt, index) => (
-                        <SelectItem key={index} value={opt.value}>
+                        <SelectItem
+                          key={index}
+                          value={opt.value}>
                           {opt.label}
                         </SelectItem>
                       ))}
@@ -497,13 +496,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                       );
                     }}
                     className="flex space-x-4"
-                    disabled={isFieldDisabled}
-                  >
+                    disabled={isFieldDisabled}>
                     {field.options?.map((opt) => (
                       <Label
                         key={opt.value}
-                        className="flex items-center space-x-2"
-                      >
+                        className="flex items-center space-x-2">
                         <RadioGroupItem value={opt.value} />
                         <span>{opt.label}</span>
                       </Label>
@@ -718,20 +715,20 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               <div className="space-y-1 flex flex-col gap-2">
                 <Label
                   className="text-primary font-semibold"
-                  htmlFor={fieldKey}
-                >
+                  htmlFor={fieldKey}>
                   {fieldLabel}
                   {isRequired && <span className="pl-2 text-red-600">*</span>}
                 </Label>
-                <Popover open={isOpen} onOpenChange={setIsOpen}>
+                <Popover
+                  open={isOpen}
+                  onOpenChange={setIsOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className="!text-left w-full md:min-w-[250px]"
                       id={fieldKey}
                       disabled={isDisabled}
-                      onClick={() => setIsOpen(!isOpen)}
-                    >
+                      onClick={() => setIsOpen(!isOpen)}>
                       {displayDate}
                     </Button>
                   </PopoverTrigger>
@@ -739,8 +736,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     className="w-auto p-0"
                     align="start"
                     side="bottom"
-                    sideOffset={5}
-                  >
+                    sideOffset={5}>
                     <Calendar
                       mode="single"
                       selected={selectedDate}
@@ -822,7 +818,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
               // If field is hidden, render empty div to maintain hook consistency
               if (isFieldHidden) {
-                return <div key={field.key} style={{ display: "none" }}></div>;
+                return (
+                  <div
+                    key={field.key}
+                    style={{ display: "none" }}></div>
+                );
               }
 
               const handleValueChange = useCallback(
@@ -1485,8 +1485,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                       `${file.name}-${file.lastModified}-${file.size}` ||
                                       index
                                     }
-                                    className="flex items-center justify-between p-2 bg-gray-50 rounded border"
-                                  >
+                                    className="flex items-center justify-between p-2 bg-gray-50 rounded border">
                                     <div className="flex-1 min-w-0">
                                       <div className="text-sm font-medium text-gray-900 truncate">
                                         {file.name}
@@ -1501,8 +1500,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => removeFile(index)}
-                                      className="ml-2 text-red-600 hover:text-red-700"
-                                    >
+                                      className="ml-2 text-red-600 hover:text-red-700">
                                       Remove
                                     </Button>
                                   </div>
@@ -1526,8 +1524,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => removeFile(0)}
-                                    className="ml-2 text-red-600 hover:text-red-700"
-                                  >
+                                    className="ml-2 text-red-600 hover:text-red-700">
                                     Remove
                                   </Button>
                                 </div>
@@ -2809,8 +2806,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                           size="sm"
                           onClick={clearSignature}
                           disabled={isFieldDisabled}
-                          className="text-red-600 hover:text-red-700"
-                        >
+                          className="text-red-600 hover:text-red-700">
                           Clear Signature
                         </Button>
                       )}
@@ -2822,8 +2818,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                           size="sm"
                           onClick={saveSignature}
                           disabled={isFieldDisabled}
-                          className="text-blue-600 hover:text-blue-700"
-                        >
+                          className="text-blue-600 hover:text-blue-700">
                           Save Signature
                         </Button>
                       )}
@@ -3781,7 +3776,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="relative" ref={dropdownRef}>
+                <div
+                  className="relative"
+                  ref={dropdownRef}>
                   <Label className="text-primary font-semibold">
                     {field.label}
                     {isFieldRequired && (
@@ -3816,8 +3813,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                             <div
                               key={index}
                               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                              onClick={() => handleOptionSelect(option)}
-                            >
+                              onClick={() => handleOptionSelect(option)}>
                               {option[labelKey]}
                             </div>
                           ))
@@ -3864,8 +3860,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
     <div
       className={
         shouldUseFullWidth ? "col-span-12 w-full" : getGridClasses(field)
-      }
-    >
+      }>
       {renderFieldContent()}
     </div>
   );
