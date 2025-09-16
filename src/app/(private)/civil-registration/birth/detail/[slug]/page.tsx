@@ -6,16 +6,13 @@ import { useEffect, useState } from "react";
 import HeroSection from "@/common/components/common/HeroSection";
 import { Button } from "@/common/components/ui/button";
 import { Card } from "@/common/components/ui/card";
-import {
-  useSubmitResolutionFormMutation,
-} from "@/features/application-service/api/applicationApi";
+import { useSubmitResolutionFormMutation } from "@/features/application-service/api/applicationApi";
 import Image from "next/image";
 import child_image from "@/public/images/groom.svg";
 import { mockBirthResponse } from "@/common/utils/constants/mock/birth";
-import { BirthResponse } from "@/features/birth-service/types";
 
 export default function BirthDetailPage() {
-  const [response, setResponse] = useState<BirthResponse | null>(null);
+  const [response, setResponse] = useState<any | null>(null);
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
@@ -31,9 +28,10 @@ export default function BirthDetailPage() {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://crvs-birth.itsidx.com/api/v1/birth-registrations/vital-request/${slug}`
+          `http://168.231.109.155:8081/api/v1/birth-registrations/vital-request?registrationFormNumber=${slug}`
         );
         setResponse(res.data); // ✅ use live data
+        console.log("id: ", slug, " birth detail data: ", res);
       } catch (err: any) {
         console.error("API error:", err.message);
         setError(err.message || "Failed to fetch birth detail");
@@ -47,16 +45,16 @@ export default function BirthDetailPage() {
   }, [slug]);
 
   const requirementsandaction = [
-    // {
-    //   title: "Correction",
-    //   details: [
-    //     "For Name Change, the person must provide court letter",
-    //     "For age correction if the new age is two years less than or greater than current age, court letter must be provided",
-    //     "For Spelling correction, user consent is enough",
-    //   ],
-    //   buttonTitle: "Request Correction",
-    //   paymentAmount: 250,
-    // },
+    {
+      title: "Correction",
+      details: [
+        "For Name Change, the person must provide court letter",
+        "For age correction if the new age is two years less than or greater than current age, court letter must be provided",
+        "For Spelling correction, user consent is enough",
+      ],
+      buttonTitle: "Request Correction",
+      paymentAmount: 250,
+    },
     {
       title: "Lost",
       details: [
@@ -65,18 +63,19 @@ export default function BirthDetailPage() {
       buttonTitle: "Request Lost Certificate",
       paymentAmount: 250,
     },
-    // {
-    //   title: "Damaged",
-    //   details: ["The Damaged certificate must be presented"],
-    //   buttonTitle: "Request Damaged Certificate",
-    //   paymentAmount: 250,
-    // },
+    {
+      title: "Damaged",
+      details: ["The Damaged certificate must be presented"],
+      buttonTitle: "Request Damaged Certificate",
+      paymentAmount: 250,
+    },
   ];
 
   const handleCopy = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
@@ -182,6 +181,19 @@ export default function BirthDetailPage() {
     return null;
   };
 
+  // Format date to display only the date part
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "-";
+    return dateString.split(" ")[0];
+  };
+
+  // Format time to display only the time part
+  const formatTime = (dateString: string) => {
+    if (!dateString) return "-";
+    const timePart = dateString.split(" ")[1];
+    return timePart ? timePart.substring(0, 5) : "-";
+  };
+
   // Inline Info Sections (instead of external components)
   const renderBasicInfo = () => {
     const d = response?.data;
@@ -217,33 +229,58 @@ export default function BirthDetailPage() {
           <div className="flex flex-col max-w-[250px] md:w-2/3 gap-3">
             <span className="text-left font-semibold">Basic Information</span>
             <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Child Name</p>
+              <p className="text-sm text-gray-600">Application Number</p>
+              <p className="text-sm font-semibold">
+                {d.registrationFormNumber || "-"}
+              </p>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <p className="text-sm text-gray-600">Full Name</p>
               <p className="text-sm font-semibold">
                 {child.childFirstName || "-"}
               </p>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Birth Date</p>
-              <p className="text-sm font-semibold">{child.birthDate || "-"}</p>
+              <p className="text-sm text-gray-600">Mother Name</p>
+              <p className="text-sm font-semibold">
+                {/* Mother name not in JSON, using placeholder */}
+                "Not Available"
+              </p>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Birth Time</p>
-              <p className="text-sm font-semibold">{child.birthTime || "-"}</p>
+              <p className="text-sm text-gray-600">Mother Nationality</p>
+              <p className="text-sm font-semibold">
+                {d.nationalityName || "-"}
+              </p>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Gender</p>
+              <p className="text-sm text-gray-600">Father Name</p>
+              <p className="text-sm font-semibold">
+                {/* Father name not in JSON, using placeholder */}
+                "Not Available"
+              </p>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <p className="text-sm text-gray-600">Father Nationality</p>
+              <p className="text-sm font-semibold">
+                {d.nationalityName || "-"}
+              </p>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <p className="text-sm text-gray-600">Sex</p>
               <p className="text-sm font-semibold">{child.gender || "-"}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Weight</p>
+              <p className="text-sm text-gray-600">Phone Number</p>
               <p className="text-sm font-semibold">
-                {child.childWeight || "-"}
+                {/* Phone number not in JSON */}
+                "-"
               </p>
             </div>
             <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Height</p>
+              <p className="text-sm text-gray-600">Nationality</p>
               <p className="text-sm font-semibold">
-                {child.childHeight || "-"}
+                {d.nationalityName || "-"}
               </p>
             </div>
           </div>
@@ -255,7 +292,6 @@ export default function BirthDetailPage() {
   const renderApplicationInfo = () => {
     const d = response?.data;
     if (!d) return null;
-    const child = d.localizations[0];
 
     return (
       <div className="flex flex-col w-full gap-3">
@@ -268,12 +304,12 @@ export default function BirthDetailPage() {
             </div>
             <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
               <p className="text-sm">Service Type</p>
-              <p className="text-sm text-right font-semibold w-fit">Lost</p>
+              <p className="text-sm text-right font-semibold w-fit">New</p>
             </div>
             <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Appointment Date</p>
+              <p className="text-sm">Status</p>
               <p className="text-sm text-right font-semibold w-fit">
-                {child.issuedDate || "-"}
+                {d.registrationStatus || "-"}
               </p>
             </div>
           </div>
@@ -292,30 +328,48 @@ export default function BirthDetailPage() {
         <span className="text-left font-semibold">Birth Information</span>
         <div className="gap-2 min-w-[250px] flex flex-col justify-center w-full">
           <div className="flex justify-between space-x-5 border-b pb-2">
-            <p className="text-sm text-gray-600">Child Name</p>
+            <p className="text-sm text-gray-600">Country of Birth</p>
+            <p className="text-sm font-semibold">{d.nationalityName || "-"}</p>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <p className="text-sm text-gray-600">Region</p>
             <p className="text-sm font-semibold">
-              {child.childFirstName || "-"}
+              {child.placeOfBirth?.facilityName || "-"}
             </p>
           </div>
           <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Birth Date</p>
-            <p className="text-sm font-semibold">{child.birthDate || "-"}</p>
+            <p className="text-sm text-gray-600">Zone/Subcity</p>
+            <p className="text-sm font-semibold">
+              {/* Using father's current zone as placeholder */}
+              {d.fatherId?.currentAddress?.zone?.localizedContent?.en?.name ||
+                "-"}
+            </p>
           </div>
           <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Birth Time</p>
-            <p className="text-sm font-semibold">{child.birthTime || "-"}</p>
+            <p className="text-sm text-gray-600">Woreda</p>
+            <p className="text-sm font-semibold">
+              {/* Using father's current woreda as placeholder */}
+              {d.fatherId?.currentAddress?.woreda?.localizedContent?.en?.name ||
+                "-"}
+            </p>
           </div>
           <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Gender</p>
-            <p className="text-sm font-semibold">{child.gender || "-"}</p>
+            <p className="text-sm text-gray-600">Kebele</p>
+            <p className="text-sm font-semibold">
+              {d.fatherId?.currentAddress?.kebele || "-"}
+            </p>
           </div>
           <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Weight</p>
-            <p className="text-sm font-semibold">{child.childWeight || "-"}</p>
+            <p className="text-sm text-gray-600">Specific Location</p>
+            <p className="text-sm font-semibold">
+              {child.placeOfBirth?.facilityName || "-"}
+            </p>
           </div>
           <div className="flex justify-between">
-            <p className="text-sm text-gray-600">Height</p>
-            <p className="text-sm font-semibold">{child.childHeight || "-"}</p>
+            <p className="text-sm text-gray-600">Birth Date</p>
+            <p className="text-sm font-semibold">
+              {formatDate(child.birthDate) || "-"}
+            </p>
           </div>
         </div>
       </div>
@@ -325,20 +379,47 @@ export default function BirthDetailPage() {
   const renderLegalInfo = () => {
     const d = response?.data;
     if (!d) return null;
+    const child = d.localizations[0];
+
     return (
-      <div className="space-y-3">
-        <p>
-          <b>Child Name:</b> {d.localizations[0].childFirstName}
-        </p>
-        <p>
-          <b>Birth Date:</b> {d.localizations[0].birthDate}
-        </p>
-        <p>
-          <b>Gender:</b> {d.localizations[0].gender}
-        </p>
-        <p>
-          <b>Weight:</b> {d.localizations[0].childWeight}
-        </p>
+      <div className="flex flex-col w-full gap-3">
+        <span className="text-left font-semibold">Legal Information</span>
+        <div className="gap-2 min-w-[250px] flex flex-col justify-center w-full">
+          <div className="flex justify-between space-x-5 border-b pb-2">
+            <p className="text-sm text-gray-600">Digital Registration No</p>
+            <p className="text-sm font-semibold">
+              {d.registrationFormNumber || "-"}
+            </p>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <p className="text-sm text-gray-600">Passport No</p>
+            <p className="text-sm font-semibold">
+              {/* Not in JSON */}
+              "-"
+            </p>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <p className="text-sm text-gray-600">FIN</p>
+            <p className="text-sm font-semibold">
+              {/* Not in JSON */}
+              "-"
+            </p>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <p className="text-sm text-gray-600">Drivers License No</p>
+            <p className="text-sm font-semibold">
+              {/* Not in JSON */}
+              "-"
+            </p>
+          </div>
+          <div className="flex justify-between">
+            <p className="text-sm text-gray-600">Marital Status</p>
+            <p className="text-sm font-semibold">
+              {/* Not in JSON */}
+              "-"
+            </p>
+          </div>
+        </div>
       </div>
     );
   };
@@ -354,7 +435,6 @@ export default function BirthDetailPage() {
   const renderEducationInfo = () => {
     const d = response?.data;
     if (!d) return null;
-    const child = d.localizations[0];
 
     return (
       <div className="w-full flex flex-col gap-3">
@@ -365,16 +445,47 @@ export default function BirthDetailPage() {
           <div className="w-full min-w-[250px] gap-2 flex flex-col justify-center">
             <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
               <p className="text-sm">Education Level</p>
-              <p className="text-sm text-right font-semibold w-fit">{"----"}</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {/* Not in JSON */}
+                "-"
+              </p>
             </div>
             <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
               <p className="text-sm">Occupation Type</p>
-              <p className="text-sm text-right font-semibold w-fit">{"----"}</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {/* Not in JSON */}
+                "-"
+              </p>
             </div>
             <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Work Place Home</p>
-              <p className="text-sm text-right font-semibold w-fit">{"----"}</p>
+              <p className="text-sm">Work Place Name</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                {/* Not in JSON */}
+                "-"
+              </p>
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderAttachments = () => {
+    return (
+      <div className="w-full flex flex-col gap-3">
+        <span className="text-left font-semibold">Attachments</span>
+        <div className="w-full flex flex-col">
+          <div className="w-full min-w-[250px] gap-2 flex flex-col justify-center">
+            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
+              <p className="text-sm">Document Icon</p>
+              <p className="text-sm text-right font-semibold w-fit">
+                Document Name
+              </p>
+              <Button variant="outline" size="sm">
+                View
+              </Button>
+            </div>
+            {/* Add more attachments as needed */}
           </div>
         </div>
       </div>
@@ -402,9 +513,10 @@ export default function BirthDetailPage() {
             <Loader className="animate-spin" />
           </Card>
         ) : null}
-        {/* Inofrmation Section */}
+
+        {/* Information Section */}
         {response ? (
-          <Card className="w-full w-2/3 flex flex-col p-5">
+          <Card className="w-full md:w-2/3 flex flex-col p-5">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-10 h-fit">
               <div className="w-full md:col-span-3 h-fit">
                 {renderBasicInfo()}
@@ -414,20 +526,20 @@ export default function BirthDetailPage() {
               </div>
             </div>
             {renderLineSeparator()}
-            <div className="flex flex-cols item-center justify-between gap-5 h-fit">
-              <div className="h-fit">{renderBirthInfo()}</div>
-              <div className="h-fit">{renderBirthInfo()}</div>
+            <div className="flex flex-col md:flex-row item-center justify-between gap-5 h-fit">
+              <div className="h-fit flex-1">{renderBirthInfo()}</div>
+              <div className="h-fit flex-1">{renderLegalInfo()}</div>
             </div>
             {renderLineSeparator()}
-            <div className="flex flex-cols item-center justify-between gap-5 h-fit">
-              <div className="h-fit">{renderEducationInfo()}</div>
-              <div className="h-fit">{renderEducationInfo()}</div>
+            <div className="flex flex-col md:flex-row item-center justify-between gap-5 h-fit">
+              <div className="h-fit flex-1">{renderEducationInfo()}</div>
+              <div className="h-fit flex-1">{renderAttachments()}</div>
             </div>
           </Card>
         ) : null}
 
         {/* Sidebar */}
-        <div className="w-1/3 flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
+        <div className="w-full md:w-1/3 flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
           {showTimer ? (
             <Card
               className="p-5"
