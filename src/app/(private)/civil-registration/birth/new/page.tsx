@@ -60,7 +60,7 @@ export default function NewBirthRegistrationPage() {
     console.log("Current selected birth type:", selected);
 
     let body = {
-      requesterId: "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+          requesterId: "e0e2aac4-3cdc-4cba-90ff-e4e2e3f4f475",
       actionType: "NEW",
       birthType: "SINGLE", // or "TWIN" etc. – set this globally
       births: [] as any[],
@@ -118,10 +118,8 @@ export default function NewBirthRegistrationPage() {
           hospitalNotificationId: null,
           childResidentId: null,
           fatherResidentId:
-            value.fatherResidentId?.id ||
-            "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+            "67758fa0-d837-4a50-a2e8-c77a15544f36",
           motherResidentId:
-            value.motherResidentId?.id ||
             "83aeec7f-cce1-43de-9f80-ca8faacc9237",
           declarantResidentId: null,
           withOld: false,
@@ -219,7 +217,7 @@ export default function NewBirthRegistrationPage() {
       // );
 
       // Here you can make your API call
-      // submitBirthRegistration(bodyMapped);
+      submitBirthRegistration(bodyMapped);
     } else {
       // Form is not ready - validation errors are already shown
       console.log("Form is not ready:", result.data);
