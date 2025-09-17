@@ -10,6 +10,7 @@ import { Button } from "@/common/components/ui/button";
 import { Card, CardContent } from "@/common/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronLeft } from "lucide-react";
 
 // FormConfig for User Registration (without userType selection)
 const userSignupConfig: FormConfig = {
@@ -186,7 +187,7 @@ const agentSignupConfig: FormConfig = {
           validators: [
             {
               type: "required",
-              message: "Organization ownership type is required",
+              message: "",
             },
           ],
           required: true,
@@ -304,18 +305,27 @@ export default function SignupPage() {
   };
 
   const handleSignup = (values: any) => {
+    console.log("=== SIGNUP FORM SUBMITTED ===");
+    console.log("User Type:", selectedUserType);
+    console.log("Form Values:", values);
+    console.log("Raw form data:", JSON.stringify(values, null, 2));
+
     const result = processFormSubmission(values, currentConfig);
 
     if (result.success) {
-      console.log("Signup form submitted successfully:", {
+      console.log("✅ Signup form submitted successfully:", {
         userType: selectedUserType,
         ...values,
       });
+      console.log("Processed result:", result);
       // Here you would typically make an API call to register the user
       setIsSubmitted(true);
     } else {
-      console.log("Form validation failed:", result.data);
+      console.log("❌ Form validation failed:", result.data);
+      console.log("Validation errors:", result);
     }
+
+    console.log("=== END SIGNUP SUBMISSION ===");
   };
 
   return (
@@ -328,12 +338,12 @@ export default function SignupPage() {
             alt="CRRSA Logo"
             width={1000}
             height={1000}
-            className="max-w-64 max-h-64"
+            className="max-w-[400px]"
           />
         </div>
 
         {/* Right Side - Form Area (60% width) */}
-        <div className="w-full lg:w-1/2 flex items-center border-l-2 border-gray-400 justify-center p-8">
+        <div className="w-full lg:w-1/2 flex items-center lg:border-l-2 border-gray-400 justify-center p-8">
           <div className="w-full max-w-2xl">
             {isSubmitted ? (
               // Success Message View
@@ -387,8 +397,10 @@ export default function SignupPage() {
               // User Type Selection View
               <>
                 <div className="text-center mb-8 gap-2">
-                  <h2 className="text-2xl font-bold">Sign Up</h2>
-                  <p className="text-gray-600">Select your account type</p>
+                  <h2 className="text-3xl font-bold">Sign Up</h2>
+                  <p className="text-gray-600 text-xl">
+                    Select your account type
+                  </p>
                 </div>
 
                 <div className="space-y-4">
@@ -402,10 +414,10 @@ export default function SignupPage() {
                           <span className="text-2xl text-black">👨‍💼</span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-800">
+                          <h3 className="text-2xl font-bold text-gray-800">
                             User
                           </h3>
-                          <p className="text-gray-600">
+                          <p className="text-gray-600 text-xl font-medium">
                             For individual citizens
                           </p>
                         </div>
@@ -437,10 +449,10 @@ export default function SignupPage() {
                           <span className="text-2xl">🏛️</span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-800">
+                          <h3 className="text-2xl font-bold text-gray-800">
                             Agent
                           </h3>
-                          <p className="text-gray-600">
+                          <p className="text-gray-600 text-xl font-medium">
                             For organizations and institutions
                           </p>
                         </div>
@@ -463,7 +475,7 @@ export default function SignupPage() {
                   </Card>
                 </div>
 
-                <div className="text-center text-base text-gray-600 mt-8">
+                <div className="text-center text-lg text-gray-600 mt-8">
                   Already have an account?{" "}
                   <Link
                     href="/login"
@@ -475,34 +487,15 @@ export default function SignupPage() {
             ) : (
               // Form View
               <>
-                <div className="flex items-center mb-6">
-                  <Button
-                    variant="ghost"
-                    onClick={handleBackToSelection}
-                    className="p-2 mr-3">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  </Button>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                      {selectedUserType === "user" ? "User" : "Agent"}{" "}
-                      Registration
-                    </h2>
-                    <p className="text-gray-600">Complete your registration</p>
+                <div className="space-y-4 relative items-center">
+                  <div className="flex items-center absolute top-0">
+                    <Button
+                      variant="ghost"
+                      onClick={handleBackToSelection}
+                      className="p-2 mr-3">
+                      <ChevronLeft />
+                    </Button>
                   </div>
-                </div>
-
-                <div className="space-y-4">
                   <DynamicForm
                     config={currentConfig}
                     handleSubmit={handleSignup}
@@ -512,11 +505,11 @@ export default function SignupPage() {
                   />
                 </div>
 
-                <div className="text-end text-base text-gray-600 mt-4">
+                <div className="text-end text-lg text-gray-600 mt-4">
                   Already have an account?{" "}
                   <Link
                     href="/login"
-                    className="text-blue-600 hover:text-blue-800 font-medium">
+                    className="text-blue-500 hover:text-blue-700 font-medium">
                     Log In
                   </Link>
                 </div>
