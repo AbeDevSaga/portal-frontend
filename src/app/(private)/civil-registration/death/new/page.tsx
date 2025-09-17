@@ -22,7 +22,7 @@ export default function NewBirthRegistrationPage() {
   const formValues = useSelector((state: RootState) => state.birthSlice);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const prevBirthTypeRef = useRef<string | null>(null);
-  const [selected, setSelected] = React.useState<string>("newChild");
+  const [selected, setSelected] = React.useState<string>("");
 
   // Dynamically select form configuration based on selected option
   const currentFormConfig = useMemo(() => {
@@ -293,7 +293,7 @@ export default function NewBirthRegistrationPage() {
           </div>
         </RadioGroup>
       </div>
-      <DynamicForm
+      {selected && <DynamicForm
         key={selected}
         config={currentFormConfig}
         handleSubmit={handleCreateBirth}
@@ -301,7 +301,7 @@ export default function NewBirthRegistrationPage() {
         formStyle="grid grid-cols-12 gap-5"
         onAccordionStateChange={handleAccordionStateChange}
         showPreview={false}
-      />
+      />}
     </Card>
   );
 

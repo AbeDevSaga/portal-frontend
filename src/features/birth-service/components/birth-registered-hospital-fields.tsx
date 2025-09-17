@@ -277,7 +277,7 @@ export const formConfig: FormConfig = {
         {
           type: "input",
           key: "birthFacilityName",
-          label: "Birth Facility",
+          label: "Birth Place",
           placeholder: "",
           description: "",
           validators: [],
