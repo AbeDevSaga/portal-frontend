@@ -26,8 +26,7 @@ export const formConfig: FormConfig = {
           key: "hospitalNotificationId",
           label: "Hospital Notification ID",
           placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for hospital notification ID. The system will search as you type.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -51,9 +50,9 @@ export const formConfig: FormConfig = {
             minSearchLength: 3,
             debounceMs: 300,
             cacheResults: true,
-            placeholder: "Search for hospital notification...",
-            noOptionsMessage: "No notification found",
-            loadingMessage: "Searching notifications...",
+            placeholder: "Enter your hospital notification id...",
+            noOptionsMessage: "No notification id found",
+            loadingMessage: "Searching notification id...",
             additionalParams: {},
             transformResponse: (data: any) => {
               console.log("hospital fetched data: ", data);
@@ -315,36 +314,6 @@ export const formConfig: FormConfig = {
           defaultValue: (dependentValues: any) => {
             if (dependentValues?.hospitalNotificationId) {
               return dependentValues.hospitalNotificationId.attendantName || "";
-            }
-            return "";
-          },
-          getDependentValue: (formValues: any) => ({
-            hospitalNotificationId: formValues.hospitalNotificationId,
-          }),
-          isDisabled: (dependentValues: any) => {
-            return dependentValues?.hospitalNotificationId;
-          },
-          isHide: (dependentValues: any) => {
-            return !dependentValues?.hospitalNotificationId;
-          },
-        },
-        {
-          type: "input",
-          key: "notificationId",
-          label: "Hospital Notification ID",
-          placeholder: "",
-          description: "",
-          validators: [],
-          required: false,
-          group: "Child Details",
-          groupOrder: 13,
-          gridCols: 6,
-          defaultValue: (dependentValues: any) => {
-            if (dependentValues?.hospitalNotificationId) {
-              return (
-                dependentValues.hospitalNotificationId.hospitalNotificationId ||
-                ""
-              );
             }
             return "";
           },

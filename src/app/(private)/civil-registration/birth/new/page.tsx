@@ -21,8 +21,8 @@ import { Label } from "@/common/components/ui/label";
 export default function NewBirthRegistrationPage() {
   const formValues = useSelector((state: RootState) => state.birthSlice);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
-  const prevBirthTypeRef = useRef<string | null>(null);
   const [selected, setSelected] = React.useState<string>("");
+  const prevBirthTypeRef = useRef<string | null>(null);
 
   // Dynamically select form configuration based on selected option
   const currentFormConfig = useMemo(() => {
@@ -41,6 +41,10 @@ export default function NewBirthRegistrationPage() {
   const { allFields, groupMap } = generateFieldGrouping(currentFormConfig);
 
   const handleChange = (value: string) => {
+    if (selected == value) {
+      setSelected("");
+      return;
+    }
     setSelected(value);
   };
 
@@ -60,7 +64,7 @@ export default function NewBirthRegistrationPage() {
     console.log("Current selected birth type:", selected);
 
     let body = {
-          requesterId: "e0e2aac4-3cdc-4cba-90ff-e4e2e3f4f475",
+      requesterId: "e0e2aac4-3cdc-4cba-90ff-e4e2e3f4f475",
       actionType: "NEW",
       birthType: "SINGLE", // or "TWIN" etc. – set this globally
       births: [] as any[],
@@ -73,10 +77,8 @@ export default function NewBirthRegistrationPage() {
           registrationStatus: "SUBMITTED",
           hospitalNotificationId: value.hospitalNotificationId || null,
           childResidentId: null,
-          fatherResidentId:
-            "67758fa0-d837-4a50-a2e8-c77a15544f36",
-          motherResidentId:
-            "83aeec7f-cce1-43de-9f80-ca8faacc9237",
+          fatherResidentId: "67758fa0-d837-4a50-a2e8-c77a15544f36",
+          motherResidentId: "83aeec7f-cce1-43de-9f80-ca8faacc9237",
           declarantResidentId: null,
           withOld: false,
           bloodType: "123e4567-e89b-12d3-a456-426614174004",
@@ -115,10 +117,8 @@ export default function NewBirthRegistrationPage() {
           registrationOfficeNumber: "RO-2025-002",
           hospitalNotificationId: null,
           childResidentId: null,
-          fatherResidentId:
-            "67758fa0-d837-4a50-a2e8-c77a15544f36",
-          motherResidentId:
-            "83aeec7f-cce1-43de-9f80-ca8faacc9237",
+          fatherResidentId: "67758fa0-d837-4a50-a2e8-c77a15544f36",
+          motherResidentId: "83aeec7f-cce1-43de-9f80-ca8faacc9237",
           declarantResidentId: null,
           withOld: false,
           bloodType: "123e4567-e89b-12d3-a456-426614174004",
@@ -158,10 +158,8 @@ export default function NewBirthRegistrationPage() {
           registrationOfficeNumber: "RO-2025-002",
           hospitalNotificationId: null,
           childResidentId: null,
-          fatherResidentId:
-            "67758fa0-d837-4a50-a2e8-c77a15544f36",
-          motherResidentId:
-            "83aeec7f-cce1-43de-9f80-ca8faacc9237",
+          fatherResidentId: "67758fa0-d837-4a50-a2e8-c77a15544f36",
+          motherResidentId: "83aeec7f-cce1-43de-9f80-ca8faacc9237",
           // fatherResidentId:
           //   value.fatherResidentId?.id ||
           //   "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
@@ -210,7 +208,7 @@ export default function NewBirthRegistrationPage() {
     console.log("result", result);
     if (result.success) {
       const bodyMapped = mapDataModel(value);
-      console.log("Mapped value: ", value)
+      console.log("Mapped value: ", value);
       // Form is ready for submission
       // console.log("Form is ready! API Payload:", bodyMapped);
       // console.log(
@@ -304,6 +302,17 @@ export default function NewBirthRegistrationPage() {
           </div>
         </RadioGroup>
       </div>
+      {selected && (
+        <DynamicForm
+          key={selected}
+          config={currentFormConfig}
+          handleSubmit={handleCreateBirth}
+          initialValues={formValues}
+          formStyle="grid grid-cols-12 gap-5"
+          onAccordionStateChange={handleAccordionStateChange}
+          showPreview={false}
+        />
+      )}
       {selected && (
         <DynamicForm
           key={selected}
