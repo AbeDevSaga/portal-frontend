@@ -8,13 +8,13 @@ import { Button } from "../ui/button";
 import React from "react";
 import crrsaLogin from "@/public/images/crrsa-login.png";
 
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
+import { useAuth } from "@/common/hooks/useAuth";
 
 
 export default function LandingNavBar() {
     const pathname = usePathname();
     const [hash, setHash] = useState("");
-    const { authenticated, user, login, logout } = useKeycloak();
+    const { isAuthenticated, user, login, logout } = useAuth();
 
     useEffect(() => {
         // Initial load hash
@@ -104,7 +104,7 @@ export default function LandingNavBar() {
                         })}
                     </div>
                     <div className='flex items-center gap-2'>
-                        {!authenticated ? (
+                        {!isAuthenticated ? (
                             <>
                                 <Button
                                     asChild

@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
+import { useAuth } from "@/common/hooks/useAuth";
 import { Card } from "../ui/card";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -14,7 +14,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { getIconColor } from "@/common/utils/constants/iconColors";
 
 const Sidebar = () => {
-    const { user } = useKeycloak();
+    const { user } = useAuth();
     const t = useTranslations();
     const currentPath = usePathname();
     const [expandedRoutes, setExpandedRoutes] = useState<Set<string>>(new Set());

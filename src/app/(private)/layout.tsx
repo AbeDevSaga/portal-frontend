@@ -2,7 +2,6 @@
 import CustomToaster from "@/common/components/common/CustomToast";
 import OfficersNavBar from "@/common/components/layout/OfficersNavBar";
 import Sidebar from "@/common/components/layout/sidebar";
-import RouteGuard from "@/common/components/common/RouteGuard";
 
 export default function BirthRegistrationLayout({
     children,
@@ -10,19 +9,17 @@ export default function BirthRegistrationLayout({
     children: React.ReactNode;
 }) {
     return (
-        <RouteGuard>
-            <div className='min-h-screen bg-cover bg-no-repeat font-barlow'>
-                <OfficersNavBar />
-                <div className='flex flex-col'>
-                    <div className='pb-10 pt-32 px-5 md:px-10 flex gap-10 flex-1'>
-                        <Sidebar />
-                        <div className='w-full space-y-5'>
-                            {children}
-                        </div>
+        <div className='min-h-screen bg-cover bg-no-repeat font-barlow'>
+            <OfficersNavBar />
+            <div className='flex flex-col'>
+                <div className='pb-10 pt-32 px-5 md:px-10 flex gap-10 flex-1'>
+                    <Sidebar />
+                    <div className='w-full space-y-5'>
+                        {children}
                     </div>
                 </div>
-                <CustomToaster />
             </div>
-        </RouteGuard>
+            <CustomToaster />
+        </div>
     );
 }

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
+import { useAuth } from "@/common/hooks/useAuth";
 
 const useAutoSignOut = (session: any) => {
-    const { logout } = useKeycloak();
+    const { logout } = useAuth();
 
     useEffect(() => {
         if (session?.expires) {
