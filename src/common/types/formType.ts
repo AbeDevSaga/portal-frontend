@@ -155,6 +155,9 @@ export interface FormConfig {
     content: React.ReactNode;
   }[];
   stepperPosition?: "top" | "left" | "";
+  title?: string; // Optional title for the form
+  description?: string; // Optional description for the form
+  showTitle?: boolean; // Whether to show the title section (default: true)
   // 🆕 New: Global grouping configuration
   grouping?: {
     defaultGroup?: string;

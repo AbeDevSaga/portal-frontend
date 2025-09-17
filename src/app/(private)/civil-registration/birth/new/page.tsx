@@ -74,10 +74,8 @@ export default function NewBirthRegistrationPage() {
           hospitalNotificationId: value.hospitalNotificationId || null,
           childResidentId: null,
           fatherResidentId:
-            value.fatherResidentId?.id ||
-            "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+            "67758fa0-d837-4a50-a2e8-c77a15544f36",
           motherResidentId:
-            value.motherResidentId?.id ||
             "83aeec7f-cce1-43de-9f80-ca8faacc9237",
           declarantResidentId: null,
           withOld: false,
@@ -161,11 +159,15 @@ export default function NewBirthRegistrationPage() {
           hospitalNotificationId: null,
           childResidentId: null,
           fatherResidentId:
-            value.fatherResidentId?.id ||
-            "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+            "67758fa0-d837-4a50-a2e8-c77a15544f36",
           motherResidentId:
-            value.motherResidentId?.id ||
             "83aeec7f-cce1-43de-9f80-ca8faacc9237",
+          // fatherResidentId:
+          //   value.fatherResidentId?.id ||
+          //   "d0a09819-4b8a-4a8f-8552-31d79e3302cb",
+          // motherResidentId:
+          //   value.motherResidentId?.id ||
+          //   "83aeec7f-cce1-43de-9f80-ca8faacc9237",
           declarantResidentId: null,
           withOld: false,
           bloodType: "123e4567-e89b-12d3-a456-426614174004",
