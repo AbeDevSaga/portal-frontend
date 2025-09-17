@@ -24,6 +24,7 @@ export const serviceList = [
           { type: "Lost", link: "/civil-registration/birth/lost" },
           { type: "Damaged", link: "/civil-registration/birth/damaged" },
           { type: "Correction", link: "/civil-registration/birth/correction" },
+          { type: "Print", link: "/civil-registration/birth/print" },
         ],
       },
       {
@@ -40,7 +41,7 @@ export const serviceList = [
         ],
       },
       {
-        name: "Devorce",
+        name: "Divorce",
         icon: divorce.src,
         requests: [
           { type: "New", link: "/civil-registration/divorce/new" },
