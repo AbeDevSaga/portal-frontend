@@ -93,7 +93,7 @@ export default function LivePreview({
   className = "",
   style = {
     padding: "1.25rem",
-    background: "linear-gradient(to right, #2A7299, #0c4A6B)",
+    background: "linear-gradient(to right, #f0f8ff, #e6f3ff)",
     color: "white",
     borderRadius: "0.5rem",
   },
@@ -168,12 +168,12 @@ export default function LivePreview({
     return (
       <div className="space-y-3">
         {/* Expand/Collapse Controls */}
-        <div className="flex gap-2 pb-2 border-b border-white/20 justify-end">
+        <div className="flex gap-2 pb-2 border-b border-white/20 justify-center">
           <Button
             variant="outline"
             size="sm"
             onClick={expandAll}
-            className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
+            className="text-primary border-white/30 hover:border-white/50  hover:bg-white/50 hover:text-primary"
           >
             <Expand className="w-4 h-4 mr-1" />
             Expand All
@@ -182,7 +182,7 @@ export default function LivePreview({
             variant="outline"
             size="sm"
             onClick={collapseAll}
-            className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
+            className="text-primary border-white/30  hover:bg-white/10 hover:text-primary"
           >
             <ChevronUp className="w-4 h-4 mr-1" />
             Collapse All
@@ -200,19 +200,19 @@ export default function LivePreview({
               value={`step-${stepIndex}`}
               className="border-white/20"
             >
-              <AccordionTrigger className="text-white hover:text-white/80 py-3">
+              <AccordionTrigger className="text-primary hover:text-primary/80 py-3">
                 <div className="flex items-center gap-3">
                   {/* Step indicator */}
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-primary text-xs font-bold">
                     {stepIndex + 1}
                   </div>
                   {/* Step title */}
-                  <span className="text-lg font-semibold text-white">
+                  <span className="text-base font-semibold text-primary/60">
                     {step.title}
                   </span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="text-white">
+              <AccordionContent className="text-primary">
                 {/* Step Fields */}
                 <div className="space-y-3">
                   {step.fields.map((field) => {
@@ -229,12 +229,12 @@ export default function LivePreview({
                         key={field.key}
                         className="flex justify-between items-start py-2 border-b border-white/10"
                       >
-                        <span className="text-sm font-medium text-white/90">
+                        <span className="text-sm font-medium text-primary/90">
                           {resolvedLabel}:
                         </span>
-                        <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
+                        <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
                           {displayValue === "" ? (
-                            <span className="text-white/50 italic">
+                            <span className="text-primary/50 italic">
                               Not filled
                             </span>
                           ) : (
@@ -263,12 +263,12 @@ export default function LivePreview({
         {" "}
         {/* Expand/Collapse Controls for stepper forms */}
         {hasMultipleSteps && (
-          <div className="flex gap-2 pb-2 border-b border-white/20 justify-end">
+          <div className="flex gap-2 pb-2 border-b border-white/20 justify-center">
             <Button
               variant="outline"
               size="sm"
               onClick={expandAll}
-              className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
+              className="text-primary "
             >
               <Expand className="w-4 h-4 mr-1" />
               Expand All
@@ -277,7 +277,7 @@ export default function LivePreview({
               variant="outline"
               size="sm"
               onClick={collapseAll}
-              className="text-white border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-white"
+              className="text-primary border-white/30 bg-[#2A7299] hover:bg-white/10 hover:text-primary"
             >
               <ChevronsUpDown className="w-4 h-4 mr-1" />
               Collapse All
@@ -315,19 +315,19 @@ export default function LivePreview({
                   value={`step-${stepIndex}`}
                   className="border-white/20"
                 >
-                  <AccordionTrigger className="text-white hover:text-white/80 py-3">
+                  <AccordionTrigger className="text-primary hover:text-primary/80 py-3">
                     <div className="flex items-center gap-3">
                       {/* Step indicator */}
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-primary text-xs font-bold">
                         {stepIndex + 1}
                       </div>
                       {/* Step title */}
-                      <span className="text-lg font-semibold text-white">
+                      <span className="text-base font-semibold text-primary/60">
                         {step.title}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="text-white">
+                  <AccordionContent className="text-primary">
                     {/* Step Fields */}
                     <div className="space-y-3">
                       {step.fields.map((field) => {
@@ -347,12 +347,12 @@ export default function LivePreview({
                             key={field.key}
                             className="flex justify-between items-start py-2 border-b border-white/10"
                           >
-                            <span className="text-sm font-medium text-white/90">
+                            <span className="text-sm font-medium text-primary/90">
                               {resolvedLabel}:
                             </span>
-                            <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
+                            <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
                               {displayValue === "" ? (
-                                <span className="text-white/50 italic">
+                                <span className="text-primary/50 italic">
                                   Not filled
                                 </span>
                               ) : (
@@ -374,7 +374,7 @@ export default function LivePreview({
               <div key={stepIndex} className="space-y-3">
                 {/* Step Title with horizontal line */}
                 <div className="border-b border-white/30 pb-2">
-                  <h3 className="text-lg font-semibold text-white">
+                  <h3 className="text-lg font-semibold text-primary/60">
                     {step.title}
                   </h3>
                 </div>
@@ -395,12 +395,12 @@ export default function LivePreview({
                         key={field.key}
                         className="flex justify-between items-start py-2 border-b border-white/10"
                       >
-                        <span className="text-sm font-medium text-white/90">
+                        <span className="text-sm font-medium text-primary/90">
                           {resolvedLabel}:
                         </span>
-                        <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
+                        <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
                           {displayValue === "" ? (
-                            <span className="text-white/50 italic">
+                            <span className="text-primary/50 italic">
                               Not filled
                             </span>
                           ) : (
@@ -436,12 +436,12 @@ export default function LivePreview({
                 key={groupItem.label + "live preview"}
                 className="flex justify-between items-start"
               >
-                <span className="text-sm font-medium text-white/90">
+                <span className="text-sm font-medium text-primary/90">
                   {groupItem.label}:
                 </span>
-                <span className="text-sm text-white/80 text-right max-w-[60%] break-words">
+                <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
                   {groupItem.value === "" ? (
-                    <span className="text-white/50 italic">Not filled</span>
+                    <span className="text-primary/50 italic">Not filled</span>
                   ) : (
                     // Handle both string and object values for lookup fields
                     formatValueForDisplay(
@@ -480,14 +480,14 @@ export default function LivePreview({
       </p>
       <Card className="" style={style}>
         {/* Header */}
-        <div className="border-b border-white/30 flex gap-2 pb-3 items-center">
-          <User className="text-white" />
-          <p className="text-white font-medium">{title}</p>
+        <div className="border-b border-slate-300 flex gap-2 pb-3 items-center">
+          <User className="text-primary" />
+          <p className="text-primary font-semibold">{title}</p>
         </div>
 
         {/* Avatar and Basic Info */}
         <div className="flex items-center py-3 border-b border-white/20">
-          <div className="h-10 w-10 relative rounded-sm overflow-clip bg-white/20">
+          <div className="h-10 w-10 relative rounded-sm overflow-clip bg-white/50">
             {avatarSrc ? (
               <Image
                 src={avatarSrc}
@@ -497,12 +497,12 @@ export default function LivePreview({
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <User className="text-white/60" size={20} />
+                <User className="text-primary/60" size={20} />
               </div>
             )}
           </div>
           <div className="ml-3">
-            <p className="text-sm text-white/80">
+            <p className="text-sm text-primary/80">
               {subtitle || "Form Preview"}
             </p>
             <p className="text-[#FDB114] text-xs">

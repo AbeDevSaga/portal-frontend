@@ -361,7 +361,7 @@ const StepperDivorceForm = ({ setStep, step }: StepperDivorceFormProps) => {
         <Form className="bg-white p-6 w-full rounded shadow mt-6 mx-auto">
           <div className="w-full">
             <span className="block font-semibold mb-2">Attachments</span>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-bold text-gray-700 mb-1">
                   Court Order <span className="text-red-500">*</span>

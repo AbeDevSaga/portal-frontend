@@ -140,7 +140,7 @@ export default function List() {
             </Button>
           </div>
 
-          <div className="flex flex-wrap justify-between items-center gap-2 min-w-fit">
+          {/* <div className="flex flex-wrap justify-between items-center gap-2 min-w-fit">
             <div className="py-2 px-3 rounded-md border-2 border-[#e4e4e4] gap-4 w-fit flex flex-wrap">
               {filterStatus.map((filterStatusOption) => (
                 <Button
@@ -173,7 +173,7 @@ export default function List() {
                 value={typeValue}
               />
             </div>
-          </div>
+          </div> */}
         </div>
 
         <DataTable

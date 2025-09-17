@@ -24,6 +24,7 @@ export const serviceList = [
           { type: "Lost", link: "/civil-registration/birth/lost" },
           { type: "Damaged", link: "/civil-registration/birth/damaged" },
           { type: "Correction", link: "/civil-registration/birth/correction" },
+          { type: "Print", link: "/civil-registration/birth/print" },
         ],
       },
       {
@@ -31,16 +32,17 @@ export const serviceList = [
         icon: marriage.src,
         requests: [
           { type: "New", link: "/civil-registration/marriage/new" },
-          { type: "Lost", link: "/civil-registration/marriage/lost" },
           { type: "Damaged", link: "/civil-registration/marriage/damaged" },
+          {type:"Lost", link: "/civil-registration/marriage/lost"},
           {
             type: "Correction",
             link: "/civil-registration/marriage/correction",
           },
+          { type: "Print", link: "/civil-registration/marriage/print" },
         ],
       },
       {
-        name: "Devorce",
+        name: "Divorce",
         icon: divorce.src,
         requests: [
           { type: "New", link: "/civil-registration/divorce/new" },
@@ -50,6 +52,7 @@ export const serviceList = [
             type: "Correction",
             link: "/civil-registration/divorce/correction",
           },
+          { type: "Print", link: "/civil-registration/divorce/print" },
         ],
       },
       {
@@ -60,6 +63,7 @@ export const serviceList = [
           { type: "Lost", link: "/civil-registration/death/lost" },
           { type: "Damaged", link: "/civil-registration/death/damaged" },
           { type: "Correction", link: "/civil-registration/death/correction" },
+          { type: "Print", link: "/civil-registration/death/print" },
         ],
       },
       {
@@ -73,6 +77,7 @@ export const serviceList = [
             type: "Correction",
             link: "/civil-registration/adoption/correction",
           },
+          { type: "Print", link: "/civil-registration/adoption/print" },
         ],
       },
       {
@@ -86,6 +91,7 @@ export const serviceList = [
             type: "Correction",
             link: "/civil-registration/fatherhood/correction",
           },
+          { type: "Print", link: "/civil-registration/fatherhood/print" },
         ],
       },
       {
@@ -99,6 +105,7 @@ export const serviceList = [
             type: "Correction",
             link: "/civil-registration/childhood/correction",
           },
+          { type: "Print", link: "/civil-registration/childhood/print" },
         ],
       },
     ],
@@ -120,6 +127,7 @@ export const serviceList = [
             type: "Correction",
             link: "/application/family_registration/correction",
           },
+          { type: "Print", link: "/application/family_registration/print" },
         ],
       },
       {
@@ -133,6 +141,7 @@ export const serviceList = [
             type: "Correction",
             link: "/application/residence_id/correction",
           },
+          { type: "Print", link: "/application/residence_id/print" },
         ],
       },
       {
@@ -146,6 +155,7 @@ export const serviceList = [
             type: "Correction",
             link: "/application/residence_transfer/correction",
           },
+          { type: "Print", link: "/application/residence_transfer/print" },
         ],
       },
       {
@@ -162,7 +172,8 @@ export const serviceList = [
             type: "Correction",
             link: "/application/unmaried_certificate/correction",
           },
-        ],
+          { type: "Print", link: "/application/unmaried_certificate/print" },
+        ],  
       },
     ],
   },
@@ -180,6 +191,7 @@ export const serviceList = [
           { type: "Lost", link: "/application/citizenship/lost" },
           { type: "Damaged", link: "/application/citizenship/damaged" },
           { type: "Correction", link: "/application/citizenship/correction" },
+          { type: "Print", link: "/application/citizenship/print" },
         ],
       },
       {
@@ -193,6 +205,7 @@ export const serviceList = [
             type: "Correction",
             link: "/application/about_being_alive/correction",
           },
+          { type: "Print", link: "/application/about_being_alive/print" },
         ],
       },
       {
@@ -206,6 +219,7 @@ export const serviceList = [
             type: "Correction",
             link: "/application/relative_relation/correction",
           },
+          { type: "Print", link: "/application/relative_relation/print" },
         ],
       },
       {
@@ -216,6 +230,7 @@ export const serviceList = [
           { type: "Lost", link: "/application/unemployed/lost" },
           { type: "Damaged", link: "/application/unemployed/damaged" },
           { type: "Correction", link: "/application/unemployed/correction" },
+          { type: "Print", link: "/application/unemployed/print" },
         ],
       },
     ],

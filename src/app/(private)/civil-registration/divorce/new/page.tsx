@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import DivorceLivePreview from "../../../components/DivorceLivePreview";
 import { Button } from "@/common/components/ui/button";
+import { Card } from "@/common/components/ui/card";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {
   attachementsSchema,
@@ -13,6 +14,7 @@ import { Stepper } from "@/common/components/common/stepper";
 import { RadioGroup } from "@radix-ui/react-radio-group";
 import { Label } from "@radix-ui/react-label";
 import StepperDivorceForm from "@/app/(private)/components/StepperDivorceForm";
+import { Eye, FileText, Image as ImageIcon, X } from "lucide-react";
 const exHusbandInitialValues = {
   exHusbandResidentNumber: "",
   divorceDate: "",
@@ -79,6 +81,7 @@ export default function DivorceNewPage() {
   const [showResults, setShowResults] = useState(false);
   const [selectedInfo, setSelectedInfo] = useState<InfoType | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [previewFile, setPreviewFile] = useState<{url: string, fileName: string, fileType: string} | null>(null);
 
   const handleNext = () => {
     setStep((s) => Math.min(s + 1, 3));
@@ -121,6 +124,34 @@ export default function DivorceNewPage() {
     certificate: "CERT-002",
     
   };
+
+  // Mock attachment data
+  const mockAttachments = [
+    {
+      fileName: "court_order_001.pdf",
+      fileType: "PDF",
+      fileUrl: "/documents/court_order_001.pdf",
+      status: "Uploaded"
+    },
+    {
+      fileName: "marriage_certificate.jpg",
+      fileType: "IMAGE",
+      fileUrl: "/documents/marriage_certificate.jpg",
+      status: "Uploaded"
+    },
+    {
+      fileName: "divorce_petition.pdf",
+      fileType: "PDF",
+      fileUrl: "/documents/divorce_petition.pdf",
+      status: "Uploaded"
+    },
+    {
+      fileName: "witness_affidavit.pdf",
+      fileType: "PDF",
+      fileUrl: "/documents/witness_affidavit.pdf",
+      status: "Uploaded"
+    }
+  ];
   
 
   // Fill form with selected info
@@ -128,6 +159,23 @@ export default function DivorceNewPage() {
     setSelectedInfo(info);
     setShowDetails(true);
     setShowResults(false);
+  };
+
+  // Helper functions for attachment display
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '')) {
+      return <ImageIcon className="w-5 h-5" />;
+    }
+    return <FileText className="w-5 h-5" />;
+  };
+
+  const handlePreview = (url: string, fileName: string, fileType: string) => {
+    setPreviewFile({ url, fileName, fileType });
+  };
+
+  const closePreview = () => {
+    setPreviewFile(null);
   };
 
  
@@ -295,13 +343,13 @@ export default function DivorceNewPage() {
                   <Button
                     type="button"
                     onClick={handleNext}
-                    className="btn btn-secondary px-8 py-3 text-lg"
+                    className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
                   >
                     Next
                   </Button>
                   <Button
                     type="submit"
-                    className="btn btn-primary px-8 py-3 text-lg"
+                    className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
                   >
                     Register Ex Husband
                   </Button>
@@ -476,21 +524,21 @@ export default function DivorceNewPage() {
                     <Button
                       type="button"
                       onClick={handlePrev}
-                      className="btn btn-secondary px-8 py-3 text-lg"
+                      className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
                     >
                       Previous
                     </Button>
                     <Button
                       type="button"
                       onClick={handleNext}
-                      className="btn btn-secondary px-8 py-3 text-lg"
+                      className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
                     >
                       Next
                     </Button>
                   </div>
                   <Button
                     type="submit"
-                    className="btn btn-primary px-8 py-3 text-lg"
+                    className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
                   >
                     Register Ex Wife
                   </Button>
@@ -512,12 +560,12 @@ export default function DivorceNewPage() {
         <Form className="bg-white p-6 w-full rounded shadow mt-6 mx-auto">
           <div className="w-full">
             <span className="block font-semibold mb-2">Attachments</span>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="flex flex-col gap-1">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+              <div className="flex flex-col gap-1 w-full">
                 <label className="text-sm font-bold text-gray-700 mb-1">
                   Court Order <span className="text-red-500">*</span>
                 </label>
-                <div className="relative border p-4 rounded flex flex-col items-center">
+                <div className="relative border p-4 rounded flex flex-col items-center w-full min-h-[200px]">
                   <img
                     src="/images/file-upload.png"
                     alt="upload"
@@ -546,11 +594,11 @@ export default function DivorceNewPage() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-1 ">
+              <div className="flex flex-col gap-1 w-full">
                 <label className="text-sm font-bold text-gray-700 mb-1">
                   Other Attachments <span className="text-red-500">*</span>
                 </label>
-                <div className="flex relative border p-4 rounded flex-col items-center">
+                <div className="relative border p-4 rounded flex flex-col items-center w-full min-h-[200px]">
                   <img
                     src="/images/file-upload.png"
                     alt="upload"
@@ -585,13 +633,13 @@ export default function DivorceNewPage() {
               <Button
                 type="button"
                 onClick={handlePrev}
-                className="btn btn-secondary px-8 py-3 text-lg"
+                className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
               >
                 Previous
               </Button>
               <Button
                 type="submit"
-                className="btn btn-primary px-8 py-3 text-lg"
+                className="btn bg-[#0c4a6b] hover:bg-[#0c4a6b]/90 text-white px-8 py-3 text-lg"
               >
                 Submit Attachments
               </Button>
@@ -610,11 +658,13 @@ export default function DivorceNewPage() {
             description="This is a place where you can apply for a new divorce."
             action={<></>}
           />
+          {selected === "registeredMarriage" && (
           <Stepper
             steps={steps}
             activeStep={step - 1}
             orientation="horizontal"
           />
+          )}
         </div>
         <div className="flex flex-col gap-2 mb-4 pt-16  px-10">
           {/* Step 1: Show only checkboxes */}
@@ -694,19 +744,23 @@ export default function DivorceNewPage() {
                 htmlFor="registeredMarriage"
                 className="text-[#0c4a6b] text-md font-medium"
               >
-                Registered in Marriage?
+                Registered by Husband or Wife?
               </Label>
             </div>
           </RadioGroup>
 
           {/* Step 2: Show input field only after selection, before search */}
           {selected && selected !== "registeredMarriage" && (
-            <div className="flex items-center gap-2 mt-2">
+            <div className="mt-2 px-5 py-5 rounded-md shadow-md">
+              <label className="block text-base font-medium text-gray-700 mb-2">
+                Search with Court case number
+              </label>
+              <div className="flex items-center gap-2">
               <input
                 type="text"
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
-                placeholder="Enter ID to search"
+                  placeholder="Enter court case number to search"
                 className="border rounded w-96 px-3 py-2 h-12 focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 bg-white"
               />
               <Button
@@ -716,6 +770,7 @@ export default function DivorceNewPage() {
               >
                 Search
               </Button>
+              </div>
             </div>
           )}
           {showResults && (
@@ -739,10 +794,131 @@ export default function DivorceNewPage() {
         </div>
         {/* If info selected, show filled form, else show normal form */}
         {showDetails && selected === "registeredCourt" && (
-          <div className="">
-            {step === 1 && renderExHusbandForm()}
-            {step === 2 && renderExWifeForm()}
-            {step === 3 && attachementsForm()}
+          <div className="mt-6">
+            {/* Basic Info Section */}
+            <div className="bg-white p-6 rounded shadow mb-6">
+              <h3 className="text-lg font-semibold mb-4">Basic Info</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Previous Marriage Certificate No.
+                  </label>
+                  <p className="text-gray-900 font-medium">{staticHusbandInfo.certificate}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Registration Date
+                  </label>
+                  <p className="text-gray-900 font-medium">{staticHusbandInfo.registrationDate}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Divorce Date
+                  </label>
+                  <p className="text-gray-900 font-medium">{staticHusbandInfo.divorceDate}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Ex Husband and Ex Wife Info Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Ex Husband Info */}
+              <div className="bg-white p-6 rounded shadow">
+                <h3 className="text-lg font-semibold mb-4">Ex Husband Info</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Full Name
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticHusbandInfo.name}</p>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Nationality
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticHusbandInfo.nationality}</p>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Date of Birth
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticHusbandInfo.dob}</p>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Address
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticHusbandInfo.address}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ex Wife Info */}
+              <div className="bg-white p-6 rounded shadow">
+                <h3 className="text-lg font-semibold mb-4">Ex Wife Info</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Full Name
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticWifeInfo.name}</p>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Nationality
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticWifeInfo.nationality}</p>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Date of Birth
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticWifeInfo.dob}</p>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200">
+                    <label className="block text font-medium text-gray-700 mb-1">
+                      Address
+                    </label>
+                    <p className="text-gray-900 text-base font-medium">{staticWifeInfo.address}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Attachments Section */}
+            <div className="bg-white p-6 rounded shadow">
+              <h3 className="text-lg font-semibold mb-4 border-b border-gray-200 pb-2">Attachments</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mockAttachments.map((attachment, index) => (
+                  <Card key={index} className="p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 text-gray-600">
+                        {getFileIcon(attachment.fileName)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {attachment.fileName}
+                        </p>
+                        <p className="text-xs text-gray-500 capitalize">
+                          {attachment.fileType?.replace(/_/g, ' ').toLowerCase()}
+                        </p>
+                        <p className="text-xs text-green-600 font-medium">
+                          {attachment.status}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePreview(attachment.fileUrl, attachment.fileName, attachment.fileType)}
+                        className="flex-shrink-0"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         {  selected === "registeredMarriage" && (
@@ -750,6 +926,47 @@ export default function DivorceNewPage() {
         )}
       </div>
       <DivorceLivePreview />
+      
+      {/* Preview Modal */}
+      {previewFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">{previewFile.fileName}</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={closePreview}
+                className="flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="border rounded-lg p-4">
+              {previewFile.fileType === 'IMAGE' ? (
+                <img
+                  src={previewFile.url}
+                  alt={previewFile.fileName}
+                  className="max-w-full h-auto"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <FileText className="w-16 h-16 text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-2">PDF Preview not available</p>
+                  <p className="text-sm text-gray-500">{previewFile.fileName}</p>
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => window.open(previewFile.url, '_blank')}
+                  >
+                    Open in New Tab
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

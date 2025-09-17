@@ -25,7 +25,7 @@ import WitnessInformation from "@/features/marriage-service/components/witnessIn
 import RejectionModal from "@/features/marriage-service/components/rejectionModal";
 import { useGetMarriageBySlugQuery } from "@/features/marriage-service/api/marriageApi";
 import GeneralInformation from "@/features/marriage-service/components/generalInformation";
-
+import Marriagedata from "./marriagemockdata";
 const body = {
   request: {
     registrationId: "11111111-2222-3333-4444-555555555555",
@@ -85,9 +85,12 @@ export default function MarriageDetail() {
   const [showTimer, setShowTimer] = useState(false);
   const params = useParams();
   const slug = params.slug;
-  const { isLoading, isError, data } = useGetMarriageBySlugQuery({
-    id: slug,
-  });
+  // const { isLoading, isError, data } = useGetMarriageBySlugQuery({
+  //   id: slug,
+  // });
+  const data = Marriagedata;
+  const isLoading = false;
+  const isError = false;
   const [displayDoc, setDisplayDoc] = useState("");
 
   const handleCopy = async (value: string) => {
@@ -172,7 +175,7 @@ export default function MarriageDetail() {
       imageActive: generalActive.src,
     },
     {
-      label: "Bridal Info",
+      label: "Groom & Bridal Info",
       component: <BridalInformation data={data?.data || null} />,
       value: "bridal",
       image: marriage.src,
@@ -180,7 +183,7 @@ export default function MarriageDetail() {
     },
     {
       label: "Witnessess",
-      component: <WitnessInformation data={data?.data.witness || null} />,
+      component: <WitnessInformation data={data?.data || null} />,
       value: "witnessess",
       image: witness.src,
       imageActive: witnessActive.src,
@@ -279,7 +282,7 @@ export default function MarriageDetail() {
       action: handleRequestCertificate,
     },
   ];
-
+console.log(data,"data check");
   return (
     <>
       <HeroSection
@@ -323,15 +326,17 @@ export default function MarriageDetail() {
         {!isError && !isLoading ? (
           <div className="grid grid-cols-2 gap-5 w-full h-fit">
             <Card className="p-5 pb-10 space-y-5 w-full col-span-2 h-fit">
-              <Card className="md:space-x-2 w-full md:w-fit bg-gray-200 py-2 px-5 rounded-sm flex flex-col md:flex-row">
+              <div className="md:space-x-2 w-full md:w-fit bg-white py-2 px-5 rounded-sm flex flex-col md:flex-row items-center">
                 {marriageDetailOptions.map((component) => (
                   <Button
                     onClick={() => setDisplayData(component.value)}
                     key={component.value}
-                    variant={
-                      component.value === displayData ? "default" : "bare"
-                    }
-                    className="w-full px-10 py-2.5 flex items-center gap-2"
+                    variant="bare"
+                    className={`w-full px-10 py-2.5 flex items-center justify-center gap-2 ${
+                      component.value === displayData 
+                        ? "bg-primary text-white" 
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
                     <Image
                       src={
@@ -346,14 +351,14 @@ export default function MarriageDetail() {
                     {component.label}
                   </Button>
                 ))}
-              </Card>
+              </div>
 
               {
                 marriageDetailOptions.find((item) => item.value === displayData)
                   ?.component
               }
 
-              <div className="flex flex-col justify-between w-full shadow-sm">
+              {/* <div className="flex flex-col justify-between w-full shadow-sm">
                 <p>Attachment</p>
                 <div className="space-y-2">
                   {Array.isArray(supportingDocsArray) &&
@@ -391,11 +396,11 @@ export default function MarriageDetail() {
                     handleCancel={setOpenFileModal}
                   />
                 ) : null}
-              </div>
+              </div> */}
             </Card>
           </div>
         ) : null}
-        <div className="w-fit min-w-[350px] 2xl:min-w-[500px] flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
+        <div className="w-fit min-w-[350px] 2xl:min-w-[450px] flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
           {showTimer ? (
             <Card
               className="p-5"

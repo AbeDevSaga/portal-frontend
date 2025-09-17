@@ -2,7 +2,7 @@
 import "@/common/utils/styles/home.css";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import React from "react";
 import crrsaLogin from "@/public/images/crrsa-login.png";
@@ -11,27 +11,22 @@ import { useKeycloak } from "@/common/contexts/KeycloakContext";
 import { Button } from "./button";
 
 export default function LandingPageNavbar() {
-  const [activeLink, setActiveLink] = useState("/#home");
+  const [activeLink, setActiveLink] = useState("");
+  const router = useRouter();
   const { authenticated, user, login, logout } = useKeycloak();
 
   const landingLinks = [
-    { link: "/#home", name: "Home" },
-    { link: "/#services", name: "Services" },
-    { link: "/#requirements", name: "Requirements" },
-    { link: "/#announcements", name: "Announcements" },
-    { link: "/applicationstatus", name: "Application Status" },
-    { link: "/#faq", name: "FAQ" },
+    { link: "/", name: "Home" },
+    { link: "/services", name: "Services" },
+    { link: "/requirements", name: "Requirements" },
+    { link: "/announcements", name: "Announcements" },
+    // { link: "/applicationstatus", name: "Application Status" },
+    { link: "/faq", name: "FAQ" },
   ];
 
   const handleLinkClick = (link: string) => {
     setActiveLink(link);
-    if (link.startsWith("/#")) {
-      const sectionId = link.replace("/#", "");
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
+    router.push(link);
   };
 
   const handleLogin = () => {
