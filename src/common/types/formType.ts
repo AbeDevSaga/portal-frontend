@@ -67,6 +67,9 @@ export interface FieldConfig {
   // Grid layout configuration
   gridCols?: 1 | 2 | 3 | 4 | 6 | 12; // Number of grid columns this field should span
   gridRow?: number; // Optional row positioning
+  // Custom styling
+  className?: string; // Optional CSS classes for custom field styling
+  labelClassName?: string; // Optional CSS classes for custom label styling
   // Default value for any field type
   defaultValue?: any | ((dependentValue: any) => any); // Default value for the field
   // File upload specific properties

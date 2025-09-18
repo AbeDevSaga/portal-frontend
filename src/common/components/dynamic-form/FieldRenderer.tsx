@@ -55,6 +55,30 @@ interface Props {
   formValues?: Record<string, any>; // Add formValues prop for dynamic grid calculation
 }
 
+/**
+ * FieldRenderer Component
+ *
+ * Renders form fields based on FieldConfig with optional custom styling support.
+ *
+ * Custom Styling:
+ * Use the `className` and `labelClassName` properties in your FieldConfig to add custom CSS classes:
+ *
+ * Example:
+ * ```typescript
+ * const fieldConfig: FieldConfig = {
+ *   type: "input",
+ *   key: "customField",
+ *   label: "Custom Styled Field",
+ *   className: "my-custom-class bg-blue-50 border-blue-300", // Custom field styling
+ *   labelClassName: "text-lg font-bold text-purple-600", // Custom label styling
+ *   placeholder: "Enter value..."
+ * };
+ * ```
+ *
+ * - `className`: Applied to both the field wrapper div and the input element
+ * - `labelClassName`: Applied to the field label element (defaults to "text-primary font-semibold")
+ */
+
 export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
   const t = useTranslations();
   const dispatch = useDispatch();
@@ -62,6 +86,20 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
   // Generate grid classes based on field configuration with dynamic visibility
   const getGridClasses = (field: FieldConfig) => {
     return getAutoFlowGridClasses(field, formValues);
+  };
+
+  // Get custom className from field configuration
+  const getFieldClassName = (baseClassName: string = "") => {
+    const customClass = field.className || "";
+    return [baseClassName, customClass].filter(Boolean).join(" ");
+  };
+
+  // Get custom labelClassName from field configuration
+  const getLabelClassName = (
+    baseClassName: string = "text-primary font-semibold"
+  ) => {
+    const customClass = field.labelClassName || "";
+    return [baseClassName, customClass].filter(Boolean).join(" ");
   };
 
   // Render the field content
@@ -165,11 +203,10 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="flex flex-col space-y-2">
+                <div className={getFieldClassName()}>
                   <Label
-                    className="text-primary font-semibold"
-                    htmlFor={field.key}
-                  >
+                    className={`${getLabelClassName()??"text-primary font-semibold"}`}
+                    htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -179,6 +216,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     {...formikField}
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -240,11 +278,10 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-1 relative">
+                <div className={getFieldClassName("space-y-1 relative")}>
                   <Label
                     htmlFor={field.key}
-                    className="text-primary font-semibold"
-                  >
+                    className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -257,6 +294,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                       type={show ? "text" : "password"}
                       placeholder={dynamicPlaceholder}
                       disabled={isFieldDisabled}
+                      className={getFieldClassName()}
                       onChange={(e) => {
                         const value = e.target.value;
                         dispatch(
@@ -330,11 +368,10 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-2">
+                <div className={getFieldClassName("space-y-2")}>
                   <Label
-                    className="text-primary font-semibold"
-                    htmlFor={field.key}
-                  >
+                    className={getLabelClassName()}
+                    htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -344,7 +381,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     {...formikField}
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
-                    className="w-full border border-gray-300 rounded-md"
+                    className={getFieldClassName(
+                      "w-full border border-gray-300 rounded-md"
+                    )}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -404,8 +443,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="flex flex-col space-x-2">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -421,9 +460,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                           value,
                         })
                       );
-                    }}
-                  >
-                    <SelectTrigger className="w-full">
+                    }}>
+                    <SelectTrigger className={getFieldClassName("w-full")}>
                       <SelectValue
                         placeholder={dynamicPlaceholder || "Select an option"}
                       />
@@ -481,8 +519,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-2">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName("space-y-1")}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -499,9 +537,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         })
                       );
                     }}
-                    className="flex space-x-4"
-                    disabled={isFieldDisabled}
-                  >
+                    className={getFieldClassName("flex space-x-4")}
+                    disabled={isFieldDisabled}>
                     {field.options?.map((opt) => (
                       <Label
                         key={opt.value}
@@ -570,8 +607,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-1">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName("space-y-1")}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -593,7 +630,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         );
                       }}
                       disabled={isFieldDisabled}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className={getFieldClassName(
+                        "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      )}
                     />
                     <span className="text-sm text-gray-700">
                       {field.description || "Check this box"}
@@ -647,8 +686,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="flex flex-col space-y-2">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -659,6 +698,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     type="number"
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       // Convert to number if possible, otherwise keep as string for validation
@@ -908,8 +948,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -920,6 +960,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     type="email"
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -979,8 +1020,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -991,6 +1032,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     type="tel"
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -1443,8 +1485,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 };
 
                 return (
-                  <div>
-                    <Label className="text-primary font-semibold">
+                  <div className={getFieldClassName()}>
+                    <Label className={getLabelClassName()}>
                       {field.label}
                       {isFieldRequired ? (
                         <span className="pl-2 text-red-600">*</span>
@@ -1460,11 +1502,13 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                           placeholder={field.placeholder}
                           multiple={isMultiple}
                           accept={allowedTypes.join(",")}
-                          className={`cursor-pointer ${
-                            isFieldRequired && !currentFiles
-                              ? "border-red-500 focus:border-red-500"
-                              : ""
-                          }`}
+                          className={getFieldClassName(
+                            `cursor-pointer ${
+                              isFieldRequired && !currentFiles
+                                ? "border-red-500 focus:border-red-500"
+                                : ""
+                            }`
+                          )}
                           disabled={isFieldDisabled}
                         />
 
@@ -2441,8 +2485,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 }
 
                 return (
-                  <div className="flex flex-col space-y-2">
-                    <Label className="text-primary font-semibold">
+                  <div className={getFieldClassName()}>
+                    <Label className={getLabelClassName()}>
                       {field.label}
                       {isFieldRequired && (
                         <span className="pl-2 text-red-600">*</span>
@@ -2780,8 +2824,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -3797,8 +3841,10 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="relative space-y-2" ref={dropdownRef}>
-                  <Label className="text-primary font-semibold">
+                <div
+                  className={getFieldClassName("relative")}
+                  ref={dropdownRef}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -3817,7 +3863,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         `Enter at least ${minSearchLength} characters to search...`
                       }
                       disabled={isFieldDisabled}
-                      className="w-full"
+                      className={getFieldClassName("w-full")}
                     />
 
                     {/* Dropdown Options */}
