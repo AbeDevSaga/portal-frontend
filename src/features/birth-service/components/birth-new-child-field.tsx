@@ -1,7 +1,18 @@
 import { FormConfig } from "@/common/types/formType";
 
 export const formConfig: FormConfig = {
-  stepperData: [],
+  title: "Register New Birth",
+  description: "This is the new birth registration section",
+  stepperData: [
+    {
+      label: "Step 1",
+      content: "General Information",
+    },
+    {
+      label: "Step 2",
+      content: "Payment Information",
+    },
+  ],
   stepperPosition: "",
   grouping: {
     defaultGroup: "Child Details",
@@ -10,6 +21,11 @@ export const formConfig: FormConfig = {
         name: "Child Details",
         label: "Child Details",
         order: 1,
+      },
+      {
+        name: "Payment Information",
+        label: "Payment Information",
+        order: 2,
       },
     ],
   },
@@ -122,8 +138,7 @@ export const formConfig: FormConfig = {
           key: "birthTimeWeight",
           label: "Birth Time Weight",
           placeholder: "Enter Birth Time Weight",
-          description:
-            "",
+          description: "",
           validators: [
             {
               type: "required",
@@ -145,8 +160,7 @@ export const formConfig: FormConfig = {
           key: "birthTimeHeight",
           label: "Birth Time Height",
           placeholder: "Ensert Birth Time Height",
-          description:
-            "",
+          description: "",
           validators: [
             {
               type: "required",
@@ -259,8 +273,7 @@ export const formConfig: FormConfig = {
           key: "fatherResidentId",
           label: "Father's resident ID",
           placeholder: "Enter Father's resident ID",
-          description:
-            "",
+          description: "",
           validators: [
             {
               type: "required",
@@ -425,8 +438,7 @@ export const formConfig: FormConfig = {
           key: "motherResidentId",
           label: "Mother's resident ID",
           placeholder: "Enter Mother's resident ID",
-          description:
-            "",
+          description: "",
           validators: [
             {
               type: "required",
@@ -619,6 +631,63 @@ export const formConfig: FormConfig = {
           ],
           required: true,
           gridCols: 6,
+        },
+      ],
+    },
+    {
+      title: "Payment Information",
+      group: "Payment Information",
+      groupOrder: 2,
+      tabular: false,
+      defaultExpanded: true,
+      fields: [
+        {
+          type: "input",
+          key: "honorRecordNumber",
+          label: "Marriage Honor Record Number",
+          placeholder: "",
+          description: "Enter the Marriage Honor Record Number",
+          validators: [
+            {
+              type: "required",
+              message: "Marriage Honor Record Number is required",
+            },
+          ],
+          required: true,
+          group: "Honor Information",
+          groupOrder: 4,
+        },
+        {
+          type: "input",
+          key: "uniqueRegistrationOfficeNumber",
+          label: "Registration Office Number",
+          placeholder: "",
+          description: "Enter the Unique number of the registration office",
+          validators: [
+            {
+              type: "required",
+              message: "Registration Office Number is required",
+            },
+          ],
+          required: true,
+          group: "Honor Information",
+          groupOrder: 4,
+        },
+        {
+          type: "input",
+          key: "uniqueMarriageCertificateNumber",
+          label: "Marriage Certificate Number",
+          placeholder: "",
+          description: "Enter the Unique Marraige Certificate Number",
+          validators: [
+            {
+              type: "required",
+              message: "Marriage Certificate Number is required",
+            },
+          ],
+          required: true,
+          group: "Honor Information",
+          groupOrder: 4,
         },
       ],
     },

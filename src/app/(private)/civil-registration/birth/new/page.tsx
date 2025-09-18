@@ -1,7 +1,8 @@
 "use client";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { formConfig as birthNewChildConfig } from "@/features/birth-service/components/birth-new-child-field";
+// import { formConfig as birthNewChildConfig } from "@/features/birth-service/components/birth-new-child-field";
+import { formConfig as birthNewChildConfig } from "@/features/birth-service/components/check-form";
 import { formConfig as defaultFormConfig } from "@/features/birth-service/components/default-form-fields";
 import { formConfig as birthRegisteredHospitalConfig } from "@/features/birth-service/components/birth-registered-hospital-fields";
 import { formConfig as birthRegisteredFamilyConfig } from "@/features/birth-service/components/birth-registered-family-field";
@@ -258,81 +259,77 @@ export default function NewBirthRegistrationPage() {
     }
   };
 
+  const customHeader = (
+    <RadioGroup value={selected} className="space-y-3 p-[16px] py-2">
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem
+          value="newChild"
+          id="newChild"
+          onClick={() => handleChange("newChild")}
+        />
+        <Label
+          htmlFor="newChild"
+          className="text-[#0c4a6b] text-md font-medium"
+        >
+          Family Member but not registered yet
+        </Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem
+          value="registeredHospital"
+          id="registeredHospital"
+          onClick={() => handleChange("registeredHospital")}
+        />
+        <Label
+          htmlFor="registeredHospital"
+          className="text-[#0c4a6b] text-md font-medium"
+        >
+          Registered in hospital
+        </Label>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem
+          value="registeredFamily"
+          id="registeredFamily"
+          onClick={() => handleChange("registeredFamily")}
+        />
+        <Label
+          htmlFor="registeredFamily"
+          className="text-[#0c4a6b] text-md font-medium"
+        >
+          Already registered as family member
+        </Label>
+      </div>
+    </RadioGroup>
+  );
+
   const formContent = (
     <Card className="p-[24px] space-y-4 w-full">
-      <RadioGroup value={selected} className="space-y-3 p-[16px] py-2">
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem
-            value="newChild"
-            id="newChild"
-            onClick={() => handleChange("newChild")}
-          />
-          <Label
-            htmlFor="newChild"
-            className="text-[#0c4a6b] text-md font-medium"
-          >
-            Family Member but not registered yet
-          </Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem
-            value="registeredHospital"
-            id="registeredHospital"
-            onClick={() => handleChange("registeredHospital")}
-          />
-          <Label
-            htmlFor="registeredHospital"
-            className="text-[#0c4a6b] text-md font-medium"
-          >
-            Registered in hospital
-          </Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem
-            value="registeredFamily"
-            id="registeredFamily"
-            onClick={() => handleChange("registeredFamily")}
-          />
-          <Label
-            htmlFor="registeredFamily"
-            className="text-[#0c4a6b] text-md font-medium"
-          >
-            Already registered as family member
-          </Label>
-        </div>
-      </RadioGroup>
-      {selected && (
-        <>
-          <div className="px-[16px]">
-            <LineSeparator
-              height="h-[1px]"
-              color="bg-gray-300"
-              width="w-full"
-              margin="my-0"
-            />
-          </div>
-          <DynamicFormRendering
-            key={selected}
-            config={currentFormConfig}
-            handleSubmit={handleCreateBirth}
-            initialValues={formValues}
-            formStyle="grid grid-cols-6 md:grid-cols-12 gap-x-[40px] gap-y-4"
-            onAccordionStateChange={handleAccordionStateChange}
-            showPreview={false}
-          />
-        </>
-      )}
+      <DynamicFormRendering
+        key={selected}
+        config={currentFormConfig}
+        handleSubmit={handleCreateBirth}
+        initialValues={formValues}
+        formStyle="grid grid-cols-6 md:grid-cols-12 gap-x-[40px] gap-y-4"
+        onAccordionStateChange={handleAccordionStateChange}
+        showPreview={false}
+        customHeader={customHeader}
+        defaultTitle={{
+          title: "Register New Birth",
+          description: "This is the new birth registration section",
+        }}
+      />
     </Card>
   );
 
   return (
     <div className="flex flex-col space-y-2">
-      <HeroSection
+      {/* <HeroSection
         title="Register New Birth"
         description="This is the place to register new birth from health center."
         action={<></>}
-      />
+      /> */}
 
       <FormWithSidePreview
         formContent={formContent}

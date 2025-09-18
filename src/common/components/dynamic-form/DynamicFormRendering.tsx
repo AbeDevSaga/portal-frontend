@@ -16,6 +16,7 @@ import { FormConfig } from "@/common/types/formType";
 import { generateEnhancedSchema } from "@/common/utils/dynamic-form/schemaGenerator";
 import { Button } from "../ui/button";
 import HeroSection from "../common/HeroSection";
+import LineSeparator from "@/app/(private)/components/LineSeparator";
 
 interface DynamicFormProps {
   config: FormConfig;
@@ -24,6 +25,11 @@ interface DynamicFormProps {
   initialValues: object;
   onAccordionStateChange?: (expandedItems: string[]) => void;
   showPreview?: boolean;
+  customHeader?: React.ReactNode;
+  defaultTitle?: {
+    title?: string;
+    description?: string;
+  };
 }
 
 export default function DynamicFormRendering({
@@ -33,6 +39,8 @@ export default function DynamicFormRendering({
   initialValues,
   onAccordionStateChange,
   showPreview = false,
+  customHeader,
+  defaultTitle,
 }: DynamicFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -56,6 +64,16 @@ export default function DynamicFormRendering({
       setExpandedItems(initialExpanded);
     }
   }, [singleFormSteps]);
+
+  // Always expand the current step (but let user collapse it later if they want)
+  useEffect(() => {
+    if (hasStepper) {
+      const stepValue = `step-${stepIndex}`;
+      setExpandedItems((prev) =>
+        prev.includes(stepValue) ? prev : [...prev, stepValue]
+      );
+    }
+  }, [stepIndex, hasStepper]);
 
   const handleAccordionValueChange = (value: string[]) => {
     setExpandedItems(value);
@@ -91,35 +109,47 @@ export default function DynamicFormRendering({
   );
 
   const renderStepper = () => {
-    if (!hasStepper) return null;
-    const shouldShowHero = config.title && config.showTitle !== false;
+    const hasConfigTitle = config.title && config.showTitle !== false;
+    const hasDefaultTitle =
+      defaultTitle && (defaultTitle.title || defaultTitle.description);
+
+    const title = hasConfigTitle
+      ? config.title!
+      : hasDefaultTitle
+      ? defaultTitle?.title
+      : "New Registration";
+
+    const description = hasConfigTitle
+      ? config.description || "Complete your registration form."
+      : hasDefaultTitle
+      ? defaultTitle?.description || ""
+      : "";
     return (
-      <div className="flex justify-between">
-        {shouldShowHero && (
+      <div className="flex items-center justify-between py-[24px]">
+        {(hasConfigTitle || hasDefaultTitle) && (
           <div className="w-full">
             <HeroSection
-              title={config.title!}
-              description={
-                config.description || "Complete your registration form."
-              }
+              title={title!}
+              description={description}
               action={<></>}
             />
           </div>
         )}
-        <Stepper
-          steps={config.stepperData!}
-          activeStep={stepIndex}
-          orientation={stepperPosition === "left" ? "vertical" : "horizontal"}
-        />
+        {hasStepper && (
+          <Stepper
+            steps={config.stepperData!}
+            activeStep={stepIndex}
+            orientation={stepperPosition === "left" ? "vertical" : "horizontal"}
+          />
+        )}
       </div>
     );
   };
 
   const renderStepAccordion = (step: any, index: number, values: any) => {
+    const stepValue = `step-${index}`;
     if (step.tabular) {
       // Wrap tabular step in Accordion
-      const stepValue = `step-${index}`;
-      const isExpanded = expandedItems.includes(stepValue);
       return (
         <Accordion
           key={stepValue}
@@ -128,19 +158,16 @@ export default function DynamicFormRendering({
           onValueChange={handleAccordionValueChange}
           className="w-full"
         >
-          <AccordionItem
-            value={stepValue}
-            className="border-gray-200"
-          >
-            <AccordionTrigger className="text-lg font-semibold text-gray-900 hover:text-gray-700 py-0">
-              <div className="flex items-center gap-3">
+          <AccordionItem value={stepValue} className="">
+            <AccordionTrigger className="py-0 w-full text-[17.5px] text-[#073954] font-bold hover:text-gray-700">
+              <div className="flex items-center gap-3 py-3">
                 <span>{step.title}</span>
                 <span className="text-sm text-gray-500">
                   ({step.fields.length} fields)
                 </span>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="pt-2">
+            <AccordionContent className="pt-2 px-[16px]">
               {renderFields(step.fields, values)}
             </AccordionContent>
           </AccordionItem>
@@ -149,17 +176,15 @@ export default function DynamicFormRendering({
     } else {
       // Non-tabular step just render fields
       return (
-        <div key={`step-${index}`}>{renderFields(step.fields, values)}</div>
+        <div className="px-[16px]" key={`step-${index}`}>
+          {renderFields(step.fields, values)}
+        </div>
       );
     }
   };
 
   return (
-    <div
-      className={`${
-        stepperPosition === "left" ? "flex gap-8" : ""
-      }`}
-    >
+    <div className={`${stepperPosition === "left" ? "flex gap-8" : ""}`}>
       {stepperPosition === "top" && renderStepper()}
       {stepperPosition === "left" && (
         <div className="hidden lg:block lg:w-64 lg:flex-shrink-0">
@@ -181,12 +206,9 @@ export default function DynamicFormRendering({
 
             return (
               <>
-                {currentStep && (
-                  <div className="py-3 w-full text-[17.5px] text-[#073954] font-bold">
-                    {currentStep.title}
-                  </div>
-                )}
-                <Form className="px-[16px] space-y-2.5">
+                {customHeader && <div className="mb-4">{customHeader}</div>}
+                <LineSeparator width="h-[2px]"/>
+                <Form className="space-y-2.5">
                   {/* Multi-step form */}
                   {hasStepper
                     ? renderStepAccordion(currentStep, stepIndex, values)
@@ -196,7 +218,7 @@ export default function DynamicFormRendering({
 
                   {/* Buttons */}
                   <div
-                    className={`flex space-x-4 ${
+                    className={`flex space-x-4 px-[16px] ${
                       hasStepper ? "justify-start" : "justify-end"
                     } pt-4`}
                   >
