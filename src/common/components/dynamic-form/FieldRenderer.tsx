@@ -54,6 +54,30 @@ interface Props {
   formValues?: Record<string, any>; // Add formValues prop for dynamic grid calculation
 }
 
+/**
+ * FieldRenderer Component
+ *
+ * Renders form fields based on FieldConfig with optional custom styling support.
+ *
+ * Custom Styling:
+ * Use the `className` and `labelClassName` properties in your FieldConfig to add custom CSS classes:
+ *
+ * Example:
+ * ```typescript
+ * const fieldConfig: FieldConfig = {
+ *   type: "input",
+ *   key: "customField",
+ *   label: "Custom Styled Field",
+ *   className: "my-custom-class bg-blue-50 border-blue-300", // Custom field styling
+ *   labelClassName: "text-lg font-bold text-purple-600", // Custom label styling
+ *   placeholder: "Enter value..."
+ * };
+ * ```
+ *
+ * - `className`: Applied to both the field wrapper div and the input element
+ * - `labelClassName`: Applied to the field label element (defaults to "text-primary font-semibold")
+ */
+
 export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
   const t = useTranslations();
   const dispatch = useDispatch();
@@ -61,6 +85,20 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
   // Generate grid classes based on field configuration with dynamic visibility
   const getGridClasses = (field: FieldConfig) => {
     return getAutoFlowGridClasses(field, formValues);
+  };
+
+  // Get custom className from field configuration
+  const getFieldClassName = (baseClassName: string = "") => {
+    const customClass = field.className || "";
+    return [baseClassName, customClass].filter(Boolean).join(" ");
+  };
+
+  // Get custom labelClassName from field configuration
+  const getLabelClassName = (
+    baseClassName: string = "text-primary font-semibold"
+  ) => {
+    const customClass = field.labelClassName || "";
+    return [baseClassName, customClass].filter(Boolean).join(" ");
   };
 
   // Render the field content
@@ -164,9 +202,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="flex flex-col space-y-2">
+                <div className={getFieldClassName()}>
                   <Label
-                    className="text-primary font-semibold"
+                    className={getLabelClassName()}
                     htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
@@ -177,6 +215,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     {...formikField}
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -238,10 +277,10 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-1 relative">
+                <div className={getFieldClassName("space-y-1 relative")}>
                   <Label
                     htmlFor={field.key}
-                    className="text-primary font-semibold">
+                    className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -254,6 +293,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                       type={show ? "text" : "password"}
                       placeholder={dynamicPlaceholder}
                       disabled={isFieldDisabled}
+                      className={getFieldClassName()}
                       onChange={(e) => {
                         const value = e.target.value;
                         dispatch(
@@ -326,9 +366,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-2">
+                <div className={getFieldClassName("space-y-2")}>
                   <Label
-                    className="text-primary font-semibold"
+                    className={getLabelClassName()}
                     htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
@@ -339,7 +379,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     {...formikField}
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
-                    className="w-full border border-gray-300 rounded-md"
+                    className={getFieldClassName(
+                      "w-full border border-gray-300 rounded-md"
+                    )}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -399,8 +441,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="flex flex-col space-x-2">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -417,7 +459,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         })
                       );
                     }}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className={getFieldClassName("w-full")}>
                       <SelectValue
                         placeholder={dynamicPlaceholder || "Select an option"}
                       />
@@ -477,8 +519,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-2">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName("space-y-1")}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -495,7 +537,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         })
                       );
                     }}
-                    className="flex space-x-4"
+                    className={getFieldClassName("flex space-x-4")}
                     disabled={isFieldDisabled}>
                     {field.options?.map((opt) => (
                       <Label
@@ -551,8 +593,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="space-y-1">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName("space-y-1")}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -574,7 +616,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         );
                       }}
                       disabled={isFieldDisabled}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className={getFieldClassName(
+                        "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      )}
                     />
                     <span className="text-sm text-gray-700">
                       {field.description || "Check this box"}
@@ -628,8 +672,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div className="flex flex-col space-y-2">
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired ? (
                       <span className="text-red-600">*</span>
@@ -640,6 +684,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     type="number"
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       // Convert to number if possible, otherwise keep as string for validation
@@ -892,8 +937,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -904,6 +949,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     type="email"
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -963,8 +1009,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -975,6 +1021,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                     type="tel"
                     placeholder={dynamicPlaceholder}
                     disabled={isFieldDisabled}
+                    className={getFieldClassName()}
                     onChange={(e) => {
                       const value = e.target.value;
                       dispatch(
@@ -1427,8 +1474,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 };
 
                 return (
-                  <div>
-                    <Label className="text-primary font-semibold">
+                  <div className={getFieldClassName()}>
+                    <Label className={getLabelClassName()}>
                       {field.label}
                       {isFieldRequired ? (
                         <span className="pl-2 text-red-600">*</span>
@@ -1444,11 +1491,13 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                           placeholder={field.placeholder}
                           multiple={isMultiple}
                           accept={allowedTypes.join(",")}
-                          className={`cursor-pointer ${
-                            isFieldRequired && !currentFiles
-                              ? "border-red-500 focus:border-red-500"
-                              : ""
-                          }`}
+                          className={getFieldClassName(
+                            `cursor-pointer ${
+                              isFieldRequired && !currentFiles
+                                ? "border-red-500 focus:border-red-500"
+                                : ""
+                            }`
+                          )}
                           disabled={isFieldDisabled}
                         />
 
@@ -2422,8 +2471,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 }
 
                 return (
-                  <div className="flex flex-col space-y-2">
-                    <Label className="text-primary font-semibold">
+                  <div className={getFieldClassName()}>
+                    <Label className={getLabelClassName()}>
                       {field.label}
                       {isFieldRequired && (
                         <span className="pl-2 text-red-600">*</span>
@@ -2761,8 +2810,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
               }
 
               return (
-                <div>
-                  <Label className="text-primary font-semibold">
+                <div className={getFieldClassName()}>
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -2855,543 +2904,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
           </Field>
         );
 
-      // case "inputSearch":
-      //   return (
-      //     <Field name={field.key}>
-      //       {({ field: formikField, form }: any) => {
-      //         const [options, setOptions] = React.useState<any[]>([]);
-      //         const [isLoading, setIsLoading] = React.useState(false);
-      //         const [inputValue, setInputValue] = React.useState("");
-      //         const [isOpen, setIsOpen] = React.useState(false);
-      //         const [error, setError] = React.useState<string | null>(null);
-      //         const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-      //         const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-      //         // Get dependent field values if callback is provided
-      //         const dependentValues = field.getDependentValue
-      //           ? field.getDependentValue(form.values)
-      //           : null;
-
-      //         // Get inputSearch configuration
-      //         const inputSearchConfig = field.inputSearchConfig;
-      //         const {
-      //           isExternal = true,
-      //           baseUrl,
-      //           apiEndpoint,
-      //           method = "GET",
-      //           searchKey = "search",
-      //           searchFormat = "query", // Default to query parameter format
-      //           valueKey = "id",
-      //           labelKey = "name",
-      //           minSearchLength = 3,
-      //           debounceMs = 300,
-      //           cacheResults = true,
-      //           placeholder,
-      //           noOptionsMessage = "No options found",
-      //           loadingMessage = "Loading...",
-      //           transformResponse,
-      //           transformRequest,
-      //         } = inputSearchConfig || {};
-
-      //         // Dynamic field properties based on dependent values
-      //         const dynamicDescription = field.getDescription
-      //           ? field.getDescription(dependentValues)
-      //           : field.description;
-      //         const isFieldDisabled = field.isDisabled
-      //           ? field.isDisabled(dependentValues)
-      //           : field.disabled;
-      //         const isFieldHidden = field.isHide
-      //           ? field.isHide(dependentValues)
-      //           : false;
-      //         const isFieldRequired = field.isRequired
-      //           ? field.isRequired(dependentValues)
-      //           : field.required;
-
-      //         // Don't return early - let the component render but conditionally show content
-      //         // This maintains hook consistency
-
-      //         // Validate required configuration
-      //         if (!apiEndpoint || !valueKey || !labelKey) {
-      //           return (
-      //             <div className="text-red-500 text-sm p-4 border border-red-200 rounded bg-red-50">
-      //               <strong>Configuration Error:</strong> InputSearch field "
-      //               {field.label}" is missing required configuration. Please
-      //               provide apiEndpoint, valueKey, and labelKey in
-      //               inputSearchConfig.
-      //             </div>
-      //           );
-      //         }
-
-      //         // Cache for storing API results
-      //         const cacheRef = React.useRef(new Map());
-      //         const cache = cacheRef.current;
-
-      //         // Debounced search function
-      //         const debouncedSearch = React.useCallback(
-      //           (searchTerm: string) => {
-      //             if (timeoutRef.current) {
-      //               clearTimeout(timeoutRef.current);
-      //             }
-      //             timeoutRef.current = setTimeout(async () => {
-      //               if (searchTerm.length < minSearchLength) {
-      //                 setOptions([]);
-      //                 return;
-      //               }
-
-      //               try {
-      //                 setIsLoading(true);
-      //                 setError(null);
-
-      //                 // Check cache first if caching is enabled
-      //                 const cacheKey = `${apiEndpoint}_${searchTerm}_${
-      //                   JSON.stringify(dependentValues) || "none"
-      //                 }`;
-      //                 if (cacheResults && cache.has(cacheKey)) {
-      //                   const cachedData = cache.get(cacheKey);
-      //                   if (cachedData) {
-      //                     setOptions(cachedData);
-      //                     setIsLoading(false);
-      //                     return;
-      //                   }
-      //                 }
-
-      //                 // Prepare request parameters based on search format
-      //                 let requestParams: Record<string, any> = {};
-
-      //                 // Add search term based on format
-      //                 if (searchFormat === "path") {
-      //                   // For path format, don't add search term to query params
-      //                   // It will be inserted into the URL path later
-      //                 } else {
-      //                   // Default query format - add search term as query parameter
-      //                   requestParams[searchKey] = searchTerm;
-      //                 }
-
-      //                 // Add additional query parameters from config if provided
-      //                 if (inputSearchConfig?.additionalParams) {
-      //                   requestParams = {
-      //                     ...requestParams,
-      //                     ...inputSearchConfig.additionalParams,
-      //                   };
-      //                 }
-
-      //                 // Add dependent values to request if transformRequest is provided
-      //                 let modifiedEndpoint = isExternal
-      //                   ? `${
-      //                       baseUrl ||
-      //                       process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL
-      //                     }${apiEndpoint}`
-      //                   : `/api/${apiEndpoint}`;
-
-      //                 if (transformRequest && dependentValues) {
-      //                   const transformedRequest = transformRequest(
-      //                     {
-      //                       ...requestParams,
-      //                       url: modifiedEndpoint,
-      //                     },
-      //                     dependentValues
-      //                   );
-
-      //                   if (transformedRequest.url) {
-      //                     modifiedEndpoint = transformedRequest.url;
-      //                   }
-      //                   if (transformedRequest.params) {
-      //                     requestParams = transformedRequest.params;
-      //                   } else if (transformedRequest.search) {
-      //                     requestParams = transformedRequest.search;
-      //                   } else if (transformedRequest.body) {
-      //                     requestParams = transformedRequest.body;
-      //                   } else {
-      //                     const { url, ...params } = transformedRequest;
-      //                     requestParams = params;
-      //                   }
-      //                 }
-
-      //                 // For GET requests, append query parameters to URL
-      //                 if (method === "GET") {
-      //                   try {
-      //                     // For external APIs, we need to construct the full URL
-      //                     if (isExternal) {
-      //                       // Start with the base URL (use custom baseUrl if provided, otherwise fall back to environment variable)
-      //                       let effectiveBaseUrl =
-      //                         baseUrl ||
-      //                         process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL ||
-      //                         "";
-      //                       // Remove trailing slash if present
-      //                       if (effectiveBaseUrl.endsWith("/")) {
-      //                         effectiveBaseUrl = effectiveBaseUrl.slice(0, -1);
-      //                       }
-      //                       // Remove leading slash from apiEndpoint if present
-      //                       let cleanEndpoint = apiEndpoint;
-      //                       if (cleanEndpoint.startsWith("/")) {
-      //                         cleanEndpoint = cleanEndpoint.slice(1);
-      //                       }
-
-      //                       // Handle path format search - insert search term into the endpoint
-      //                       if (searchFormat === "path") {
-      //                         // Replace any placeholder in the endpoint with the search term
-      //                         // Common patterns: /{search}, /{id}, /{term}, etc.
-      //                         const searchPlaceholders = [
-      //                           "{search}",
-      //                           "{id}",
-      //                           "{term}",
-      //                           "{query}",
-      //                           "{value}",
-      //                         ];
-
-      //                         for (const placeholder of searchPlaceholders) {
-      //                           if (cleanEndpoint.includes(placeholder)) {
-      //                             cleanEndpoint = cleanEndpoint.replace(
-      //                               placeholder,
-      //                               encodeURIComponent(searchTerm)
-      //                             );
-      //                             break;
-      //                           }
-      //                         }
-
-      //                         // If no placeholder found, append the search term to the endpoint
-      //                         if (
-      //                           !searchPlaceholders.some((p) =>
-      //                             cleanEndpoint.includes(p)
-      //                           )
-      //                         ) {
-      //                           // Remove trailing slash if present
-      //                           if (cleanEndpoint.endsWith("/")) {
-      //                             cleanEndpoint = cleanEndpoint.slice(0, -1);
-      //                           }
-      //                           cleanEndpoint = `${cleanEndpoint}/${encodeURIComponent(
-      //                             searchTerm
-      //                           )}`;
-      //                         }
-      //                       }
-
-      //                       // Construct the full URL
-      //                       let fullUrl = `${effectiveBaseUrl}/${cleanEndpoint}`;
-
-      //                       // Add query parameters
-      //                       const queryParams = Object.entries(requestParams)
-      //                         .filter(
-      //                           ([_, value]) =>
-      //                             value !== undefined &&
-      //                             value !== null &&
-      //                             value !== ""
-      //                         )
-      //                         .map(
-      //                           ([key, value]) =>
-      //                             `${key}=${encodeURIComponent(String(value))}`
-      //                         )
-      //                         .join("&");
-
-      //                       if (queryParams) {
-      //                         const separator = fullUrl.includes("?")
-      //                           ? "&"
-      //                           : "?";
-      //                         fullUrl = `${fullUrl}${separator}${queryParams}`;
-      //                       }
-
-      //                       modifiedEndpoint = fullUrl;
-      //                     } else {
-      //                       // For local API routes, handle both query and path formats
-      //                       if (searchFormat === "path") {
-      //                         // Handle path format for local API routes
-      //                         let localEndpoint = apiEndpoint;
-
-      //                         // Replace any placeholder in the endpoint with the search term
-      //                         const searchPlaceholders = [
-      //                           "{search}",
-      //                           "{id}",
-      //                           "{term}",
-      //                           "{query}",
-      //                           "{value}",
-      //                         ];
-
-      //                         for (const placeholder of searchPlaceholders) {
-      //                           if (localEndpoint.includes(placeholder)) {
-      //                             localEndpoint = localEndpoint.replace(
-      //                               placeholder,
-      //                               encodeURIComponent(searchTerm)
-      //                             );
-      //                             break;
-      //                           }
-      //                         }
-
-      //                         // If no placeholder found, append the search term to the endpoint
-      //                         if (
-      //                           !searchPlaceholders.some((p) =>
-      //                             localEndpoint.includes(p)
-      //                           )
-      //                         ) {
-      //                           // Remove trailing slash if present
-      //                           if (localEndpoint.endsWith("/")) {
-      //                             localEndpoint = localEndpoint.slice(0, -1);
-      //                           }
-      //                           localEndpoint = `${localEndpoint}/${encodeURIComponent(
-      //                             searchTerm
-      //                           )}`;
-      //                         }
-
-      //                         modifiedEndpoint = `/api/${localEndpoint}`;
-      //                       } else {
-      //                         // Default query format - append query parameters
-      //                         const queryParams = Object.entries(requestParams)
-      //                           .filter(
-      //                             ([_, value]) =>
-      //                               value !== undefined &&
-      //                               value !== null &&
-      //                               value !== ""
-      //                           )
-      //                           .map(
-      //                             ([key, value]) =>
-      //                               `${key}=${encodeURIComponent(
-      //                                 String(value)
-      //                               )}`
-      //                           )
-      //                           .join("&");
-
-      //                         if (queryParams) {
-      //                           const separator = modifiedEndpoint.includes("?")
-      //                             ? "&"
-      //                             : "?";
-      //                           modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
-      //                         }
-      //                       }
-      //                     }
-      //                   } catch (error) {
-      //                     console.error("Error constructing URL:", error);
-      //                     // Fallback: manually construct query string
-      //                     const queryParams = Object.entries(requestParams)
-      //                       .filter(
-      //                         ([_, value]) =>
-      //                           value !== undefined &&
-      //                           value !== null &&
-      //                           value !== ""
-      //                       )
-      //                       .map(
-      //                         ([key, value]) =>
-      //                           `${key}=${encodeURIComponent(String(value))}`
-      //                       )
-      //                       .join("&");
-
-      //                     if (queryParams) {
-      //                       const separator = modifiedEndpoint.includes("?")
-      //                         ? "&"
-      //                         : "?";
-      //                       modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
-      //                     }
-      //                   }
-      //                 }
-
-      //                 // Make API request
-      //                 const response = await fetch(modifiedEndpoint, {
-      //                   method: method,
-      //                   headers: {
-      //                     "Content-Type": "application/json",
-      //                   },
-      //                   body:
-      //                     method === "POST"
-      //                       ? JSON.stringify(requestParams)
-      //                       : undefined,
-      //                 });
-
-      //                 if (!response.ok) {
-      //                   throw new Error(
-      //                     `API request failed: ${response.status}`
-      //                   );
-      //                 }
-
-      //                 const data = await response.json();
-
-      //                 // Transform response if custom transformer is provided
-      //                 let transformedOptions = data;
-      //                 if (transformResponse) {
-      //                   transformedOptions = transformResponse(data);
-      //                 } else {
-      //                   // Default transformation
-      //                   transformedOptions = data.map((item: any) => ({
-      //                     value: item[valueKey],
-      //                     label: item[labelKey],
-      //                     ...item, // Include all original properties
-      //                   }));
-      //                 }
-
-      //                 setOptions(transformedOptions);
-
-      //                 // Cache results if enabled
-      //                 if (cacheResults) {
-      //                   cache.set(cacheKey, transformedOptions);
-      //                 }
-      //               } catch (error) {
-      //                 console.error("Search error:", error);
-      //                 setError(
-      //                   error instanceof Error ? error.message : "Search failed"
-      //                 );
-      //                 setOptions([]);
-      //               } finally {
-      //                 setIsLoading(false);
-      //               }
-      //             }, debounceMs);
-      //           },
-      //           [
-      //             apiEndpoint,
-      //             valueKey,
-      //             labelKey,
-      //             searchKey,
-      //             debounceMs,
-      //             minSearchLength,
-      //             cacheResults,
-      //             dependentValues,
-      //             transformRequest,
-      //             transformResponse,
-      //           ]
-      //         );
-
-      //         // Handle input change
-      //         const handleInputChange = (
-      //           e: React.ChangeEvent<HTMLInputElement>
-      //         ) => {
-      //           const newValue = e.target.value;
-      //           setInputValue(newValue);
-      //           formikField.onChange(e);
-
-      //           if (newValue.length >= minSearchLength) {
-      //             debouncedSearch(newValue);
-      //             setIsOpen(true);
-      //           } else {
-      //             setOptions([]);
-      //             setIsOpen(false);
-      //           }
-      //         };
-
-      //         // Handle option selection
-      //         const handleOptionSelect = (option: any) => {
-      //           const inputEvent = {
-      //             target: {
-      //               name: field.key,
-      //               value: option[labelKey],
-      //             },
-      //           } as React.ChangeEvent<HTMLInputElement>;
-      //           formikField.onChange(inputEvent);
-      //           setInputValue(option[labelKey]);
-      //           setIsOpen(false);
-
-      //           // Store the full selected object as the field value
-      //           form.setFieldValue(field.key, option);
-      //           dispatch(
-      //             updateField({
-      //               key: field.key,
-      //               value: option,
-      //             })
-      //           );
-      //         };
-
-      //         // Handle input focus
-      //         const handleInputFocus = () => {
-      //           if (inputValue.length >= minSearchLength) {
-      //             setIsOpen(true);
-      //           }
-      //         };
-
-      //         // Handle input blur
-      //         const handleInputBlur = () => {
-      //           // Delay closing to allow option selection
-      //           setTimeout(() => setIsOpen(false), 200);
-      //         };
-
-      //         // Close dropdown when clicking outside
-      //         React.useEffect(() => {
-      //           const handleClickOutside = (event: MouseEvent) => {
-      //             if (
-      //               dropdownRef.current &&
-      //               !dropdownRef.current.contains(event.target as Node)
-      //             ) {
-      //               setIsOpen(false);
-      //             }
-      //           };
-
-      //           document.addEventListener("mousedown", handleClickOutside);
-      //           return () => {
-      //             document.removeEventListener("mousedown", handleClickOutside);
-      //           };
-      //         }, []);
-
-      //         // Conditionally render the field content based on isFieldHidden
-      //         if (isFieldHidden) {
-      //           return <div style={{ display: "none" }}></div>;
-      //         }
-
-      //         return (
-      //           <div className="relative" ref={dropdownRef}>
-      //             <Label className="text-primary font-semibold">
-      //               {field.label}
-      //               {isFieldRequired && (
-      //                 <span className="pl-2 text-red-600">*</span>
-      //               )}
-      //             </Label>
-
-      //             <div className="space-y-2">
-      //               <Input
-      //                 {...formikField}
-      //                 value={inputValue}
-      //                 onChange={handleInputChange}
-      //                 onFocus={handleInputFocus}
-      //                 onBlur={handleInputBlur}
-      //                 placeholder={
-      //                   placeholder ||
-      //                   `Enter at least ${minSearchLength} characters to search...`
-      //                 }
-      //                 disabled={isFieldDisabled}
-      //                 className="w-full"
-      //               />
-
-      //               {/* Dropdown Options */}
-      //               {isOpen && (
-      //                 <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-      //                   {isLoading ? (
-      //                     <div className="px-4 py-2 text-sm text-gray-500">
-      //                       {loadingMessage}
-      //                     </div>
-      //                   ) : options.length > 0 ? (
-      //                     options.map((option, index) => (
-      //                       <div
-      //                         key={index}
-      //                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-      //                         onClick={() => handleOptionSelect(option)}
-      //                       >
-      //                         {option[labelKey]}
-      //                       </div>
-      //                     ))
-      //                   ) : inputValue.length >= minSearchLength ? (
-      //                     <div className="px-4 py-2 text-sm text-gray-500">
-      //                       {noOptionsMessage}
-      //                     </div>
-      //                   ) : null}
-      //                 </div>
-      //               )}
-
-      //               {/* Error message */}
-      //               {error && <p className="text-sm text-red-600">{error}</p>}
-
-      //               {/* Dynamic description */}
-      //               {dynamicDescription && dynamicDescription.trim() !== "" && (
-      //                 <p className="text-[#7D7D7D] text-sm mt-1">
-      //                   {dynamicDescription}
-      //                 </p>
-      //               )}
-
-      //               {/* Formik validation errors */}
-      //               <ErrorMessage
-      //                 name={field.key}
-      //                 component="div"
-      //                 className="text-red-500 text-sm"
-      //               />
-      //             </div>
-      //           </div>
-      //         );
-      //       }}
-      //     </Field>
-      //   );
-      
-        case "formArray":
+      case "formArray":
         if (!field.formArrayConfig) {
           console.warn("FormArray field missing formArrayConfig:", field);
           return null;
@@ -3475,7 +2988,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 apiEndpoint.includes("hosital-notifications") ||
                 apiEndpoint.includes("hospital-notifications");
 
-              // Debounced search function 
+              // Debounced search function
               const debouncedSearch = React.useCallback(
                 (searchTerm: string) => {
                   if (timeoutRef.current) {
@@ -3777,9 +3290,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
               return (
                 <div
-                  className="relative space-y-2"
+                  className={getFieldClassName("relative")}
                   ref={dropdownRef}>
-                  <Label className="text-primary font-semibold">
+                  <Label className={getLabelClassName()}>
                     {field.label}
                     {isFieldRequired && (
                       <span className="pl-2 text-red-600">*</span>
@@ -3798,7 +3311,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                         `Enter at least ${minSearchLength} characters to search...`
                       }
                       disabled={isFieldDisabled}
-                      className="w-full"
+                      className={getFieldClassName("w-full")}
                     />
 
                     {/* Dropdown Options */}
