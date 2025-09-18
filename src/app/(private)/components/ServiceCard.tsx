@@ -202,7 +202,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
                     <a
                       key={request.type}
                       href={request.link}
-                      className="w-full flex bg-gray-200 hover:bg-gray-600 hover:text-white items-center justify-center  text-xs p-2 bg-muted rounded   transition-colors"
+                      className="w-full flex bg-[#073954] text-[#F8F8F8] items-center justify-center text-xs p-2 rounded 
+             hover:bg-primary 
+             transition-colors duration-300 ease-in-out"
                     >
                       {request.type}
                     </a>

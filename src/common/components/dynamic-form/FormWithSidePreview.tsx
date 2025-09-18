@@ -80,7 +80,7 @@ export default function FormWithSidePreview({
 
     return (
         <div className={`flex flex-wrap ${getGridCols()} gap-10 ${className}`}>
-            <div className={`${getFormColSpan()}`}>
+            <div className={`${getFormColSpan()} w-full`}>
                 {formContent}
             </div>
             <div className={`${getPreviewColSpan()} space-y-3.5 w-full`}>

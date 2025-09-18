@@ -4,8 +4,14 @@ import Link from "next/link";
 import looper from "@/public/images/Looper-bg.svg";
 import Image from "next/image";
 import ellipse from "@/public/images/Ellipse-25.svg";
+import { useKeycloak } from "@/common/contexts/KeycloakContext";
 
 function HomePage() {
+  const { authenticated, user, login, logout } = useKeycloak();
+  const handleLogin = () => {
+    login();
+  };
+
   return (
     <section
       className="min-h-screen bg-cover bg-no-repeat font-barlow p-4"
@@ -33,12 +39,12 @@ function HomePage() {
             Gateway to Identity, Citizenship, and Residence Services.
           </p>
           <Button asChild className="bg-[#073954]">
-            <Link
-              href="/login"
+            <div
+              onClick={handleLogin}
               className="text-xl lg:!py-5 lg:!px-14 w-fit mx-auto !z-30  text-white"
             >
               Access Services
-            </Link>
+            </div>
           </Button>
         </div>
       </div>

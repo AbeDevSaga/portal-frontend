@@ -739,11 +739,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
             );
 
             const displayDate = useMemo(() => {
-              if (!currentValue) return "Select date";
+              if (!currentValue) return "DD/MM/YY";
               try {
                 return new Date(currentValue).toLocaleDateString();
               } catch {
-                return "Select date";
+                return "DD/MM/YY";
               }
             }, [currentValue]);
 
@@ -757,7 +757,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
             }, [currentValue]);
 
             return (
-              <div className="space-y-1 flex flex-col gap-2">
+              <div className="space-y-2 flex flex-col">
                 <Label
                   className="text-primary font-semibold"
                   htmlFor={fieldKey}>
@@ -770,7 +770,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="!text-left w-full md:min-w-[250px]"
+                      className="flex items-center justify-start w-full md:min-w-[250px]"
                       id={fieldKey}
                       disabled={isDisabled}
                       onClick={() => setIsOpen(!isOpen)}>

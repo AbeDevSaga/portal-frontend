@@ -25,6 +25,8 @@ function isValidBirthday(birthdayStr: string) {
   return age >= 18;
 }
 export const formConfig: FormConfig = {
+  title: "New Marriage",
+  description: "This is the new marriage registration section",
   stepperData: [
     {
       label: "Step 1",
@@ -40,16 +42,12 @@ export const formConfig: FormConfig = {
     },
     {
       label: "Step 4",
+      content: "Witness Information",
+    },
+    {
+      label: "Step 5",
       content: "Honor Information",
     },
-    // {
-    //     label: "Step 5",
-    //     content: "Groom Witness Information",
-    // },
-    // {
-    //     label: "Step 6",
-    //     content: "Bride Witness Information",
-    // },
   ],
   stepperPosition: "",
   grouping: {
@@ -69,6 +67,11 @@ export const formConfig: FormConfig = {
         name: "Bride's Information",
         label: "Bride's Information",
         order: 3,
+      },
+      {
+        name: "Witnesses Information",
+        label: "Witnesses Information",
+        order: 4,
       },
     ],
   },
@@ -150,16 +153,16 @@ export const formConfig: FormConfig = {
           ],
           required: true,
           group: "General Information",
-          groupOrder: 1,
+          groupOrder: 2,
         },
       ],
     },
     {
       title: "Groom's Information",
       group: "Groom's Information",
-      groupOrder: 2,
-      tabular: false,
-      defaultExpanded: true,
+      groupOrder: 1,
+      tabular: true,
+      defaultExpanded: false,
       fields: [
         {
           type: "inputSearch",
@@ -177,6 +180,8 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 1,
+          gridCols: 6,
+          defaultValue: null,
           inputSearchConfig: {
             isExternal: true,
             apiEndpoint: "/resident/residents",
@@ -273,6 +278,7 @@ export const formConfig: FormConfig = {
           placeholder: "",
           description: "Upload the Groom's Birth Certificate",
           required: false,
+          gridCols: 6,
           group: "Groom's Information",
           groupOrder: 2,
         },
@@ -612,42 +618,6 @@ export const formConfig: FormConfig = {
         //         );
         //     },
         // },
-        // {
-        //     type: "fileUpload",
-        //     key: "groomWidowCertificate",
-        //     label: "Groom's Widow Certificate",
-        //     placeholder: "",
-        //     description: "Upload the Grooms Widow Certificate",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Widow Certificate is required",
-        //         },
-        //     ],
-        //     isRequired: (dependentValue) => {
-        //         return (
-        //             dependentValue.earlierMaritalStatusGroom === "WIDOW"
-        //         );
-        //     },
-        //     // required:  (dependentValues: any) => {
-        //     //     // Make required if birth type is twin
-        //     //     return dependentValues?.birthType === 'twin';
-        //     // },
-        //     group: "Groom's Information",
-        //     groupOrder: 2,
-        //     getDependentValue: (formValues: any) => ({
-        //         groomResidentId: formValues.earlierMaritalStatusGroom,
-        //     }),
-        //     isDisabled: (dependentValues: any) => {
-        //         return dependentValues?.earlierMaritalStatusGroom;
-        //     },
-        //     isHide: (dependentValues: any) => {
-        //         return (
-        //             dependentValues.earlierMaritalStatusGroom !==
-        //             "WIDOW"
-        //         );
-        //     },
-        // },
         {
           type: "fileUpload",
           key: "groomPhoto",
@@ -671,26 +641,6 @@ export const formConfig: FormConfig = {
             return dependentValues?.groomPhoto;
           },
         },
-        // {
-        //     type: "fileUpload",
-        //     key: "residentIdGroom",
-        //     label: "Groom's Resident ID",
-        //     placeholder: "",
-        //     description: "Upload the Grooms Resident ID",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Groom's Resident ID is required",
-        //         },
-        //     ],
-        //     required: true,
-        //     // required:  (dependentValues: any) => {
-        //     //     // Make required if birth type is twin
-        //     //     return dependentValues?.birthType === 'twin';
-        //     // },
-        //     group: "Groom's Information",
-        //     groupOrder: 2,
-        // },
         {
           type: "lookup",
           key: "groomEducationlStatus",
@@ -1021,42 +971,6 @@ export const formConfig: FormConfig = {
             return !dependentValues?.groomWitnessSecondResidentId;
           },
         },
-        // {
-        //     type: "fileUpload",
-        //     key: "groomFirstWitnessId",
-        //     label: "Groom's First Witness ID",
-        //     placeholder: "",
-        //     description: "Witness's proof of identity (ID, Passport)",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Groom's First witness ID is required",
-        //         },
-        //     ],
-        //     required: true,
-        //     group: "Groom's Information",
-        //     groupOrder: 2,
-        // },
-
-        // {
-        //     type: "fileUpload",
-        //     key: "groomSecondWitnessId",
-        //     label: "Groom's Second Witness ID",
-        //     placeholder: "",
-        //     description: "Witness's proof of identity (ID, Passport)",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Groom's Second witness ID is required",
-        //         },
-        //     ],
-        //     required: true,
-        //     group: "Groom's Information",
-        //     groupOrder: 2,
-        //     isDisabled: (dependentValues: any) => {
-        //         return dependentValues?.groomPhoto;
-        //     },
-        // },
       ],
     },
 
@@ -1065,7 +979,7 @@ export const formConfig: FormConfig = {
       group: "Bride's Information",
       groupOrder: 3,
       tabular: false,
-      defaultExpanded: true,
+      defaultExpanded: false,
       fields: [
         {
           type: "inputSearch",
@@ -1177,16 +1091,6 @@ export const formConfig: FormConfig = {
             return !dependentValues?.brideResidentId;
           },
         },
-        // {
-        //     type: "fileUpload",
-        //     key: "brideBirthCertificate",
-        //     label: "Bride's Birth Certificate",
-        //     placeholder: "",
-        //     description: "Upload the Bride's Birth Certificate",
-        //     required: false,
-        //     group: "Bride's Information",
-        //     groupOrder: 2,
-        // },
         {
           type: "input",
           key: "brideNationality",
@@ -1473,83 +1377,6 @@ export const formConfig: FormConfig = {
             return !dependentValues?.brideResidentId;
           },
         },
-        // {
-        //     type: "fileUpload",
-        //     key: "brideDivorceCertificate",
-        //     label: "Bride's Divorce Certificate",
-        //     placeholder: "",
-        //     description: "Upload the Brides Divorce Certificate",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Divorce Certificate is required",
-        //         },
-        //     ],
-        //     isRequired: (dependentValue) => {
-        //         return (
-        //             dependentValue.earlierMaritalStatusBride ===
-        //                 "MARRIED" ||
-        //             dependentValue.earlierMaritalStatusBride ===
-        //                 "DIVORCED"
-        //         );
-        //     },
-        //     // required:  (dependentValues: any) => {
-        //     //     // Make required if birth type is twin
-        //     //     return dependentValues?.birthType === 'twin';
-        //     // },
-        //     group: "Bride's Information",
-        //     groupOrder: 2,
-        //     getDependentValue: (formValues: any) => ({
-        //         brideResidentId: formValues.earlierMaritalStatusBride,
-        //     }),
-        //     isDisabled: (dependentValues: any) => {
-        //         return dependentValues?.earlierMaritalStatusBride;
-        //     },
-        //     isHide: (dependentValues: any) => {
-        //         return (
-        //             dependentValues.earlierMaritalStatusBride !==
-        //                 "MARRIED" &&
-        //             dependentValues.earlierMaritalStatusBride !==
-        //                 "DIVORCED"
-        //         );
-        //     },
-        // },
-        // {
-        //     type: "fileUpload",
-        //     key: "brideWidowCertificate",
-        //     label: "Bride's Widow Certificate",
-        //     placeholder: "",
-        //     description: "Upload the Brides Widow Certificate",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Widow Certificate is required",
-        //         },
-        //     ],
-        //     isRequired: (dependentValue) => {
-        //         return (
-        //             dependentValue.earlierMaritalStatusBride === "WIDOW"
-        //         );
-        //     },
-        //     // required:  (dependentValues: any) => {
-        //     //     // Make required if birth type is twin
-        //     //     return dependentValues?.birthType === 'twin';
-        //     // },
-        //     group: "Bride's Information",
-        //     groupOrder: 2,
-        //     getDependentValue: (formValues: any) => ({
-        //         brideResidentId: formValues.earlierMaritalStatusBride,
-        //     }),
-        //     isDisabled: (dependentValues: any) => {
-        //         return dependentValues?.earlierMaritalStatusBride;
-        //     },
-        //     isHide: (dependentValues: any) => {
-        //         return (
-        //             dependentValues.earlierMaritalStatusBride !==
-        //             "WIDOW"
-        //         );
-        //     },
-        // },
         {
           type: "fileUpload",
           key: "bridePhoto",
@@ -1573,26 +1400,6 @@ export const formConfig: FormConfig = {
             return dependentValues?.bridePhoto;
           },
         },
-        // {
-        //     type: "fileUpload",
-        //     key: "residentIdBride",
-        //     label: "Bride's Resident ID",
-        //     placeholder: "",
-        //     description: "Upload the Bride's Resident ID",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Bride's Resident ID is required",
-        //         },
-        //     ],
-        //     required: true,
-        //     // required:  (dependentValues: any) => {
-        //     //     // Make required if birth type is twin
-        //     //     return dependentValues?.birthType === 'twin';
-        //     // },
-        //     group: "Bride's Information",
-        //     groupOrder: 2,
-        // },
         {
           type: "lookup",
           key: "brideEducationlStatus",
@@ -1913,51 +1720,14 @@ export const formConfig: FormConfig = {
             return !dependentValues?.brideWitnessSecondResidentId;
           },
         },
-
-        // {
-        //     type: "fileUpload",
-        //     key: "brideFirstWitnessId",
-        //     label: "Bride's First Witness ID",
-        //     placeholder: "",
-        //     description: "Witness's proof of identity (ID, Passport)",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Bride's First witness ID is required",
-        //         },
-        //     ],
-        //     required: true,
-        //     group: "Bride's Information",
-        //     groupOrder: 2,
-        // },
-
-        // {
-        //     type: "fileUpload",
-        //     key: "brideSecondWitnessId",
-        //     label: "Bride's Second Witness ID",
-        //     placeholder: "",
-        //     description: "Witness's proof of identity (ID, Passport)",
-        //     validators: [
-        //         {
-        //             type: "required",
-        //             message: "Bride's Second witness ID is required",
-        //         },
-        //     ],
-        //     required: true,
-        //     group: "Bride's Information",
-        //     groupOrder: 2,
-        //     isDisabled: (dependentValues: any) => {
-        //         return dependentValues?.groomPhoto;
-        //     },
-        // },
       ],
     },
     {
-      title: "Honor Information",
-      group: "Honor Information",
+      title: "Witnesses Information",
+      group: "Witnesses Information",
       groupOrder: 4,
       tabular: false,
-      defaultExpanded: true,
+      defaultExpanded: false,
       fields: [
         {
           type: "input",
@@ -2009,333 +1779,62 @@ export const formConfig: FormConfig = {
         },
       ],
     },
-    // {
-    //     title: "Groom Witness Information",
-    //     group: "Groom Witness Information",
-    //     groupOrder: 5,
-    //     tabular: false,
-    //     defaultExpanded: true,
-    //     fields: [
-    //         {
-    //             type: "inputSearch",
-    //             key: "witnessResidentIdGroom",
-    //             label: "Groom's Witness resident ID",
-    //             placeholder: "Enter at least 3 characters to search...",
-    //             description:
-    //                 "Search for a resident by entering their ID. The system will search as you type.",
-    //             validators: [
-    //                 {
-    //                     type: "required",
-    //                     message: "Resident ID is required",
-    //                 },
-    //             ],
-    //             required: true,
-    //             group: "Groom Witness Information",
-
-    //             groupOrder: 1,
-    //             inputSearchConfig: {
-    //                 isExternal: true,
-    //                 apiEndpoint: "/resident/residents",
-    //                 method: "GET",
-    //                 searchKey: "search",
-    //                 valueKey: "id",
-    //                 labelKey: "name",
-    //                 minSearchLength: 3,
-    //                 debounceMs: 300,
-    //                 cacheResults: true,
-    //                 placeholder: "Search for resident...",
-    //                 noOptionsMessage: "No resident found",
-    //                 loadingMessage: "Searching residents...",
-    //                 additionalParams: {
-    //                     // limit: 20,        // Uncomment and modify as needed
-    //                     // offset: 0,        // Uncomment and modify as needed
-    //                     // Add any other parameters your API expects
-    //                 },
-    //                 transformResponse: (data: any) => {
-    //                     if (
-    //                         !data ||
-    //                         !data.content ||
-    //                         !Array.isArray(data.content)
-    //                     ) {
-    //                         return [];
-    //                     }
-    //                     // console.log("Groom data", data);
-    //                     return data.content.map((resident: any) => ({
-    //                         id: resident.id,
-    //                         value: resident.id,
-    //                         label: resident.firstName || "Unknown",
-    //                         name: resident.firstName || "Unknown",
-    //                         firstName: resident.firstName,
-    //                         middleName: resident.middleName,
-    //                         lastName: resident.lastName,
-    //                         fullName: [
-    //                             resident.firstName,
-    //                             resident.middleName,
-    //                             resident.lastName,
-    //                         ]
-    //                             .filter(Boolean)
-    //                             .join(" "),
-    //                         age: resident.age,
-    //                         dateOfBirth: resident.dateOfBirth,
-    //                         gender: resident.gender,
-    //                         maritalStatus: resident.maritalStatus,
-    //                         mobileNumber: resident.mobileNumber,
-    //                         nationality: resident.nationality,
-    //                         ...resident,
-    //                     }));
-    //                 },
-    //             },
-    //         },
-    //         {
-    //             type: "input",
-    //             key: "witnessFirstNameGroom",
-    //             label: "Groom Witness Information",
-    //             placeholder: "",
-    //             description:
-    //                 "Enter Witness Full name as it appears on official documents",
-    //             validators: [
-    //                 {
-    //                     type: "required",
-    //                     message: "Earlier Marital Status is required",
-    //                 },
-    //             ],
-    //             required: true,
-    //             group: "Groom Witness Information",
-    //             groupOrder: 2,
-    //             defaultValue: (dependentValues: any) => {
-    //                 if (
-    //                     dependentValues?.witnessResidentIdGroom &&
-    //                     typeof dependentValues.witnessResidentIdGroom ===
-    //                         "object"
-    //                 ) {
-    //                     return (
-    //                         dependentValues.witnessResidentIdGroom
-    //                             .fullName || ""
-    //                     );
-    //                 }
-    //                 return "";
-    //             },
-    //             getDependentValue: (formValues: any) => ({
-    //                 witnessResidentIdGroom:
-    //                     formValues.witnessResidentIdGroom,
-    //             }),
-    //             isDisabled: (dependentValues: any) => {
-    //                 return dependentValues?.witnessResidentIdGroom;
-    //             },
-    //             isHide: (dependentValues: any) => {
-    //                 return !dependentValues?.witnessResidentIdGroom;
-    //             },
-    //         },
-    //         {
-    //             type: "digitalSignature",
-    //             key: "parentSignatureGroom",
-    //             label: "Witness Signature",
-    //             description:
-    //                 "Please sign below to confirm the information provided is accurate and complete",
-    //             required: true,
-    //             group: "Account Details",
-    //             groupOrder: 6,
-    //             validators: [
-    //                 {
-    //                     type: "required",
-    //                     message:
-    //                         "Signature is required to proceed with registration",
-    //                 },
-    //             ],
-    //             digitalSignatureConfig: {
-    //                 canvasWidth: 450,
-    //                 canvasHeight: 200,
-    //                 penColor: "#1f2937", // Dark gray for better visibility
-    //                 penWidth: 3,
-    //                 backgroundColor: "#ffffff",
-    //                 showClearButton: true,
-    //                 showSaveButton: true,
-    //                 placeholder: "Click and drag to sign here",
-    //                 validationMessage:
-    //                     "Please provide your signature to continue",
-    //             },
-    //         },
-    //     ],
-    // },
-    // {
-    //     title: "Bride Witness Information",
-    //     group: "Bride Witness Information",
-    //     groupOrder: 6,
-    //     tabular: false,
-    //     defaultExpanded: true,
-    //     fields: [
-    //         {
-    //             type: "inputSearch",
-    //             key: "witnessResidentIdBride",
-    //             label: "Bride's Witness resident ID",
-    //             placeholder: "Enter at least 3 characters to search...",
-    //             description:
-    //                 "Search for a resident by entering their ID. The system will search as you type.",
-    //             validators: [
-    //                 {
-    //                     type: "required",
-    //                     message: "Resident ID is required",
-    //                 },
-    //             ],
-    //             required: true,
-    //             group: "Bride Witness Information",
-
-    //             groupOrder: 1,
-    //             inputSearchConfig: {
-    //                 isExternal: true,
-    //                 apiEndpoint: "/resident/residents",
-    //                 method: "GET",
-    //                 searchKey: "search",
-    //                 valueKey: "id",
-    //                 labelKey: "name",
-    //                 minSearchLength: 3,
-    //                 debounceMs: 300,
-    //                 cacheResults: true,
-    //                 placeholder: "Search for resident...",
-    //                 noOptionsMessage: "No resident found",
-    //                 loadingMessage: "Searching residents...",
-    //                 additionalParams: {
-    //                     // limit: 20,        // Uncomment and modify as needed
-    //                     // offset: 0,        // Uncomment and modify as needed
-    //                     // Add any other parameters your API expects
-    //                 },
-    //                 transformResponse: (data: any) => {
-    //                     if (
-    //                         !data ||
-    //                         !data.content ||
-    //                         !Array.isArray(data.content)
-    //                     ) {
-    //                         return [];
-    //                     }
-    //                     // console.log("Groom data", data);
-    //                     return data.content.map((resident: any) => ({
-    //                         id: resident.id,
-    //                         value: resident.id,
-    //                         label: resident.firstName || "Unknown",
-    //                         name: resident.firstName || "Unknown",
-    //                         firstName: resident.firstName,
-    //                         middleName: resident.middleName,
-    //                         lastName: resident.lastName,
-    //                         fullName: [
-    //                             resident.firstName,
-    //                             resident.middleName,
-    //                             resident.lastName,
-    //                         ]
-    //                             .filter(Boolean)
-    //                             .join(" "),
-    //                         age: resident.age,
-    //                         dateOfBirth: resident.dateOfBirth,
-    //                         gender: resident.gender,
-    //                         maritalStatus: resident.maritalStatus,
-    //                         mobileNumber: resident.mobileNumber,
-    //                         nationality: resident.nationality,
-    //                         ...resident,
-    //                     }));
-    //                 },
-    //             },
-    //         },
-    //         {
-    //             type: "input",
-    //             key: "witnessFirstNameBride",
-    //             label: "Groom Witness Information",
-    //             placeholder: "",
-    //             description:
-    //                 "Enter Witness Full name as it appears on official documents",
-    //             validators: [
-    //                 {
-    //                     type: "required",
-    //                     message: "Earlier Marital Status is required",
-    //                 },
-    //             ],
-    //             required: true,
-    //             group: "Bride Witness Information",
-    //             groupOrder: 2,
-    //             defaultValue: (dependentValues: any) => {
-    //                 if (
-    //                     dependentValues?.witnessResidentIdBride &&
-    //                     typeof dependentValues.witnessResidentIdBride ===
-    //                         "object"
-    //                 ) {
-    //                     return (
-    //                         dependentValues.witnessResidentIdBride
-    //                             .fullName || ""
-    //                     );
-    //                 }
-    //                 return "";
-    //             },
-    //             getDependentValue: (formValues: any) => ({
-    //                 witnessResidentIdBride:
-    //                     formValues.witnessResidentIdBride,
-    //             }),
-    //             isDisabled: (dependentValues: any) => {
-    //                 return dependentValues?.witnessResidentIdBride;
-    //             },
-    //             isHide: (dependentValues: any) => {
-    //                 return !dependentValues?.witnessResidentIdBride;
-    //             },
-    //         },
-
-    //         {
-    //             type: "digitalSignature",
-    //             key: "parentSignatureBride",
-    //             label: "Witness Signature",
-    //             description:
-    //                 "Please sign below to confirm the information provided is accurate and complete",
-    //             required: true,
-    //             group: "Account Details",
-    //             groupOrder: 6,
-    //             validators: [
-    //                 {
-    //                     type: "required",
-    //                     message:
-    //                         "Signature is required to proceed with registration",
-    //                 },
-    //             ],
-    //             digitalSignatureConfig: {
-    //                 canvasWidth: 450,
-    //                 canvasHeight: 200,
-    //                 penColor: "#1f2937", // Dark gray for better visibility
-    //                 penWidth: 3,
-    //                 backgroundColor: "#ffffff",
-    //                 showClearButton: true,
-    //                 showSaveButton: true,
-    //                 placeholder: "Click and drag to sign here",
-    //                 validationMessage:
-    //                     "Please provide your signature to continue",
-    //             },
-    // Dynamic behavior based on country selection
-    // getDependentValue: (formValues: any) => {
-    //     return {
-    //         countryOfBirth: formValues.countryOfBirth,
-    //         regionOfBirth: formValues.regionOfBirth,
-    //     };
-    // },
-    // // Make signature required for all countries
-    // isRequired: (dependentValues: any) => {
-    //     return true; // Always required for birth registration
-    // },
-    // // Always show the signature field, but guide users with description
-    // isHide: (dependentValues: any) => {
-    //     return false; // Always visible
-    // },
-    // // Custom description based on country
-    // getDescription: (dependentValues: any) => {
-    //     if (!dependentValues?.countryOfBirth) {
-    //         return "Please select a country first before signing. The signature field is available for you to use once you've made your selection.";
-    //     }
-    //     const countryId = typeof dependentValues.countryOfBirth === 'object'
-    //         ? dependentValues.countryOfBirth.value || dependentValues.countryOfBirth.id
-    //         : dependentValues.countryOfBirth;
-
-    //     if (countryId === 'ET') {
-    //         return "Ethiopian birth registration requires parent/guardian signature for verification";
-    //     } else if (countryId === 'US') {
-    //         return "US birth registration requires legal guardian signature for processing";
-    //     }
-    //     return "Please sign below to confirm the information provided is accurate and complete";
-    // }
-    // },
-    // ],
-    // },
+    {
+      title: "Honor Information",
+      group: "Honor Information",
+      groupOrder: 5,
+      tabular: false,
+      defaultExpanded: false,
+      fields: [
+        {
+          type: "input",
+          key: "honorRecordNumber",
+          label: "Marriage Honor Record Number",
+          placeholder: "",
+          description: "Enter the Marriage Honor Record Number",
+          validators: [
+            {
+              type: "required",
+              message: "Marriage Honor Record Number is required",
+            },
+          ],
+          required: true,
+          group: "Honor Information",
+          groupOrder: 4,
+        },
+        {
+          type: "input",
+          key: "uniqueRegistrationOfficeNumber",
+          label: "Registration Office Number",
+          placeholder: "",
+          description: "Enter the Unique number of the registration office",
+          validators: [
+            {
+              type: "required",
+              message: "Registration Office Number is required",
+            },
+          ],
+          required: true,
+          group: "Honor Information",
+          groupOrder: 4,
+        },
+        {
+          type: "input",
+          key: "uniqueMarriageCertificateNumber",
+          label: "Marriage Certificate Number",
+          placeholder: "",
+          description: "Enter the Unique Marraige Certificate Number",
+          validators: [
+            {
+              type: "required",
+              message: "Marriage Certificate Number is required",
+            },
+          ],
+          required: true,
+          group: "Honor Information",
+          groupOrder: 4,
+        },
+      ],
+    },
   ],
 };
