@@ -16,6 +16,7 @@ import { FormConfig } from "@/common/types/formType";
 import { generateEnhancedSchema } from "@/common/utils/dynamic-form/schemaGenerator";
 import { Button } from "../ui/button";
 import HeroSection from "../common/HeroSection";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 interface DynamicFormProps {
   config: FormConfig;
@@ -227,7 +228,7 @@ export default function DynamicForm({
                     {isReviewStep ? (
                       // Review section
                       <div className="bg-gray-100 p-4 rounded-lg border">
-                        <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
                           Review Your Information
                         </h3>
                         <div className="space-y-2">
@@ -243,10 +244,10 @@ export default function DynamicForm({
                               <div
                                 key={key}
                                 className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="font-medium text-gray-700">
+                                <span className="font-medium text-xl text-gray-700">
                                   {fieldLabel}:
                                 </span>
-                                <span className="text-gray-900">
+                                <span className="text-xl text-gray-900">
                                   {typeof value === "object" && value !== null
                                     ? (value as any).label ||
                                       (value as any).name ||
@@ -305,23 +306,32 @@ export default function DynamicForm({
                       <Button
                         type="button"
                         variant="outline"
+                        className=" h-14 text-xl"
                         onClick={handlePrev}
                         disabled={stepIndex === 0}>
+                        <ArrowLeftIcon className="mr-2" />
                         Previous
                       </Button>
                       <Button
                         type="submit"
                         disabled={!shouldEnableButton}
-                        className={
+                        className={`h-14 text-xl ${
                           !shouldEnableButton
                             ? "opacity-50 cursor-not-allowed"
                             : ""
-                        }>
-                        {stepIndex === steps.length - 1
-                          ? shouldEnableButton
-                            ? "Submit"
-                            : "Fill Required Fields"
-                          : "Next"}
+                        }`}>
+                        {stepIndex === steps.length - 1 ? (
+                          shouldEnableButton ? (
+                            "Submit"
+                          ) : (
+                            "Fill Required Fields"
+                          )
+                        ) : (
+                          <>
+                            <span>Next</span>
+                            <ArrowRightIcon className="ml-2" />
+                          </>
+                        )}
                       </Button>
                     </div>
 
@@ -430,7 +440,7 @@ export default function DynamicForm({
                                         </div> */}
                     {/* ************************************************ NOTE: for debugging purpose only - END *********************************** */}
 
-                    <div className="flex justify-end pt-4">
+                    {/* <div className="flex justify-end pt-4">
                       <Button
                         type="submit"
                         disabled={!shouldEnableButton}
@@ -441,7 +451,7 @@ export default function DynamicForm({
                         }`}>
                         {shouldEnableButton ? "Submit" : "Fill Required Fields"}
                       </Button>
-                    </div>
+                    </div> */}
                     {showPreview && (
                       <LivePreview
                         title="Form Preview"
