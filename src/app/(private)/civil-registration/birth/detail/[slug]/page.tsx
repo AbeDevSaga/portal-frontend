@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import axios from "axios";
-import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
+import { Check, Copy, Eye, Info, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import HeroSection from "@/common/components/common/HeroSection";
 import { Button } from "@/common/components/ui/button";
@@ -10,12 +10,13 @@ import { useSubmitResolutionFormMutation } from "@/features/application-service/
 import Image from "next/image";
 import child_image from "@/public/images/groom.svg";
 import { mockBirthResponse } from "@/common/utils/constants/mock/birth";
+import CertificateDialog from "@/common/components/common/CertificateDialog";
 
 export default function BirthDetailPage() {
   const [response, setResponse] = useState<any | null>(null);
   const [openRejectModal, setOpenRejectModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showTimer, setShowTimer] = useState(false);
+  const [showCertificateDialog, setShowCertificateDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -129,8 +130,7 @@ export default function BirthDetailPage() {
             onClick={() =>
               handleValidateApplication({ status: "UNDER_REVIEW", reason: "" })
             }
-            disabled={resolutionIsLoading}
-          >
+            disabled={resolutionIsLoading}>
             Validate Application
           </Button>
           <Button onClick={() => setOpenRejectModal(true)}>
@@ -145,14 +145,12 @@ export default function BirthDetailPage() {
             onClick={() =>
               handleValidateApplication({ status: "APPROVED", reason: "" })
             }
-            disabled={resolutionIsLoading}
-          >
+            disabled={resolutionIsLoading}>
             Approve Application
           </Button>
           <Button
             onClick={() => setOpenRejectModal(true)}
-            disabled={resolutionIsLoading}
-          >
+            disabled={resolutionIsLoading}>
             Reject Application
           </Button>
         </>
@@ -165,9 +163,8 @@ export default function BirthDetailPage() {
           </div>
           <Button
             className="bg-[#073954]"
-            onClick={() => setShowTimer(true)}
-            disabled={resolutionIsLoading}
-          >
+            onClick={() => setShowCertificateDialog(true)}
+            disabled={resolutionIsLoading}>
             Request Certificate
           </Button>
         </div>
@@ -481,7 +478,9 @@ export default function BirthDetailPage() {
               <p className="text-sm text-right font-semibold w-fit">
                 Document Name
               </p>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm">
                 View
               </Button>
             </div>
@@ -540,7 +539,7 @@ export default function BirthDetailPage() {
 
         {/* Sidebar */}
         <div className="w-full md:w-1/3 flex-1 flex flex-col md:flex-row xl:flex-col gap-5">
-          {showTimer ? (
+          {/* {showTimer ? (
             <Card
               className="p-5"
               style={{
@@ -572,8 +571,7 @@ export default function BirthDetailPage() {
                 </div>
               </div>
             </Card>
-          ) : null}
-
+          ) : null} */}
           <Card className="p-5 space-y-2">
             <p className="text-lg font-semibold text-[#073954]">
               Requirements and Actions
@@ -582,17 +580,21 @@ export default function BirthDetailPage() {
               {requirementsandaction.map((item) => (
                 <Card
                   key={item.title}
-                  className="p-3 space-y-3 bg-[#E8EEFD] border border-[#204D66] text-[#073954]"
-                >
+                  className="p-3 space-y-3 bg-[#E8EEFD] border border-[#204D66] text-[#073954]">
                   <p className="font-semibold mb-3">{item.title}</p>
                   {item.details.map((d) => (
-                    <div key={d} className="flex gap-2 items-center">
+                    <div
+                      key={d}
+                      className="flex gap-2 items-center">
                       <Check size={24} />
                       <p>{d}</p>
                     </div>
                   ))}
                   <div className="rounded-sm px-5 flex items-center gap-2 bg-[#FFF6E0] py-2">
-                    <Info fill="orange" color="white" />
+                    <Info
+                      fill="orange"
+                      color="white"
+                    />
                     <p>You are asked to pay {item.paymentAmount} Br</p>
                   </div>
                   <Button className="bg-[#073954]">{item.buttonTitle}</Button>
@@ -602,6 +604,14 @@ export default function BirthDetailPage() {
           </Card>
         </div>
       </div>
+
+      {/* Certificate Dialog */}
+      <CertificateDialog
+        open={showCertificateDialog}
+        handleCancel={setShowCertificateDialog}
+        certificateData={response?.data}
+        registrationNumber={slug as string}
+      />
     </>
   );
 }
