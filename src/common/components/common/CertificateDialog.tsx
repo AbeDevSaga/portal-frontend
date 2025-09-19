@@ -4,6 +4,7 @@ import { Download, Eye, FileText, Share2, X } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogTitle,
 } from "@/common/components/ui/dialog";
@@ -59,8 +60,12 @@ export default function CertificateDialog({
     <Dialog
       open={open}
       onOpenChange={handleCancel}>
-      <DialogContent className="w-[90vw] h-[95vh] max-w-none p-0 gap-0 border-none">
+      <DialogContent className="w-[90vw] h-[95vh] max-w-none p-0 gap-0 border-none [&>button]:hidden">
         {/* Header */}
+        <DialogClose className="absolute right-10 top-4 text-white hidden">
+          <X className="h-4 w-4" />
+        </DialogClose>
+
         <div className="flex flex-row items-center justify-between p-6 border-b bg-[#073954] text-white">
           <DialogTitle className="text-xl font-semibold text-white">
             Birth Certificate - {registrationNumber}
@@ -73,7 +78,7 @@ export default function CertificateDialog({
               className="text-lg"
               onClick={handleDownload}>
               <Download className="h-4 w-4 mr-2" />
-              Download
+              Download PDF
             </Button>
             <Button
               variant="ghost"
@@ -81,7 +86,7 @@ export default function CertificateDialog({
               className="text-lg"
               onClick={handlePrint}>
               <FileText className="h-4 w-4 mr-2" />
-              Print
+              Print Certificate
             </Button>
             <Button
               variant="ghost"
@@ -96,7 +101,7 @@ export default function CertificateDialog({
               size="sm"
               className="text-lg"
               onClick={() => handleCancel(false)}>
-              <X className="h-4 w-4" />
+              <X className="h-6 w-6" />
             </Button>
           </div>
         </div>
@@ -285,7 +290,7 @@ export default function CertificateDialog({
 
         {/* Footer Actions */}
         <div className="flex justify-center gap-4 p-6 border-t border-gray-300 bg-gray-50">
-          <Button
+          {/* <Button
             onClick={handleDownload}
             className="bg-[#073954] hover:bg-[#073954]/90">
             <Download className="h-4 w-4 mr-2" />
@@ -302,7 +307,7 @@ export default function CertificateDialog({
             className="bg-[#073954] hover:bg-[#073954]/90">
             <Share2 className="h-4 w-4 mr-2" />
             Share
-          </Button>
+          </Button> */}
         </div>
       </DialogContent>
     </Dialog>

@@ -1211,85 +1211,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
                       // Force entire form validation to update submit button state
                       form.validateForm();
-
-                      // ENHANCED DEBUG: Check why form is still invalid
-                      setTimeout(() => {
-                        console.log(
-                          `[DEBUG] FileUpload ${field.key} - Deep validation check:`,
-                          {
-                            fieldKey: field.key,
-                            fieldValue: form.values[field.key],
-                            fieldTouched: form.touched[field.key],
-                            fieldErrors: form.errors[field.key],
-                            formIsValid: form.isValid,
-                            formIsValidating: form.isValidating,
-                            formDirty: form.dirty,
-                            formErrors: form.errors,
-                            formTouched: form.touched,
-                            formValues: form.values,
-                            // Check if there are other fields with errors
-                            allFieldErrors: Object.keys(form.errors).filter(
-                              (key) => form.errors[key]
-                            ),
-                            allTouchedFields: Object.keys(form.touched).filter(
-                              (key) => form.touched[key]
-                            ),
-                            // Check if this field is actually required
-                            isFieldRequired: isFieldRequired,
-                            // Check if the field value is truthy
-                            hasValidValue: !!form.values[field.key],
-                            // Check if the field value is a File object
-                            isFileObject:
-                              form.values[field.key] instanceof File,
-                            // Check if the field value has the expected properties
-                            valueProperties: form.values[field.key]
-                              ? Object.getOwnPropertyNames(
-                                  form.values[field.key]
-                                )
-                              : "null",
-                          }
-                        );
-                      }, 100); // Small delay to ensure validation completes
-
-                      // DEBUG: Log the touch state after setting it
-                      console.log(
-                        `[DEBUG] FileUpload ${field.key} - After setting touched:`,
-                        {
-                          fieldTouched: form.touched[field.key],
-                          formIsValid: form.isValid,
-                          formIsValidating: form.isValidating,
-                        }
-                      );
                     }, 0);
-
-                    // DEBUG: Log validation state after file selection
-                    console.log(
-                      `[DEBUG] FileUpload ${field.key} - After file selection:`,
-                      {
-                        fieldKey: field.key,
-                        fieldValue: form.values[field.key],
-                        fieldValueType: typeof form.values[field.key],
-                        fieldValueIsArray: Array.isArray(
-                          form.values[field.key]
-                        ),
-                        fieldValueKeys: form.values[field.key]
-                          ? Object.keys(form.values[field.key])
-                          : "null",
-                        fieldTouched: form.touched[field.key],
-                        fieldErrors: form.errors[field.key],
-                        formIsValid: form.isValid,
-                        formIsValidating: form.isValidating,
-                        formDirty: form.dirty,
-                        formValues: form.values,
-                        isFieldRequired: isFieldRequired,
-                        hasFiles: !!selectedFiles,
-                        selectedFilesType: typeof selectedFiles,
-                        selectedFilesIsArray: Array.isArray(selectedFiles),
-                        selectedFilesKeys: selectedFiles
-                          ? Object.keys(selectedFiles)
-                          : "null",
-                      }
-                    );
 
                     dispatch(
                       updateField({
@@ -1378,22 +1300,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                       // Trigger form validation to update submit button state
                       form.validateField(field.key);
 
-                      // DEBUG: Log validation state after file removal (multiple)
-                      console.log(
-                        `[DEBUG] FileUpload ${field.key} - After file removal (multiple):`,
-                        {
-                          fieldKey: field.key,
-                          fieldValue: form.values[field.key],
-                          fieldTouched: form.touched[field.key],
-                          fieldErrors: form.errors[field.key],
-                          formIsValid: form.isValid,
-                          formIsValidating: form.isValidating,
-                          formDirty: form.dirty,
-                          remainingFiles: updatedFiles.length,
-                          isFieldRequired: isFieldRequired,
-                        }
-                      );
-
                       dispatch(
                         updateField({
                           key: field.key,
@@ -1423,21 +1329,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
                       // Trigger form validation to update submit button state
                       form.validateField(field.key);
-
-                      // DEBUG: Log validation state after file removal (single)
-                      console.log(
-                        `[DEBUG] FileUpload ${field.key} - After file removal (single):`,
-                        {
-                          fieldKey: field.key,
-                          fieldValue: form.values[field.key],
-                          fieldTouched: form.touched[field.key],
-                          fieldErrors: form.errors[field.key],
-                          formIsValid: form.isValid,
-                          formIsValidating: form.isValidating,
-                          formDirty: form.dirty,
-                          isFieldRequired: isFieldRequired,
-                        }
-                      );
 
                       dispatch(
                         updateField({
@@ -1484,192 +1375,254 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                   }
                 };
 
+                // Check if we should show preview
+                const shouldShowPreview =
+                  field.showPreview && currentFiles && !isMultiple;
+                const previewFile = shouldShowPreview
+                  ? (currentFiles as File)
+                  : null;
+
+                // Create file URL for preview
+                const createFilePreviewUrl = (file: File) => {
+                  try {
+                    return URL.createObjectURL(file);
+                  } catch (error) {
+                    console.error("Error creating file preview URL:", error);
+                    return null;
+                  }
+                };
+
+                const previewUrl = previewFile
+                  ? createFilePreviewUrl(previewFile)
+                  : null;
+
+                // Check if file is previewable
+                const isPreviewable =
+                  previewFile &&
+                  (previewFile.type.startsWith("image/") ||
+                    previewFile.type === "application/pdf" ||
+                    previewFile.name.toLowerCase().endsWith(".pdf"));
+
                 return (
-                  <div className={getFieldClassName()}>
-                    <Label className={getLabelClassName()}>
-                      {field.label}
-                      {isFieldRequired ? (
-                        <span className="pl-2 text-red-600">*</span>
-                      ) : null}
-                    </Label>
-                    <div className="space-y-2">
-                      {/* File Input */}
-                      <div className="relative">
-                        <Input
-                          ref={fileInputRef}
-                          type="file"
-                          onChange={handleFileChange}
-                          placeholder={field.placeholder}
-                          multiple={isMultiple}
-                          accept={allowedTypes.join(",")}
-                          className={getFieldClassName(
-                            `cursor-pointer ${
+                  <div className={field.showPreview ? "flex gap-4" : ""}>
+                    {/* File Upload Section - Always maintains its original width */}
+                    <div className={field.showPreview ? "flex-1" : "w-full"}>
+                      <Label className="text-primary font-semibold">
+                        {field.label}
+                        {isFieldRequired ? (
+                          <span className="pl-2 text-red-600">*</span>
+                        ) : null}
+                      </Label>
+                      <div className="space-y-2">
+                        {/* File Input */}
+                        <div className="relative">
+                          <Input
+                            ref={fileInputRef}
+                            type="file"
+                            onChange={handleFileChange}
+                            placeholder={field.placeholder}
+                            multiple={isMultiple}
+                            accept={allowedTypes.join(",")}
+                            className={`cursor-pointer ${
                               isFieldRequired && !currentFiles
                                 ? "border-red-500 focus:border-red-500"
                                 : ""
-                            }`
-                          )}
-                          disabled={isFieldDisabled}
-                        />
+                            }`}
+                            disabled={isFieldDisabled}
+                          />
 
-                        {/* File Constraints Info */}
-                        <div className="text-xs text-gray-500 mt-1">
-                          <div>
-                            Max file size: {formatFileSize(maxFileSize)}
-                          </div>
-                          <div>
-                            Files: {minFiles} - {maxFiles}
-                          </div>
-                          {allowedTypes.length > 0 &&
-                            allowedTypes[0] !== "*" && (
-                              <div>
-                                Allowed types: {allowedTypes.join(", ")}
+                          {/* File Constraints Info */}
+                          <div className="text-xs text-gray-500 mt-1">
+                            <div>
+                              Max file size: {formatFileSize(maxFileSize)}
+                            </div>
+                            <div>
+                              Files: {minFiles} - {maxFiles}
+                            </div>
+                            {allowedTypes.length > 0 &&
+                              allowedTypes[0] !== "*" && (
+                                <div>
+                                  Allowed types: {allowedTypes.join(", ")}
+                                </div>
+                              )}
+                            {isFieldRequired && (
+                              <div className="text-red-500 font-medium">
+                                * This field is required
                               </div>
                             )}
-                          {isFieldRequired && (
-                            <div className="text-red-500 font-medium">
-                              * This field is required
-                            </div>
-                          )}
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Selected Files Display */}
-                      {currentFiles && (
-                        <div className="space-y-2">
-                          {isMultiple
-                            ? Array.from(currentFiles as File[]).map(
-                                (file: File, index: number) => (
-                                  <div
-                                    key={
-                                      `${file.name}-${file.lastModified}-${file.size}` ||
-                                      index
-                                    }
-                                    className="flex items-center justify-between p-2 bg-gray-50 rounded border"
-                                  >
+                        {/* Selected Files Display - only show if preview is disabled or multiple files */}
+                        {currentFiles && (!shouldShowPreview || isMultiple) && (
+                          <div className="space-y-2">
+                            {isMultiple
+                              ? Array.from(currentFiles as File[]).map(
+                                  (file: File, index: number) => (
+                                    <div
+                                      key={
+                                        `${file.name}-${file.lastModified}-${file.size}` ||
+                                        index
+                                      }
+                                      className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                      <div className="flex-1 min-w-0">
+                                        <div className="text-sm font-medium text-gray-900 truncate">
+                                          {file.name}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {formatFileSize(file.size)} •{" "}
+                                          {file.type}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => removeFile(index)}
+                                        className="ml-2 text-red-600 hover:text-red-700">
+                                        Remove
+                                      </Button>
+                                    </div>
+                                  )
+                                )
+                              : currentFiles && (
+                                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded border">
                                     <div className="flex-1 min-w-0">
                                       <div className="text-sm font-medium text-gray-900 truncate">
-                                        {file.name}
+                                        {(currentFiles as File).name}
                                       </div>
                                       <div className="text-xs text-gray-500">
-                                        {formatFileSize(file.size)} •{" "}
-                                        {file.type}
+                                        {formatFileSize(
+                                          (currentFiles as File).size
+                                        )}{" "}
+                                        • {(currentFiles as File).type}
                                       </div>
                                     </div>
                                     <Button
                                       type="button"
                                       variant="outline"
                                       size="sm"
-                                      onClick={() => removeFile(index)}
-                                      className="ml-2 text-red-600 hover:text-red-700"
-                                    >
+                                      onClick={() => removeFile(0)}
+                                      className="ml-2 text-red-600 hover:text-red-700">
                                       Remove
                                     </Button>
                                   </div>
-                                )
-                              )
-                            : currentFiles && (
-                                <div className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-medium text-gray-900 truncate">
-                                      {(currentFiles as File).name}
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                      {formatFileSize(
-                                        (currentFiles as File).size
-                                      )}{" "}
-                                      • {(currentFiles as File).type}
-                                    </div>
-                                  </div>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => removeFile(0)}
-                                    className="ml-2 text-red-600 hover:text-red-700"
-                                  >
-                                    Remove
-                                  </Button>
-                                </div>
-                              )}
-                        </div>
-                      )}
+                                )}
+                          </div>
+                        )}
 
-                      {/* Required field validation message */}
-                      {isFieldRequired && !currentFiles && (
-                        <div className="text-red-500 text-sm">
-                          Please select a file. This field is required.
-                        </div>
-                      )}
+                        {/* Required field validation message */}
+                        {isFieldRequired && !currentFiles && (
+                          <div className="text-red-500 text-sm">
+                            Please select a file. This field is required.
+                          </div>
+                        )}
 
-                      {/* DEBUG: Validation Status Display */}
-                      {/* <div className='mt-4 p-3 bg-gray-100 rounded border text-xs'>
-                                                <div className='font-semibold mb-2 text-gray-700'>🔍 Validation Debug Info:</div>
-                                                <div className='grid grid-cols-2 gap-2'>
-                                                    <div>
-                                                        <span className='font-medium'>Field Key:</span> {field.key}
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Required:</span> 
-                                                        <span className={isFieldRequired ? 'text-red-600' : 'text-green-600'}>
-                                                            {isFieldRequired ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Has Files:</span> 
-                                                        <span className={currentFiles ? 'text-green-600' : 'text-red-600'}>
-                                                            {currentFiles ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Field Value:</span> 
-                                                        <span className='text-gray-600'>
-                                                            {currentFiles ? (Array.isArray(currentFiles) ? `${currentFiles.length} file(s)` : '1 file') : 'null'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Field Touched:</span> 
-                                                        <span className={form.touched[field.key] ? 'text-blue-600' : 'text-red-600'}>
-                                                            {form.touched[field.key] ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Field Errors:</span> 
-                                                        <span className={form.errors[field.key] ? 'text-red-600' : 'text-green-600'}>
-                                                            {form.errors[field.key] || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Form Valid:</span> 
-                                                        <span className={form.isValid ? 'text-green-600' : 'text-red-600'}>
-                                                            {form.isValid ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Form Validating:</span> 
-                                                        <span className={form.isValidating ? 'text-yellow-600' : 'text-gray-600'}>
-                                                            {form.isValidating ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className='mt-2 pt-2 border-t border-gray-300'>
-                                                    <div className='font-medium text-gray-700'>Current Form Values:</div>
-                                                    <pre className='text-xs bg-white p-2 rounded border mt-1 overflow-auto max-h-20'>
-                                                        {JSON.stringify(form.values, null, 2)}
-                                                    </pre>
-                                                </div>
-                                            </div> */}
+                        {dynamicDescription &&
+                          dynamicDescription.trim() !== "" && (
+                            <p className="text-[#7D7D7D] text-sm mt-1">
+                              {dynamicDescription}
+                            </p>
+                          )}
+                        <ErrorMessage
+                          name={field.key}
+                          component="div"
+                          className="text-red-500"
+                        />
+                      </div>
                     </div>
-                    {dynamicDescription && dynamicDescription.trim() !== "" && (
-                      <p className="text-[#7D7D7D] text-sm mt-1">
-                        {dynamicDescription}
-                      </p>
+
+                    {/* File Preview Section */}
+                    {shouldShowPreview && (
+                      <div className="flex-1 space-y-2">
+                        <Label className="text-primary font-semibold">
+                          Preview
+                        </Label>
+                        <div className="border rounded-lg p-4 bg-gray-50 min-h-[200px]">
+                          {previewFile && isPreviewable && previewUrl ? (
+                            <div className="space-y-2">
+                              {/* File Info */}
+                              <div className="flex items-center justify-between p-2 bg-white rounded border mb-3">
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-medium text-gray-900 truncate">
+                                    {previewFile.name}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    {formatFileSize(previewFile.size)} •{" "}
+                                    {previewFile.type}
+                                  </div>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => removeFile(0)}
+                                  className="ml-2 text-red-600 hover:text-red-700">
+                                  Remove
+                                </Button>
+                              </div>
+
+                              {/* Preview Content */}
+                              <div className="max-h-[200px] max-w-1/2 overflow-auto">
+                                {previewFile.type.startsWith("image/") ? (
+                                  <img
+                                    src={previewUrl}
+                                    alt={previewFile.name}
+                                    className="max-w-full h-auto rounded"
+                                    onLoad={() => {
+                                      // Cleanup the URL after image loads to free memory
+                                      setTimeout(() => {
+                                        if (previewUrl)
+                                          URL.revokeObjectURL(previewUrl);
+                                      }, 1000);
+                                    }}
+                                  />
+                                ) : previewFile.type === "application/pdf" ||
+                                  previewFile.name
+                                    .toLowerCase()
+                                    .endsWith(".pdf") ? (
+                                  <div className="h-[350px]">
+                                    <iframe
+                                      src={previewUrl}
+                                      className="w-full h-full border-0 rounded"
+                                      title={`Preview of ${previewFile.name}`}
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : previewFile && !isPreviewable ? (
+                            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                              <div className="text-4xl mb-2">📄</div>
+                              <div className="text-sm font-medium">
+                                {previewFile.name}
+                              </div>
+                              <div className="text-xs">
+                                {formatFileSize(previewFile.size)}
+                              </div>
+                              <div className="text-xs mt-2 text-center">
+                                Preview not available for this file type
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeFile(0)}
+                                className="mt-3 text-red-600 hover:text-red-700">
+                                Remove File
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-gray-400">
+                              <div className="text-center">
+                                <div className="text-4xl mb-2">📁</div>
+                                <div className="text-sm">No file selected</div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     )}
-                    <ErrorMessage
-                      name={field.key}
-                      component="div"
-                      className="text-red-500"
-                    />
                   </div>
                 );
               } catch (error) {

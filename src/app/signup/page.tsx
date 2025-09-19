@@ -204,6 +204,7 @@ const agentSignupConfig: FormConfig = {
           groupOrder: 1,
           gridCols: 12, // Full width
           allowedTypes: [".pdf", ".doc", ".docx", ".jpg", ".png"],
+          showPreview: true, // Add this flag to enable preview
         },
       ],
     },
@@ -386,7 +387,7 @@ export default function SignupPage() {
 
                 <div className="space-y-4">
                   {/* User Card */}
-                  <Card
+                  {/* <Card
                     className="cursor-pointer hover:border-slate-900/50 hover:shadow-md transition-all duration-200 border-2"
                     onClick={() => handleUserTypeSelection("user")}>
                     <CardContent className="p-6">
@@ -418,7 +419,7 @@ export default function SignupPage() {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
+                  </Card> */}
 
                   {/* Agent Card */}
                   <Card
@@ -431,7 +432,7 @@ export default function SignupPage() {
                         </div>
                         <div className="flex-1">
                           <h3 className="text-2xl font-bold text-gray-800">
-                            Agent
+                            Stakeholder
                           </h3>
                           <p className="text-gray-600 text-xl font-medium">
                             For organizations and institutions

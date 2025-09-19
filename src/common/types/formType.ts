@@ -78,6 +78,7 @@ export interface FieldConfig {
   minFiles?: number;
   maxFiles?: number;
   allowedTypes?: string[]; // e.g., ['image/*', '.pdf', '.doc']
+  showPreview?: boolean; // Whether to show file preview
   // Select specific properties
   searchable?: boolean; // For react-select
   clearable?: boolean; // For react-select
