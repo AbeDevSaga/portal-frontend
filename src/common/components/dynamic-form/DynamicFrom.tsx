@@ -25,6 +25,7 @@ interface DynamicFormProps {
   initialValues: object;
   onAccordionStateChange?: (expandedItems: string[]) => void;
   showPreview?: boolean;
+  expandedItems?: string[];
 }
 
 export default function DynamicForm({
@@ -34,10 +35,15 @@ export default function DynamicForm({
   initialValues,
   onAccordionStateChange,
   showPreview = false,
+  expandedItems: externalExpandedItems,
 }: DynamicFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
   // State to track which accordion items are expanded
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [internalExpandedItems, setInternalExpandedItems] = useState<string[]>([]);
+  // Use external expanded items if provided, otherwise use internal state
+  const expandedItems = externalExpandedItems || internalExpandedItems;
+  const setExpandedItems = externalExpandedItems ? () => {} : setInternalExpandedItems;
+  
   // Ensure config has steps before accessing
   const steps = config?.steps || [];
   // console.log("config steps", steps);
@@ -56,20 +62,27 @@ export default function DynamicForm({
   const singleFormSteps = hasStepper ? null : steps;
   // Initialize expanded items based on defaultExpanded values
   React.useEffect(() => {
-    if (singleFormSteps) {
+    if (singleFormSteps && !externalExpandedItems) {
       const initialExpanded = singleFormSteps
         .map((step, index) => (step.defaultExpanded ? `step-${index}` : null))
         .filter(Boolean) as string[];
-      setExpandedItems(initialExpanded);
+      setInternalExpandedItems(initialExpanded);
     }
-  }, [singleFormSteps]);
+  }, [singleFormSteps, externalExpandedItems]);
 
   // Handle accordion value changes
   const handleAccordionValueChange = (value: string[]) => {
-    setExpandedItems(value);
-    // 🆕 Notify parent component of accordion state changes
-    if (onAccordionStateChange) {
-      onAccordionStateChange(value);
+    if (externalExpandedItems) {
+      // If using external state, notify parent component
+      if (onAccordionStateChange) {
+        onAccordionStateChange(value);
+      }
+    } else {
+      // If using internal state, update it directly
+      setExpandedItems(value);
+      if (onAccordionStateChange) {
+        onAccordionStateChange(value);
+      }
     }
   };
 
@@ -126,7 +139,7 @@ export default function DynamicForm({
           </div>
         </AccordionTrigger>
         <AccordionContent className="pt-4">
-          <div className={`${formStyle} space-y-4`}>
+          <div className={`${formStyle} grid grid-cols-12 gap-4 auto-rows-auto`}>
             {fields.map((field: any) => (
               <FieldRenderer
                 key={field.key}
@@ -143,7 +156,7 @@ export default function DynamicForm({
   // Function to render fields normally
   const renderNormalFields = (fields: any[], formValues: any = {}) => {
     return (
-      <div className={`${formStyle}`}>
+      <div className={`${formStyle} grid grid-cols-12 gap-4 auto-rows-auto`}>
         {fields.map((field: any) => (
           <FieldRenderer
             key={field.key}
