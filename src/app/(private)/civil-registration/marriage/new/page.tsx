@@ -135,9 +135,7 @@ export default function NewMarriageRegistrationPage() {
       if (response) {
         toast.success("Marriage registration submitted successfully!");
         // data.
-        router.push(
-          `/marriage/detail/${response.registration_form_number}`
-        );
+        router.push(`/marriage/detail/${response.registration_form_number}`);
       } else {
         toast.error("Failed to create Marriage registration");
       }
@@ -155,9 +153,13 @@ export default function NewMarriageRegistrationPage() {
         config={formConfig}
         handleSubmit={(value) => handleCreateMarriage(value)}
         initialValues={formValues}
-        formStyle="grid grid-cols-12 gap-5"
+        formStyle="grid grid-cols-6 md:grid-cols-12 gap-x-[40px] gap-y-4"
         onAccordionStateChange={handleAccordionStateChange}
         showPreview={false}
+        defaultTitle={{
+          title: "New Marriage Registration",
+          description: "This is the new marriage registration section",
+        }}
       />
     </Card>
   );

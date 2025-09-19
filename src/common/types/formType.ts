@@ -166,13 +166,14 @@ export interface FormConfig {
   showTitle?: boolean; // Whether to show the title section (default: true)
   // 🆕 New: Global grouping configuration
   grouping?: {
+    group?: string;
     defaultGroup?: string;
     groups?: {
       name: string;
       label: string;
       order: number;
     }[];
-  };
+  }[];
 }
 
 // 🆕 New: Utility types for dynamic field grouping

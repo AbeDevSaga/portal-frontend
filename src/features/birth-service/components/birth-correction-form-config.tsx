@@ -3,38 +3,61 @@ import { FormConfig } from "@/common/types/formType";
 export const birthCorrectionFormConfig: FormConfig = {
   title: "Birth Certificate Correction",
   description: "Correct information on your birth certificate",
-  stepperData: [],
+  stepperData: [
+    {
+      label: "Step 1",
+      content: "General Information",
+    },
+    {
+      label: "Step 2",
+      content: "Payment Information",
+    },
+  ],
   stepperPosition: "",
-  grouping: {
-    defaultGroup: "Correction Details",
-    groups: [
-      {
-        name: "Correction Details",
-        label: "Correction Details",
-        order: 1,
-      },
-      {
-        name: "Basic Information",
-        label: "Basic Information",
-        order: 2,
-      },
-      {
-        name: "Birth Information",
-        label: "Birth Information",
-        order: 3,
-      },
-      {
-        name: "Parent Information",
-        label: "Parent Information",
-        order: 4,
-      },
-      {
-        name: "Identification & Personal Details",
-        label: "Identification & Personal Details",
-        order: 5,
-      },
-    ],
-  },
+  grouping: [
+    {
+      group: "General Information",
+      defaultGroup: "Correction Details",
+      groups: [
+        {
+          name: "Correction Details",
+          label: "Correction Details",
+          order: 1,
+        },
+        {
+          name: "Basic Information",
+          label: "Basic Information",
+          order: 2,
+        },
+        {
+          name: "Birth Information",
+          label: "Birth Information",
+          order: 3,
+        },
+        {
+          name: "Parent Information",
+          label: "Parent Information",
+          order: 4,
+        },
+        {
+          name: "Identification & Personal Details",
+          label: "Identification & Personal Details",
+          order: 5,
+        },
+      ],
+    },
+    {
+      group: "Payment Information",
+      defaultGroup: "Correction Details",
+      groups: [
+        {
+          name: "Payment Information",
+          label: "Payment Information",
+          order: 1,
+        },
+      ],
+    },
+  ],
   steps: [
     {
       title: "Basic Information",
@@ -120,7 +143,11 @@ export const birthCorrectionFormConfig: FormConfig = {
           placeholder: "Enter phone number",
           validators: [
             { type: "required", message: "Phone number is required" },
-            { type: "pattern", value: "^[0-9+\\-\\s()]+$", message: "Please enter a valid phone number" },
+            {
+              type: "pattern",
+              value: "^[0-9+\\-\\s()]+$",
+              message: "Please enter a valid phone number",
+            },
           ],
           required: true,
           group: "Basic Information",
@@ -147,9 +174,7 @@ export const birthCorrectionFormConfig: FormConfig = {
             { label: "Triplet", value: "TRIPLET" },
             { label: "Multiple", value: "MULTIPLE" },
           ],
-          validators: [
-            { type: "required", message: "Birth type is required" },
-          ],
+          validators: [{ type: "required", message: "Birth type is required" }],
           required: true,
           group: "Birth Information",
           groupOrder: 1,
@@ -162,8 +187,16 @@ export const birthCorrectionFormConfig: FormConfig = {
           placeholder: "Enter birth weight",
           validators: [
             { type: "required", message: "Birth weight is required" },
-            { type: "min", value: 0.5, message: "Weight must be at least 0.5 kg" },
-            { type: "max", value: 10, message: "Weight must be less than 10 kg" },
+            {
+              type: "min",
+              value: 0.5,
+              message: "Weight must be at least 0.5 kg",
+            },
+            {
+              type: "max",
+              value: 10,
+              message: "Weight must be less than 10 kg",
+            },
           ],
           required: true,
           group: "Birth Information",
@@ -177,8 +210,16 @@ export const birthCorrectionFormConfig: FormConfig = {
           placeholder: "Enter birth height",
           validators: [
             { type: "required", message: "Birth height is required" },
-            { type: "min", value: 20, message: "Height must be at least 20 cm" },
-            { type: "max", value: 80, message: "Height must be less than 80 cm" },
+            {
+              type: "min",
+              value: 20,
+              message: "Height must be at least 20 cm",
+            },
+            {
+              type: "max",
+              value: 80,
+              message: "Height must be less than 80 cm",
+            },
           ],
           required: true,
           group: "Birth Information",
@@ -235,7 +276,10 @@ export const birthCorrectionFormConfig: FormConfig = {
           label: "Attendant Qualification",
           placeholder: "Enter attendant qualification",
           validators: [
-            { type: "required", message: "Attendant qualification is required" },
+            {
+              type: "required",
+              message: "Attendant qualification is required",
+            },
           ],
           required: true,
           group: "Birth Information",
@@ -283,9 +327,7 @@ export const birthCorrectionFormConfig: FormConfig = {
             { label: "Benishangul-Gumuz", value: "Benishangul-Gumuz" },
             { label: "Other", value: "Other" },
           ],
-          validators: [
-            { type: "required", message: "Region is required" },
-          ],
+          validators: [{ type: "required", message: "Region is required" }],
           required: true,
           group: "Birth Information",
           groupOrder: 9,
@@ -334,9 +376,7 @@ export const birthCorrectionFormConfig: FormConfig = {
             { label: "Yeka", value: "Yeka" },
             { label: "Other", value: "Other" },
           ],
-          validators: [
-            { type: "required", message: "Woreda is required" },
-          ],
+          validators: [{ type: "required", message: "Woreda is required" }],
           required: true,
           group: "Birth Information",
           groupOrder: 11,
@@ -360,9 +400,7 @@ export const birthCorrectionFormConfig: FormConfig = {
             { label: "Kebele 10", value: "Kebele 10" },
             { label: "Other", value: "Other" },
           ],
-          validators: [
-            { type: "required", message: "Kebele is required" },
-          ],
+          validators: [{ type: "required", message: "Kebele is required" }],
           required: true,
           group: "Birth Information",
           groupOrder: 12,
@@ -619,6 +657,58 @@ export const birthCorrectionFormConfig: FormConfig = {
           group: "Identification & Personal Details",
           groupOrder: 7,
           gridCols: 6,
+        },
+      ],
+    },
+    {
+      title: "Payment Information",
+      group: "Payment Information",
+      groupOrder: 1,
+      tabular: false,
+      defaultExpanded: true,
+      fields: [
+        {
+          type: "payment",
+          key: "paymentOption",
+          label: "Payment Option",
+          description: "Choose your payment method.",
+          required: true,
+          options: [
+            {
+              id: "telebirr",
+              label: "Telebirr Transfer",
+              value: "telebirr",
+              data: {
+                image: "/images/telebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-white",
+              },
+            },
+            {
+              id: "cbe",
+              label: "CBE Transfer",
+              value: "cbe",
+              data: {
+                image: "/images/cbebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#730b7d]",
+              },
+            },
+            {
+              id: "mpesa",
+              label: "Mpesa Transfer",
+              value: "mpesa",
+              data: {
+                image: "/images/mpesa.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#09ed2c]",
+              },
+            },
+          ],
+          gridCols: 12,
         },
       ],
     },

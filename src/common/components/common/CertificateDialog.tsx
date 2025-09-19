@@ -15,14 +15,12 @@ interface CertificateDialogProps {
   open: boolean;
   handleCancel: Dispatch<SetStateAction<boolean>>;
   certificateData?: any;
-  registrationNumber?: string;
 }
 
 export default function CertificateDialog({
   open,
   handleCancel,
   certificateData,
-  registrationNumber,
 }: CertificateDialogProps) {
   const handleDownload = () => {
     try {
@@ -30,7 +28,7 @@ export default function CertificateDialog({
       const link = document.createElement("a");
       link.href = "/mock-file.pdf"; // Path to your mock PDF in public folder
       link.download = `Birth_Certificate_${
-        registrationNumber || "Unknown"
+        certificateData?.registrationFormNumber || "Unknown"
       }.pdf`;
       link.target = "_blank";
 
@@ -57,9 +55,7 @@ export default function CertificateDialog({
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={handleCancel}>
+    <Dialog open={open} onOpenChange={handleCancel}>
       <DialogContent className="w-[90vw] h-[95vh] max-w-none p-0 gap-0 border-none [&>button]:hidden">
         {/* Header */}
         <DialogClose className="absolute right-10 top-4 text-white hidden">
@@ -68,7 +64,7 @@ export default function CertificateDialog({
 
         <div className="flex flex-row items-center justify-between p-6 border-b bg-[#073954] text-white">
           <DialogTitle className="text-xl font-semibold text-white">
-            Birth Certificate - {registrationNumber}
+            Birth Certificate - {certificateData?.registrationFormNumber}
           </DialogTitle>
           <div className="flex items-center gap-2">
             {/* Action Buttons */}
@@ -76,7 +72,8 @@ export default function CertificateDialog({
               variant="ghost"
               size="sm"
               className="text-lg"
-              onClick={handleDownload}>
+              onClick={handleDownload}
+            >
               <Download className="h-4 w-4 mr-2" />
               Download PDF
             </Button>
@@ -84,7 +81,8 @@ export default function CertificateDialog({
               variant="ghost"
               size="sm"
               className="text-lg"
-              onClick={handlePrint}>
+              onClick={handlePrint}
+            >
               <FileText className="h-4 w-4 mr-2" />
               Print Certificate
             </Button>
@@ -92,7 +90,8 @@ export default function CertificateDialog({
               variant="ghost"
               size="sm"
               className="text-lg"
-              onClick={handleShare}>
+              onClick={handleShare}
+            >
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
@@ -100,7 +99,8 @@ export default function CertificateDialog({
               variant="ghost"
               size="sm"
               className="text-lg"
-              onClick={() => handleCancel(false)}>
+              onClick={() => handleCancel(false)}
+            >
               <X className="h-6 w-6" />
             </Button>
           </div>
@@ -135,7 +135,7 @@ export default function CertificateDialog({
                     Registration Number
                   </p>
                   <p className="text-xl font-bold text-[#073954]">
-                    {registrationNumber || "N/A"}
+                    {certificateData?.registrationFormNumber || "N/A"}
                   </p>
                 </div>
 
@@ -278,7 +278,7 @@ export default function CertificateDialog({
                     <div className="text-right">
                       <p className="text-sm text-gray-600">Certificate ID:</p>
                       <p className="font-semibold text-sm">
-                        {registrationNumber || "N/A"}
+                        {certificateData?.registrationFormNumber || "N/A"}
                       </p>
                     </div>
                   </div>

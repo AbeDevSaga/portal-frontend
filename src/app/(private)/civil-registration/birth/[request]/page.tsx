@@ -155,7 +155,7 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
             </div>
 
             <a
-              href={`/civil-registration/birth/${request}/form`} // This would be your actual form page
+              href={`/civil-registration/birth/${request}/${formNumber}`} // This would be your actual form page
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
             >
               Continue to Application

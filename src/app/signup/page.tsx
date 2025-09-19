@@ -22,16 +22,18 @@ const userSignupConfig: FormConfig = {
     { label: "Step 2", content: "Complete" },
   ],
   stepperPosition: "top",
-  grouping: {
-    defaultGroup: "User Registration",
-    groups: [
-      {
-        name: "User Registration",
-        label: "User Registration",
-        order: 1,
-      },
-    ],
-  },
+  grouping: [
+    {
+      defaultGroup: "User Registration",
+      groups: [
+        {
+          name: "User Registration",
+          label: "User Registration",
+          order: 1,
+        },
+      ],
+    },
+  ],
   steps: [
     {
       title: "Account Setup",
@@ -119,16 +121,18 @@ const agentSignupConfig: FormConfig = {
     { label: "Step 3", content: "Complete" },
   ],
   stepperPosition: "top",
-  grouping: {
-    defaultGroup: "Agent Registration",
-    groups: [
-      {
-        name: "Agent Registration",
-        label: "Agent Registration",
-        order: 1,
-      },
-    ],
-  },
+  grouping: [
+    {
+      defaultGroup: "Agent Registration",
+      groups: [
+        {
+          name: "Agent Registration",
+          label: "Agent Registration",
+          order: 1,
+        },
+      ],
+    },
+  ],
   steps: [
     {
       title: "Organization Information",
@@ -336,7 +340,8 @@ export default function SignupPage() {
                     className="w-8 h-8 text-green-600"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24">
+                    viewBox="0 0 24 24"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -371,7 +376,8 @@ export default function SignupPage() {
                       setIsSubmitted(false);
                       setShowForm(false);
                       setSelectedUserType(null);
-                    }}>
+                    }}
+                  >
                     Register Another Account
                   </Button>
                 </div>
@@ -425,7 +431,8 @@ export default function SignupPage() {
                   {/* Agent Card */}
                   <Card
                     className="cursor-pointer hover:border-slate-900/50 hover:shadow-md transition-all duration-200 border-2"
-                    onClick={() => handleUserTypeSelection("agent")}>
+                    onClick={() => handleUserTypeSelection("agent")}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-slate-700/10 rounded-lg flex items-center justify-center">
@@ -444,7 +451,8 @@ export default function SignupPage() {
                             className="w-6 h-6"
                             fill="none"
                             stroke="currentColor"
-                            viewBox="0 0 24 24">
+                            viewBox="0 0 24 24"
+                          >
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -462,7 +470,8 @@ export default function SignupPage() {
                   Already have an account?{" "}
                   <Link
                     href="/login"
-                    className="text-blue-500 hover:text-blue-800 font-medium">
+                    className="text-blue-500 hover:text-blue-800 font-medium"
+                  >
                     Log In
                   </Link>
                 </div>
@@ -475,7 +484,8 @@ export default function SignupPage() {
                     <Button
                       variant="ghost"
                       onClick={handleBackToSelection}
-                      className="p-2 mr-3">
+                      className="p-2 mr-3"
+                    >
                       <ChevronLeft />
                     </Button>
                   </div>
@@ -492,7 +502,8 @@ export default function SignupPage() {
                   Already have an account?{" "}
                   <Link
                     href="/login"
-                    className="text-blue-500 hover:text-blue-700 font-medium">
+                    className="text-blue-500 hover:text-blue-700 font-medium"
+                  >
                     Log In
                   </Link>
                 </div>

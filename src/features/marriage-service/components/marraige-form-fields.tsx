@@ -50,31 +50,33 @@ export const formConfig: FormConfig = {
     },
   ],
   stepperPosition: "",
-  grouping: {
-    defaultGroup: "General Information",
-    groups: [
-      {
-        name: "General Information",
-        label: "General Information",
-        order: 1,
-      },
-      {
-        name: "Groom's Information",
-        label: "Groom's Information",
-        order: 2,
-      },
-      {
-        name: "Bride's Information",
-        label: "Bride's Information",
-        order: 3,
-      },
-      {
-        name: "Witnesses Information",
-        label: "Witnesses Information",
-        order: 4,
-      },
-    ],
-  },
+  grouping: [
+    {
+      defaultGroup: "General Information",
+      groups: [
+        {
+          name: "General Information",
+          label: "General Information",
+          order: 1,
+        },
+        {
+          name: "Groom's Information",
+          label: "Groom's Information",
+          order: 2,
+        },
+        {
+          name: "Bride's Information",
+          label: "Bride's Information",
+          order: 3,
+        },
+        {
+          name: "Witnesses Information",
+          label: "Witnesses Information",
+          order: 4,
+        },
+      ],
+    },
+  ],
   steps: [
     {
       title: "General Information",

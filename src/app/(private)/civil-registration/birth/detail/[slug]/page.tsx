@@ -610,7 +610,6 @@ export default function BirthDetailPage() {
         open={showCertificateDialog}
         handleCancel={setShowCertificateDialog}
         certificateData={response?.data}
-        registrationNumber={slug as string}
       />
     </>
   );

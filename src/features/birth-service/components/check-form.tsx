@@ -14,21 +14,23 @@ export const formConfig: FormConfig = {
     },
   ],
   stepperPosition: "",
-  grouping: {
-    defaultGroup: "Child Details",
-    groups: [
-      {
-        name: "Child Details",
-        label: "Child Details",
-        order: 1,
-      },
-      {
-        name: "Payment Information",
-        label: "Payment Information",
-        order: 2,
-      },
-    ],
-  },
+  grouping: [
+    {
+      defaultGroup: "Child Details",
+      groups: [
+        {
+          name: "Child Details",
+          label: "Child Details",
+          order: 1,
+        },
+        {
+          name: "Payment Information",
+          label: "Payment Information",
+          order: 2,
+        },
+      ],
+    },
+  ],
   steps: [
     {
       title: "Child Details",

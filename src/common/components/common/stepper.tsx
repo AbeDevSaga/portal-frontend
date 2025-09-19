@@ -27,7 +27,7 @@ export function Stepper({
         className={cn(
           "flex",
           orientation === "horizontal"
-            ? "items-center justify-center"
+            ? "flex-nowrap items-center"
             : "flex-col items-start gap-4"
         )}
       >
@@ -43,8 +43,8 @@ export function Stepper({
               className={cn(
                 "flex text-lg",
                 orientation === "horizontal"
-                  ? "flex-col items-center gap-2 text-center"
-                  : "items-center gap-4"
+                  ? "flex-col items-center gap-1 text-center"
+                  : "items-center gap-2"
               )}
             >
               <div
@@ -62,9 +62,9 @@ export function Stepper({
 
               <div
                 className={cn(
-                  "truncate",
+                  "truncate text-[13px]",
                   index <= activeStep ? "font-semibold" : "",
-                  orientation === "vertical" ? "min-w-[120px]" : "max-w-[120px]"
+                  orientation === "vertical" ? "min-w-[80px]" : "max-w-[80px]"
                 )}
               >
                 {step.content}
@@ -75,8 +75,8 @@ export function Stepper({
                 className={cn(
                   "transition-colors",
                   orientation === "horizontal"
-                    ? "flex-1 w-[80px] h-[2px] mt-[16px]"
-                    : "w-[2px] h-[80px] ml-4",
+                    ? "flex-1 w-[60px] h-[2px] mt-[16px]"
+                    : "w-[2px] h-[60px] ml-4",
                   index < activeStep ? "bg-primary" : "bg-muted"
                 )}
               />
