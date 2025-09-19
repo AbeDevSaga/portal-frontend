@@ -39,7 +39,7 @@ const PaymentField = ({ field, form, formikField, dispatch }: any) => {
   const selectedValue = formikField.value;
 
   return (
-    <div className="space-y-2">
+    <div className="w-full space-y-2">
       <label className="text-primary font-semibold">
         {field.label}
         {field.required && <span className="text-red-600">*</span>}

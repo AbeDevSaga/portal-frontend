@@ -4,7 +4,7 @@ import React, { useState } from "react";
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 
-type RequestType = "lost" | "damaged" | "correction";
+type RequestType = "lost" | "damaged" | "correction" | "print";
 
 function Page({ params }: { params: Promise<{ request: string }> }) {
   const { request } = React.use(params);
