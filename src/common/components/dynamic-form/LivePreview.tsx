@@ -116,6 +116,10 @@ export default function LivePreview({
     const groupName = groupMap[field.key];
     const value = formValues[field.key] ?? "";
 
+    console.log("value: ", value, formValues)
+    console.log("groupName: ", groupName)
+    console.log("field: ", field)
+
     if (!acc[groupName]) acc[groupName] = [];
     acc[groupName].push({
       label: field.label,

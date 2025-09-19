@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSubmitFormMutation } from "@/features/marriage-service/api/marriageApi";
+import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 const handleConvertDate = (date: string) => {
   const dateOnly = date.split("T")[0];
   return dateOnly;
@@ -150,11 +151,11 @@ export default function NewMarriageRegistrationPage() {
 
   const formContent = (
     <Card className="p-5">
-      <DynamicForm
+      <DynamicFormRendering
         config={formConfig}
         handleSubmit={(value) => handleCreateMarriage(value)}
         initialValues={formValues}
-        formStyle="grid grid-cols-2 gap-5"
+        formStyle="grid grid-cols-12 gap-5"
         onAccordionStateChange={handleAccordionStateChange}
         showPreview={false}
       />

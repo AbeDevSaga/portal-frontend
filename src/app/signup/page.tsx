@@ -10,6 +10,7 @@ import { Button } from "@/common/components/ui/button";
 import { Card, CardContent } from "@/common/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronLeft } from "lucide-react";
 
 // FormConfig for User Registration (without userType selection)
 const userSignupConfig: FormConfig = {
@@ -17,9 +18,8 @@ const userSignupConfig: FormConfig = {
   description: "Create your personal account",
   showTitle: false,
   stepperData: [
-    { label: "Step 1", content: "Personal Info" },
-    { label: "Step 2", content: "Account Setup" },
-    { label: "Step 3", content: "Complete" },
+    { label: "Step 1", content: "Account Setup" },
+    { label: "Step 2", content: "Complete" },
   ],
   stepperPosition: "top",
   grouping: {
@@ -34,7 +34,7 @@ const userSignupConfig: FormConfig = {
   },
   steps: [
     {
-      title: "Personal Information",
+      title: "Account Setup",
       group: "User Registration",
       groupOrder: 1,
       tabular: false,
@@ -45,45 +45,28 @@ const userSignupConfig: FormConfig = {
           key: "fullName",
           label: "Full Name",
           placeholder: "Enter your full name",
+          className:
+            "px-4 h-14 mt-0.5 mb-10 border-neutral-300 placeholder:text-xl text-xl", // Example of custom field styling
+          labelClassName: "text-lg text-neutral-500", // Example of custom label styling
           validators: [
-            { type: "required", message: "Full name is required" },
+            { type: "required", message: "" },
             { type: "min", value: 2, message: "Must be at least 2 characters" },
           ],
           required: true,
           group: "User Registration",
           groupOrder: 1,
-          gridCols: 12,
-        },
-      ],
-    },
-    {
-      title: "Account Setup",
-      group: "User Registration",
-      groupOrder: 2,
-      tabular: false,
-      defaultExpanded: true,
-      fields: [
-        {
-          type: "email",
-          key: "email",
-          label: "Email",
-          placeholder: "Enter your email",
-          validators: [
-            { type: "required", message: "Email is required" },
-            { type: "email", message: "Please enter a valid email address" },
-          ],
-          required: true,
-          group: "User Registration",
-          groupOrder: 2,
-          gridCols: 12,
+          gridCols: 6, // Left column
         },
         {
           type: "password",
           key: "password",
           label: "Password",
           placeholder: "Enter your password",
+          className:
+            "px-4 h-14 mb-10 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
           validators: [
-            { type: "required", message: "Password is required" },
+            { type: "required", message: "" },
             {
               type: "min",
               value: 8,
@@ -92,15 +75,32 @@ const userSignupConfig: FormConfig = {
           ],
           required: true,
           group: "User Registration",
-          groupOrder: 3,
-          gridCols: 12,
+          groupOrder: 1,
+          gridCols: 6, // Right column
+        },
+        {
+          type: "email",
+          key: "email",
+          label: "Email",
+          placeholder: "Enter your email",
+          className:
+            "px-4 py-1 h-14 mb-10 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
+          validators: [
+            { type: "required", message: "" },
+            { type: "email", message: "Please enter a valid email address" },
+          ],
+          required: true,
+          group: "User Registration",
+          groupOrder: 1,
+          gridCols: 6, // Left column, second row
         },
       ],
     },
     {
       title: "Complete Registration",
       group: "User Registration",
-      groupOrder: 3,
+      groupOrder: 2,
       tabular: false,
       defaultExpanded: true,
       fields: [],
@@ -115,9 +115,8 @@ const agentSignupConfig: FormConfig = {
   showTitle: false,
   stepperData: [
     { label: "Step 1", content: "Organization Info" },
-    { label: "Step 2", content: "Details" },
-    { label: "Step 3", content: "Account Setup" },
-    { label: "Step 4", content: "Complete" },
+    { label: "Step 2", content: "Account Setup" },
+    { label: "Step 3", content: "Complete" },
   ],
   stepperPosition: "top",
   grouping: {
@@ -143,66 +142,43 @@ const agentSignupConfig: FormConfig = {
           key: "orgName",
           label: "Organization Name",
           placeholder: "Enter organization name",
-          validators: [
-            { type: "required", message: "Organization name is required" },
-          ],
+          className: "h-14 mb-7 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
+          validators: [{ type: "required", message: "" }],
           required: true,
           group: "Agent Registration",
           groupOrder: 1,
-          gridCols: 12,
+          gridCols: 6, // Left column
         },
         {
           type: "select",
           key: "orgType",
           label: "Organization Type",
           placeholder: "Select organization type",
-          validators: [
-            { type: "required", message: "Organization type is required" },
-          ],
+          className: "h-14 mb-8 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
+          validators: [{ type: "required", message: "" }],
           required: true,
           group: "Agent Registration",
-          groupOrder: 2,
-          gridCols: 12,
+          groupOrder: 1,
+          gridCols: 6, // Right column
           options: [
             { label: "Court", value: "court" },
             { label: "Hospital", value: "hospital" },
             { label: "Government Office", value: "government-office" },
           ],
         },
-      ],
-    },
-    {
-      title: "Organization Details",
-      group: "Agent Registration",
-      groupOrder: 2,
-      tabular: false,
-      defaultExpanded: true,
-      fields: [
-        {
-          type: "input",
-          key: "orgOwnership",
-          label: "Organization Ownership Type",
-          placeholder: "Enter ownership type",
-          validators: [
-            {
-              type: "required",
-              message: "Organization ownership type is required",
-            },
-          ],
-          required: true,
-          group: "Agent Registration",
-          groupOrder: 3,
-          gridCols: 12,
-        },
+
         {
           type: "textarea",
           key: "description",
-
           label: "Detail Description",
           placeholder: "Enter detailed description",
+          className: "py-3 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
           description: "Provide detailed information about your organization",
           validators: [
-            { type: "required", message: "Description is required" },
+            { type: "required", message: "" },
             {
               type: "min",
               value: 10,
@@ -211,22 +187,22 @@ const agentSignupConfig: FormConfig = {
           ],
           required: true,
           group: "Agent Registration",
-          groupOrder: 4,
-          gridCols: 12,
+          groupOrder: 1,
+          gridCols: 12, // Full width
         },
         {
           type: "fileUpload",
           key: "attachment",
           label: "Attachment",
           placeholder: "",
+          // className: "mb-10",
+          labelClassName: "text-lg text-neutral-500",
           description: "Upload required documents",
-          validators: [{ type: "required", message: "Attachment is required" }],
+          validators: [{ type: "required", message: "" }],
           required: true,
           group: "Agent Registration",
-          groupOrder: 5,
-          gridCols: 12,
-          // multiple: false,
-          // maxFileSize: 5 * 1024 * 1024, // 5MB
+          groupOrder: 1,
+          gridCols: 12, // Full width
           allowedTypes: [".pdf", ".doc", ".docx", ".jpg", ".png"],
         },
       ],
@@ -234,7 +210,7 @@ const agentSignupConfig: FormConfig = {
     {
       title: "Account Setup",
       group: "Agent Registration",
-      groupOrder: 3,
+      groupOrder: 2,
       tabular: false,
       defaultExpanded: true,
       fields: [
@@ -243,22 +219,28 @@ const agentSignupConfig: FormConfig = {
           key: "email",
           label: "Email",
           placeholder: "Enter your email",
+          className:
+            "px-4 h-14 mb-10 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
           validators: [
-            { type: "required", message: "Email is required" },
+            { type: "required", message: "" },
             { type: "email", message: "Please enter a valid email address" },
           ],
           required: true,
           group: "Agent Registration",
-          groupOrder: 6,
-          gridCols: 12,
+          groupOrder: 2,
+          gridCols: 6, // Left column
         },
         {
           type: "password",
           key: "password",
           label: "Password",
           placeholder: "Enter your password",
+          className:
+            "px-4 h-14 mb-10 border-neutral-300 placeholder:text-xl text-xl",
+          labelClassName: "text-lg text-neutral-500",
           validators: [
-            { type: "required", message: "Password is required" },
+            { type: "required", message: "" },
             {
               type: "min",
               value: 8,
@@ -267,15 +249,15 @@ const agentSignupConfig: FormConfig = {
           ],
           required: true,
           group: "Agent Registration",
-          groupOrder: 7,
-          gridCols: 12,
+          groupOrder: 2,
+          gridCols: 6, // Right column
         },
       ],
     },
     {
       title: "Complete Registration",
       group: "Agent Registration",
-      groupOrder: 4,
+      groupOrder: 3,
       tabular: false,
       defaultExpanded: true,
       fields: [],
@@ -304,37 +286,46 @@ export default function SignupPage() {
   };
 
   const handleSignup = (values: any) => {
+    console.log("=== SIGNUP FORM SUBMITTED ===");
+    console.log("User Type:", selectedUserType);
+    console.log("Form Values:", values);
+    console.log("Raw form data:", JSON.stringify(values, null, 2));
+
     const result = processFormSubmission(values, currentConfig);
 
     if (result.success) {
-      console.log("Signup form submitted successfully:", {
+      console.log("✅ Signup form submitted successfully:", {
         userType: selectedUserType,
         ...values,
       });
+      console.log("Processed result:", result);
       // Here you would typically make an API call to register the user
       setIsSubmitted(true);
     } else {
-      console.log("Form validation failed:", result.data);
+      console.log("❌ Form validation failed:", result.data);
+      console.log("Validation errors:", result);
     }
+
+    console.log("=== END SIGNUP SUBMISSION ===");
   };
 
   return (
     <div className="min-h-screen flex bg-gray-100 px-16 py-10">
       <div className="flex bg-white shadow-2xl rounded-3xl border w-full py-10">
         {/* Left Side - Logo */}
-        <div className="hidden lg:flex lg:w-1/2 items-center justify-center px-12 py-7">
+        <div className="hidden lg:flex lg:w-1/3 items-center justify-center px-12 py-7">
           <Image
             src="/logo.jpg"
             alt="CRRSA Logo"
             width={1000}
             height={1000}
-            className="max-w-64 max-h-64"
+            className="max-w-[350px]"
           />
         </div>
 
         {/* Right Side - Form Area (60% width) */}
-        <div className="w-full lg:w-1/2 flex items-center border-l-2 border-gray-400 justify-center p-8">
-          <div className="w-full max-w-2xl">
+        <div className="w-full lg:w-2/3 flex items-center lg:border-l-2 border-gray-400 justify-center p-8">
+          <div className="w-full max-w-5xl">
             {isSubmitted ? (
               // Success Message View
               <div className="text-center space-y-6">
@@ -353,32 +344,32 @@ export default function SignupPage() {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-3xl font-bold text-gray-800 mb-2">
                     Registration Successful!
                   </h2>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 mb-4 text-xl">
                     Your {selectedUserType === "user" ? "user" : "agent"}{" "}
                     account has been created successfully.
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className=" text-gray-500 text-xl">
                     You can now log in to your account using your registered
                     credentials.
                   </p>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-3 max-w-xl mx-auto">
                   <Link href="/login">
-                    <Button className="w-full bg-slate-700 hover:bg-slate-800 text-white">
+                    <Button className="w-full bg-slate-700 h-14 text-xl font-bold hover:bg-slate-800 text-white">
                       Go to Login
                     </Button>
                   </Link>
                   <Button
                     variant="outline"
+                    className="w-full h-14 text-xl font-bold"
                     onClick={() => {
                       setIsSubmitted(false);
                       setShowForm(false);
                       setSelectedUserType(null);
-                    }}
-                    className="w-full">
+                    }}>
                     Register Another Account
                   </Button>
                 </div>
@@ -387,8 +378,10 @@ export default function SignupPage() {
               // User Type Selection View
               <>
                 <div className="text-center mb-8 gap-2">
-                  <h2 className="text-2xl font-bold">Sign Up</h2>
-                  <p className="text-gray-600">Select your account type</p>
+                  <h2 className="text-3xl font-bold">Sign Up</h2>
+                  <p className="text-gray-600 text-xl">
+                    Select your account type
+                  </p>
                 </div>
 
                 <div className="space-y-4">
@@ -402,10 +395,10 @@ export default function SignupPage() {
                           <span className="text-2xl text-black">👨‍💼</span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-800">
+                          <h3 className="text-2xl font-bold text-gray-800">
                             User
                           </h3>
-                          <p className="text-gray-600">
+                          <p className="text-gray-600 text-xl font-medium">
                             For individual citizens
                           </p>
                         </div>
@@ -437,10 +430,10 @@ export default function SignupPage() {
                           <span className="text-2xl">🏛️</span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-800">
+                          <h3 className="text-2xl font-bold text-gray-800">
                             Agent
                           </h3>
-                          <p className="text-gray-600">
+                          <p className="text-gray-600 text-xl font-medium">
                             For organizations and institutions
                           </p>
                         </div>
@@ -463,7 +456,7 @@ export default function SignupPage() {
                   </Card>
                 </div>
 
-                <div className="text-center text-base text-gray-600 mt-8">
+                <div className="text-center text-lg text-gray-600 mt-8">
                   Already have an account?{" "}
                   <Link
                     href="/login"
@@ -475,34 +468,15 @@ export default function SignupPage() {
             ) : (
               // Form View
               <>
-                <div className="flex items-center mb-6">
-                  <Button
-                    variant="ghost"
-                    onClick={handleBackToSelection}
-                    className="p-2 mr-3">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  </Button>
-                  <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                      {selectedUserType === "user" ? "User" : "Agent"}{" "}
-                      Registration
-                    </h2>
-                    <p className="text-gray-600">Complete your registration</p>
+                <div className="space-y-4 relative items-center">
+                  <div className="flex items-center absolute top-0">
+                    <Button
+                      variant="ghost"
+                      onClick={handleBackToSelection}
+                      className="p-2 mr-3">
+                      <ChevronLeft />
+                    </Button>
                   </div>
-                </div>
-
-                <div className="space-y-4">
                   <DynamicForm
                     config={currentConfig}
                     handleSubmit={handleSignup}
@@ -512,11 +486,11 @@ export default function SignupPage() {
                   />
                 </div>
 
-                <div className="text-end text-base text-gray-600 mt-4">
+                <div className="text-end text-lg text-gray-600 mt-4">
                   Already have an account?{" "}
                   <Link
                     href="/login"
-                    className="text-blue-600 hover:text-blue-800 font-medium">
+                    className="text-blue-500 hover:text-blue-700 font-medium">
                     Log In
                   </Link>
                 </div>
