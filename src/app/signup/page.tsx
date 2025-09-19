@@ -194,15 +194,16 @@ const agentSignupConfig: FormConfig = {
           type: "fileUpload",
           key: "attachment",
           label: "Attachment",
-          placeholder: "",
+          placeholder: "Choose File",
           // className: "mb-10",
           labelClassName: "text-lg text-neutral-500",
+          className: "py-3 border-neutral-300 placeholder:text-xl text-xl",
           description: "Upload required documents",
           validators: [{ type: "required", message: "" }],
           required: true,
           group: "Agent Registration",
           groupOrder: 1,
-          gridCols: 12, // Full width
+          gridCols: 6, // Full width
           allowedTypes: [".pdf", ".doc", ".docx", ".jpg", ".png"],
           showPreview: true, // Add this flag to enable preview
         },
