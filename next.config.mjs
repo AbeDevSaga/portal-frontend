@@ -62,6 +62,17 @@ const nextConfig = {
   //     }
   //   ];
   // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '168.231.109.155',
+        port: '9000',
+        pathname: '/vital-certificates/**',
+      },
+
+    ],
+  },
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

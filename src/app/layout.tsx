@@ -6,7 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { DM_Sans } from "next/font/google";
 import CustomToaster from "@/common/components/common/CustomToast";
 import Providers from "./provider";
-import { KeycloakProvider } from "@/common/contexts/KeycloakContext";
+import SessionProvider from "@/components/providers/SessionProvider";
 
 const dmSans = DM_Sans({
     subsets: ["latin"], // choose subsets you need
@@ -34,13 +34,13 @@ export default async function RootLayout({
             <body className={dmSans.className}>
                 <CustomToaster />
                 {/* <Toaster/> */}
-                <KeycloakProvider>
+                <SessionProvider>
                     <NextIntlClientProvider>
                         <Providers>
                             <div className='min-h-screen'>{children}</div>
                         </Providers>
                     </NextIntlClientProvider>
-                </KeycloakProvider>
+                </SessionProvider>
             </body>
         </html>
     );

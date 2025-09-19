@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
+import { useAuth } from "@/common/hooks/useAuth";
 import { Card } from "../ui/card";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -24,11 +24,19 @@ interface SidebarSection {
 }
 
 const Sidebar = () => {
+<<<<<<< HEAD
   const { user } = useKeycloak();
   const t = useTranslations();
   const currentPath = usePathname();
   const [expandedRoutes, setExpandedRoutes] = useState<Set<string>>(new Set());
   const [isInitialized, setIsInitialized] = useState(false);
+=======
+    const { user } = useAuth();
+    const t = useTranslations();
+    const currentPath = usePathname();
+    const [expandedRoutes, setExpandedRoutes] = useState<Set<string>>(new Set());
+    const [isInitialized, setIsInitialized] = useState(false);
+>>>>>>> gitlab1/main
 
   // Get username from Keycloak user
   const username = user?.username || user?.firstName || "User";
@@ -65,6 +73,7 @@ const Sidebar = () => {
     return false;
   };
 
+<<<<<<< HEAD
   // Toggle section expansion
   const toggleRoute = (routeLabel: string) => {
     const newExpanded = new Set(expandedRoutes);
@@ -75,6 +84,40 @@ const Sidebar = () => {
     }
     setExpandedRoutes(newExpanded);
   };
+=======
+        // Check if current path starts with the route and has a sub-route
+        // This will match /application/birth/new, /application/birth/list, /application/birth/detail, etc.
+        if (currentPathLower.startsWith(routeLower + '/')) {
+            return true;
+        }
+
+        return false;
+    };
+
+    // Helper function to check if any child route is active
+    const isSectionActive = (childRoutes: SidebarChildRoute[]) => {
+        return childRoutes.some(child => isRouteActive(child.route));
+    };
+
+    // Toggle section expansion
+    const toggleRoute = (routeLabel: string) => {
+        const newExpanded = new Set(expandedRoutes);
+        if (newExpanded.has(routeLabel)) {
+            newExpanded.delete(routeLabel);
+        } else {
+            newExpanded.add(routeLabel);
+        }
+        setExpandedRoutes(newExpanded);
+    };
+
+    // Check if route should be expanded (has active route)
+    const shouldExpandRoute = (route: SidebarChildRoute) => {
+        return isRouteActive(route.route) ||
+            route.children?.some(child => isRouteActive(child.route));
+    };
+
+    // const config = sidebarConfigData as SidebarConfig;
+>>>>>>> gitlab1/main
 
   // Check if route should be expanded (has active route)
   const shouldExpandRoute = (route: SidebarChildRoute) => {

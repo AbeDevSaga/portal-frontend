@@ -31,6 +31,7 @@ const ProfileComponent = ({
     </div>
   </div>
 );
+<<<<<<< HEAD
 
 const InformationComponent = ({
   person,
@@ -80,6 +81,139 @@ const InformationComponent = ({
               {personal?.religion?.localizedContent?.en?.name ?? "--"}
             </p>
           </div>
+=======
+const InformationComponent = ({
+    id,
+    type,
+    image,
+}: {
+    type: string;
+    id: string;
+    image: string;
+}) => {
+    const { data, isLoading, isError } = useGetResidentDataByIdQuery(
+        { id: id! },
+        {
+            skip: !id,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+    console.log("data", data);
+
+    const {
+        data: religionData,
+        isLoading: isReligionLoading,
+        isError: isReligionError,
+    } = useGetReligionDataByIdQuery(
+        { id: data?.personalInfo.religion! },
+        {
+            skip: !data?.personalInfo.religion,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+    console.log("data?.religion", data?.religion);
+
+    const {
+        data: nationalityData,
+        isLoading: isNationalityLoading,
+        isError: isNationalityError,
+    } = useGetNationalityDataByIdQuery(
+        { id: data?.personalInfo?.nationality! },
+        {
+            skip: !data?.personalInfo?.nationality,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+    return (
+        <div className='flex flex-col lg:flex-row gap-5 w-full py-5'>
+            <Card className='flex flex-col md:flex-row w-full'>
+                <ProfileCompnent
+                    name={
+                        data
+                            ? data.personalInfo.localizedContent.en.firstName +
+                              " " +
+                              data.personalInfo.localizedContent.en.middleName +
+                              " " +
+                              data.personalInfo.localizedContent.en.lastName
+                            : ""
+                    }
+                    bridalType={type}
+                    image={image}
+                />
+
+                <div className='rounded-md py-5 px-5 gap-2 min-w-fit flex flex-col justify-center w-full'>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Nationality</p>
+                        <p className='text-sm text-right font-semibold w-fit'>
+                            {nationalityData?.localizedContent["en"].name}
+                        </p>
+                    </div>
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>National ID Number</p>
+                        <p className='text-sm text-right font-semibold w-fit'>
+                            111111{" "}
+                        </p>
+                    </div>{" "}
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Date of Birth</p>
+                        <p className='text-sm text-right font-semibold w-fit'>
+                            {data?.personalInfo?.dateOfBirth
+                                ? data?.personalInfo?.dateOfBirth
+                                : null}
+                        </p>
+                    </div>{" "}
+                    {/* <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Current Living Address</p>
+                        <p className='text-sm text-right font-semibold w-fit'>
+                            Date of Marriage
+                        </p>
+                    </div>{" "} */}
+                    <div className='w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2'>
+                        <p className='text-sm'>Religion</p>
+                        <p className='text-sm text-right font-semibold w-fit'>
+                            {religionData?.localizedContent["en"].name}
+                        </p>
+                    </div>
+                    {/* <div className='w-full flex justify-between gap-x-5 gap-y-2 pb-2'>
+                        <p className='text-sm'>Early Marriage Status</p>
+                        <p className='text-sm text-right font-semibold w-fit'>
+                            Date of Marriage
+                        </p>
+                    </div> */}
+                </div>
+            </Card>
+            <Card className='min-w-[250px] p-5'>
+                <p className='text-lg font-semibold text-[#073954]'>
+                    Birth Information
+                </p>
+                <div className='py-5 gap-2 min-w-fit flex flex-col justify-center'>
+                    <div className='flex justify-between border-b'>
+                        <p className='text-sm'>Country </p>
+                        <p className='text-sm font-semibold w-fit text-right'>
+                            {nationalityData?.localizedContent["en"].name}
+                        </p>
+                    </div>
+                    <div className='flex justify-between border-b'>
+                        <p className='text-sm'>City / Region </p>
+                        <p className='text-sm font-semibold w-fit text-right'>
+                            ----{" "}
+                        </p>
+                    </div>
+                    <div className='flex justify-between border-b'>
+                        <p className='text-sm'>Sub-city</p>
+                        <p className='text-sm font-semibold w-fit text-right'>
+                            ----
+                        </p>
+                    </div>
+                    <div className='flex justify-between'>
+                        <p className='text-sm'>Kebele</p>
+                        <p className='text-sm font-semibold w-fit text-right'>
+                            ----
+                        </p>
+                    </div>
+                </div>
+            </Card>
+>>>>>>> gitlab1/main
         </div>
       </Card>
 
@@ -120,6 +254,7 @@ const InformationComponent = ({
   );
 };
 
+<<<<<<< HEAD
 const BridalInformation = ({ data }: { data: any }) => {
   return (
     <div>
@@ -130,6 +265,34 @@ const BridalInformation = ({ data }: { data: any }) => {
       <InformationComponent person={data.wife} type="Bride" />
     </div>
   );
+=======
+const BridalInformation = ({
+    data,
+    husbandImage,
+    wifeImage,
+}: {
+    data: MarriageData;
+    husbandImage: string;
+    wifeImage: string;
+}) => {
+    return (
+        <div className=''>
+            <p className='text-xl font-semibold border-b pb-7 text-[#073954]'>
+                Bridal Information
+            </p>
+            <InformationComponent
+                id={data.husband}
+                image={husbandImage}
+                type='Groom'
+            />
+            <InformationComponent
+                id={data.wife}
+                image={wifeImage}
+                type='Bride'
+            />
+        </div>
+    );
+>>>>>>> gitlab1/main
 };
 
 export default BridalInformation;

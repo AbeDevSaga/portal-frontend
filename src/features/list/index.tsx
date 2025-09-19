@@ -11,11 +11,18 @@ import { Button } from "@/common/components/ui/button";
 import { DataTable } from "@/common/components/common/CrrsaTable";
 import SelectComponent from "@/common/components/common/SelectComponent";
 import { useGetListQuery } from "./api/listApi";
+<<<<<<< HEAD
 import RequestTypeDropdown from "./components/RequestTypeDropdown";
 
 export default function List() {
   const [response, setResponse] = useState([]);
   const [filteredResponse, setFilteredResponse] = useState<any[]>([]);
+=======
+import { MarriageRecord } from "../announcment/types/type";
+
+export default function List() {
+    const [response, setResponse] = useState<MarriageRecord[]>([]);
+>>>>>>> gitlab1/main
 
   const t = useTranslations();
 

@@ -9,7 +9,7 @@ export default function FileViewer({ fileUrl }: { fileUrl: string }) {
 
     if (isPdf) {
         return (
-            <div className='h-full max-h-[700px] w-full'>
+            <div className='h-full max-h-[700px] w-full min-h-[500px]'>
                 <Worker
                     // Hardcode your installed version of pdfjs-dist here
                     workerUrl='https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js'
@@ -21,7 +21,7 @@ export default function FileViewer({ fileUrl }: { fileUrl: string }) {
     }
 
     return (
-        <div className='flex justify-center'>
+        <div className='flex justify-center h-full max-h-[750px] min-h-[500px]'>
             <img
                 src={fileUrl}
                 alt='Document'

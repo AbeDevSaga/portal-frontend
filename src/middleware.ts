@@ -1,39 +1,39 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { withAuth } from "next-auth/middleware";
 
-const ROOT = '/home';
-
-export default function middleware(req: NextRequest) {
-    const { pathname } = req.nextUrl;
-
-    // Redirect login attempts to home page since login is handled in navigation
-    if (pathname === "/login") {
-        return NextResponse.redirect(new URL(ROOT, req.url));
-    }
-
-    // Define protected routes that require authentication
-    const PROTECTED_ROUTES = ["/officers"];
-    
-    // Check if the current path is a protected route
-    const isProtectedRoute = PROTECTED_ROUTES.some(route => 
-        pathname.startsWith(route)
-    );
-
-    // For now, allow all routes - authentication will be handled by components
-    // You can add more sophisticated logic here later if needed
-    
-    return NextResponse.next();
-}
+export default withAuth(
+  function middleware(req) {
+    // Add any additional middleware logic here if needed
+    console.log('Middleware - Path:', req.nextUrl.pathname);
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        console.log('Middleware - Token:', token);
+        console.log('Middleware - Path:', req.nextUrl.pathname);
+        
+        // Protect private routes - only allow access if user is authenticated
+        if (req.nextUrl.pathname.startsWith('/application') || 
+            req.nextUrl.pathname.startsWith('/officers')) {
+          const isAuthorized = !!token;
+          console.log('Middleware - Is Authorized:', isAuthorized);
+          return isAuthorized;
+        }
+        // Allow access to public routes
+        return true;
+      },
+    },
+  }
+);
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
-    ],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };

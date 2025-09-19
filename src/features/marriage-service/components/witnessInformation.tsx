@@ -21,6 +21,7 @@ const WitnessInformation = ({ data }: { data: any }) => {
   const [displayData, setDisplayData] = useState("husbandWetness");
   const [previewFile, setPreviewFile] = useState<{url: string, fileName: string, fileType: string} | null>(null);
 
+<<<<<<< HEAD
   // filter witnesses by prefix (husbandWetnessOne, wifeWetnessTwo, etc.)
   const witnesses = data
     ? Object.keys(data.witness)
@@ -50,6 +51,57 @@ const WitnessInformation = ({ data }: { data: any }) => {
     const categorized = {
       groom: [] as any[],
       bride: [] as any[]
+=======
+    const WitnessComponent = ({ id }: { id: string }) => {
+        const { data, isLoading, isError } = useGetResidentDataByIdQuery(
+            { id: id! },
+            {
+                skip: !id,
+                refetchOnMountOrArgChange: true,
+            }
+        );
+        console.log("witness data", data);
+        return (
+            <div className='flex flex-col lg:flex-row w-full py-2' key={id}>
+                <Card className='rounded-sm py-5 px-5 gap-2 w-full flex bg-[#F8F8F8]'>
+                    <ProfileCompnent
+                        image={witnessImage.src}
+                        signiture={witnessImage.src}
+                        name='witness'
+                    />
+                    <div className='flex flex-col w-full'>
+                        <div className='flex-1 w-full flex items-center justify-between gap-x-5 gap-y-2 border-b'>
+                            <p className='text-sm'>Full Name</p>
+                            <p className='text-sm font-semibold w-fit'>
+                                {data
+                                    ? data.personalInfo.localizedContent.en
+                                          .firstName +
+                                      " " +
+                                      data.personalInfo.localizedContent.en
+                                          .middleName +
+                                      " " +
+                                      data.personalInfo.localizedContent.en
+                                          .lastName
+                                    : ""}{" "}
+                            </p>
+                        </div>
+                        <div className='flex-1 w-full flex items-center justify-between gap-x-5 gap-y-2 border-b'>
+                            <p className='text-sm'>National ID Number</p>
+                            <p className='text-sm font-semibold w-fit'>
+                                1234123412341234
+                            </p>
+                        </div>{" "}
+                        <div className='flex-1 w-full flex items-center justify-between gap-x-5 gap-y-2'>
+                            <p className='text-sm'>Current Living Address</p>
+                            <p className='text-sm font-semibold w-fit'>
+                                Bole Brass
+                            </p>
+                        </div>
+                    </div>{" "}
+                </Card>
+            </div>
+        );
+>>>>>>> gitlab1/main
     };
 
     attachments.forEach((attachment: any) => {

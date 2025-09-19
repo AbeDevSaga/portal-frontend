@@ -8,7 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
+import { useAuth } from "@/common/hooks/useAuth";
 import React from "react";
 import { LanguageSwitcher } from "../common/LanguageSelector";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -23,7 +23,7 @@ function classNames(...classes: string[]) {
 
 
 export default function OfficersNavBar() {
-    const { user, logout } = useKeycloak();
+    const { user, logout } = useAuth();
     const t = useTranslations();
     
     const username = user?.username || user?.firstName || 'User';

@@ -22,6 +22,7 @@ export interface BirthPlace {
     facilityType: string;
     facilityOwnership: string;
     facilityNotificationRef: string;
+    locationDescription: string;
 }
 
 export interface BirthData {
