@@ -24,27 +24,17 @@ interface SidebarSection {
 }
 
 const Sidebar = () => {
-<<<<<<< HEAD
-  const { user } = useKeycloak();
+  const { user } = useAuth();
   const t = useTranslations();
   const currentPath = usePathname();
   const [expandedRoutes, setExpandedRoutes] = useState<Set<string>>(new Set());
   const [isInitialized, setIsInitialized] = useState(false);
-=======
-    const { user } = useAuth();
-    const t = useTranslations();
-    const currentPath = usePathname();
-    const [expandedRoutes, setExpandedRoutes] = useState<Set<string>>(new Set());
-    const [isInitialized, setIsInitialized] = useState(false);
->>>>>>> gitlab1/main
 
-  // Get username from Keycloak user
   const username = user?.username || user?.firstName || "User";
 
   // Initialize default expanded routes on first load
   useEffect(() => {
     if (!isInitialized && sidebarRoutes.length > 0) {
-      // Find the default section and expand its first route
       const defaultSection = sidebarRoutes.find(
         (section) => section.title === "Dashboard"
       );
@@ -60,20 +50,16 @@ const Sidebar = () => {
     const currentPathLower = currentPath.toLowerCase();
     const routeLower = route.toLowerCase();
 
-    // Exact match
-    if (currentPathLower === routeLower) {
-      return true;
-    }
-
-    // Check if current path starts with the route and has a sub-route
-    if (currentPathLower.startsWith(routeLower + "/")) {
-      return true;
-    }
+    if (currentPathLower === routeLower) return true;
+    if (currentPathLower.startsWith(routeLower + "/")) return true;
 
     return false;
   };
 
-<<<<<<< HEAD
+  const isSectionActive = (childRoutes: SidebarChildRoute[]) => {
+    return childRoutes.some((child) => isRouteActive(child.route));
+  };
+
   // Toggle section expansion
   const toggleRoute = (routeLabel: string) => {
     const newExpanded = new Set(expandedRoutes);
@@ -84,52 +70,16 @@ const Sidebar = () => {
     }
     setExpandedRoutes(newExpanded);
   };
-=======
-        // Check if current path starts with the route and has a sub-route
-        // This will match /application/birth/new, /application/birth/list, /application/birth/detail, etc.
-        if (currentPathLower.startsWith(routeLower + '/')) {
-            return true;
-        }
 
-        return false;
-    };
-
-    // Helper function to check if any child route is active
-    const isSectionActive = (childRoutes: SidebarChildRoute[]) => {
-        return childRoutes.some(child => isRouteActive(child.route));
-    };
-
-    // Toggle section expansion
-    const toggleRoute = (routeLabel: string) => {
-        const newExpanded = new Set(expandedRoutes);
-        if (newExpanded.has(routeLabel)) {
-            newExpanded.delete(routeLabel);
-        } else {
-            newExpanded.add(routeLabel);
-        }
-        setExpandedRoutes(newExpanded);
-    };
-
-    // Check if route should be expanded (has active route)
-    const shouldExpandRoute = (route: SidebarChildRoute) => {
-        return isRouteActive(route.route) ||
-            route.children?.some(child => isRouteActive(child.route));
-    };
-
-    // const config = sidebarConfigData as SidebarConfig;
->>>>>>> gitlab1/main
-
-  // Check if route should be expanded (has active route)
   const shouldExpandRoute = (route: SidebarChildRoute) => {
     return (
       isRouteActive(route.route) ||
-      (route.children &&
-        route.children.some((child) => isRouteActive(child.route)))
+      route.children?.some((child) => isRouteActive(child.route))
     );
   };
 
   return (
-    <Card className="py-8 px-5 space-y-8 w-fit h-fit hidden 2xl:block ">
+    <Card className="py-8 px-5 space-y-8 w-fit h-fit hidden 2xl:block">
       <div className="text-[#073954] space-y-5">
         {sidebarRoutes.map((section: SidebarSection) => (
           <div key={section.title} className="space-y-1">
@@ -145,7 +95,6 @@ const Sidebar = () => {
                   isRouteActive(subChild.route)
                 );
 
-              // Determine if this route should be expanded
               const isManuallyExpanded = expandedRoutes.has(child.label);
               const hasActiveRoute = shouldExpandRoute(child);
               const isDefaultRoute =

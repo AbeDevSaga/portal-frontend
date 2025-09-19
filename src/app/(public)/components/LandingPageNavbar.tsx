@@ -7,13 +7,15 @@ import { useEffect, useState } from "react";
 import React from "react";
 import crrsaLogin from "@/public/images/crrsa-login.png";
 
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
 import { Button } from "./button";
 
 export default function LandingPageNavbar() {
   const [activeLink, setActiveLink] = useState("");
   const router = useRouter();
-  const { authenticated, user, login, logout } = useKeycloak();
+  const user = {
+    username: "Amanuel Daniel",
+    firstName: "Amanuel",
+  };
 
   const landingLinks = [
     { link: "/", name: "Home" },
@@ -30,11 +32,11 @@ export default function LandingPageNavbar() {
   };
 
   const handleLogin = () => {
-    login();
+    router.push("/login");
   };
 
   const handleLogout = () => {
-    logout();
+    router.push("/login");
   };
 
   return (
@@ -65,14 +67,16 @@ export default function LandingPageNavbar() {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-5">
-            {!authenticated ? (
+            {!false ? (
               <>
                 <Button
                   asChild
                   variant="outline"
                   className="border-2 text-[14px] border-[#073954] px-[24px] py-2.5"
                 >
-                  <Link href="/signup" className="text-[14px]">Register</Link>
+                  <Link href="/signup" className="text-[14px]">
+                    Register
+                  </Link>
                 </Button>
                 <Button
                   onClick={handleLogin}

@@ -1,15 +1,14 @@
 import React from "react";
 import { Button } from "./button";
-import Link from "next/link";
 import looper from "@/public/images/Looper-bg.svg";
 import Image from "next/image";
 import ellipse from "@/public/images/Ellipse-25.svg";
-import { useKeycloak } from "@/common/contexts/KeycloakContext";
+import { useRouter } from "next/navigation";
 
 function HomePage() {
-  const { authenticated, user, login, logout } = useKeycloak();
+  const router = useRouter();
   const handleLogin = () => {
-    login();
+    router.push("/application");
   };
 
   return (
