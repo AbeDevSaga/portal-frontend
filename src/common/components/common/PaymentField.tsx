@@ -17,8 +17,8 @@ const PaymentField = ({ field, form, formikField, dispatch }: any) => {
       await new Promise((resolve) => setTimeout(resolve, 1200));
 
       // Set Formik value as plain string
-      form.setFieldValue(field.key, option.value);
-      form.setFieldTouched(field.key, true);
+      form.setFieldValue(field.key, option.value, true);
+      form.setFieldTouched(field.key, true, false);
 
       // Update redux store if needed
       dispatch?.(
