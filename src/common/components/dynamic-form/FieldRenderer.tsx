@@ -1153,85 +1153,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
                       // Force entire form validation to update submit button state
                       form.validateForm();
-
-                      // ENHANCED DEBUG: Check why form is still invalid
-                      setTimeout(() => {
-                        console.log(
-                          `[DEBUG] FileUpload ${field.key} - Deep validation check:`,
-                          {
-                            fieldKey: field.key,
-                            fieldValue: form.values[field.key],
-                            fieldTouched: form.touched[field.key],
-                            fieldErrors: form.errors[field.key],
-                            formIsValid: form.isValid,
-                            formIsValidating: form.isValidating,
-                            formDirty: form.dirty,
-                            formErrors: form.errors,
-                            formTouched: form.touched,
-                            formValues: form.values,
-                            // Check if there are other fields with errors
-                            allFieldErrors: Object.keys(form.errors).filter(
-                              (key) => form.errors[key]
-                            ),
-                            allTouchedFields: Object.keys(form.touched).filter(
-                              (key) => form.touched[key]
-                            ),
-                            // Check if this field is actually required
-                            isFieldRequired: isFieldRequired,
-                            // Check if the field value is truthy
-                            hasValidValue: !!form.values[field.key],
-                            // Check if the field value is a File object
-                            isFileObject:
-                              form.values[field.key] instanceof File,
-                            // Check if the field value has the expected properties
-                            valueProperties: form.values[field.key]
-                              ? Object.getOwnPropertyNames(
-                                  form.values[field.key]
-                                )
-                              : "null",
-                          }
-                        );
-                      }, 100); // Small delay to ensure validation completes
-
-                      // DEBUG: Log the touch state after setting it
-                      console.log(
-                        `[DEBUG] FileUpload ${field.key} - After setting touched:`,
-                        {
-                          fieldTouched: form.touched[field.key],
-                          formIsValid: form.isValid,
-                          formIsValidating: form.isValidating,
-                        }
-                      );
                     }, 0);
-
-                    // DEBUG: Log validation state after file selection
-                    console.log(
-                      `[DEBUG] FileUpload ${field.key} - After file selection:`,
-                      {
-                        fieldKey: field.key,
-                        fieldValue: form.values[field.key],
-                        fieldValueType: typeof form.values[field.key],
-                        fieldValueIsArray: Array.isArray(
-                          form.values[field.key]
-                        ),
-                        fieldValueKeys: form.values[field.key]
-                          ? Object.keys(form.values[field.key])
-                          : "null",
-                        fieldTouched: form.touched[field.key],
-                        fieldErrors: form.errors[field.key],
-                        formIsValid: form.isValid,
-                        formIsValidating: form.isValidating,
-                        formDirty: form.dirty,
-                        formValues: form.values,
-                        isFieldRequired: isFieldRequired,
-                        hasFiles: !!selectedFiles,
-                        selectedFilesType: typeof selectedFiles,
-                        selectedFilesIsArray: Array.isArray(selectedFiles),
-                        selectedFilesKeys: selectedFiles
-                          ? Object.keys(selectedFiles)
-                          : "null",
-                      }
-                    );
 
                     dispatch(
                       updateField({
@@ -1320,22 +1242,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                       // Trigger form validation to update submit button state
                       form.validateField(field.key);
 
-                      // DEBUG: Log validation state after file removal (multiple)
-                      console.log(
-                        `[DEBUG] FileUpload ${field.key} - After file removal (multiple):`,
-                        {
-                          fieldKey: field.key,
-                          fieldValue: form.values[field.key],
-                          fieldTouched: form.touched[field.key],
-                          fieldErrors: form.errors[field.key],
-                          formIsValid: form.isValid,
-                          formIsValidating: form.isValidating,
-                          formDirty: form.dirty,
-                          remainingFiles: updatedFiles.length,
-                          isFieldRequired: isFieldRequired,
-                        }
-                      );
-
                       dispatch(
                         updateField({
                           key: field.key,
@@ -1365,21 +1271,6 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
 
                       // Trigger form validation to update submit button state
                       form.validateField(field.key);
-
-                      // DEBUG: Log validation state after file removal (single)
-                      console.log(
-                        `[DEBUG] FileUpload ${field.key} - After file removal (single):`,
-                        {
-                          fieldKey: field.key,
-                          fieldValue: form.values[field.key],
-                          fieldTouched: form.touched[field.key],
-                          fieldErrors: form.errors[field.key],
-                          formIsValid: form.isValid,
-                          formIsValidating: form.isValidating,
-                          formDirty: form.dirty,
-                          isFieldRequired: isFieldRequired,
-                        }
-                      );
 
                       dispatch(
                         updateField({
@@ -1426,187 +1317,254 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                   }
                 };
 
-                return (
-                  <div>
-                    <Label className="text-primary font-semibold">
-                      {field.label}
-                      {isFieldRequired ? (
-                        <span className="pl-2 text-red-600">*</span>
-                      ) : null}
-                    </Label>
-                    <div className="space-y-2">
-                      {/* File Input */}
-                      <div className="relative">
-                        <Input
-                          ref={fileInputRef}
-                          type="file"
-                          onChange={handleFileChange}
-                          placeholder={field.placeholder}
-                          multiple={isMultiple}
-                          accept={allowedTypes.join(",")}
-                          className={`cursor-pointer ${
-                            isFieldRequired && !currentFiles
-                              ? "border-red-500 focus:border-red-500"
-                              : ""
-                          }`}
-                          disabled={isFieldDisabled}
-                        />
+                // Check if we should show preview
+                const shouldShowPreview =
+                  field.showPreview && currentFiles && !isMultiple;
+                const previewFile = shouldShowPreview
+                  ? (currentFiles as File)
+                  : null;
 
-                        {/* File Constraints Info */}
-                        <div className="text-xs text-gray-500 mt-1">
-                          <div>
-                            Max file size: {formatFileSize(maxFileSize)}
-                          </div>
-                          <div>
-                            Files: {minFiles} - {maxFiles}
-                          </div>
-                          {allowedTypes.length > 0 &&
-                            allowedTypes[0] !== "*" && (
-                              <div>
-                                Allowed types: {allowedTypes.join(", ")}
+                // Create file URL for preview
+                const createFilePreviewUrl = (file: File) => {
+                  try {
+                    return URL.createObjectURL(file);
+                  } catch (error) {
+                    console.error("Error creating file preview URL:", error);
+                    return null;
+                  }
+                };
+
+                const previewUrl = previewFile
+                  ? createFilePreviewUrl(previewFile)
+                  : null;
+
+                // Check if file is previewable
+                const isPreviewable =
+                  previewFile &&
+                  (previewFile.type.startsWith("image/") ||
+                    previewFile.type === "application/pdf" ||
+                    previewFile.name.toLowerCase().endsWith(".pdf"));
+
+                return (
+                  <div className={field.showPreview ? "flex gap-4" : ""}>
+                    {/* File Upload Section - Always maintains its original width */}
+                    <div className={field.showPreview ? "flex-1" : "w-full"}>
+                      <Label className="text-primary font-semibold">
+                        {field.label}
+                        {isFieldRequired ? (
+                          <span className="pl-2 text-red-600">*</span>
+                        ) : null}
+                      </Label>
+                      <div className="space-y-2">
+                        {/* File Input */}
+                        <div className="relative">
+                          <Input
+                            ref={fileInputRef}
+                            type="file"
+                            onChange={handleFileChange}
+                            placeholder={field.placeholder}
+                            multiple={isMultiple}
+                            accept={allowedTypes.join(",")}
+                            className={`cursor-pointer ${
+                              isFieldRequired && !currentFiles
+                                ? "border-red-500 focus:border-red-500"
+                                : ""
+                            }`}
+                            disabled={isFieldDisabled}
+                          />
+
+                          {/* File Constraints Info */}
+                          <div className="text-xs text-gray-500 mt-1">
+                            <div>
+                              Max file size: {formatFileSize(maxFileSize)}
+                            </div>
+                            <div>
+                              Files: {minFiles} - {maxFiles}
+                            </div>
+                            {allowedTypes.length > 0 &&
+                              allowedTypes[0] !== "*" && (
+                                <div>
+                                  Allowed types: {allowedTypes.join(", ")}
+                                </div>
+                              )}
+                            {isFieldRequired && (
+                              <div className="text-red-500 font-medium">
+                                * This field is required
                               </div>
                             )}
-                          {isFieldRequired && (
-                            <div className="text-red-500 font-medium">
-                              * This field is required
-                            </div>
-                          )}
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Selected Files Display */}
-                      {currentFiles && (
-                        <div className="space-y-2">
-                          {isMultiple
-                            ? Array.from(currentFiles as File[]).map(
-                                (file: File, index: number) => (
-                                  <div
-                                    key={
-                                      `${file.name}-${file.lastModified}-${file.size}` ||
-                                      index
-                                    }
-                                    className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                        {/* Selected Files Display - only show if preview is disabled or multiple files */}
+                        {currentFiles && (!shouldShowPreview || isMultiple) && (
+                          <div className="space-y-2">
+                            {isMultiple
+                              ? Array.from(currentFiles as File[]).map(
+                                  (file: File, index: number) => (
+                                    <div
+                                      key={
+                                        `${file.name}-${file.lastModified}-${file.size}` ||
+                                        index
+                                      }
+                                      className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                      <div className="flex-1 min-w-0">
+                                        <div className="text-sm font-medium text-gray-900 truncate">
+                                          {file.name}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {formatFileSize(file.size)} •{" "}
+                                          {file.type}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => removeFile(index)}
+                                        className="ml-2 text-red-600 hover:text-red-700">
+                                        Remove
+                                      </Button>
+                                    </div>
+                                  )
+                                )
+                              : currentFiles && (
+                                  <div className="flex items-center justify-between p-2 bg-gray-50 rounded border">
                                     <div className="flex-1 min-w-0">
                                       <div className="text-sm font-medium text-gray-900 truncate">
-                                        {file.name}
+                                        {(currentFiles as File).name}
                                       </div>
                                       <div className="text-xs text-gray-500">
-                                        {formatFileSize(file.size)} •{" "}
-                                        {file.type}
+                                        {formatFileSize(
+                                          (currentFiles as File).size
+                                        )}{" "}
+                                        • {(currentFiles as File).type}
                                       </div>
                                     </div>
                                     <Button
                                       type="button"
                                       variant="outline"
                                       size="sm"
-                                      onClick={() => removeFile(index)}
+                                      onClick={() => removeFile(0)}
                                       className="ml-2 text-red-600 hover:text-red-700">
                                       Remove
                                     </Button>
                                   </div>
-                                )
-                              )
-                            : currentFiles && (
-                                <div className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-                                  <div className="flex-1 min-w-0">
-                                    <div className="text-sm font-medium text-gray-900 truncate">
-                                      {(currentFiles as File).name}
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                      {formatFileSize(
-                                        (currentFiles as File).size
-                                      )}{" "}
-                                      • {(currentFiles as File).type}
-                                    </div>
-                                  </div>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => removeFile(0)}
-                                    className="ml-2 text-red-600 hover:text-red-700">
-                                    Remove
-                                  </Button>
-                                </div>
-                              )}
-                        </div>
-                      )}
+                                )}
+                          </div>
+                        )}
 
-                      {/* Required field validation message */}
-                      {isFieldRequired && !currentFiles && (
-                        <div className="text-red-500 text-sm">
-                          Please select a file. This field is required.
-                        </div>
-                      )}
+                        {/* Required field validation message */}
+                        {isFieldRequired && !currentFiles && (
+                          <div className="text-red-500 text-sm">
+                            Please select a file. This field is required.
+                          </div>
+                        )}
 
-                      {/* DEBUG: Validation Status Display */}
-                      {/* <div className='mt-4 p-3 bg-gray-100 rounded border text-xs'>
-                                                <div className='font-semibold mb-2 text-gray-700'>🔍 Validation Debug Info:</div>
-                                                <div className='grid grid-cols-2 gap-2'>
-                                                    <div>
-                                                        <span className='font-medium'>Field Key:</span> {field.key}
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Required:</span> 
-                                                        <span className={isFieldRequired ? 'text-red-600' : 'text-green-600'}>
-                                                            {isFieldRequired ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Has Files:</span> 
-                                                        <span className={currentFiles ? 'text-green-600' : 'text-red-600'}>
-                                                            {currentFiles ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Field Value:</span> 
-                                                        <span className='text-gray-600'>
-                                                            {currentFiles ? (Array.isArray(currentFiles) ? `${currentFiles.length} file(s)` : '1 file') : 'null'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Field Touched:</span> 
-                                                        <span className={form.touched[field.key] ? 'text-blue-600' : 'text-red-600'}>
-                                                            {form.touched[field.key] ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Field Errors:</span> 
-                                                        <span className={form.errors[field.key] ? 'text-red-600' : 'text-green-600'}>
-                                                            {form.errors[field.key] || 'None'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Form Valid:</span> 
-                                                        <span className={form.isValid ? 'text-green-600' : 'text-red-600'}>
-                                                            {form.isValid ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className='font-medium'>Form Validating:</span> 
-                                                        <span className={form.isValidating ? 'text-yellow-600' : 'text-gray-600'}>
-                                                            {form.isValidating ? 'Yes' : 'No'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className='mt-2 pt-2 border-t border-gray-300'>
-                                                    <div className='font-medium text-gray-700'>Current Form Values:</div>
-                                                    <pre className='text-xs bg-white p-2 rounded border mt-1 overflow-auto max-h-20'>
-                                                        {JSON.stringify(form.values, null, 2)}
-                                                    </pre>
-                                                </div>
-                                            </div> */}
+                        {dynamicDescription &&
+                          dynamicDescription.trim() !== "" && (
+                            <p className="text-[#7D7D7D] text-sm mt-1">
+                              {dynamicDescription}
+                            </p>
+                          )}
+                        <ErrorMessage
+                          name={field.key}
+                          component="div"
+                          className="text-red-500"
+                        />
+                      </div>
                     </div>
-                    {dynamicDescription && dynamicDescription.trim() !== "" && (
-                      <p className="text-[#7D7D7D] text-sm mt-1">
-                        {dynamicDescription}
-                      </p>
+
+                    {/* File Preview Section */}
+                    {shouldShowPreview && (
+                      <div className="flex-1 space-y-2">
+                        <Label className="text-primary font-semibold">
+                          Preview
+                        </Label>
+                        <div className="border rounded-lg p-4 bg-gray-50 min-h-[200px]">
+                          {previewFile && isPreviewable && previewUrl ? (
+                            <div className="space-y-2">
+                              {/* File Info */}
+                              <div className="flex items-center justify-between p-2 bg-white rounded border mb-3">
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-medium text-gray-900 truncate">
+                                    {previewFile.name}
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    {formatFileSize(previewFile.size)} •{" "}
+                                    {previewFile.type}
+                                  </div>
+                                </div>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => removeFile(0)}
+                                  className="ml-2 text-red-600 hover:text-red-700">
+                                  Remove
+                                </Button>
+                              </div>
+
+                              {/* Preview Content */}
+                              <div className="max-h-[200px] max-w-1/2 overflow-auto">
+                                {previewFile.type.startsWith("image/") ? (
+                                  <img
+                                    src={previewUrl}
+                                    alt={previewFile.name}
+                                    className="max-w-full h-auto rounded"
+                                    onLoad={() => {
+                                      // Cleanup the URL after image loads to free memory
+                                      setTimeout(() => {
+                                        if (previewUrl)
+                                          URL.revokeObjectURL(previewUrl);
+                                      }, 1000);
+                                    }}
+                                  />
+                                ) : previewFile.type === "application/pdf" ||
+                                  previewFile.name
+                                    .toLowerCase()
+                                    .endsWith(".pdf") ? (
+                                  <div className="h-[350px]">
+                                    <iframe
+                                      src={previewUrl}
+                                      className="w-full h-full border-0 rounded"
+                                      title={`Preview of ${previewFile.name}`}
+                                    />
+                                  </div>
+                                ) : null}
+                              </div>
+                            </div>
+                          ) : previewFile && !isPreviewable ? (
+                            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                              <div className="text-4xl mb-2">📄</div>
+                              <div className="text-sm font-medium">
+                                {previewFile.name}
+                              </div>
+                              <div className="text-xs">
+                                {formatFileSize(previewFile.size)}
+                              </div>
+                              <div className="text-xs mt-2 text-center">
+                                Preview not available for this file type
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeFile(0)}
+                                className="mt-3 text-red-600 hover:text-red-700">
+                                Remove File
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-gray-400">
+                              <div className="text-center">
+                                <div className="text-4xl mb-2">📁</div>
+                                <div className="text-sm">No file selected</div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     )}
-                    <ErrorMessage
-                      name={field.key}
-                      component="div"
-                      className="text-red-500"
-                    />
                   </div>
                 );
               } catch (error) {
@@ -2855,543 +2813,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
           </Field>
         );
 
-      // case "inputSearch":
-      //   return (
-      //     <Field name={field.key}>
-      //       {({ field: formikField, form }: any) => {
-      //         const [options, setOptions] = React.useState<any[]>([]);
-      //         const [isLoading, setIsLoading] = React.useState(false);
-      //         const [inputValue, setInputValue] = React.useState("");
-      //         const [isOpen, setIsOpen] = React.useState(false);
-      //         const [error, setError] = React.useState<string | null>(null);
-      //         const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-      //         const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-      //         // Get dependent field values if callback is provided
-      //         const dependentValues = field.getDependentValue
-      //           ? field.getDependentValue(form.values)
-      //           : null;
-
-      //         // Get inputSearch configuration
-      //         const inputSearchConfig = field.inputSearchConfig;
-      //         const {
-      //           isExternal = true,
-      //           baseUrl,
-      //           apiEndpoint,
-      //           method = "GET",
-      //           searchKey = "search",
-      //           searchFormat = "query", // Default to query parameter format
-      //           valueKey = "id",
-      //           labelKey = "name",
-      //           minSearchLength = 3,
-      //           debounceMs = 300,
-      //           cacheResults = true,
-      //           placeholder,
-      //           noOptionsMessage = "No options found",
-      //           loadingMessage = "Loading...",
-      //           transformResponse,
-      //           transformRequest,
-      //         } = inputSearchConfig || {};
-
-      //         // Dynamic field properties based on dependent values
-      //         const dynamicDescription = field.getDescription
-      //           ? field.getDescription(dependentValues)
-      //           : field.description;
-      //         const isFieldDisabled = field.isDisabled
-      //           ? field.isDisabled(dependentValues)
-      //           : field.disabled;
-      //         const isFieldHidden = field.isHide
-      //           ? field.isHide(dependentValues)
-      //           : false;
-      //         const isFieldRequired = field.isRequired
-      //           ? field.isRequired(dependentValues)
-      //           : field.required;
-
-      //         // Don't return early - let the component render but conditionally show content
-      //         // This maintains hook consistency
-
-      //         // Validate required configuration
-      //         if (!apiEndpoint || !valueKey || !labelKey) {
-      //           return (
-      //             <div className="text-red-500 text-sm p-4 border border-red-200 rounded bg-red-50">
-      //               <strong>Configuration Error:</strong> InputSearch field "
-      //               {field.label}" is missing required configuration. Please
-      //               provide apiEndpoint, valueKey, and labelKey in
-      //               inputSearchConfig.
-      //             </div>
-      //           );
-      //         }
-
-      //         // Cache for storing API results
-      //         const cacheRef = React.useRef(new Map());
-      //         const cache = cacheRef.current;
-
-      //         // Debounced search function
-      //         const debouncedSearch = React.useCallback(
-      //           (searchTerm: string) => {
-      //             if (timeoutRef.current) {
-      //               clearTimeout(timeoutRef.current);
-      //             }
-      //             timeoutRef.current = setTimeout(async () => {
-      //               if (searchTerm.length < minSearchLength) {
-      //                 setOptions([]);
-      //                 return;
-      //               }
-
-      //               try {
-      //                 setIsLoading(true);
-      //                 setError(null);
-
-      //                 // Check cache first if caching is enabled
-      //                 const cacheKey = `${apiEndpoint}_${searchTerm}_${
-      //                   JSON.stringify(dependentValues) || "none"
-      //                 }`;
-      //                 if (cacheResults && cache.has(cacheKey)) {
-      //                   const cachedData = cache.get(cacheKey);
-      //                   if (cachedData) {
-      //                     setOptions(cachedData);
-      //                     setIsLoading(false);
-      //                     return;
-      //                   }
-      //                 }
-
-      //                 // Prepare request parameters based on search format
-      //                 let requestParams: Record<string, any> = {};
-
-      //                 // Add search term based on format
-      //                 if (searchFormat === "path") {
-      //                   // For path format, don't add search term to query params
-      //                   // It will be inserted into the URL path later
-      //                 } else {
-      //                   // Default query format - add search term as query parameter
-      //                   requestParams[searchKey] = searchTerm;
-      //                 }
-
-      //                 // Add additional query parameters from config if provided
-      //                 if (inputSearchConfig?.additionalParams) {
-      //                   requestParams = {
-      //                     ...requestParams,
-      //                     ...inputSearchConfig.additionalParams,
-      //                   };
-      //                 }
-
-      //                 // Add dependent values to request if transformRequest is provided
-      //                 let modifiedEndpoint = isExternal
-      //                   ? `${
-      //                       baseUrl ||
-      //                       process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL
-      //                     }${apiEndpoint}`
-      //                   : `/api/${apiEndpoint}`;
-
-      //                 if (transformRequest && dependentValues) {
-      //                   const transformedRequest = transformRequest(
-      //                     {
-      //                       ...requestParams,
-      //                       url: modifiedEndpoint,
-      //                     },
-      //                     dependentValues
-      //                   );
-
-      //                   if (transformedRequest.url) {
-      //                     modifiedEndpoint = transformedRequest.url;
-      //                   }
-      //                   if (transformedRequest.params) {
-      //                     requestParams = transformedRequest.params;
-      //                   } else if (transformedRequest.search) {
-      //                     requestParams = transformedRequest.search;
-      //                   } else if (transformedRequest.body) {
-      //                     requestParams = transformedRequest.body;
-      //                   } else {
-      //                     const { url, ...params } = transformedRequest;
-      //                     requestParams = params;
-      //                   }
-      //                 }
-
-      //                 // For GET requests, append query parameters to URL
-      //                 if (method === "GET") {
-      //                   try {
-      //                     // For external APIs, we need to construct the full URL
-      //                     if (isExternal) {
-      //                       // Start with the base URL (use custom baseUrl if provided, otherwise fall back to environment variable)
-      //                       let effectiveBaseUrl =
-      //                         baseUrl ||
-      //                         process.env.NEXT_PUBLIC_CRRSA_BACKEND_API_URL ||
-      //                         "";
-      //                       // Remove trailing slash if present
-      //                       if (effectiveBaseUrl.endsWith("/")) {
-      //                         effectiveBaseUrl = effectiveBaseUrl.slice(0, -1);
-      //                       }
-      //                       // Remove leading slash from apiEndpoint if present
-      //                       let cleanEndpoint = apiEndpoint;
-      //                       if (cleanEndpoint.startsWith("/")) {
-      //                         cleanEndpoint = cleanEndpoint.slice(1);
-      //                       }
-
-      //                       // Handle path format search - insert search term into the endpoint
-      //                       if (searchFormat === "path") {
-      //                         // Replace any placeholder in the endpoint with the search term
-      //                         // Common patterns: /{search}, /{id}, /{term}, etc.
-      //                         const searchPlaceholders = [
-      //                           "{search}",
-      //                           "{id}",
-      //                           "{term}",
-      //                           "{query}",
-      //                           "{value}",
-      //                         ];
-
-      //                         for (const placeholder of searchPlaceholders) {
-      //                           if (cleanEndpoint.includes(placeholder)) {
-      //                             cleanEndpoint = cleanEndpoint.replace(
-      //                               placeholder,
-      //                               encodeURIComponent(searchTerm)
-      //                             );
-      //                             break;
-      //                           }
-      //                         }
-
-      //                         // If no placeholder found, append the search term to the endpoint
-      //                         if (
-      //                           !searchPlaceholders.some((p) =>
-      //                             cleanEndpoint.includes(p)
-      //                           )
-      //                         ) {
-      //                           // Remove trailing slash if present
-      //                           if (cleanEndpoint.endsWith("/")) {
-      //                             cleanEndpoint = cleanEndpoint.slice(0, -1);
-      //                           }
-      //                           cleanEndpoint = `${cleanEndpoint}/${encodeURIComponent(
-      //                             searchTerm
-      //                           )}`;
-      //                         }
-      //                       }
-
-      //                       // Construct the full URL
-      //                       let fullUrl = `${effectiveBaseUrl}/${cleanEndpoint}`;
-
-      //                       // Add query parameters
-      //                       const queryParams = Object.entries(requestParams)
-      //                         .filter(
-      //                           ([_, value]) =>
-      //                             value !== undefined &&
-      //                             value !== null &&
-      //                             value !== ""
-      //                         )
-      //                         .map(
-      //                           ([key, value]) =>
-      //                             `${key}=${encodeURIComponent(String(value))}`
-      //                         )
-      //                         .join("&");
-
-      //                       if (queryParams) {
-      //                         const separator = fullUrl.includes("?")
-      //                           ? "&"
-      //                           : "?";
-      //                         fullUrl = `${fullUrl}${separator}${queryParams}`;
-      //                       }
-
-      //                       modifiedEndpoint = fullUrl;
-      //                     } else {
-      //                       // For local API routes, handle both query and path formats
-      //                       if (searchFormat === "path") {
-      //                         // Handle path format for local API routes
-      //                         let localEndpoint = apiEndpoint;
-
-      //                         // Replace any placeholder in the endpoint with the search term
-      //                         const searchPlaceholders = [
-      //                           "{search}",
-      //                           "{id}",
-      //                           "{term}",
-      //                           "{query}",
-      //                           "{value}",
-      //                         ];
-
-      //                         for (const placeholder of searchPlaceholders) {
-      //                           if (localEndpoint.includes(placeholder)) {
-      //                             localEndpoint = localEndpoint.replace(
-      //                               placeholder,
-      //                               encodeURIComponent(searchTerm)
-      //                             );
-      //                             break;
-      //                           }
-      //                         }
-
-      //                         // If no placeholder found, append the search term to the endpoint
-      //                         if (
-      //                           !searchPlaceholders.some((p) =>
-      //                             localEndpoint.includes(p)
-      //                           )
-      //                         ) {
-      //                           // Remove trailing slash if present
-      //                           if (localEndpoint.endsWith("/")) {
-      //                             localEndpoint = localEndpoint.slice(0, -1);
-      //                           }
-      //                           localEndpoint = `${localEndpoint}/${encodeURIComponent(
-      //                             searchTerm
-      //                           )}`;
-      //                         }
-
-      //                         modifiedEndpoint = `/api/${localEndpoint}`;
-      //                       } else {
-      //                         // Default query format - append query parameters
-      //                         const queryParams = Object.entries(requestParams)
-      //                           .filter(
-      //                             ([_, value]) =>
-      //                               value !== undefined &&
-      //                               value !== null &&
-      //                               value !== ""
-      //                           )
-      //                           .map(
-      //                             ([key, value]) =>
-      //                               `${key}=${encodeURIComponent(
-      //                                 String(value)
-      //                               )}`
-      //                           )
-      //                           .join("&");
-
-      //                         if (queryParams) {
-      //                           const separator = modifiedEndpoint.includes("?")
-      //                             ? "&"
-      //                             : "?";
-      //                           modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
-      //                         }
-      //                       }
-      //                     }
-      //                   } catch (error) {
-      //                     console.error("Error constructing URL:", error);
-      //                     // Fallback: manually construct query string
-      //                     const queryParams = Object.entries(requestParams)
-      //                       .filter(
-      //                         ([_, value]) =>
-      //                           value !== undefined &&
-      //                           value !== null &&
-      //                           value !== ""
-      //                       )
-      //                       .map(
-      //                         ([key, value]) =>
-      //                           `${key}=${encodeURIComponent(String(value))}`
-      //                       )
-      //                       .join("&");
-
-      //                     if (queryParams) {
-      //                       const separator = modifiedEndpoint.includes("?")
-      //                         ? "&"
-      //                         : "?";
-      //                       modifiedEndpoint = `${modifiedEndpoint}${separator}${queryParams}`;
-      //                     }
-      //                   }
-      //                 }
-
-      //                 // Make API request
-      //                 const response = await fetch(modifiedEndpoint, {
-      //                   method: method,
-      //                   headers: {
-      //                     "Content-Type": "application/json",
-      //                   },
-      //                   body:
-      //                     method === "POST"
-      //                       ? JSON.stringify(requestParams)
-      //                       : undefined,
-      //                 });
-
-      //                 if (!response.ok) {
-      //                   throw new Error(
-      //                     `API request failed: ${response.status}`
-      //                   );
-      //                 }
-
-      //                 const data = await response.json();
-
-      //                 // Transform response if custom transformer is provided
-      //                 let transformedOptions = data;
-      //                 if (transformResponse) {
-      //                   transformedOptions = transformResponse(data);
-      //                 } else {
-      //                   // Default transformation
-      //                   transformedOptions = data.map((item: any) => ({
-      //                     value: item[valueKey],
-      //                     label: item[labelKey],
-      //                     ...item, // Include all original properties
-      //                   }));
-      //                 }
-
-      //                 setOptions(transformedOptions);
-
-      //                 // Cache results if enabled
-      //                 if (cacheResults) {
-      //                   cache.set(cacheKey, transformedOptions);
-      //                 }
-      //               } catch (error) {
-      //                 console.error("Search error:", error);
-      //                 setError(
-      //                   error instanceof Error ? error.message : "Search failed"
-      //                 );
-      //                 setOptions([]);
-      //               } finally {
-      //                 setIsLoading(false);
-      //               }
-      //             }, debounceMs);
-      //           },
-      //           [
-      //             apiEndpoint,
-      //             valueKey,
-      //             labelKey,
-      //             searchKey,
-      //             debounceMs,
-      //             minSearchLength,
-      //             cacheResults,
-      //             dependentValues,
-      //             transformRequest,
-      //             transformResponse,
-      //           ]
-      //         );
-
-      //         // Handle input change
-      //         const handleInputChange = (
-      //           e: React.ChangeEvent<HTMLInputElement>
-      //         ) => {
-      //           const newValue = e.target.value;
-      //           setInputValue(newValue);
-      //           formikField.onChange(e);
-
-      //           if (newValue.length >= minSearchLength) {
-      //             debouncedSearch(newValue);
-      //             setIsOpen(true);
-      //           } else {
-      //             setOptions([]);
-      //             setIsOpen(false);
-      //           }
-      //         };
-
-      //         // Handle option selection
-      //         const handleOptionSelect = (option: any) => {
-      //           const inputEvent = {
-      //             target: {
-      //               name: field.key,
-      //               value: option[labelKey],
-      //             },
-      //           } as React.ChangeEvent<HTMLInputElement>;
-      //           formikField.onChange(inputEvent);
-      //           setInputValue(option[labelKey]);
-      //           setIsOpen(false);
-
-      //           // Store the full selected object as the field value
-      //           form.setFieldValue(field.key, option);
-      //           dispatch(
-      //             updateField({
-      //               key: field.key,
-      //               value: option,
-      //             })
-      //           );
-      //         };
-
-      //         // Handle input focus
-      //         const handleInputFocus = () => {
-      //           if (inputValue.length >= minSearchLength) {
-      //             setIsOpen(true);
-      //           }
-      //         };
-
-      //         // Handle input blur
-      //         const handleInputBlur = () => {
-      //           // Delay closing to allow option selection
-      //           setTimeout(() => setIsOpen(false), 200);
-      //         };
-
-      //         // Close dropdown when clicking outside
-      //         React.useEffect(() => {
-      //           const handleClickOutside = (event: MouseEvent) => {
-      //             if (
-      //               dropdownRef.current &&
-      //               !dropdownRef.current.contains(event.target as Node)
-      //             ) {
-      //               setIsOpen(false);
-      //             }
-      //           };
-
-      //           document.addEventListener("mousedown", handleClickOutside);
-      //           return () => {
-      //             document.removeEventListener("mousedown", handleClickOutside);
-      //           };
-      //         }, []);
-
-      //         // Conditionally render the field content based on isFieldHidden
-      //         if (isFieldHidden) {
-      //           return <div style={{ display: "none" }}></div>;
-      //         }
-
-      //         return (
-      //           <div className="relative" ref={dropdownRef}>
-      //             <Label className="text-primary font-semibold">
-      //               {field.label}
-      //               {isFieldRequired && (
-      //                 <span className="pl-2 text-red-600">*</span>
-      //               )}
-      //             </Label>
-
-      //             <div className="space-y-2">
-      //               <Input
-      //                 {...formikField}
-      //                 value={inputValue}
-      //                 onChange={handleInputChange}
-      //                 onFocus={handleInputFocus}
-      //                 onBlur={handleInputBlur}
-      //                 placeholder={
-      //                   placeholder ||
-      //                   `Enter at least ${minSearchLength} characters to search...`
-      //                 }
-      //                 disabled={isFieldDisabled}
-      //                 className="w-full"
-      //               />
-
-      //               {/* Dropdown Options */}
-      //               {isOpen && (
-      //                 <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-      //                   {isLoading ? (
-      //                     <div className="px-4 py-2 text-sm text-gray-500">
-      //                       {loadingMessage}
-      //                     </div>
-      //                   ) : options.length > 0 ? (
-      //                     options.map((option, index) => (
-      //                       <div
-      //                         key={index}
-      //                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-      //                         onClick={() => handleOptionSelect(option)}
-      //                       >
-      //                         {option[labelKey]}
-      //                       </div>
-      //                     ))
-      //                   ) : inputValue.length >= minSearchLength ? (
-      //                     <div className="px-4 py-2 text-sm text-gray-500">
-      //                       {noOptionsMessage}
-      //                     </div>
-      //                   ) : null}
-      //                 </div>
-      //               )}
-
-      //               {/* Error message */}
-      //               {error && <p className="text-sm text-red-600">{error}</p>}
-
-      //               {/* Dynamic description */}
-      //               {dynamicDescription && dynamicDescription.trim() !== "" && (
-      //                 <p className="text-[#7D7D7D] text-sm mt-1">
-      //                   {dynamicDescription}
-      //                 </p>
-      //               )}
-
-      //               {/* Formik validation errors */}
-      //               <ErrorMessage
-      //                 name={field.key}
-      //                 component="div"
-      //                 className="text-red-500 text-sm"
-      //               />
-      //             </div>
-      //           </div>
-      //         );
-      //       }}
-      //     </Field>
-      //   );
-      
-        case "formArray":
+      case "formArray":
         if (!field.formArrayConfig) {
           console.warn("FormArray field missing formArrayConfig:", field);
           return null;
@@ -3475,7 +2897,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
                 apiEndpoint.includes("hosital-notifications") ||
                 apiEndpoint.includes("hospital-notifications");
 
-              // Debounced search function 
+              // Debounced search function
               const debouncedSearch = React.useCallback(
                 (searchTerm: string) => {
                   if (timeoutRef.current) {
