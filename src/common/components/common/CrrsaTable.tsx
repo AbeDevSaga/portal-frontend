@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
                                     row.getIsSelected() ? "selected" : undefined
                                 }
                                 className={`
-                                           bg-white shadow-md transition-shadow duration-200
+                                           bg-white shadow-sm transition-shadow duration-200
                                             even:bg-[#F7F9FF]
                                             ${
                                                 i === 0
