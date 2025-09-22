@@ -49,9 +49,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { FormArrayField } from "./FormArrayField";
 import { getAutoFlowGridClasses } from "@/common/utils/dynamic-form/dynamicGridLayout";
 import PaymentField from "../common/PaymentField";
+import RequestDetail from "@/app/(private)/components/RequestDetail";
 
 interface Props {
   field: FieldConfig;
+  extraData?: any;
   formValues?: Record<string, any>; // Add formValues prop for dynamic grid calculation
 }
 
@@ -79,7 +81,7 @@ interface Props {
  * - `labelClassName`: Applied to the field label element (defaults to "text-primary font-semibold")
  */
 
-export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
+export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraData }) => {
   const t = useTranslations();
   const dispatch = useDispatch();
 
@@ -577,6 +579,19 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
             )}
           </Field>
         );
+
+        case "detail":
+          return (
+            <Field name={field.key}>
+              {({ form }: any) => (
+                <RequestDetail
+                  data={extraData?.previewData}  // inject preview data
+                  loading={form.isSubmitting}
+                  error={form.errors[field.key]}
+                />
+              )}
+            </Field>
+          );
 
       case "checkbox":
         return (
@@ -2577,7 +2592,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {} }) => {
             }}
           </Field>
         );
-      case "digitalSignature":
+      
+        case "digitalSignature":
         return (
           <Field name={field.key}>
             {({ field: formikField, form }: any) => {
