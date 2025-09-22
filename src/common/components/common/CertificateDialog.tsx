@@ -10,6 +10,7 @@ import {
 } from "@/common/components/ui/dialog";
 import { Button } from "@/common/components/ui/button";
 import { Card } from "@/common/components/ui/card";
+import { useRouter } from "next/navigation";
 
 interface CertificateDialogProps {
   open: boolean;
@@ -43,10 +44,10 @@ export default function CertificateDialog({
       alert("Failed to download certificate. Please try again.");
     }
   };
-
+  const router = useRouter();
   const handlePrint = () => {
     // Implement print functionality
-    window.print();
+    router.push("/civil-registration/birth/print/form");
   };
 
   const handleShare = () => {
@@ -84,7 +85,8 @@ export default function CertificateDialog({
               onClick={handlePrint}
             >
               <FileText className="h-4 w-4 mr-2" />
-              Print Certificate
+              
+              Request Certificate
             </Button>
             <Button
               variant="ghost"
@@ -123,6 +125,9 @@ export default function CertificateDialog({
                 </h1>
                 <p className="text-lg text-gray-600">
                   Civil Registration and Vital Statistics Agency
+                </p>
+                <p className="text-sm text-[#e03030] font-medium mt-2">
+                  DIGITAL COPY
                 </p>
                 <div className="w-32 h-1 bg-[#073954] mx-auto mt-4"></div>
               </div>
