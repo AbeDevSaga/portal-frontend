@@ -14,7 +14,7 @@ import { getIconColor } from "@/common/utils/constants/iconColors";
 interface SidebarChildRoute {
   icon: string;
   label: string;
-  route: string;
+  route?: string;
   children?: SidebarChildRoute[];
 }
 
@@ -35,23 +35,51 @@ const Sidebar = () => {
   // Initialize default expanded routes on first load
   useEffect(() => {
     if (!isInitialized && sidebarRoutes.length > 0) {
-      const defaultSection = sidebarRoutes.find(
-        (section) => section.title === "Dashboard"
-      );
-      if (defaultSection && defaultSection.childRoutes.length > 0) {
-        const firstRoute = defaultSection.childRoutes[0];
-        setExpandedRoutes(new Set([firstRoute.label]));
+      const expandedSet = new Set<string>();
+      
+      // Find all routes that should be expanded based on current path
+      sidebarRoutes.forEach((section) => {
+        section.childRoutes.forEach((child) => {
+          if (shouldExpandRoute(child)) {
+            expandedSet.add(child.label);
+          }
+        });
+      });
+      
+      // If no routes are active, expand the first dashboard route
+      if (expandedSet.size === 0) {
+        const defaultSection = sidebarRoutes.find(
+          (section) => section.title === "Dashboard"
+        );
+        if (defaultSection && defaultSection.childRoutes.length > 0) {
+          const firstRoute = defaultSection.childRoutes[0];
+          expandedSet.add(firstRoute.label);
+        }
       }
+      
+      setExpandedRoutes(expandedSet);
       setIsInitialized(true);
     }
-  }, [isInitialized]);
+  }, [isInitialized, currentPath]);
 
-  const isRouteActive = (route: string) => {
+  const isRouteActive = (route?: string) => {
+    if (!route) return false;
+    
     const currentPathLower = currentPath.toLowerCase();
     const routeLower = route.toLowerCase();
 
+    // Exact match
     if (currentPathLower === routeLower) return true;
+    
+    // Check if current path starts with the route (for nested routes)
     if (currentPathLower.startsWith(routeLower + "/")) return true;
+    
+    // Special handling for routes that might have additional path segments
+    // e.g., /civil-registration/birth/correction should match /civil-registration/birth/correction/form
+    if (routeLower !== "/" && currentPathLower.startsWith(routeLower)) {
+      const nextChar = currentPathLower[routeLower.length];
+      if (!nextChar || nextChar === "/") return true;
+    }
 
     return false;
   };
@@ -72,10 +100,18 @@ const Sidebar = () => {
   };
 
   const shouldExpandRoute = (route: SidebarChildRoute) => {
-    return (
-      isRouteActive(route.route) ||
-      route.children?.some((child) => isRouteActive(child.route))
-    );
+    // Check if the route itself is active
+    if (isRouteActive(route.route)) return true;
+    
+    // Check if any of its children are active
+    if (route.children?.some((child) => isRouteActive(child.route))) return true;
+    
+    // Check if any nested children are active (for deeper nesting)
+    if (route.children?.some((child) => 
+      child.children?.some((grandChild) => isRouteActive(grandChild.route))
+    )) return true;
+    
+    return false;
   };
 
   return (
@@ -102,77 +138,106 @@ const Sidebar = () => {
 
               const isExpanded =
                 isManuallyExpanded || hasActiveRoute || isDefaultRoute;
+              
+              // Determine if this route or any of its children are active
+              const isRouteOrChildActive = isActive || isChildActive;
 
               return (
                 <div key={child.label} className="space-y-1">
                   {/* Main route button */}
                   <Button
-                    asChild
+                    asChild={!!child.route}
                     className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none text-lg font-semibold shadow-none w-full ${
-                      isActive || isChildActive
+                      isRouteOrChildActive
                         ? "bg-[#073954] text-white"
                         : "text-[#073954] hover:text-[#073954] hover:bg-[#073954]/10 bg-transparent"
                     }`}
+                    onClick={!child.route ? () => toggleRoute(child.label) : undefined}
                   >
-                    <Link href={child.route}>
+                    {child.route ? (
+                      <Link href={child.route}>
                       <IconRenderer
                         icon={child.icon}
                         alt={child.label}
                         className={
-                          isActive || isChildActive ? "text-white" : ""
+                          isRouteOrChildActive ? "text-white" : ""
                         }
                         color={
-                          isActive || isChildActive
+                          isRouteOrChildActive
                             ? getIconColor("active")
                             : getIconColor("default")
                         }
                       />
-                      <span className="flex-1 text-left">{child.label}</span>
-                      {hasChildren && (
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggleRoute(child.label);
-                          }}
-                          className="ml-auto p-1 hover:bg-white/20 rounded"
-                        >
-                          {isExpanded ? (
-                            <ChevronDown className="w-4 h-4" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4" />
-                          )}
-                        </button>
-                      )}
-                    </Link>
+                        <span className="flex-1 text-left">{child.label}</span>
+                        {hasChildren && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleRoute(child.label);
+                            }}
+                            className="ml-auto p-1 hover:bg-white/20 rounded"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
+                      </Link>
+                    ) : (
+                      <>
+                        <IconRenderer
+                          icon={child.icon}
+                          alt={child.label}
+                          className={
+                            isRouteOrChildActive ? "text-white" : ""
+                          }
+                          color={
+                            isRouteOrChildActive
+                              ? getIconColor("active")
+                              : getIconColor("default")
+                          }
+                        />
+                        <span className="flex-1 text-left">{child.label}</span>
+                        {hasChildren && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleRoute(child.label);
+                            }}
+                            className="ml-auto p-1 hover:bg-white/20 rounded"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4" />
+                            )}
+                          </button>
+                        )}
+                      </>
+                    )}
                   </Button>
 
                   {/* Nested children */}
                   {hasChildren && isExpanded && (
-                    <div className="ml-6 space-y-1">
+                    <div className="ml-10 gap-y-1 flex flex-col border-l-2 border-l-[#073954]/80 pl-2">
                       {child.children!.map((subChild) => {
                         const isSubActive = isRouteActive(subChild.route);
                         return (
                           <Button
                             asChild
                             key={subChild.label}
-                            className={`duration-200 ease-in-out flex items-center gap-3 justify-start border-none shadow-none font-bold w-full text-lg ${
+                            className={`py-1 bg-transparent hover:text-[#073954]  hover:bg-[#073954]/10 rounded-sm  duration-200 ease-in-out flex items-center  justify-start   shadow-none   w-full text-lg ${
                               isSubActive
-                                ? "bg-[#073954]/80 text-white"
-                                : "text-[#073954]/70 hover:text-[#073954] hover:bg-[#073954]/10 bg-transparent"
+                                ? "text-[#073954] font-semibold"
+                                : "text-[#073954]/70 "
                             }`}
                           >
-                            <Link href={subChild.route}>
-                              <IconRenderer
-                                icon={subChild.icon}
-                                alt={subChild.label}
-                                className={isSubActive ? "text-white" : ""}
-                                color={
-                                  isSubActive
-                                    ? getIconColor("active")
-                                    : getIconColor("default")
-                                }
-                              />
+                            <Link href={subChild.route || "#"}>
+                              
                               {subChild.label}
                             </Link>
                           </Button>
