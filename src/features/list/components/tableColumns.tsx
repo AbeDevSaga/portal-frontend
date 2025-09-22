@@ -2,6 +2,7 @@ import { EventTypes } from "@/common/utils/enums/enum";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
 import Link from "next/link";
+import RequestTypeTag from "./RequestTypeTag";
 const statusColorMapping = {
     completed: "text-green-500 bg-green-500/30",
     rejected: "text-red-500 bg-red-500/30",
@@ -15,6 +16,10 @@ export const TableColumns: ColumnDef<unknown>[] = [
     {
         accessorKey: "eventType",
         header: "Request Type",
+        cell: ({ row }: any) => {
+            const eventType = row.original?.eventType;
+            return <RequestTypeTag requestType={eventType} />;
+        },
     },
     {
         accessorKey: "requestDate",

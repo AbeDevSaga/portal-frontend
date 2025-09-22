@@ -165,7 +165,7 @@ export default function BirthDetailPage() {
             className="bg-[#073954]"
             onClick={() => setShowCertificateDialog(true)}
             disabled={resolutionIsLoading}>
-            Request Certificate
+            View Certificate
           </Button>
         </div>
       );
