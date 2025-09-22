@@ -64,8 +64,6 @@ export default function DynamicFormRendering({
   const currentStep = hasStepper
     ? steps[stepIndex] || { title: "", fields: [] }
     : { title: "", fields: steps.flatMap((step) => step.fields) };
-    
-  console.log("currentStep: ", steps)
 
   const singleFormSteps = hasStepper ? null : steps;
 

@@ -4,9 +4,7 @@ import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { initializeForm } from "@/features/birth-service/store/birthSlice";
-import DynamicForm from "@/common/components/dynamic-form/DynamicFrom";
 import BirthCorrectionPreview from "@/features/birth-service/components/BirthCorrectionPreview";
-import HeroSection from "@/common/components/common/HeroSection";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import { FileText, Upload, Eye } from "lucide-react";
@@ -117,27 +115,6 @@ export default function BirthCorrection({
 
   return (
     <>
-      <HeroSection
-        redirectTo="/civil-registration/birth"
-        title="Birth Certificate Correction"
-        description="Request corrections to your birth certificate information"
-        action={
-          <div className="flex space-x-3">
-            <Button className="bg-[#073954]" onClick={handlePreviewClick}>
-              <Eye className="mr-2 h-4 w-4" />
-              {showFullPreview ? "Hide Preview" : "Show Preview"}
-            </Button>
-            <Button
-              className="bg-green-600 hover:bg-green-700"
-              onClick={handleFormSubmit}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Request Update
-            </Button>
-          </div>
-        }
-      />
-
       <div className="w-full flex flex-wrap xl:flex-nowrap gap-4">
         {/* Form Section */}
         <div className="w-full md:w-2/3">

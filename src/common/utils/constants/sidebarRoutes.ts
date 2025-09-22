@@ -10,6 +10,7 @@ export const sidebarRoutes = [
         icon: "birth",
         label: "Birth",
         route: "/civil-registration/birth",
+        
       },
       {
         icon: "death",
