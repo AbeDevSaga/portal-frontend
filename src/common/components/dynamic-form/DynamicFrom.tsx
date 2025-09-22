@@ -127,29 +127,36 @@ export default function DynamicForm({
   ) => {
     const accordionValue = `step-${stepIndex}`;
     return (
-      <AccordionItem
-        value={accordionValue}
-        className="border-gray-200">
-        <AccordionTrigger className="text-lg font-semibold text-gray-900 hover:text-gray-700 py-3">
-          <div className="flex items-center gap-3">
-            <span>{stepTitle}</span>
-            <span className="text-sm text-gray-500">
-              ({fields.length} fields)
-            </span>
-          </div>
-        </AccordionTrigger>
-        <AccordionContent className="pt-4">
-          <div className={`${formStyle} grid grid-cols-12 gap-4 auto-rows-auto`}>
-            {fields.map((field: any) => (
-              <FieldRenderer
-                key={field.key}
-                field={field}
-                formValues={formValues}
-              />
-            ))}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+      <Accordion
+        type="multiple"
+        value={expandedItems}
+        onValueChange={handleAccordionValueChange}
+        className="w-full"
+      >
+        <AccordionItem
+          value={accordionValue}
+          className="border-gray-200">
+          <AccordionTrigger className="text-lg font-semibold text-gray-900 hover:text-gray-700 py-3">
+            <div className="flex items-center gap-3">
+              <span>{stepTitle}</span>
+              <span className="text-sm text-gray-500">
+                ({fields.length} fields)
+              </span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className={`${formStyle} grid grid-cols-12 gap-4 auto-rows-auto`}>
+              {fields.map((field: any) => (
+                <FieldRenderer
+                  key={field.key}
+                  field={field}
+                  formValues={formValues}
+                />
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     );
   };
 
