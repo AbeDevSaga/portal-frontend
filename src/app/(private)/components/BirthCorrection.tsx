@@ -10,7 +10,6 @@ import { Button } from "@/common/components/ui/button";
 import { birthCorrectionFormConfig } from "@/features/birth-service/components/birth-correction-form-config";
 import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 import SidePreview from "./SidePreview";
-import { birthLostFormConfig } from "@/features/birth-service/components/birth-lost-form-config";
 
 interface BirthCorrectionProps {
   data: any | null;
@@ -124,7 +123,7 @@ export default function BirthCorrection({
         <div className="w-full md:w-2/3">
           <Card className="p-6">
             <DynamicFormRendering
-              config={birthLostFormConfig}
+              config={birthCorrectionFormConfig}
               handleSubmit={handleFormSubmit}
               initialValues={emptyValues}
               formStyle="grid grid-cols-6 md:grid-cols-12 gap-x-[40px] gap-y-4"
