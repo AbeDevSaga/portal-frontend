@@ -31,6 +31,7 @@ interface DynamicFormProps {
     description?: string;
   };
   expandedItems?: string[];
+  extraData?: any;
 }
 
 export default function DynamicFormRendering({
@@ -43,6 +44,7 @@ export default function DynamicFormRendering({
   customHeader,
   defaultTitle,
   expandedItems: externalExpandedItems,
+  extraData,
 }: DynamicFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
   // State to track which accordion items are expanded
@@ -56,16 +58,16 @@ export default function DynamicFormRendering({
     : setInternalExpandedItems;
 
   const steps = config?.steps || [];
-  console.log("config: ", config)
-  console.log("steps: ", steps)
+  console.log("config: ", config);
+  console.log("steps: ", steps);
   const hasStepper = config?.stepperData && config.stepperData.length > 0;
   const stepperPosition = config?.stepperPosition || "top";
 
   const currentStep = hasStepper
     ? steps[stepIndex] || { title: "", fields: [] }
     : { title: "", fields: steps.flatMap((step) => step.fields) };
-    
-  console.log("currentStep: ", steps)
+
+  console.log("currentStep: ", steps);
 
   const singleFormSteps = hasStepper ? null : steps;
 

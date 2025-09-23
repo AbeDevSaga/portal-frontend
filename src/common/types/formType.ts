@@ -14,7 +14,8 @@ export type FieldType =
   | "digitalSignature"
   | "inputSearch"
   | "formArray"
-  | "payment";
+  | "payment"
+  | "detail";
 
 export interface Option {
   id?: string;

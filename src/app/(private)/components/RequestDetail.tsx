@@ -11,17 +11,18 @@ import { birthCorrectionFormConfig } from "@/features/birth-service/components/b
 import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 import SidePreview from "./SidePreview";
 
-interface BirthCorrectionProps {
+interface RequestDetailProps {
   data: any | null;
   loading?: boolean;
   error?: string;
 }
 
-export default function BirthCorrection({
+export default function RequestDetail({
   data,
   loading,
   error,
-}: BirthCorrectionProps) {
+}: RequestDetailProps) {
+  const requestType = data?.requestType;
   const [showFullPreview, setShowFullPreview] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [expandedItems, setExpandedItems] = useState<string[]>(["step-0"]); // Only first accordion open
@@ -112,9 +113,6 @@ export default function BirthCorrection({
   const initialFormValues = {
     ...mockBirthData,
   };
-  const emptyValues = {
-    empty: "empty"
-  }
 
   return (
     <>
@@ -125,7 +123,7 @@ export default function BirthCorrection({
             <DynamicFormRendering
               config={birthCorrectionFormConfig}
               handleSubmit={handleFormSubmit}
-              initialValues={emptyValues}
+              initialValues={initialFormValues}
               formStyle="grid grid-cols-6 md:grid-cols-12 gap-x-[40px] gap-y-4"
               onAccordionStateChange={handleAccordionStateChange}
               expandedItems={expandedItems}
@@ -135,7 +133,7 @@ export default function BirthCorrection({
 
         {/* Sidebar */}
         <SidePreview
-          requestType="correction"
+          requestType={requestType}
           attachments={attachments}
           fileUploadHandler={handleFileUpload}
           removeAttachment={removeAttachment}

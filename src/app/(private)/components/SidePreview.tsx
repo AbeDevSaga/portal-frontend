@@ -1,7 +1,8 @@
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
-import { FileText, Upload, Eye } from "lucide-react";
+import { FileText, Upload } from "lucide-react";
 import React from "react";
+import { requestTypeData } from "@/app/(public)/constants/requestTypeData";
 
 interface SidePreviewProps {
   requestType: string;
@@ -9,23 +10,35 @@ interface SidePreviewProps {
   fileUploadHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   removeAttachment: (index: number) => void;
 }
+
 function SidePreview({
-    requestType,
+  requestType,
   attachments,
   fileUploadHandler,
   removeAttachment,
 }: SidePreviewProps) {
-    const requestDependentData = [
-        request: {
+  const requestConfig = requestTypeData.find((req) => req.type === requestType);
 
-        }
-    ]
+  if (!requestConfig) {
+    return (
+      <div className="w-full md:w-1/3 flex-1 flex flex-col gap-5">
+        <Card className="p-5">
+          <h3 className="text-lg font-semibold text-red-600 mb-4">
+            Invalid request type
+          </h3>
+        </Card>
+      </div>
+    );
+  }
+
+  const { attachment, payment } = requestConfig;
+
   return (
     <div className="w-full md:w-1/3 flex-1 flex flex-col gap-5">
       {/* Attachments Card */}
       <Card className="p-5">
         <h3 className="text-lg font-semibold text-[#073954] mb-4">
-          Supporting Documents
+          {attachment?.label}
         </h3>
         <div className="space-y-4">
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
@@ -82,13 +95,12 @@ function SidePreview({
           {/* Requirements */}
           <div className="bg-blue-50 p-3 rounded-lg">
             <h4 className="text-sm font-semibold text-blue-900 mb-2">
-              Required Documents:
+              {attachment?.requiredDoc.label}
             </h4>
             <ul className="text-xs text-blue-800 space-y-1">
-              <li>• Court letter (for name/age changes)</li>
-              <li>• Valid ID document</li>
-              <li>• Original birth certificate</li>
-              <li>• Police report (if lost)</li>
+              {attachment?.requiredDoc.list.map((doc, i) => (
+                <li key={i}>• {doc}</li>
+              ))}
             </ul>
           </div>
         </div>
@@ -97,21 +109,27 @@ function SidePreview({
       {/* Payment Information */}
       <Card className="p-5">
         <h3 className="text-lg font-semibold text-[#073954] mb-4">
-          Payment Information
+          {payment.label}
         </h3>
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Correction Fee</span>
-            <span className="text-sm font-semibold">250 Br</span>
+            <span className="text-sm text-gray-600">Service Fee</span>
+            <span className="text-sm font-semibold">
+              {payment.serviceFee} Br
+            </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">Processing Fee</span>
-            <span className="text-sm font-semibold">50 Br</span>
+            <span className="text-sm font-semibold">
+              {payment.processingFee} Br
+            </span>
           </div>
           <div className="border-t pt-2">
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold">Total</span>
-              <span className="text-lg font-bold text-[#073954]">300 Br</span>
+              <span className="text-lg font-bold text-[#073954]">
+                {payment.serviceFee + payment.processingFee} Br
+              </span>
             </div>
           </div>
           <Button
