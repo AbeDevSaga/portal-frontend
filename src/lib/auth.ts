@@ -75,16 +75,12 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, account, profile }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
-        console.log('JWT Callback - Profile:', profile);
-        console.log('JWT Callback - Account:', account);
-        console.log('JWT Callback - Token before:', token);
         
         return {
           ...token,
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
           roles: [], // Set empty roles for now - you can add role logic later
-          printingZone: profile?.printing_zone,
           accessTokenExpires: account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000
         }
       }
