@@ -32,11 +32,7 @@ const AnnouncementPage = () => {
       label: "Marriage",
       value: "marriage",
     },
-    {
-      label: "Vacancy",
-      value: "vacancy",
-    },
-    {
+     {
       label: "Announcement",
       value: "announcement",
     },
@@ -94,7 +90,7 @@ const AnnouncementPage = () => {
       className="w-full bg-[#073954]/10 bg-cover bg-no-repeat p-4 flex items-center justify-center min-h-screen font-barlow"
       id="announcements"
     >
-      <div className="w-full overflow-clip flex-1 flex flex-col w-full gap-5">
+      <div className="w-full overflow-clip flex-1 flex flex-col   gap-5">
         <div className="absolute h-full w-full z-10 md:bottom-40 lg:left-[15rem]">
           <div className="flex-1 relative h-full w-full min-h-[70vh] lg:min-h-[125vh]">
             <Image src={looper.src} alt="looper" fill></Image>

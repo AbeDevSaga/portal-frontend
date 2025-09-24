@@ -21,7 +21,7 @@ const MarriageAvatar = ({ coupleAvatar }: copuleAvatarType) => {
                             {item.name}
                         </AvatarFallback>
                     </Avatar>
-                    <p>{item.name}</p>
+                    <p className="text-center">{item.name}</p>
                 </div>
             ))}
         </div>
