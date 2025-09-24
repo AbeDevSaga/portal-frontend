@@ -1,11 +1,15 @@
 "use client";
+import LandingNavBar from "@/common/components/layout/landingNavBar";
 import { Button } from "@/common/components/ui/button";
-import React, { useEffect, useState } from "react";
+import { Card } from "@/common/components/ui/card";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import marriage from "@/public/images/sidebar/marriage.svg";
 import { PaginationComponent } from "@/common/components/ui/paginationComponent";
+import { Input } from "@/common/components/ui/input";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import ComplaintModal from "@/features/vital-service/components/complaintModal";
 import MarriageAvatar from "@/features/vital-service/components/marriageAvatar";
-
 const mockMarriageData = [
   {
     id: 1,
@@ -130,6 +134,20 @@ const mockMarriageData = [
   },
 ];
 
+const subcityWoredaData = {
+  "Addis Ketema": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14"],
+  "Akaky Kaliti": ["01", "02", "03", "04", "05", "06", "07"],
+  "Arada": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+  "Bole": ["01", "02", "03", "04", "05", "06", "07", "09", "11", "12", "13", "14"],
+  "Gullele": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+  "Kirkos": ["01", "02", "03", "04", "05", "07", "08", "09", "10", "11"],
+  "Kolfe Keranio": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"],
+  "Lideta": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"],
+  "Nifas Silk-Lafto": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15"],
+  "Yeka": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+}
+
+
 const AnnouncementPage = () => {
   const [openComplaintModalOpen, setOpenComplaintModal] = useState(false);
   const [selectedMarriage, setSelectedMarriage] = useState<{
@@ -146,6 +164,8 @@ const AnnouncementPage = () => {
   const [woredaValue, setWoredaValue] = useState("");
   const [nameValue, setNameValue] = useState("");
   const [filteredData, setFilteredData] = useState<any[]>(mockMarriageData);
+  const [showFilter, setShowFilter] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
   const handleSetCurrentPage = (index: number) => {
     setPageDetail({
       ...pageDetail,
@@ -203,8 +223,8 @@ const AnnouncementPage = () => {
     }));
   }, []);
 
-  // Filter data based on current filter values
-  useEffect(() => {
+  // Manual filter function
+  const applyFilters = () => {
     let filtered = mockMarriageData;
 
     // Apply name filter
@@ -234,7 +254,7 @@ const AnnouncementPage = () => {
       pageIndex: 1,
       pageCount: Math.ceil(filtered.length / prev.pageSize),
     }));
-  }, [nameValue, subcityValue, woredaValue]);
+  };
 
   // Handle pagination for filtered data
   useEffect(() => {
@@ -243,9 +263,31 @@ const AnnouncementPage = () => {
     const paginatedData = filteredData.slice(startIndex, endIndex);
     setResponse(paginatedData);
   }, [pageDetail.pageIndex, pageDetail.pageSize, filteredData]);
+
+  // Handle click outside to close filter
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
+        setShowFilter(false);
+      }
+    };
+
+    if (showFilter) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFilter]);
   const handleSubcityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log("Subcity changed:", e.target.value);
     setSubcityValue(e.target.value);
+    // Reset woreda when subcity changes
+    setWoredaValue("");
   };
 
   const handleWoredaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -263,6 +305,12 @@ const AnnouncementPage = () => {
     setSubcityValue("");
     setWoredaValue("");
     setNameValue("");
+    setFilteredData(mockMarriageData);
+    setPageDetail((prev) => ({
+      ...prev,
+      pageIndex: 1,
+      pageCount: Math.ceil(mockMarriageData.length / prev.pageSize),
+    }));
   };
   return (
     <section
@@ -270,8 +318,8 @@ const AnnouncementPage = () => {
       id="announcements"
     >
       <div className="  overflow-clip flex-1 flex flex-col w-full gap-5">
-        <div className="w-full lg:px-[66px] mx-auto flex flex-col flex-1 justify-center gap-5 py-5 overflow-clip">
-          <div className="flex justify-between lg:flex-wrap lg:justify-evenly pb-2 lg:pb-5 w-fit mx-auto lg:gap-16">
+        <div className="w-full lg:px-[66px] mx-auto flex  flex-col flex-1 justify-center gap-5 py-5 overflow-clip">
+          <div className="flex justify-between lg:flex-wrap lg:justify-evenly lg:pb-5 w-fit mx-auto lg:gap-16">
             {tabOptions.map((option) => (
               <div key={option.label}>
                 <Button
@@ -288,10 +336,7 @@ const AnnouncementPage = () => {
               </div>
             ))}
           </div>
-          {/* Conditional Content Based on Selected Tab */}
-          {showTab === "announcement" ? (
-            // Empty page with "Announcement" text
-            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-lg">
+          {showTab === "announcement" ? (<div className="flex flex-col items-center justify-center py-20 bg-white rounded-lg">
               <div className="text-center">
                 <div className="text-6xl text-gray-300 mb-4">📢</div>
                 <h3 className="text-3xl font-semibold text-[#073954] mb-2">
@@ -301,201 +346,209 @@ const AnnouncementPage = () => {
                   No announcements available at this time.
                 </p>
               </div>
+            </div>):
+          (<>
+           <div className="w-full flex justify-end relative items-start">
+           <div className=" absolute right-0 z-20 -top-10  ">
+             {/* Filter Section */}
+             {/* show the padding only when the showFilter is true */}
+             <div ref={filterRef} className={`border flex justify-center items-center flex-col bg-white  rounded-lg ${showFilter ? "shadow-lg  " : ""}`}>
+              {/* if the showFilter is true, then update the background color to #073954 */}
+              <Button
+                onClick={() => setShowFilter(!showFilter)}
+                variant="outline"
+                className={`w-full min-w-44    flex  items-center justify-between ${
+                  showFilter
+                    ? "  bg-gray-100 outline-none    border-gray-300 font-medium"
+                    : ""
+                }`}
+              >
+                <p className="text-sm  ">Filter</p>
+                <ChevronDownIcon
+                  className={`w-4 h-4 ${showFilter ? "rotate-180" : ""}`}
+                />
+              </Button>
+               {showFilter && (
+                 <div className="flex max-w-44 px-4 py-2 pb-3 rounded-lg  bg-white min-w-40 mt-2 flex-col w-fit flex-wrap gap-2 items-center justify-center  ">
+                  <div className="flex w-full flex-col ">
+                    <select
+                      name="subcity"
+                      id="subcity"
+                      onChange={handleSubcityChange}
+                      value={subcityValue}
+                      className="px-5 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
+                    >
+                      {Object.keys(subcityWoredaData).map((subcity) => (
+                        <option key={subcity} value={subcity}>
+                          {subcity}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                   {/* Woreda Filter */}
+                   <div className="flex w-full flex-col">
+                     <select
+                       name="woreda"
+                       id="woreda"
+                       onChange={handleWoredaChange}
+                       value={woredaValue}
+                       disabled={!subcityValue}
+                       className={`px-5 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent ${
+                         !subcityValue 
+                           ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed" 
+                           : "border-gray-300 cursor-pointer"
+                       }`}
+                     >
+                       <option value="">All Woredas</option>
+                       {subcityValue && subcityWoredaData[subcityValue as keyof typeof subcityWoredaData] && 
+                         subcityWoredaData[subcityValue as keyof typeof subcityWoredaData].map((woreda) => (
+                           <option key={woreda} value={woreda}>
+                             {woreda}
+                           </option>
+                         ))
+                       }
+                     </select>
+                   </div>
+
+                  {/* Name Filter */}
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      placeholder="Groom or Bride name"
+                      value={nameValue}
+                      onChange={handleNameChange}
+                      className="w-full px-3 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
+                    />
+                  </div>
+
+                   {/* filter button */}
+                   <Button 
+                     onClick={applyFilters}
+                     className="w-full bg-[#073954] text-white"
+                   >
+                     Filter
+                   </Button>
+                </div>
+              )}
             </div>
-          ) : (
-            // Marriage content
-            <>
-              {/* Filter Section */}
-              <div className="w-full flex justify-center items-center">
-                <div className="bg-white rounded-lg mb-6">
-                  <div className="flex flex-wrap gap-5 items-center justify-center">
-                    <div className="flex flex-col ">
-                      <label className="text-sm font-medium text-gray-700 mb-1">
-                        Subcity
-                      </label>
-                      <select
-                        name="subcity"
-                        id="subcity"
-                        onChange={handleSubcityChange}
-                        value={subcityValue}
-                        className="px-5 py-2 border border-[#E1E7EA] cursor-pointer  rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-none"
-                      >
-                        <option value="">All Subcities</option>
-                        <option value="Bole">Bole</option>
-                        <option value="Kirkos">Kirkos</option>
-                        <option value="Arada">Arada</option>
-                        <option value="Lideta">Lideta</option>
-                        <option value="Nifas Silk">Nifas Silk</option>
-                        <option value="Kolfe">Kolfe</option>
-                        <option value="Gulele">Gulele</option>
-                        <option value="Yeka">Yeka</option>
-                      </select>
-                    </div>
+          </div>
+          </div>
 
-                    {/* Woreda Filter */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium text-gray-700 mb-1">
-                        Woreda
-                      </label>
-                      <select
-                        name="woreda"
-                        id="woreda"
-                        onChange={handleWoredaChange}
-                        value={woredaValue}
-                        className="px-5 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-none"
-                      >
-                        <option value="">All Woredas</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                      </select>
-                    </div>
+          {/* No Data Message */}
+          {filteredData.length === 0 && (
+            <div className="flex  flex-col items-center justify-center py-12 bg-white rounded-lg ">
+              <div className="text-center">
+                <div className="text-6xl text-gray-300 mb-4">📋</div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  No Marriage Announcements Found
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  No marriage announcements match your current filter criteria.
+                </p>
+                <Button
+                  onClick={clearFilters}
+                  className="bg-[#073954] hover:bg-[#073954]/90 text-white"
+                >
+                  Clear All Filters
+                </Button>
+              </div>
+            </div>
+          )}
 
-                    {/* Name Filter */}
-                    <div className="flex flex-col">
-                      <label className="text-sm font-medium text-gray-700 mb-1">
-                        Search Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Groom or Bride name"
-                        value={nameValue}
-                        onChange={handleNameChange}
-                        className="w-48 px-3 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
+           {/* Marriage Cards Grid - Only show when there are results */}
+           {filteredData.length > 0 && (
+             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-10">
+              {response.map((married, index) => (
+                 <div
+                   key={index}
+                   className="pt-3.5 pb-2 px-5 rounded-md shadow-md bg-white "
+                 >
+                  <div className="px-5 space-y-2 pb-3 border-b">
+                    <div className="flex flex-col items-center justify-center">
+                      <Image
+                        src={marriage}
+                        alt="marriage"
+                        width={20}
+                        height={20}
                       />
+                      <p className="text-xl font-semibold text-yellow-500">
+                        To be Married
+                      </p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 text-center mt-4 italic">
-                    Use the filters above to find specific marriage
-                    announcements
-                  </p>
-                </div>
-              </div>
-
-              {/* No Data Message */}
-              {filteredData.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-12 bg-white rounded-lg ">
-                  <div className="text-center">
-                    <div className="text-6xl text-gray-300 mb-4">📋</div>
-                    <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                      No Marriage Announcements Found
-                    </h3>
-                    <p className="text-gray-500 mb-4">
-                      No marriage announcements match your current filter
-                      criteria.
-                    </p>
+                  <div className="px-5 space-y-2.5">
+                    <MarriageAvatar
+                      coupleAvatar={generateCoupleAvatar(
+                        married.groomName,
+                        married.brideName
+                      )}
+                    />
+                    <div className="flex w-full justify-between py-0.5 border-y pt-1.5">
+                      <div className="leading-tight">
+                        <p>Subcity</p>
+                        <p className="text-sm font-semibold">
+                          {married.subcity}
+                        </p>
+                      </div>
+                      <div className=" leading-none">
+                        <p>Woreda</p>
+                        <p className="text-sm font-semibold">
+                          {married.woreda}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex w-full justify-between items-center py-0.5">
+                    <div>
+                      <p className="text-2xl font-semibold px-5 text-yellow-500">
+                        {married.daysRemaining} days
+                      </p>
+                      <p className="text-xs">Remaining Complaint Days</p>
+                    </div>
                     <Button
-                      onClick={clearFilters}
-                      className="bg-[#073954] hover:bg-[#073954]/90 text-white"
+                      onClick={() => {
+                        setSelectedMarriage({
+                          groomName: married.groomName,
+                          brideName: married.brideName,
+                        });
+                        setOpenComplaintModal(true);
+                      }}
+                      size="sm"
+                      className="bg-[#073954]"
                     >
-                      Clear All Filters
+                      Give Complaint
                     </Button>
                   </div>
                 </div>
-              )}
-
-              {/* Marriage Cards Grid - Only show when there are results */}
-              {filteredData.length > 0 && (
-                <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-10">
-                  {response.map((married, index) => (
-                    <div
-                      key={index}
-                      className="pt-3.5 pb-2 px-5 rounded-md shadow-md z-40 bg-white "
-                    >
-                      <div className="px-5 space-y-2 pb-3 border-b">
-                        <div className="flex flex-col items-center justify-center">
-                          <Image
-                            src={marriage}
-                            alt="marriage"
-                            width={20}
-                            height={20}
-                          />
-                          <p className="text-xl font-semibold text-yellow-500">
-                            To be Married
-                          </p>
-                        </div>
-                      </div>
-                      <div className="px-5 space-y-2.5">
-                        <MarriageAvatar
-                          coupleAvatar={generateCoupleAvatar(
-                            married.groomName,
-                            married.brideName
-                          )}
-                        />
-                        <div className="flex w-full justify-between py-0.5 border-y pt-1.5">
-                          <div className="leading-tight">
-                            <p>Subcity</p>
-                            <p className="text-sm font-semibold">
-                              {married.subcity}
-                            </p>
-                          </div>
-                          <div className=" leading-none">
-                            <p>Woreda</p>
-                            <p className="text-sm font-semibold">
-                              {married.woreda}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex w-full justify-between items-center py-0.5">
-                        <div>
-                          <p className="text-2xl font-semibold px-5 text-yellow-500">
-                            {married.daysRemaining} days
-                          </p>
-                          <p className="text-xs">Remaining Complaint Days</p>
-                        </div>
-                        <Button
-                          onClick={() => {
-                            setSelectedMarriage({
-                              groomName: married.groomName,
-                              brideName: married.brideName,
-                            });
-                            setOpenComplaintModal(true);
-                          }}
-                          size="sm"
-                          className="bg-[#073954]"
-                        >
-                          Give Complaint
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Pagination - Only show when there are results */}
-              {filteredData.length > 0 && (
-                <div className="flex justify-end w-full max-w-[1200px] mx-auto px-5 z-30">
-                  <PaginationComponent
-                    totalItems={filteredData.length}
-                    itemsPerPage={pageDetail.pageSize}
-                    onPageChange={handlePageChange}
-                    currentPage={pageDetail.pageIndex}
-                    setCurrentPage={handleSetCurrentPage}
-                  />
-                </div>
-              )}
-            </>
+              ))}
+            </div>
           )}
+
+          {/* Pagination - Only show when there are results */}
+          {filteredData.length > 0 && (
+            <div className="flex justify-end w-full max-w-[1200px] mx-auto px-5 z-30">
+              <PaginationComponent
+                totalItems={filteredData.length}
+                itemsPerPage={pageDetail.pageSize}
+                onPageChange={handlePageChange}
+                currentPage={pageDetail.pageIndex}
+                setCurrentPage={handleSetCurrentPage}
+              />
+            </div>
+          )}
+          </>)}
         </div>
       </div>
 
-      {/* {openComplaintModalOpen ? (
+      {openComplaintModalOpen ? (
         <ComplaintModal
           open={openComplaintModalOpen}
           handleCancel={setOpenComplaintModal}
-          complaintModalData={selectedMarriage}
+          groomName={selectedMarriage?.groomName}
+          brideName={selectedMarriage?.brideName}
         />
-      ) : null} */}
+      ) : null}
     </section>
   );
 };
