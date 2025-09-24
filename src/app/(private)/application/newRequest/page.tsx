@@ -1,6 +1,6 @@
 "use client";
 import HeroSection from "@/common/components/common/HeroSection";
-import { ServiceList } from "../../components/ServiceCard";
+import { ServiceList } from "@/common/components/common/ServiceCard";
 export default function Page() {
   return (
     <>

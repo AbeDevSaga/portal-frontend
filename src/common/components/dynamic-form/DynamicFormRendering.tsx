@@ -16,7 +16,7 @@ import { FormConfig } from "@/common/types/formType";
 import { generateEnhancedSchema } from "@/common/utils/dynamic-form/schemaGenerator";
 import { Button } from "../ui/button";
 import HeroSection from "../common/HeroSection";
-import LineSeparator from "@/app/(private)/components/LineSeparator";
+import LineSeparator from "../common/LineSeparator";
 
 interface DynamicFormProps {
   config: FormConfig;

@@ -2,7 +2,7 @@ import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
 import { FileText, Upload } from "lucide-react";
 import React from "react";
-import { requestTypeData } from "@/app/(public)/constants/requestTypeData";
+import { requestTypeData } from "@/common/utils/constants/requestTypeData";
 
 interface SidePreviewProps {
   requestType: string;

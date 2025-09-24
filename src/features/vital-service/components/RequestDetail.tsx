@@ -3,11 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
-import { initializeForm } from "@/features/birth-service/store/birthSlice";
-import BirthCorrectionPreview from "@/features/birth-service/components/BirthCorrectionPreview";
+import { initializeForm } from "@/features/vital-service/birth-service/store/birthSlice";
+import BirthCorrectionPreview from "@/features/vital-service/birth-service/components/BirthCorrectionPreview";
 import { Card } from "@/common/components/ui/card";
 import { Button } from "@/common/components/ui/button";
-import { birthCorrectionFormConfig } from "@/features/birth-service/components/birth-correction-form-config";
+import { birthCorrectionFormConfig } from "@/features/vital-service/birth-service/components/birth-correction-form-config";
 import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 import SidePreview from "./SidePreview";
 

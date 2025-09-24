@@ -2,10 +2,11 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 // import { formConfig as birthNewChildConfig } from "@/features/birth-service/components/birth-new-child-field";
-import { formConfig as birthNewChildConfig } from "@/features/birth-service/components/check-form";
-import { formConfig as defaultFormConfig } from "@/features/birth-service/components/default-form-fields";
-import { formConfig as birthRegisteredHospitalConfig } from "@/features/birth-service/components/birth-registered-hospital-fields";
-import { formConfig as birthRegisteredFamilyConfig } from "@/features/birth-service/components/birth-registered-family-field";
+import { formConfig as birthNewChildConfig } from "@/features/vital-service/birth-service/components/check-form";
+import { formConfig as birthNewHealtCenterConfig } from "@/features/vital-service/birth-service/components/birth-register-health-center";
+import { formConfig as defaultFormConfig } from "@/features/vital-service/birth-service/components/default-form-fields";
+import { formConfig as birthRegisteredHospitalConfig } from "@/features/vital-service/birth-service/components/birth-registered-hospital-fields";
+import { formConfig as birthRegisteredFamilyConfig } from "@/features/vital-service/birth-service/components/birth-registered-family-field";
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import { generateFieldGrouping } from "@/common/utils/dynamic-form/fieldGrouping";
@@ -19,7 +20,6 @@ import {
 import HeroSection from "@/common/components/common/HeroSection";
 import { RadioGroup, RadioGroupItem } from "@/common/components/ui/radio-group";
 import { Label } from "@/common/components/ui/label";
-import LineSeparator from "@/app/(private)/components/LineSeparator";
 import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 
 export default function NewBirthRegistrationPage() {
@@ -37,6 +37,8 @@ export default function NewBirthRegistrationPage() {
         return birthRegisteredHospitalConfig;
       case "registeredFamily":
         return birthRegisteredFamilyConfig;
+      case "healthCenter":
+        return birthNewHealtCenterConfig;
       default:
         return defaultFormConfig;
     }
@@ -301,6 +303,19 @@ export default function NewBirthRegistrationPage() {
           Already registered as family member
         </Label>
       </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem
+          value="healthCenter"
+          id="healthCenter"
+          onClick={() => handleChange("healthCenter")}
+        />
+        <Label
+          htmlFor="healthCenter"
+          className="text-[#0c4a6b] text-md font-medium"
+        >
+          Register As Health Center
+        </Label>
+      </div>
     </RadioGroup>
   );
 
@@ -325,12 +340,6 @@ export default function NewBirthRegistrationPage() {
 
   return (
     <div className="flex flex-col space-y-2">
-      {/* <HeroSection
-        title="Register New Birth"
-        description="This is the place to register new birth from health center."
-        action={<></>}
-      /> */}
-
       <FormWithSidePreview
         formContent={formContent}
         formValues={formValues}

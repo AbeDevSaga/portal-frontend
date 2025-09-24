@@ -8,7 +8,7 @@ import React from "react";
 import crrsaLogin from "@/public/images/crrsa-login.png";
 import { Home, Menu } from "lucide-react";
 
-import { Button } from "./button";
+
 import {
   Sheet,
   SheetContent,
@@ -16,6 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/common/components/ui/sheet";
+import { Button } from "../ui/button";
 
 export default function LandingPageNavbar() {
   const [activeLink, setActiveLink] = useState("");

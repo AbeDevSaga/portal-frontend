@@ -49,7 +49,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { FormArrayField } from "./FormArrayField";
 import { getAutoFlowGridClasses } from "@/common/utils/dynamic-form/dynamicGridLayout";
 import PaymentField from "../common/PaymentField";
-import RequestDetail from "@/app/(private)/components/RequestDetail";
+import RequestDetail from "@/features/vital-service/components/RequestDetail";
 
 interface Props {
   field: FieldConfig;

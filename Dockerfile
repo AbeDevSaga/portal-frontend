@@ -9,6 +9,9 @@ RUN pnpm install
 # Copy source code
 COPY . .
 
+# Copy environment file for production build
+COPY .env.production .env.local
+
 # Remove old build to avoid stale worker versions
 RUN rm -rf .next
 

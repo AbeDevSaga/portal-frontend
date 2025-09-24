@@ -1,11 +1,10 @@
 "use client";
-
-import LineSeparator from "@/app/(private)/components/LineSeparator";
-import { Button } from "@/app/(public)/components/button";
 import { updateField } from "@/redux/feature/birthSlice";
 import Image from "next/image";
 import { useState } from "react";
 import { ErrorMessage } from "formik";
+import LineSeparator from "./LineSeparator";
+import { Button } from "../ui/button";
 
 const PaymentField = ({ field, form, formikField, dispatch }: any) => {
   const [pendingOption, setPendingOption] = useState<any>(null);

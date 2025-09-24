@@ -1,9 +1,9 @@
 "use client";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { formConfig as birthNewChildConfig } from "@/features/birth-service/components/death-as-family-field";
-import { formConfig as birthRegisteredHospitalConfig } from "@/features/birth-service/components/birth-registered-hospital-fields";
-import { formConfig as birthRegisteredFamilyConfig } from "@/features/birth-service/components/birth-registered-family-field";
+import { formConfig as birthNewChildConfig } from "@/features/vital-service/birth-service/components/death-as-family-field";
+import { formConfig as birthRegisteredHospitalConfig } from "@/features/vital-service/birth-service/components/birth-registered-hospital-fields";
+import { formConfig as birthRegisteredFamilyConfig } from "@/features/vital-service/birth-service/components/birth-registered-family-field";
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import { generateFieldGrouping } from "@/common/utils/dynamic-form/fieldGrouping";

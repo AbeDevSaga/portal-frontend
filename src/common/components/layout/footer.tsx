@@ -2,8 +2,8 @@ import Image from "next/image";
 import React from "react";
 import footerCrrsa from "@/public/images/crrsa-footer.svg";
 import Link from "next/link";
-import { footerData } from "../constants/footerData";
-import SocialLinks from "./SocialLinks";
+import { footerData } from "@/common/utils/constants/footerData";
+import SocialLinks from "../ui/SocialLinks";
 const Footer = () => {
   const date = new Date();
   return (

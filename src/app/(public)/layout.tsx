@@ -1,7 +1,7 @@
 "use client";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import Footer from "./components/footer";
-import LandingPageNavbar from "./components/LandingPageNavbar";
+import LandingPageNavbar from "@/common/components/layout/LandingPageNavbar";
+import Footer from "@/common/components/layout/footer";
 
 export default function LandingPagesLayout({
   children,
@@ -27,11 +27,6 @@ export default function LandingPagesLayout({
   return (
     <div className="min-h-screen flex flex-col scrollbar-hide">
       <div ref={appBarRef} className="fixed top-0 left-0 right-0 z-50">
-        {/* <AppBar
-          logo={appBarData.logo}
-          button={appBarData.button}
-          navLinks={navLinks}
-        /> */}
         <LandingPageNavbar />
       </div>
       <main
@@ -43,7 +38,6 @@ export default function LandingPagesLayout({
         {children}
       </main>
       <Footer />
-      {/* <Footer footer={defaultFooterData} navLinks={navLinks} /> */}
     </div>
   );
 }

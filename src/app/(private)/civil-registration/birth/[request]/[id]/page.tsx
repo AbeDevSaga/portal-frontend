@@ -1,10 +1,10 @@
 // path: birth/[request]/[id]/page.tsx
 "use client";
-import BirthDetail from "@/app/(private)/components/BirthDetail";
 import React, { useEffect, useState } from "react";
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
-import BirthCorrection from "@/app/(private)/components/BirthCorrection";
+import BirthCorrection from "@/features/vital-service/components/BirthCorrection";
+import BirthDetail from "@/features/vital-service/components/BirthDetail";
 
 type RequestType = "lost" | "damaged" | "correction" | "print";
 

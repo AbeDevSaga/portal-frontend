@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import DivorceLivePreview from "../../../components/DivorceLivePreview";
 import { Button } from "@/common/components/ui/button";
 import { Card } from "@/common/components/ui/card";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -13,8 +12,9 @@ import HeroSection from "@/common/components/common/HeroSection";
 import { Stepper } from "@/common/components/common/stepper";
 import { RadioGroup } from "@radix-ui/react-radio-group";
 import { Label } from "@radix-ui/react-label";
-import StepperDivorceForm from "@/app/(private)/components/StepperDivorceForm";
 import { Eye, FileText, Image as ImageIcon, X } from "lucide-react";
+import DivorceLivePreview from "@/features/vital-service/components/DivorceLivePreview";
+import StepperDivorceForm from "@/features/vital-service/components/StepperDivorceForm";
 const exHusbandInitialValues = {
   exHusbandResidentNumber: "",
   divorceDate: "",

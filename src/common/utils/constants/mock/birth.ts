@@ -1,5 +1,3 @@
-import { BirthResponse } from "@/features/birth-service/types";
-
 export const mockBirthResponse = {
   id: "1dbf80f6-d2ef-44f9-b9a7-9e96697c8a84",
   registrationFormNumber: "RO-2025-00220250011",

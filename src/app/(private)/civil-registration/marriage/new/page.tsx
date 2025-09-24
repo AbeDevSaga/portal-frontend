@@ -8,13 +8,13 @@ import {
 } from "@/common/components/dynamic-form";
 import { generateFieldGrouping } from "@/common/utils/dynamic-form/fieldGrouping";
 import { processFormSubmission } from "@/common/utils/formSubmissionUtils";
-import { formConfig } from "@/features/marriage-service/components/marraige-form-fields";
+import { formConfig } from "@/features/vital-service/marriage-service/components/marraige-form-fields";
 
 import { useEffect, useState } from "react";
 // import { useSubmitFormMutation } from "./api/marriageApi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useSubmitFormMutation } from "@/features/marriage-service/api/marriageApi";
+import { useSubmitFormMutation } from "@/features/vital-service/marriage-service/api/marriageApi";
 import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 const handleConvertDate = (date: string) => {
   const dateOnly = date.split("T")[0];

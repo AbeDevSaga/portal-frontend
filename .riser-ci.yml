@@ -48,3 +48,4 @@ deploy-job:
         cd $SSH_DIR &&
         docker pull registry.risertechservices.com/crrsa/$CI_PROJECT_NAME:latest &&
         ./start.sh"
+
