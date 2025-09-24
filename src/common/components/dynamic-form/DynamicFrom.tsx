@@ -16,7 +16,8 @@ import { FormConfig } from "@/common/types/formType";
 import { generateEnhancedSchema } from "@/common/utils/dynamic-form/schemaGenerator";
 import { Button } from "../ui/button";
 import HeroSection from "../common/HeroSection";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, Eye, X, FileText } from "lucide-react";
+import Image from "next/image";
 
 interface DynamicFormProps {
   config: FormConfig;
@@ -39,11 +40,22 @@ export default function DynamicForm({
 }: DynamicFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
   // State to track which accordion items are expanded
-  const [internalExpandedItems, setInternalExpandedItems] = useState<string[]>([]);
+  const [internalExpandedItems, setInternalExpandedItems] = useState<string[]>(
+    []
+  );
+  // State for file preview modal
+  const [previewFile, setPreviewFile] = useState<{
+    url: string;
+    fileName: string;
+    fileType?: string;
+  } | null>(null);
+
   // Use external expanded items if provided, otherwise use internal state
   const expandedItems = externalExpandedItems || internalExpandedItems;
-  const setExpandedItems = externalExpandedItems ? () => {} : setInternalExpandedItems;
-  
+  const setExpandedItems = externalExpandedItems
+    ? () => {}
+    : setInternalExpandedItems;
+
   // Ensure config has steps before accessing
   const steps = config?.steps || [];
   // console.log("config steps", steps);
@@ -117,6 +129,41 @@ export default function DynamicForm({
     }
   };
 
+  // Handle file preview
+  const handleFilePreview = (
+    fileUrl: string,
+    fileName: string,
+    fileType?: string
+  ) => {
+    setPreviewFile({ url: fileUrl, fileName, fileType });
+  };
+
+  const closePreview = () => {
+    setPreviewFile(null);
+  };
+
+  // Helper function to check if file is an image
+  const isImageFile = (fileName: string) => {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    return ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(
+      extension || ""
+    );
+  };
+
+  // Helper function to get file URL from attachment object
+  const getFileUrl = (attachment: any): string => {
+    if (typeof attachment === "string") return attachment;
+    if (attachment?.fileUrl) return attachment.fileUrl;
+    if (attachment?.url) return attachment.url;
+    if (attachment?.file && typeof attachment.file === "string")
+      return attachment.file;
+    // If it's a File object, create a blob URL
+    if (attachment instanceof File) {
+      return URL.createObjectURL(attachment);
+    }
+    return "";
+  };
+
   // Function to render fields in tabular/accordion mode
   const renderTabularFields = (
     fields: any[],
@@ -139,7 +186,8 @@ export default function DynamicForm({
           </div>
         </AccordionTrigger>
         <AccordionContent className="pt-4">
-          <div className={`${formStyle} grid grid-cols-12 gap-4 auto-rows-auto`}>
+          <div
+            className={`${formStyle} grid grid-cols-12 gap-4 auto-rows-auto`}>
             {fields.map((field: any) => (
               <FieldRenderer
                 key={field.key}
@@ -240,36 +288,172 @@ export default function DynamicForm({
                   <Form className="space-y-2.5">
                     {isReviewStep ? (
                       // Review section
-                      <div className="bg-gray-100 p-4 rounded-lg border">
-                        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
-                          Review Your Information
-                        </h3>
-                        <div className="space-y-2">
-                          {Object.entries(values).map(([key, value]) => {
-                            if (!value) return null;
+                      <div className="flex flex-col gap-4">
+                        {/* This is for the information other than attachments */}
+                        <div className="bg-gray-100 p-4 rounded-lg border">
+                          <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+                            Review Your Information
+                          </h3>
+                          <div className="space-y-2">
+                            {Object.entries(values).map(([key, value]) => {
+                              // Filter out attachment fields
+                              if (
+                                !value ||
+                                key === "attachment" ||
+                                key.toLowerCase().includes("attachment")
+                              )
+                                return null;
 
-                            // Format the field label
-                            const fieldLabel = key
-                              .replace(/([A-Z])/g, " $1")
-                              .replace(/^./, (str) => str.toUpperCase());
+                              // Format the field label
+                              const fieldLabel = key
+                                .replace(/([A-Z])/g, " $1")
+                                .replace(/^./, (str: string) =>
+                                  str.toUpperCase()
+                                );
 
-                            return (
-                              <div
-                                key={key}
-                                className="flex justify-between py-2 border-b border-gray-200">
-                                <span className="font-medium text-xl text-gray-700">
-                                  {fieldLabel}:
-                                </span>
-                                <span className="text-xl text-gray-900">
-                                  {typeof value === "object" && value !== null
-                                    ? (value as any).label ||
-                                      (value as any).name ||
-                                      JSON.stringify(value)
-                                    : String(value)}
-                                </span>
-                              </div>
-                            );
-                          })}
+                              return (
+                                <div
+                                  key={key}
+                                  className="flex justify-between py-2 border-b border-gray-200">
+                                  <span className="font-medium text-xl text-gray-700">
+                                    {fieldLabel}:
+                                  </span>
+                                  <span className="text-xl text-gray-900">
+                                    {typeof value === "object" && value !== null
+                                      ? (value as any).label ||
+                                        (value as any).name ||
+                                        JSON.stringify(value)
+                                      : String(value)}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        {/* This is for the attachments */}
+                        <div className="bg-gray-100 p-4 rounded-lg border">
+                          <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+                            Review Your Attachments
+                          </h3>
+                          <div className="space-y-2">
+                            {(values as any).attachment &&
+                            Array.isArray((values as any).attachment)
+                              ? (values as any).attachment.map(
+                                  (attachment: any, index: number) => {
+                                    if (!attachment) return null;
+
+                                    const fileName =
+                                      typeof attachment === "object" &&
+                                      attachment !== null
+                                        ? attachment.name ||
+                                          attachment.label ||
+                                          attachment.fileName ||
+                                          "File attached"
+                                        : String(attachment);
+
+                                    const fileUrl = getFileUrl(attachment);
+
+                                    return (
+                                      <div
+                                        key={`attachment-${index}`}
+                                        className="flex justify-between items-center py-2 border-b border-gray-200">
+                                        <span className="font-medium text-xl text-gray-700">
+                                          Attachment {index + 1}:
+                                        </span>
+                                        <div className="flex items-center gap-3">
+                                          <span className="text-xl text-gray-900">
+                                            {fileName}
+                                          </span>
+                                          {fileUrl && (
+                                            <Button
+                                              type="button"
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleFilePreview(
+                                                  fileUrl,
+                                                  fileName
+                                                );
+                                              }}
+                                              className="flex items-center gap-2">
+                                              <Eye className="w-4 h-4" />
+                                              Preview
+                                            </Button>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                )
+                              : // Also check for other attachment-related fields
+                                Object.entries(values).map(([key, value]) => {
+                                  if (
+                                    !value ||
+                                    !key.toLowerCase().includes("attachment")
+                                  )
+                                    return null;
+
+                                  const fieldLabel = key
+                                    .replace(/([A-Z])/g, " $1")
+                                    .replace(/^./, (str: string) =>
+                                      str.toUpperCase()
+                                    );
+
+                                  const fileName =
+                                    typeof value === "object" && value !== null
+                                      ? (value as any).name ||
+                                        (value as any).label ||
+                                        (value as any).fileName ||
+                                        "File attached"
+                                      : String(value);
+
+                                  const fileUrl = getFileUrl(value);
+
+                                  return (
+                                    <div
+                                      key={`attachment-field-${key}`}
+                                      className="flex justify-between items-center py-2 border-b border-gray-200">
+                                      <span className="font-medium text-xl text-gray-700">
+                                        {fieldLabel}:
+                                      </span>
+                                      <div className="flex items-center gap-3">
+                                        <span className="text-xl text-gray-900">
+                                          {fileName}
+                                        </span>
+                                        {fileUrl && (
+                                          <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="lg"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                              handleFilePreview(
+                                                fileUrl,
+                                                fileName
+                                              );
+                                            }}
+                                            className="flex items-center gap-2 px-4">
+                                            <Eye className="size-5" />
+                                            Preview
+                                          </Button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                            {/* Show message if no attachments */}
+                            {!(values as any).attachment &&
+                              !Object.keys(values).some((key) =>
+                                key.toLowerCase().includes("attachment")
+                              ) && (
+                                <div className="text-gray-500 text-lg italic">
+                                  No attachments uploaded
+                                </div>
+                              )}
+                          </div>
                         </div>
                       </div>
                     ) : (
@@ -482,6 +666,60 @@ export default function DynamicForm({
           </>
         )}
       </div>
+
+      {/* File Preview Modal */}
+      {previewFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold text-gray-900 truncate">
+                {previewFile.fileName}
+              </h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={closePreview}
+                className="flex-shrink-0">
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="p-4 overflow-auto max-h-[calc(90vh-80px)]">
+              {isImageFile(previewFile.fileName) ? (
+                <div className="flex justify-center">
+                  <Image
+                    src={previewFile.url}
+                    alt={previewFile.fileName}
+                    width={800}
+                    height={600}
+                    className="max-w-full h-auto rounded-lg shadow-lg"
+                    unoptimized
+                  />
+                </div>
+              ) : previewFile.fileName.toLowerCase().endsWith(".pdf") ? (
+                <div className="h-[600px]">
+                  <iframe
+                    src={previewFile.url}
+                    className="w-full h-full border-0 rounded"
+                    title={`Preview of ${previewFile.fileName}`}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-64 bg-gray-50 rounded-lg">
+                  <FileText className="w-16 h-16 text-gray-400 mb-4" />
+                  <p className="text-gray-600 mb-4">
+                    Preview not available for this file type
+                  </p>
+                  <Button
+                    onClick={() => window.open(previewFile.url, "_blank")}
+                    className="bg-blue-600 hover:bg-blue-700">
+                    Open in New Tab
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
