@@ -293,178 +293,191 @@ const AnnouncementPage = () => {
               </div>
             ))}
           </div>
-          {/* Filter Section */}
-          <div className="  w-full flex justify-center items-center  ">
-            {/* Filter Section */}
-          <div className="bg-white rounded-lg p-6 mb-6">
-            <div className="flex flex-col items-center mb-4">
-              {/* <h3 className="text-xl font-semibold text-[#073954] mb-2">Filter Marriage Announcements</h3> */}
-             
-            </div>
-            
-            <div className="flex flex-wrap gap-5 items-center justify-center">
-              <div className="flex flex-col ">
-                <label className="text-sm font-medium text-gray-700 mb-1">Subcity</label>
-                <select
-                  name="subcity"
-                  id="subcity"
-                  onChange={handleSubcityChange}
-                  value={subcityValue}
-                  className="px-5 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
-                >
-                  <option value="">All Subcities</option>
-                  <option value="Bole">Bole</option>
-                  <option value="Kirkos">Kirkos</option>
-                  <option value="Arada">Arada</option>
-                  <option value="Lideta">Lideta</option>
-                  <option value="Nifas Silk">Nifas Silk</option>
-                  <option value="Kolfe">Kolfe</option>
-                  <option value="Gulele">Gulele</option>
-                  <option value="Yeka">Yeka</option>
-                </select>
-              </div>
-
-              {/* Woreda Filter */}
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">Woreda</label>
-                <select
-                  name="woreda"
-                  id="woreda"
-                  onChange={handleWoredaChange}
-                  value={woredaValue}
-                  className="px-5 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
-                >
-                  <option value="">All Woredas</option>
-                  <option value="01">01</option>
-                  <option value="02">02</option>
-                  <option value="03">03</option>
-                  <option value="04">04</option>
-                  <option value="05">05</option>
-                  <option value="06">06</option>
-                  <option value="07">07</option>
-                  <option value="08">08</option>
-                  <option value="09">09</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-                </select>
-              </div>
-
-              {/* Name Filter */}
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  Search Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Groom or Bride name"
-                  value={nameValue}
-                  onChange={handleNameChange}
-                  className="w-48 px-3 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
-                />
+          {/* Conditional Content Based on Selected Tab */}
+          {showTab === "announcement" ? (
+            // Empty page with "Announcement" text
+            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-lg">
+              <div className="text-center">
+                <div className="text-6xl text-gray-300 mb-4">📢</div>
+                <h3 className="text-3xl font-semibold text-[#073954] mb-2">
+                  Announcement
+                </h3>
+                <p className="text-gray-500 text-lg">
+                  No announcements available at this time.
+                </p>
               </div>
             </div>
-            <p className="text-sm text-gray-500 text-center mt-4 italic">
-                Use the filters above to find specific marriage announcements
-              </p>
-             
-
-          </div>
-          </div>
-
-           {/* No Data Message */}
-           {filteredData.length === 0 && (
-             <div className="flex flex-col items-center justify-center py-12 bg-white rounded-lg ">
-               <div className="text-center">
-                 <div className="text-6xl text-gray-300 mb-4">📋</div>
-                 <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                   No Marriage Announcements Found
-                 </h3>
-                 <p className="text-gray-500 mb-4">
-                   No marriage announcements match your current filter criteria.
-                 </p>
-                 <Button
-                   onClick={clearFilters}
-                   className="bg-[#073954] hover:bg-[#073954]/90 text-white"
-                 >
-                   Clear All Filters
-                 </Button>
-               </div>
-             </div>
-           )}
-
-           {/* Marriage Cards Grid - Only show when there are results */}
-           {filteredData.length > 0 && (
-             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-10">
-               {response.map((married, index) => (
-              <div
-                key={index}
-                className="pt-3.5 pb-2 px-5 rounded-md shadow-md z-40 bg-white "
-              >
-                <div className="px-5 space-y-2 pb-3 border-b">
-                  <div className="flex flex-col items-center justify-center">
-                    <Image
-                      src={marriage}
-                      alt="marriage"
-                      width={20}
-                      height={20}
-                    />
-                    <p className="text-xl font-semibold text-yellow-500">
-                      To be Married
-                    </p>
-                  </div>
-                </div>
-                <div className="px-5 space-y-2.5">
-                  <MarriageAvatar coupleAvatar={generateCoupleAvatar(married.groomName, married.brideName)} />
-                  <div className="flex w-full justify-between py-0.5 border-y pt-1.5">
-                    <div className="leading-tight">
-                      <p>Subcity</p>
-                      <p className="text-sm font-semibold">{married.subcity}</p>
+          ) : (
+            // Marriage content
+            <>
+              {/* Filter Section */}
+              <div className="w-full flex justify-center items-center">
+                <div className="bg-white rounded-lg mb-6">
+                  
+                  
+                  <div className="flex flex-wrap gap-5 items-center justify-center">
+                    <div className="flex flex-col ">
+                      <label className="text-sm font-medium text-gray-700 mb-1">Subcity</label>
+                      <select
+                        name="subcity"
+                        id="subcity"
+                        onChange={handleSubcityChange}
+                        value={subcityValue}
+                        className="px-5 py-2 border border-[#E1E7EA] cursor-pointer  rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-none"
+                      >
+                        <option value="">All Subcities</option>
+                        <option value="Bole">Bole</option>
+                        <option value="Kirkos">Kirkos</option>
+                        <option value="Arada">Arada</option>
+                        <option value="Lideta">Lideta</option>
+                        <option value="Nifas Silk">Nifas Silk</option>
+                        <option value="Kolfe">Kolfe</option>
+                        <option value="Gulele">Gulele</option>
+                        <option value="Yeka">Yeka</option>
+                      </select>
                     </div>
-                    <div className=" leading-none">
-                      <p>Woreda</p>
-                      <p className="text-sm font-semibold">{married.woreda}</p>
+
+                    {/* Woreda Filter */}
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium text-gray-700 mb-1">Woreda</label>
+                      <select
+                        name="woreda"
+                        id="woreda"
+                        onChange={handleWoredaChange}
+                        value={woredaValue}
+                        className="px-5 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-none"
+                      >
+                        <option value="">All Woredas</option>
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                      </select>
+                    </div>
+
+                    {/* Name Filter */}
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium text-gray-700 mb-1">
+                        Search Name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Groom or Bride name"
+                        value={nameValue}
+                        onChange={handleNameChange}
+                        className="w-48 px-3 py-2 border cursor-pointer border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#073954] focus:border-transparent"
+                      />
                     </div>
                   </div>
-                </div>
-                <div className="flex w-full justify-between items-center py-0.5">
-                  <div>
-                    <p className="text-2xl font-semibold px-5 text-yellow-500">
-                      {married.daysRemaining} days
+                  <p className="text-sm text-gray-500 text-center mt-4 italic">
+                      Use the filters above to find specific marriage announcements
                     </p>
-                    <p className="text-xs">Remaining Complaint Days</p>
-                  </div>
-                  <Button
-                    onClick={() => {
-                      setSelectedMarriage({
-                        groomName: married.groomName,
-                        brideName: married.brideName
-                      });
-                      setOpenComplaintModal(true);
-                    }}
-                    size="sm"
-                    className="bg-[#073954]"
-                  >
-                    Give Complaint
-                  </Button>
                 </div>
               </div>
-               ))}
-             </div>
-           )}
 
-           {/* Pagination - Only show when there are results */}
-           {filteredData.length > 0 && (
-             <div className="flex justify-end w-full max-w-[1200px] mx-auto px-5 z-30">
-               <PaginationComponent
-                 totalItems={filteredData.length}
-                 itemsPerPage={pageDetail.pageSize}
-                 onPageChange={handlePageChange}
-                 currentPage={pageDetail.pageIndex}
-                 setCurrentPage={handleSetCurrentPage}
-               />
-             </div>
-           )}
+              {/* No Data Message */}
+              {filteredData.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 bg-white rounded-lg ">
+                  <div className="text-center">
+                    <div className="text-6xl text-gray-300 mb-4">📋</div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                      No Marriage Announcements Found
+                    </h3>
+                    <p className="text-gray-500 mb-4">
+                      No marriage announcements match your current filter criteria.
+                    </p>
+                    <Button
+                      onClick={clearFilters}
+                      className="bg-[#073954] hover:bg-[#073954]/90 text-white"
+                    >
+                      Clear All Filters
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Marriage Cards Grid - Only show when there are results */}
+              {filteredData.length > 0 && (
+                <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-10">
+                  {response.map((married, index) => (
+                   <div
+                     key={index}
+                     className="pt-3.5 pb-2 px-5 rounded-md shadow-md z-40 bg-white "
+                   >
+                     <div className="px-5 space-y-2 pb-3 border-b">
+                       <div className="flex flex-col items-center justify-center">
+                         <Image
+                           src={marriage}
+                           alt="marriage"
+                           width={20}
+                           height={20}
+                         />
+                         <p className="text-xl font-semibold text-yellow-500">
+                           To be Married
+                         </p>
+                       </div>
+                     </div>
+                     <div className="px-5 space-y-2.5">
+                       <MarriageAvatar coupleAvatar={generateCoupleAvatar(married.groomName, married.brideName)} />
+                       <div className="flex w-full justify-between py-0.5 border-y pt-1.5">
+                         <div className="leading-tight">
+                           <p>Subcity</p>
+                           <p className="text-sm font-semibold">{married.subcity}</p>
+                         </div>
+                         <div className=" leading-none">
+                           <p>Woreda</p>
+                           <p className="text-sm font-semibold">{married.woreda}</p>
+                         </div>
+                       </div>
+                     </div>
+                     <div className="flex w-full justify-between items-center py-0.5">
+                       <div>
+                         <p className="text-2xl font-semibold px-5 text-yellow-500">
+                           {married.daysRemaining} days
+                         </p>
+                         <p className="text-xs">Remaining Complaint Days</p>
+                       </div>
+                       <Button
+                         onClick={() => {
+                           setSelectedMarriage({
+                             groomName: married.groomName,
+                             brideName: married.brideName
+                           });
+                           setOpenComplaintModal(true);
+                         }}
+                         size="sm"
+                         className="bg-[#073954]"
+                       >
+                         Give Complaint
+                       </Button>
+                     </div>
+                   </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination - Only show when there are results */}
+              {filteredData.length > 0 && (
+                <div className="flex justify-end w-full max-w-[1200px] mx-auto px-5 z-30">
+                  <PaginationComponent
+                    totalItems={filteredData.length}
+                    itemsPerPage={pageDetail.pageSize}
+                    onPageChange={handlePageChange}
+                    currentPage={pageDetail.pageIndex}
+                    setCurrentPage={handleSetCurrentPage}
+                  />
+                </div>
+              )}
+            </>
+          )}
          </div>
       </div>
 
