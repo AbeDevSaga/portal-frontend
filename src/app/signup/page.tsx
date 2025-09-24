@@ -209,7 +209,7 @@ const agentSignupConfig: FormConfig = {
           groupOrder: 1,
           gridCols: 6, // Full width
           allowedTypes: [".pdf", ".doc", ".docx", ".jpg", ".png"],
-          showPreview: true, // Add this flag to enable preview
+          showPreview: false, // Add this flag to enable preview
         },
       ],
     },
@@ -292,45 +292,31 @@ export default function SignupPage() {
   };
 
   const handleSignup = (values: any) => {
-    console.log("=== SIGNUP FORM SUBMITTED ===");
-    console.log("User Type:", selectedUserType);
-    console.log("Form Values:", values);
-    console.log("Raw form data:", JSON.stringify(values, null, 2));
-
     const result = processFormSubmission(values, currentConfig);
 
     if (result.success) {
-      console.log("✅ Signup form submitted successfully:", {
-        userType: selectedUserType,
-        ...values,
-      });
-      console.log("Processed result:", result);
-      // Here you would typically make an API call to register the user
       setIsSubmitted(true);
-    } else {
-      console.log("❌ Form validation failed:", result.data);
-      console.log("Validation errors:", result);
     }
 
-    console.log("=== END SIGNUP SUBMISSION ===");
+    console.log("=== END OF SIGNUP SUBMISSION ===");
   };
 
   return (
     <div className="min-h-screen flex bg-gray-100 px-16 py-10">
       <div className="flex bg-white shadow-2xl rounded-3xl border w-full py-10">
         {/* Left Side - Logo */}
-        <div className="hidden lg:flex lg:w-1/3 items-center justify-center px-12 py-7">
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center px-12 py-7">
           <Image
             src="/logo.jpg"
             alt="CRRSA Logo"
             width={1000}
             height={1000}
-            className="max-w-[350px]"
+            className="max-w-[530px]"
           />
         </div>
 
         {/* Right Side - Form Area (60% width) */}
-        <div className="w-full lg:w-2/3 flex items-center lg:border-l-2 border-gray-400 justify-center p-8">
+        <div className="w-full lg:w-1/2 flex items-center lg:border-l-2 border-gray-400 justify-center p-8">
           <div className="w-full max-w-5xl">
             {isSubmitted ? (
               // Success Message View
@@ -340,8 +326,7 @@ export default function SignupPage() {
                     className="w-8 h-8 text-green-600"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                    viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -376,8 +361,7 @@ export default function SignupPage() {
                       setIsSubmitted(false);
                       setShowForm(false);
                       setSelectedUserType(null);
-                    }}
-                  >
+                    }}>
                     Register Another Account
                   </Button>
                 </div>
@@ -431,8 +415,7 @@ export default function SignupPage() {
                   {/* Agent Card */}
                   <Card
                     className="cursor-pointer hover:border-slate-900/50 hover:shadow-md transition-all duration-200 border-2"
-                    onClick={() => handleUserTypeSelection("agent")}
-                  >
+                    onClick={() => handleUserTypeSelection("agent")}>
                     <CardContent className="p-6">
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-slate-700/10 rounded-lg flex items-center justify-center">
@@ -451,8 +434,7 @@ export default function SignupPage() {
                             className="w-6 h-6"
                             fill="none"
                             stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
+                            viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -470,8 +452,7 @@ export default function SignupPage() {
                   Already have an account?{" "}
                   <Link
                     href="/login"
-                    className="text-blue-500 hover:text-blue-800 font-medium"
-                  >
+                    className="text-blue-500 hover:text-blue-800 font-medium">
                     Log In
                   </Link>
                 </div>
@@ -480,15 +461,14 @@ export default function SignupPage() {
               // Form View
               <>
                 <div className="space-y-4 relative items-center">
-                  <div className="flex items-center absolute top-0">
+                  {/* <div className="flex items-center absolute top-0">
                     <Button
                       variant="ghost"
                       onClick={handleBackToSelection}
-                      className="p-2 mr-3"
-                    >
+                      className="p-2 mr-3">
                       <ChevronLeft />
                     </Button>
-                  </div>
+                  </div> */}
                   <DynamicForm
                     config={currentConfig}
                     handleSubmit={handleSignup}
@@ -502,8 +482,7 @@ export default function SignupPage() {
                   Already have an account?{" "}
                   <Link
                     href="/login"
-                    className="text-blue-500 hover:text-blue-700 font-medium"
-                  >
+                    className="text-blue-500 hover:text-blue-700 font-medium">
                     Log In
                   </Link>
                 </div>
