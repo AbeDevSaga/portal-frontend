@@ -82,164 +82,6 @@ interface Props {
  * - `labelClassName`: Applied to the field label element (defaults to "text-primary font-semibold")
  */
 
-// const ArrayFieldRenderer: React.FC<any> = ({
-//   field,
-//   form,
-//   formValues,
-//   extraData,
-// }) => {
-//   const dependentValues = field.getDependentValue
-//     ? field.getDependentValue(formValues)
-//     : null;
-
-//   const isFieldHidden = field.isHide ? field.isHide(dependentValues) : false;
-//   if (isFieldHidden) return null;
-
-//   // calculate array length
-//   const arrayLength = useMemo(() => {
-//     return field.getLength ? field.getLength(dependentValues?.birthType) : 1;
-//   }, [dependentValues?.birthType, field.getLength]);
-
-//   // Initialize array only once
-//   useEffect(() => {
-//     const currentArray = form.values[field.key];
-//     if (!currentArray) {
-//       form.setFieldValue(
-//         field.key,
-//         Array.from({ length: arrayLength }, () => ({})),
-//         false
-//       );
-//     }
-//   }, [arrayLength, field.key, form]);
-
-//   // Adjust array length without wiping existing values
-//   useEffect(() => {
-//     const currentArray = form.values[field.key] || [];
-//     if (currentArray.length !== arrayLength) {
-//       const newArray = Array.from({ length: arrayLength }, (_, i) => {
-//         return currentArray[i] || {};
-//       });
-//       form.setFieldValue(field.key, newArray, false);
-//     }
-//   }, [arrayLength, field.key, form.values[field.key]?.length, form]);
-
-//   return (
-//     <div className="w-full">
-//       <label className="block mb-2 font-semibold">{field.label}</label>
-
-//       {(form.values[field.key] || []).map((child: any, index: number) => (
-//         <div key={index} className="child-field border p-4 mb-4 rounded-lg">
-//           <h4 className="mb-2 font-medium">Child {index + 1}</h4>
-//           <div className={field.className ?? "grid grid-cols-6 md:grid-cols-12 gap-4"}>
-//             {field.fields.map((nestedField: any) => (
-//               <FieldRenderer
-//                 key={`${field.key}[${index}].${nestedField.key}`}
-//                 field={{
-//                   ...nestedField,
-//                   key: `${field.key}[${index}].${nestedField.key}`,
-//                 }}
-//                 formValues={form.values}
-//                 extraData={extraData}
-//               />
-//             ))}
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-
-
-// const ArrayFieldRenderer: React.FC<any> = ({
-//   field,
-//   form,
-//   formValues,
-//   extraData,
-// }) => {
-//   const dependentValues = field.getDependentValue
-//     ? field.getDependentValue(formValues)
-//     : null;
-
-//   const isFieldHidden = field.isHide ? field.isHide(dependentValues) : false;
-//   if (isFieldHidden) return null;
-
-//   // calculate array length
-//   const arrayLength = useMemo(() => {
-//     return field.getLength ? field.getLength(dependentValues?.birthType) : 1;
-//   }, [dependentValues?.birthType, field.getLength]);
-
-//   // Initialize array only once
-//   useEffect(() => {
-//     const currentArray = form.values[field.key];
-//     if (!currentArray) {
-//       form.setFieldValue(
-//         field.key,
-//         Array.from({ length: arrayLength }, () => ({})),
-//         false
-//       );
-//     }
-//   }, [arrayLength, field.key, form]);
-
-//   // Adjust array length without wiping existing values
-//   useEffect(() => {
-//     const currentArray = form.values[field.key] || [];
-//     if (currentArray.length !== arrayLength) {
-//       const newArray = Array.from({ length: arrayLength }, (_, i) => currentArray[i] || {});
-//       form.setFieldValue(field.key, newArray, false);
-//     }
-//   }, [arrayLength, field.key, form.values[field.key]?.length, form]);
-
-//   const handleNestedChange = (index: number, key: string, value: any) => {
-//     const currentArray = [...(form.values[field.key] || [])];
-//     currentArray[index] = {
-//       ...currentArray[index],
-//       [key]: value,
-//     };
-//     form.setFieldValue(field.key, currentArray);
-//     // Update Redux store if needed
-//     // dispatch(updateField({ key: field.key, value: currentArray }));
-//   };
-
-//   return (
-//     <div className="w-full">
-//       <label className="block mb-2 font-semibold">{field.label}</label>
-
-//       {(form.values[field.key] || []).map((child: any, index: number) => (
-//         <div key={index} className="child-field border p-4 mb-4 rounded-lg">
-//           <h4 className="mb-2 font-medium">Child {index + 1}</h4>
-//           <div className={field.className ?? "grid grid-cols-6 md:grid-cols-12 gap-4"}>
-//             {field.fields.map((nestedField: any) => (
-//               <Field
-//                 key={`${field.key}[${index}].${nestedField.key}`}
-//                 name={`${field.key}[${index}].${nestedField.key}`}
-//               >
-//                 {({ field: formikField }: any) => (
-//                   <div className={"text-primary font-semibold"}>
-//                     <Label
-//                       className={"text-primary font-semibold"}
-//                       htmlFor={`${field.key}[${index}].${nestedField.key}`}
-//                     >
-//                       {nestedField.label}
-//                       {nestedField.isRequired && <span className="text-red-600">*</span>}
-//                     </Label>
-//                     <Input
-//                       {...formikField}
-//                       placeholder={nestedField.placeholder}
-//                       onChange={(e) => handleNestedChange(index, nestedField.key, e.target.value)}
-//                     />
-//                   </div>
-//                 )}
-//               </Field>
-//             ))}
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-
 export const FieldRenderer: React.FC<Props> = ({
   field, 
   formValues = {},
@@ -3059,15 +2901,7 @@ export const FieldRenderer: React.FC<Props> = ({
         );
         
       case "array":
-        return (
-          <Field name={field.key}>
-            {({ form }: any) => (
-              <ArrayFieldRenderer 
-                field={field}
-              />
-            )}
-          </Field>
-        );
+        return <ArrayFieldRenderer field={field} />;
         
       case "formArray":
         if (!field.formArrayConfig) {
@@ -3080,7 +2914,8 @@ export const FieldRenderer: React.FC<Props> = ({
             formArrayConfig={field.formArrayConfig}
           />
         );
-      case "inputSearch":
+      
+        case "inputSearch":
         return (
           <Field name={field.key}>
             {({ field: formikField, form }: any) => {
