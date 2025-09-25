@@ -79,108 +79,34 @@ export const formConfig: FormConfig = {
           gridCols: 6,
         },
         {
-          type: "select",
-          key: "gender",
-          label: "Gender",
-          placeholder: "Select Child's Gender",
-          validators: [{ type: "required", message: "" }],
-          required: true,
-          group: "None-Resident Registration",
-          groupOrder: 2,
-          gridCols: 6, // Left column
-          options: [
-            { label: "Male", value: "male" },
-            { label: "Female", value: "female" },
-          ],
-        },
-        {
-          type: "input",
-          key: "firstName",
-          label: "Child's First Name",
-          placeholder: "Enter child's first name.",
-          description: "",
-          validators: [
-            { type: "required", message: "Child's First name is required" },
-          ],
-          required: true,
-          group: "Child Details",
-          groupOrder: 1,
-          gridCols: 6,
-        },
-        {
-          type: "number",
-          key: "birthTimeWeight",
-          label: "Birth Time Weight",
-          placeholder: "Enter Birth Time Weight",
-          description: "",
-          validators: [
-            {
-              type: "required",
-              message: "Birth time weight is required",
-            },
-            {
-              type: "min",
-              value: 0,
-              message: "Must be at least 1",
-            },
-          ],
-          required: true,
-          group: "Child Details",
-          groupOrder: 5,
-          gridCols: 6,
-        },
-        {
-          type: "number",
-          key: "birthTimeHeight",
-          label: "Birth Time Height",
-          placeholder: "Ensert Birth Time Height",
-          description: "",
-          validators: [
-            {
-              type: "required",
-              message: "Birth time hight is required",
-            },
-            {
-              type: "min",
-              value: 0,
-              message: "Must be above 0",
-            },
-          ],
-          required: true,
-          group: "Child Details",
-          groupOrder: 6,
-          gridCols: 6,
-        },
-        {
           type: "input",
           key: "fatherFullName",
           label: "Father's Full Name",
-          placeholder: "",
+          placeholder: "Enter Father's Full Name",
           description: "",
-          validators: [],
-          required: false,
+          validators: [
+            { type: "required", message: "Father's full name is required" },
+          ],
+          required: true,
           group: "Child Details",
           groupOrder: 12,
           gridCols: 6,
-          defaultValue: (dependentValues: any) => {
-            if (
-              dependentValues?.fatherResidentId &&
-              typeof dependentValues.fatherResidentId === "object"
-            ) {
-              return dependentValues.fatherResidentId.fullName || "";
-            }
-            return "";
-          },
-          getDependentValue: (formValues: any) => ({
-            fatherResidentId: formValues.fatherResidentId,
-          }),
-          isDisabled: (dependentValues: any) => {
-            return dependentValues?.fatherResidentId;
-          },
-          isHide: (dependentValues: any) => {
-            return !dependentValues?.fatherResidentId;
-          },
         },
+        {
+          type: "input",
+          key: "motherFullName",
+          label: "Mother's Full Name",
+          placeholder: "Enter Mother's Full Name",
+          description: "",
+          validators: [
+            { type: "required", message: "Mother's full name is required" },
+          ],
+          required: true,
+          group: "Child Details",
+          groupOrder: 13,
+          gridCols: 6,
+        },
+
         {
           group: "Child Details",
           groupOrder: 19,
@@ -214,6 +140,111 @@ export const formConfig: FormConfig = {
           ],
           required: true,
           gridCols: 6,
+        },
+
+        {
+          type: "array", // new type for dynamic children
+          key: "children",
+          label: "Children Details",
+          className: "grid grid-cols-6 md:grid-cols-12 gap-4",
+          getDependentValue: (formValues: any) => ({
+            birthType: formValues.birthType,
+          }),
+          isRequired: (dependentValues: any) => {
+            // Only required when the field is visible
+            return dependentValues?.birthType;
+          },
+          isHide: (dependentValues: any) => {
+            return !dependentValues?.birthType;
+          },
+          getLength: (birthType: string) => {
+            switch (birthType) {
+              case "single":
+                return 1;
+              case "twin":
+                return 2;
+              case "triplet":
+                return 3;
+              default:
+                return 1;
+            }
+          },
+          fields: [
+            {
+              type: "input",
+              key: "firstName",
+              label: "Child's First Name",
+              placeholder: "Enter child's first name.",
+              description: "",
+              gridCols: 6,
+              validators: [
+                { type: "required", message: "Child's First name is required" },
+              ],
+              required: true,
+              group: "Child Details",
+              groupOrder: 1,
+            },
+            {
+              type: "select",
+              key: "gender",
+              label: "Gender",
+              placeholder: "Select Child's Gender",
+              validators: [{ type: "required", message: "" }],
+              required: true,
+              group: "None-Resident Registration",
+              groupOrder: 2,
+              gridCols: 6,
+              options: [
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" },
+              ],
+            },
+
+            {
+              type: "number",
+              key: "birthTimeWeight",
+              label: "Birth Time Weight",
+              placeholder: "Enter Birth Time Weight",
+              description: "",
+              validators: [
+                {
+                  type: "required",
+                  message: "Birth time weight is required",
+                },
+                {
+                  type: "min",
+                  value: 0,
+                  message: "Must be at least 1",
+                },
+              ],
+              required: true,
+              group: "Child Details",
+              groupOrder: 5,
+              gridCols: 6,
+            },
+            {
+              type: "number",
+              key: "birthTimeHeight",
+              label: "Birth Time Height",
+              placeholder: "Ensert Birth Time Height",
+              description: "",
+              validators: [
+                {
+                  type: "required",
+                  message: "Birth time hight is required",
+                },
+                {
+                  type: "min",
+                  value: 0,
+                  message: "Must be above 0",
+                },
+              ],
+              required: true,
+              group: "Child Details",
+              groupOrder: 6,
+              gridCols: 6,
+            },
+          ],
         },
       ],
     },

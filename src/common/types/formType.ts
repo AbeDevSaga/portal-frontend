@@ -15,7 +15,8 @@ export type FieldType =
   | "inputSearch"
   | "formArray"
   | "payment"
-  | "detail";
+  | "detail"
+  | "array";
 
 export interface Option {
   id?: string;
@@ -95,7 +96,11 @@ export interface FieldConfig {
   getPlaceholder?: (dependentValue: any) => string; // Dynamic placeholder based on dependent value
   isHide?: (dependentValue: any) => boolean; // Dynamic visibility based on dependent value
   isRequired?: (dependentValue: any) => boolean; // Dynamic requirement based on dependent value
+  getLength?: (formValues: any) => any; // Get value from dependent field
 
+  //create inner fileds 
+  
+  fields?: FieldConfig[];
   // Lookup specific properties
   lookupConfig?: {
     isExternal?: boolean;
