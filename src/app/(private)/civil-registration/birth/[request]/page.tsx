@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
+import FamilyTree from "@/features/vital-service/components/FamilyTree";
+import { Button } from "@/common/components/ui/button";
 
 type RequestType = "lost" | "damaged" | "correction" | "print";
 
@@ -14,7 +16,7 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
   const [userData, setUserData] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [showFamilyList, setShowFamilyList] = useState(false);  
   // http://168.231.109.155:8081/api/v1/birth-registrations/vital-request?registrationFormNumber=RO-2025-00220250195
 
   // Validate the request
@@ -78,6 +80,17 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
   const placeholderText = "Enter your birth registration ID";
 
   return (
+    <>
+    <div className="flex justify-center gap-4">
+      <Button onClick={() => setShowFamilyList(false)} variant="outline"  >
+        By Registration Form Number
+      </Button>
+      <Button onClick={() => setShowFamilyList(true)} variant="outline">
+        Family Members
+      </Button>
+    </div>
+
+{showFamilyList ? <FamilyTree /> : (
     <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-2">
         <div className="text-center">
@@ -184,8 +197,10 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
             </div>
           </div>
         )}
-      </div>
+        </div>
     </div>
+)}
+    </>
   );
 }
 
