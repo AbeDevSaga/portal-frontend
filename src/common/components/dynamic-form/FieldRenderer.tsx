@@ -81,7 +81,11 @@ interface Props {
  * - `labelClassName`: Applied to the field label element (defaults to "text-primary font-semibold")
  */
 
-export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraData }) => {
+export const FieldRenderer: React.FC<Props> = ({
+  field,
+  formValues = {},
+  extraData,
+}) => {
   const t = useTranslations();
   const dispatch = useDispatch();
 
@@ -207,7 +211,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
               return (
                 <div className={getFieldClassName()}>
                   <Label
-                    className={`${getLabelClassName()??"text-primary font-semibold"}`}
+                    className={`${
+                      getLabelClassName() ?? "text-primary font-semibold"
+                    }`}
                     htmlFor={field.key}>
                     {field.label}
                     {isFieldRequired ? (
@@ -313,8 +319,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                       variant="ghost"
                       size="sm"
                       className="absolute right-2 top-1/2 -translate-y-1/2"
-                      onClick={() => setShow(!show)}
-                    >
+                      onClick={() => setShow(!show)}>
                       {show ? (
                         <EyeOff className="h-4 w-4" />
                       ) : (
@@ -470,7 +475,9 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                     </SelectTrigger>
                     <SelectContent>
                       {field.options?.map((opt, index) => (
-                        <SelectItem key={index} value={opt.value}>
+                        <SelectItem
+                          key={index}
+                          value={opt.value}>
                           {opt.label}
                         </SelectItem>
                       ))}
@@ -544,8 +551,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                     {field.options?.map((opt) => (
                       <Label
                         key={opt.value}
-                        className="flex items-center space-x-2"
-                      >
+                        className="flex items-center space-x-2">
                         <RadioGroupItem value={opt.value} />
                         <span>{opt.label}</span>
                       </Label>
@@ -580,18 +586,18 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
           </Field>
         );
 
-        case "detail":
-          return (
-            <Field name={field.key}>
-              {({ form }: any) => (
-                <RequestDetail
-                  data={extraData?.previewData}  // inject preview data
-                  loading={form.isSubmitting}
-                  error={form.errors[field.key]}
-                />
-              )}
-            </Field>
-          );
+      case "detail":
+        return (
+          <Field name={field.key}>
+            {({ form }: any) => (
+              <RequestDetail
+                data={extraData?.previewData} // inject preview data
+                loading={form.isSubmitting}
+                error={form.errors[field.key]}
+              />
+            )}
+          </Field>
+        );
 
       case "checkbox":
         return (
@@ -789,20 +795,20 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
               <div className="space-y-2 flex flex-col">
                 <Label
                   className="text-primary font-semibold"
-                  htmlFor={fieldKey}
-                >
+                  htmlFor={fieldKey}>
                   {fieldLabel}
                   {isRequired && <span className="pl-2 text-red-600">*</span>}
                 </Label>
-                <Popover open={isOpen} onOpenChange={setIsOpen}>
+                <Popover
+                  open={isOpen}
+                  onOpenChange={setIsOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className="flex items-center justify-start w-full md:min-w-[250px]"
                       id={fieldKey}
                       disabled={isDisabled}
-                      onClick={() => setIsOpen(!isOpen)}
-                    >
+                      onClick={() => setIsOpen(!isOpen)}>
                       {displayDate}
                     </Button>
                   </PopoverTrigger>
@@ -810,8 +816,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                     className="w-auto p-0"
                     align="start"
                     side="bottom"
-                    sideOffset={5}
-                  >
+                    sideOffset={5}>
                     <Calendar
                       mode="single"
                       selected={selectedDate}
@@ -893,7 +898,11 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
 
               // If field is hidden, render empty div to maintain hook consistency
               if (isFieldHidden) {
-                return <div key={field.key} style={{ display: "none" }}></div>;
+                return (
+                  <div
+                    key={field.key}
+                    style={{ display: "none" }}></div>
+                );
               }
 
               const handleValueChange = useCallback(
@@ -2592,8 +2601,8 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
             }}
           </Field>
         );
-      
-        case "digitalSignature":
+
+      case "digitalSignature":
         return (
           <Field name={field.key}>
             {({ field: formikField, form }: any) => {
@@ -2838,8 +2847,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                           size="sm"
                           onClick={clearSignature}
                           disabled={isFieldDisabled}
-                          className="text-red-600 hover:text-red-700"
-                        >
+                          className="text-red-600 hover:text-red-700">
                           Clear Signature
                         </Button>
                       )}
@@ -2851,8 +2859,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                           size="sm"
                           onClick={saveSignature}
                           disabled={isFieldDisabled}
-                          className="text-blue-600 hover:text-blue-700"
-                        >
+                          className="text-blue-600 hover:text-blue-700">
                           Save Signature
                         </Button>
                       )}
@@ -3847,8 +3854,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
                             <div
                               key={index}
                               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                              onClick={() => handleOptionSelect(option)}
-                            >
+                              onClick={() => handleOptionSelect(option)}>
                               {option[labelKey]}
                             </div>
                           ))
@@ -3895,8 +3901,7 @@ export const FieldRenderer: React.FC<Props> = ({ field, formValues = {}, extraDa
     <div
       className={
         shouldUseFullWidth ? "col-span-12 w-full" : getGridClasses(field)
-      }
-    >
+      }>
       {renderFieldContent()}
     </div>
   );
