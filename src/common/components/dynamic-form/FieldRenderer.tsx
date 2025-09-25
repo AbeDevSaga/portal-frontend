@@ -319,8 +319,7 @@ export const FieldRenderer: React.FC<Props> = ({
                       variant="ghost"
                       size="sm"
                       className="absolute right-2 top-1/2 -translate-y-1/2"
-                      onClick={() => setShow(!show)}
-                    >
+                      onClick={() => setShow(!show)}>
                       {show ? (
                         <EyeOff className="h-4 w-4" />
                       ) : (
@@ -475,7 +474,9 @@ export const FieldRenderer: React.FC<Props> = ({
                     </SelectTrigger>
                     <SelectContent>
                       {field.options?.map((opt, index) => (
-                        <SelectItem key={index} value={opt.value}>
+                        <SelectItem
+                          key={index}
+                          value={opt.value}>
                           {opt.label}
                         </SelectItem>
                       ))}
@@ -550,8 +551,7 @@ export const FieldRenderer: React.FC<Props> = ({
                     {field.options?.map((opt) => (
                       <Label
                         key={opt.value}
-                        className="flex items-center space-x-2"
-                      >
+                        className="flex items-center space-x-2">
                         <RadioGroupItem value={opt.value} />
                         <span>{opt.label}</span>
                       </Label>
@@ -795,20 +795,20 @@ export const FieldRenderer: React.FC<Props> = ({
               <div className="space-y-2 flex flex-col">
                 <Label
                   className="text-primary font-semibold"
-                  htmlFor={fieldKey}
-                >
+                  htmlFor={fieldKey}>
                   {fieldLabel}
                   {isRequired && <span className="pl-2 text-red-600">*</span>}
                 </Label>
-                <Popover open={isOpen} onOpenChange={setIsOpen}>
+                <Popover
+                  open={isOpen}
+                  onOpenChange={setIsOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       className="flex items-center justify-start w-full md:min-w-[250px]"
                       id={fieldKey}
                       disabled={isDisabled}
-                      onClick={() => setIsOpen(!isOpen)}
-                    >
+                      onClick={() => setIsOpen(!isOpen)}>
                       {displayDate}
                     </Button>
                   </PopoverTrigger>
@@ -816,8 +816,7 @@ export const FieldRenderer: React.FC<Props> = ({
                     className="w-auto p-0"
                     align="start"
                     side="bottom"
-                    sideOffset={5}
-                  >
+                    sideOffset={5}>
                     <Calendar
                       mode="single"
                       selected={selectedDate}
@@ -899,7 +898,11 @@ export const FieldRenderer: React.FC<Props> = ({
 
               // If field is hidden, render empty div to maintain hook consistency
               if (isFieldHidden) {
-                return <div key={field.key} style={{ display: "none" }}></div>;
+                return (
+                  <div
+                    key={field.key}
+                    style={{ display: "none" }}></div>
+                );
               }
 
               const handleValueChange = useCallback(
@@ -2849,8 +2852,7 @@ export const FieldRenderer: React.FC<Props> = ({
                           size="sm"
                           onClick={clearSignature}
                           disabled={isFieldDisabled}
-                          className="text-red-600 hover:text-red-700"
-                        >
+                          className="text-red-600 hover:text-red-700">
                           Clear Signature
                         </Button>
                       )}
@@ -2862,8 +2864,7 @@ export const FieldRenderer: React.FC<Props> = ({
                           size="sm"
                           onClick={saveSignature}
                           disabled={isFieldDisabled}
-                          className="text-blue-600 hover:text-blue-700"
-                        >
+                          className="text-blue-600 hover:text-blue-700">
                           Save Signature
                         </Button>
                       )}
@@ -3327,8 +3328,7 @@ export const FieldRenderer: React.FC<Props> = ({
                             <div
                               key={index}
                               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                              onClick={() => handleOptionSelect(option)}
-                            >
+                              onClick={() => handleOptionSelect(option)}>
                               {option[labelKey]}
                             </div>
                           ))
@@ -3375,8 +3375,7 @@ export const FieldRenderer: React.FC<Props> = ({
     <div
       className={
         shouldUseFullWidth ? "col-span-12 w-full" : getGridClasses(field)
-      }
-    >
+      }>
       {renderFieldContent()}
     </div>
   );
