@@ -274,6 +274,7 @@ export default function DynamicFormRendering({
   };
 
   const renderStepAccordion = (step: any, index: number, values: any) => {
+    console.log("step.fields,: ", step.fields, "values: ", values)
     const stepValue = `step-${index}`;
     if (step.tabular) {
       // Wrap tabular step in Accordion
