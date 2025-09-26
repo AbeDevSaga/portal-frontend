@@ -1,3 +1,4 @@
+"use client";
 import { AccordionComponent } from "@/common/components/common/AccordionComponent";
 import { Card } from "@/common/components/ui/card";
 import { Award, CircleAlert, Heart, ListChecks } from "lucide-react";

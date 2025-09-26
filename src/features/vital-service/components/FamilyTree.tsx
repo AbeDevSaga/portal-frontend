@@ -266,7 +266,7 @@ const FamilyTree = ({ onContinue }: FamilyTreeProps) => {
                 className="flex items-center gap-1.5 !h-full primary-button"
                 asChild
               >
-                <Link href="/application/newRequest" className="h-full">
+                <Link href="/civil-registration/birth/new?selected=newChild" className="h-full">
                   <Plus />
                   Add Family Member
                 </Link>

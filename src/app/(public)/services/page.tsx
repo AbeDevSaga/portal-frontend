@@ -1,3 +1,4 @@
+"use client";
 import { ServiceList } from "@/common/components/common/ServiceCard";
 import React from "react";
 
