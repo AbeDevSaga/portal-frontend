@@ -1,17 +1,17 @@
 const attachments = [
-    {
-      type: "IMAGE",
-      url: "https://data.unicef.org/wp-content/uploads/2017/12/EngBirthfinal.jpg",
-      fileName: "Birth Certificate",
-      fileType: "image/jpg",
-    },
-    {
-      type: "IMAGE",
-      url: "https://data.unicef.org/wp-content/uploads/2017/12/EngBirthfinal.jpg",
-      fileName: "Birth Certificate",
-      fileType: "image/jpg",
-    },
-  ];
+  {
+    type: "IMAGE",
+    url: "https://data.unicef.org/wp-content/uploads/2017/12/EngBirthfinal.jpg",
+    fileName: "Birth Certificate",
+    fileType: "image/jpg",
+  },
+  {
+    type: "IMAGE",
+    url: "https://data.unicef.org/wp-content/uploads/2017/12/EngBirthfinal.jpg",
+    fileName: "Birth Certificate",
+    fileType: "image/jpg",
+  },
+];
 const resident = [
     {
       personal_info: {
@@ -58,27 +58,31 @@ const resident = [
           kebele: "07",
           house_number: "45",
         },
-        father_current_address: {
+        current_address: {
           region: "ADDIS ABABA",
           zone: "ADDIS KETEMA",
           woreda: "Woreda 02",
           kebele: "05",
           house_number: "123",
         },
-        mother_name: "Meseret Bekele",
-        mother_occupation: "Teacher",
-        mother_phone_number: "+251911234567",
-        mother_profile_picture: "https://randomuser.me/api/portraits/women/3.jpg",
-        mother_nationality_name: "Ethiopia",
-        mother_registration_form_number: "RO-2020-00220250011",
-        mother_previous_address: {
+      },
+      mother_info: {
+        first_name: "Meseret",
+        last_name: "Bekele",
+        occupation: "Teacher",
+        phone_number: "+251911234567",
+        profile_picture: "https://randomuser.me/api/portraits/women/3.jpg",
+        nationality_name: "Ethiopia",
+        registration_form_number: "RO-2020-00220250013",
+        registration_status: "COMPLETED",
+        previous_address: {
           region: "ADDIS ABABA",
           zone: "AKAKI KALITI",
           woreda: "Woreda 03",
           kebele: "07",
           house_number: "45",
         },
-        mother_current_address: {
+        current_address: {
           region: "ADDIS ABABA",
           zone: "ADDIS KETEMA",
           woreda: "Woreda 02",
@@ -187,7 +191,7 @@ const resident = [
           kebele: "07",
           house_number: "45",
         },
-        father_current_address: {
+        current_address: {
           region: "ADDIS ABABA",
           zone: "ADDIS KETEMA",
           woreda: "Woreda 02",
@@ -207,7 +211,7 @@ const resident = [
           kebele: "07",
           house_number: "45",
         },
-        mother_current_address: {
+        current_address: {
           region: "ADDIS ABABA",
           zone: "ADDIS KETEMA",
           woreda: "Woreda 02",
@@ -275,5 +279,37 @@ const resident = [
   ];
  
 
-  export default resident;
-  
+export default resident;
+
+export function getResidentByFormNumber(formNumber: string) {
+  for (const res of resident) {
+    // 1. Check personal info
+    if (res.personal_info.registration_form_number === formNumber) {
+      return res;
+    }
+
+    // 2. Check parental info (father & mother)
+    if (
+      res.parental_info?.father_info?.registration_form_number === formNumber
+    ) {
+      return res;
+    }
+    if (
+      res.parental_info?.mother_info?.registration_form_number === formNumber
+    ) {
+      return res;
+    }
+
+    // 3. Check children info
+    if (res.children_info?.length) {
+      for (const child of res.children_info) {
+        if (child.registration_form_number === formNumber) {
+          // return both resident + child if you want to access child details
+          return { ...res, matchedChild: child };
+        }
+      }
+    }
+  }
+
+  return undefined;
+}

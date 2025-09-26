@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import BirthCorrection from "@/features/vital-service/components/BirthCorrection";
 import BirthDetail from "@/features/vital-service/components/BirthDetail";
+import { getResidentByFormNumber } from "@/common/utils/constants/mock/resident-mock";
 
 type RequestType = "lost" | "damaged" | "correction" | "print";
 
@@ -30,39 +31,41 @@ function RequestDeatil({
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `http://168.231.109.155:8081/api/v1/birth-registrations/vital-request?registrationFormNumber=${id}`
-        );
-        const data = await res.json();
-
-        if (data.success && data.data) {
-          setUserData(data.data);
-        } else {
-          setError(
-            "No record found. Please check your information and try again."
-          );
-        }
-      } catch (err) {
-        setError("An error occurred. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    const result = getResidentByFormNumber(id);
+    console.log("result: ", result)
+    setUserData(result);
   }, [id]);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch(
+  //         `http://168.231.109.155:8081/api/v1/birth-registrations/vital-request?registrationFormNumber=${id}`
+  //       );
+  //       const data = await res.json();
+
+  //       if (data.success && data.data) {
+  //         setUserData(data.data);
+  //       } else {
+  //         setError(
+  //           "No record found. Please check your information and try again."
+  //         );
+  //       }
+  //     } catch (err) {
+  //       setError("An error occurred. Please try again later.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [id]);
+
+  console.log("user data: ", userData);
+
   if (validRequestType === "correction") {
-    return (
-      <BirthCorrection
-        data={userData}
-        loading={loading}
-        error={error}
-      />
-    );
+    return <BirthCorrection data={userData} loading={loading} error={error} />;
   }
   return (
     <BirthDetail

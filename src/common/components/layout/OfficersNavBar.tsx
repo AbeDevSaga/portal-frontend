@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avat
 import { USER_MENU_ITEMS, ALL_MENU_ITEMS } from "@/common/utils/constants/MenuItems";
 import "@/common/utils/styles/home.css";
 import { Bell, Slash } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,6 +15,7 @@ import { LanguageSwitcher } from "../common/LanguageSelector";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useTranslations } from "next-intl";
 import crrsaLogin from "@/public/images/crrsa-login.png";
+import { RootState } from "@/redux/store";
 
 const userMenuItems = USER_MENU_ITEMS;
 
@@ -24,6 +26,7 @@ function classNames(...classes: string[]) {
 
 export default function OfficersNavBar() {
     const { user, logout } = useAuth();
+    const userState = useSelector((state: RootState) => state.user);
     const t = useTranslations();
     
     const username = user?.username || user?.firstName || 'User';
@@ -208,7 +211,7 @@ export default function OfficersNavBar() {
                                         <div className='flex items-center gap-3'>
                                             <div className='text-right'>
                                                 <p className='text-lg font-semibold'>
-                                                    Solomon Yosef
+                                                    {userState.personal_info.first_name}
                                                 </p>
                                                 <p className=''>{t("user")}</p>
                                             </div>
@@ -340,7 +343,7 @@ export default function OfficersNavBar() {
                         <div className='flex items-center px-5'>
                             <div className=''>
                                 <div className='text-right'>
-                                    <p>Solomon Yosef</p>
+                                    {userState.personal_info.first_name}
                                     <p>user</p>
                                 </div>
                                 <div>
