@@ -1,10 +1,11 @@
-import FamilyTree from '@/features/vital-service/components/FamilyTree'
-import React from 'react'
+import FamilyTree from "@/features/vital-service/components/FamilyTree";
+import React from "react";
 
 const page = () => {
-  return (
-    <FamilyTree /> 
-  )
-}
+  const handleContinue = (value: string) => {
+    console.log("value: ", value);
+  };
+  return <FamilyTree onContinue={handleContinue} />;
+};
 
-export default page
+export default page;
