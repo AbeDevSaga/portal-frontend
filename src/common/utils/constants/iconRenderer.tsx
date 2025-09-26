@@ -3,7 +3,8 @@ import Image from "next/image";
 import { MessageCircleWarning } from "lucide-react";
 
 // Import all SVG icons
-import birth from "@/public/images/sidebar/birth.svg";
+// import birth from "@/public/images/sidebar/birth.svg";
+import birth from "@/public/images/birth.svg";
 import death from "@/public/images/sidebar/death.svg";
 import marriage from "@/public/images/sidebar/marriage.svg";
 import divorce from "@/public/images/sidebar/divorce.svg";
@@ -35,20 +36,20 @@ const iconMap: Record<string, string> = {
   id: id.src,
   family: family.src,
   list: list.src,
-  create: create.src
+  create: create.src,
 };
 
-export const IconRenderer: React.FC<IconRendererProps> = ({ 
-  icon, 
-  alt = "icon",  
+export const IconRenderer: React.FC<IconRendererProps> = ({
+  icon,
+  alt = "icon",
   className = "",
-  color 
+  color,
 }) => {
   // If icon is a Lucide icon
   if (icon === "MessageCircleWarning") {
     return <MessageCircleWarning className={className} />;
   }
-  
+
   // If icon is a mapped SVG icon
   if (iconMap[icon]) {
     const filterStyle = color ? { filter: getSvgFilter(color) } : {};
@@ -63,7 +64,7 @@ export const IconRenderer: React.FC<IconRendererProps> = ({
       />
     );
   }
-  
+
   // Fallback for unknown icons
   console.warn(`Unknown icon: ${icon}`);
   return <div className={`w-6 h-6 bg-gray-300 rounded ${className}`} />;
