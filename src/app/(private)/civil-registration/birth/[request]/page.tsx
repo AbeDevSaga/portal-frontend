@@ -16,7 +16,7 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
   const [userData, setUserData] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showFamilyList, setShowFamilyList] = useState(false);  
+  const [showFamilyList, setShowFamilyList] = useState(true);  
   // http://168.231.109.155:8081/api/v1/birth-registrations/vital-request?registrationFormNumber=RO-2025-00220250195
 
   // Validate the request
@@ -81,14 +81,14 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
 
   return (
     <>
-    <div className="flex justify-center gap-4">
+    {/* <div className="flex justify-center gap-4">
       <Button onClick={() => setShowFamilyList(false)} variant="outline"  >
         By Registration Form Number
       </Button>
       <Button onClick={() => setShowFamilyList(true)} variant="outline">
         Family Members
       </Button>
-    </div>
+    </div> */}
 
 {showFamilyList ? <FamilyTree /> : (
     <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
