@@ -12,7 +12,7 @@ export default withAuth(
         console.log('Middleware - Path:', req.nextUrl.pathname);
         
         // Protect private routes - only allow access if user is authenticated
-        if (req.nextUrl.pathname.startsWith('/application') || 
+        if (req.nextUrl.pathname.startsWith('/officers') || 
             req.nextUrl.pathname.startsWith('/officers')) {
           const isAuthorized = !!token;
           console.log('Middleware - Is Authorized:', isAuthorized);

@@ -7,7 +7,6 @@ import legitmation from "@/public/images/sidebar/legitimationoffather.svg";
 import recognition from "@/public/images/sidebar/recognitionofchild.svg";
 import id from "@/public/images/sidebar/id.svg";
 import family from "@/public/images/sidebar/family.svg";
-import { MessageCircleWarning } from "lucide-react";
 
 export interface SidebarChildRoute {
   icon: string | React.ReactNode;

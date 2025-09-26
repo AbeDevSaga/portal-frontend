@@ -1,37 +1,28 @@
-"use client";
-import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { Button } from "@/common/components/ui/button";
+import Image from "next/image";
+import RegisterForm from "./RegisterForm";
 
 export default function SignupPage() {
-    const t = useTranslations();
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        {t('Account Registration')}
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                        {t('Contact your administrator to create an account')}
-                    </p>
-                </div>
-                <div className="mt-8 space-y-6">
-                    <div className="text-center">
-                        <p className="text-sm text-gray-600">
-                            {t('For account creation, please contact your system administrator.')}
-                        </p>
-                    </div>
-                    <div className="text-center">
-                        <Link href="/">
-                            <Button variant="outline">
-                                {t('Back to Home')}
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="min-h-screen flex bg-gray-100 px-16 py-10">
+      <div className="flex bg-white shadow-2xl rounded-3xl border w-full py-10">
+        {/* Left Side - Logo */}
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center px-12 py-7">
+          <Image
+            src="/logo.jpg"
+            alt="CRRSA Logo"
+            width={1000}
+            height={1000}
+            className="max-w-[441px]"
+          />
         </div>
-    );
+
+        {/* Right Side - Form Area (60% width) */}
+        <div className="w-full lg:w-1/2 flex items-center lg:border-l-2 border-[#D9D9D9] justify-center p-8">
+          <div className="w-full max-w-3xl flex flex-col gap-2 ">
+            <RegisterForm />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
