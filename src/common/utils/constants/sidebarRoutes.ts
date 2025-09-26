@@ -257,6 +257,16 @@ export const sidebarRoutes = [
     ],
   },
   {
+    title: "Family Members",
+    childRoutes: [
+      {
+        icon: "family",
+        label: "Family Members",
+        route: "/family-members",
+      },
+    ],
+  },
+  {
     title: "Complaint",
     childRoutes: [
       {
@@ -266,4 +276,5 @@ export const sidebarRoutes = [
       },
     ],
   },
+  
 ];
