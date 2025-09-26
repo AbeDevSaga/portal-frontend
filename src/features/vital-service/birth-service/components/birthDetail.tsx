@@ -1,5 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { AlarmClock, Check, Copy, Eye, Info, Loader } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 // import { mapApiResponseToFormFields } from "@/common/utils/dynamic-form/dynamicApiMapper";
@@ -38,18 +39,17 @@ export default function BirthDetail() {
   const [copied, setCopied] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
   const params = useParams();
-  const slug = params.slug;
-  const { isLoading, isError, data } = useGetBirthBySlugQuery({
-    id: slug,
-  });
+  const slugParam = params?.slug;
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+  const { isLoading, isError, data } = useGetBirthBySlugQuery(
+    slug ? { id: slug } : skipToken
+  );
 
   useEffect(() => {
     if (!isError && !isLoading && data) {
       setResponse(data.data);
     }
   }, [data]);
-
-  
 
   const requirementsandaction = [
     {
