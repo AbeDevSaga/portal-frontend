@@ -1,5 +1,4 @@
 import { LIST_ENDPOINT } from "@/common/utils/constants/EndPoints";
-import { GetListResponse } from "@/features/announcment/types/type";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const listApi = createApi({
@@ -9,7 +8,7 @@ export const listApi = createApi({
   }),
   endpoints: (builder) => ({
     getList: builder.query<
-      GetListResponse,
+      any,
       {
         page?: number;
         perPage?: number;
