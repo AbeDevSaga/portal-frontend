@@ -22,8 +22,8 @@ export function Stepper({
   orientation = "horizontal",
 }: StepperProps) {
   return (
-    <div className="w-full bg-red-500 flex items-center justify-end">
-      <div className="w-full bg-green-500">
+    <div className="w-full flex items-center justify-end">
+      <div className="w-auto overflow-x-scroll">
         <div
           className={cn(
             "flex",

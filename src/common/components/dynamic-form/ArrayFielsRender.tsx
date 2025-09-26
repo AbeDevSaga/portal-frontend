@@ -31,8 +31,7 @@ export const ArrayFieldRenderer: React.FC<ArrayFieldRendererProps> = ({
 
   const dependentValues = field.getDependentValue?.(values) || null;
 
-  if (field.isHide?.(dependentValues)) return null;
-
+  // Move all hooks to the top before any conditional returns
   const baseLength = useMemo(() => {
     return field.getLength?.(dependentValues?.birthType) || 1;
   }, [dependentValues?.birthType, field]);
@@ -91,6 +90,9 @@ export const ArrayFieldRenderer: React.FC<ArrayFieldRendererProps> = ({
     setFieldValue,
     currentArray,
   ]);
+
+  // Now do the conditional return AFTER all hooks
+  if (field.isHide?.(dependentValues)) return null;
 
   const canAddMore = totalAllowedLength < maxItems;
 
