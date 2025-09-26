@@ -40,115 +40,67 @@ export const formConfig: FormConfig = {
       defaultExpanded: true,
       fields: [
         {
-          type: "select",
-          key: "birthType",
-          label: "Birth Type",
-          placeholder: "Select birth type",
-          // className:
-          //   "px-4 h-14 mt-0.5 mb-10 border-neutral-300 placeholder:text-xl text-xl",
-          // labelClassName: "text-lg text-neutral-500", // Example of custom label styling
-          validators: [{ type: "required", message: "" }],
-          required: true,
-          group: "None-Resident Registration",
-          groupOrder: 2,
-          gridCols: 6, // Left column
-          options: [
-            { label: "Single", value: "single" },
-            { label: "Twin", value: "twin" },
-            { label: "Triplet", value: "triplet" },
-            { label: "Other", value: "other" },
-          ],
-        },
-        {
-          type: "date",
-          key: "childDateOfBirth",
-          label: "Date of Birth",
-          placeholder: "DD/MM/YY",
-          description: "",
-          validators: [
-            { type: "required", message: "Date of birth is required" },
+          type: "array", // new type for dynamic children
+          key: "basicInformation",
+          label: "Basic Information",
+          className: "grid grid-cols-1 md:grid-cols-2 gap-4",
+          fields: [
             {
-              type: "maxDate",
-              value: new Date().toISOString().split("T")[0],
-              message: "Date cannot be in the future",
+              type: "select",
+              key: "birthType",
+              label: "Birth Type",
+              placeholder: "Select birth type",
+              // className: "md:col-span-2",
+              validators: [{ type: "required", message: "" }],
+              required: true,
+              group: "None-Resident Registration",
+              groupOrder: 2,
+              gridCols: 6, // Left column
+              options: [
+                { label: "Single", value: "single" },
+                { label: "Twin", value: "twin" },
+                { label: "Triplet", value: "triplet" },
+                { label: "Other", value: "other" },
+              ],
+            },
+            {
+              type: "date",
+              key: "childDateOfBirth",
+              label: "Date of Birth",
+              placeholder: "DD/MM/YY",
+              description: "",
+              validators: [
+                { type: "required", message: "Date of birth is required" },
+                {
+                  type: "maxDate",
+                  value: new Date().toISOString().split("T")[0],
+                  message: "Date cannot be in the future",
+                },
+              ],
+              required: true,
+              group: "Child Details",
+              groupOrder: 4,
+              gridCols: 6,
             },
           ],
-          required: true,
-          group: "Child Details",
-          groupOrder: 4,
-          gridCols: 6,
-        },
-        {
-          type: "input",
-          key: "fatherFullName",
-          label: "Father's Full Name",
-          placeholder: "Enter Father's Full Name",
-          description: "",
-          validators: [
-            { type: "required", message: "Father's full name is required" },
-          ],
-          required: true,
-          group: "Child Details",
-          groupOrder: 12,
-          gridCols: 6,
-        },
-        {
-          type: "input",
-          key: "motherFullName",
-          label: "Mother's Full Name",
-          placeholder: "Enter Mother's Full Name",
-          description: "",
-          validators: [
-            { type: "required", message: "Mother's full name is required" },
-          ],
-          required: true,
-          group: "Child Details",
-          groupOrder: 13,
-          gridCols: 6,
-        },
-
-        {
-          group: "Child Details",
-          groupOrder: 19,
-          type: "input",
-          key: "birthAttendantName",
-          label: "Birth Attendant Full Name",
-          placeholder: "Enter Birth Attendant Full Name.",
-          description: "",
-          validators: [
-            {
-              type: "required",
-              message: "Birth attendant full name is required",
-            },
-          ],
-          required: true,
-          gridCols: 6,
-        },
-        {
-          group: "Child Details",
-          groupOrder: 20,
-          type: "input",
-          key: "birthAttendantQualification",
-          label: "Birth Attendant Qualification",
-          placeholder: "Enter birth attendant qualification.",
-          description: "",
-          validators: [
-            {
-              type: "required",
-              message: "Birth attendant qualification is required",
-            },
-          ],
-          required: true,
-          gridCols: 6,
         },
 
         {
           type: "array", // new type for dynamic children
           key: "children",
           label: "Children Details",
-          className: "grid grid-cols-6 md:grid-cols-12 gap-4",
+          className: "grid grid-cols-1 md:grid-cols-2 gap-4",
+          validators: [
+            {
+              type: "button", // <-- new validator for Add button
+              button: true,
+              maxItems: 5, // maximum children that can be added
+              message: "You cannot add more than 5 children",
+              label: "Add Another Child",
+            },
+          ],
           getDependentValue: (formValues: any) => ({
-            birthType: formValues.birthType,
+            birthType: formValues.basicInformation?.[0]?.birthType,
           }),
           isRequired: (dependentValues: any) => {
             // Only required when the field is visible
@@ -246,6 +198,85 @@ export const formConfig: FormConfig = {
             },
           ],
         },
+        {
+          type: "array", // new type for dynamic children
+          key: "motherInformation",
+          label: "Mother Information",
+          className: "grid grid-cols-1 md:grid-cols-2 gap-4",
+          fields: [
+            {
+              type: "input",
+              key: "fatherFullName",
+              label: "Father's Full Name",
+              placeholder: "Enter Father's Full Name",
+              description: "",
+              validators: [
+                { type: "required", message: "Father's full name is required" },
+              ],
+              required: true,
+              group: "Child Details",
+              groupOrder: 12,
+              gridCols: 6,
+            },
+            {
+              type: "input",
+              key: "motherFullName",
+              label: "Mother's Full Name",
+              placeholder: "Enter Mother's Full Name",
+              description: "",
+              validators: [
+                { type: "required", message: "Mother's full name is required" },
+              ],
+              required: true,
+              group: "Child Details",
+              groupOrder: 13,
+              gridCols: 6,
+            },
+          ],
+        },
+
+        {
+          type: "array", // new type for dynamic children
+          key: "birthAttendantInformation",
+          label: "Birth Attendant Information",
+          className: "grid grid-cols-1 md:grid-cols-2 gap-4",
+          fields: [
+            {
+              group: "Child Details",
+              groupOrder: 19,
+              type: "input",
+              key: "birthAttendantName",
+              label: "Birth Attendant Full Name",
+              placeholder: "Enter Birth Attendant Full Name.",
+              description: "",
+              validators: [
+                {
+                  type: "required",
+                  message: "Birth attendant full name is required",
+                },
+              ],
+              required: true,
+              gridCols: 6,
+            },
+            {
+              group: "Child Details",
+              groupOrder: 20,
+              type: "input",
+              key: "birthAttendantQualification",
+              label: "Birth Attendant Qualification",
+              placeholder: "Enter birth attendant qualification.",
+              description: "",
+              validators: [
+                {
+                  type: "required",
+                  message: "Birth attendant qualification is required",
+                },
+              ],
+              required: true,
+              gridCols: 6,
+            },
+          ],
+        },
       ],
     },
     {
@@ -256,52 +287,47 @@ export const formConfig: FormConfig = {
       defaultExpanded: true,
       fields: [
         {
-          type: "input",
-          key: "honorRecordNumber",
-          label: "Marriage Honor Record Number",
-          placeholder: "",
-          description: "Enter the Marriage Honor Record Number",
-          validators: [
+          type: "payment",
+          key: "paymentOption",
+          label: "Payment Option",
+          description: "Choose your payment method.",
+          required: true,
+          options: [
             {
-              type: "required",
-              message: "Marriage Honor Record Number is required",
+              id: "telebirr",
+              label: "Telebirr Transfer",
+              value: "telebirr",
+              data: {
+                image: "/images/telebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-white",
+              },
+            },
+            {
+              id: "cbe",
+              label: "CBE Transfer",
+              value: "cbe",
+              data: {
+                image: "/images/cbebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#730b7d]",
+              },
+            },
+            {
+              id: "mpesa",
+              label: "Mpesa Transfer",
+              value: "mpesa",
+              data: {
+                image: "/images/mpesa.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#09ed2c]",
+              },
             },
           ],
-          required: true,
-          group: "Honor Information",
-          groupOrder: 4,
-        },
-        {
-          type: "input",
-          key: "uniqueRegistrationOfficeNumber",
-          label: "Registration Office Number",
-          placeholder: "",
-          description: "Enter the Unique number of the registration office",
-          validators: [
-            {
-              type: "required",
-              message: "Registration Office Number is required",
-            },
-          ],
-          required: true,
-          group: "Honor Information",
-          groupOrder: 4,
-        },
-        {
-          type: "input",
-          key: "uniqueMarriageCertificateNumber",
-          label: "Marriage Certificate Number",
-          placeholder: "",
-          description: "Enter the Unique Marraige Certificate Number",
-          validators: [
-            {
-              type: "required",
-              message: "Marriage Certificate Number is required",
-            },
-          ],
-          required: true,
-          group: "Honor Information",
-          groupOrder: 4,
+          gridCols: 12,
         },
       ],
     },

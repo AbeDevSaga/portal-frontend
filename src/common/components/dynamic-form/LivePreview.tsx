@@ -19,12 +19,34 @@ import {
 import { Button } from "@/common/components/ui/button";
 import { useState, useEffect } from "react";
 import { resolveLabel } from "@/common/utils/dynamic-form/resolveLabel";
+
 const formatValueForDisplay = (
   value: any,
   fieldType?: string,
   fieldLabel?: string
 ): string => {
+  console.log(
+    "value: ",
+    value,
+    "fieldType: ",
+    fieldType,
+    "fieldLabel: ",
+    fieldLabel
+  );
   if (!value || value === "") return "";
+
+  // Handle array fields
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "";
+
+    // If it's an array of objects (like array fields), format each item
+    if (typeof value[0] === "object" && value[0] !== null) {
+      return `${value.length} item(s) entered`;
+    }
+
+    // If it's a simple array, join the values
+    return value.join(", ");
+  }
 
   // Handle digital signature fields
   if (
@@ -49,12 +71,6 @@ const formatValueForDisplay = (
     if (value.label) return value.label;
     if (value.name) return value.name;
     if (value.value) return value.value;
-    if (Array.isArray(value) && value.length > 0) {
-      if (typeof value[0] === "object" && value[0].label) {
-        return value.map((item: any) => item.label).join(", ");
-      }
-      return value.join(", ");
-    }
     return "Selected";
   }
 
@@ -67,6 +83,23 @@ const formatValueForDisplay = (
   return String(value);
 };
 
+// Helper function to get array field values for display
+const getArrayFieldDisplayValue = (field: any, formValues: any): string => {
+  const arrayValue = formValues[field.key];
+
+  if (!arrayValue || !Array.isArray(arrayValue)) return "";
+
+  if (arrayValue.length === 0) return "";
+
+  // For array fields, show a summary of what's been filled
+  const filledCount = arrayValue.filter(
+    (item) =>
+      item && Object.values(item).some((val) => val !== "" && val != null)
+  ).length;
+
+  return `${filledCount} of ${arrayValue.length} item(s) filled`;
+};
+
 interface LivePreviewProps {
   title: string;
   subtitle?: string;
@@ -74,10 +107,15 @@ interface LivePreviewProps {
   avatarAlt?: string;
   formValues: Record<string, any>;
   groupMap?: Record<string, string>;
-  allFields: Array<{ key: string; label: string; type: string }>;
+  allFields: Array<{
+    key: string;
+    label: string;
+    type: string;
+    fields?: any[];
+  }>;
   className?: string;
   style?: React.CSSProperties;
-  config?: FormConfig; // Add config to access step information
+  config?: FormConfig;
   expandedSections?: string[];
   onAccordionStateChange?: (expandedItems: string[]) => void;
 }
@@ -104,175 +142,55 @@ export default function LivePreview({
   const [localExpandedSections, setLocalExpandedSections] =
     useState<string[]>(expandedSections);
 
-  // Sync local state with parent form's accordion state
   useEffect(() => {
     setLocalExpandedSections(expandedSections);
   }, [expandedSections]);
 
-  // Group the data based on the groupMap
-  const groupedData = allFields.reduce((acc, field) => {
-    if (!groupMap[field.key]) return acc;
+  // Enhanced field processing that handles array fields
+  const processFieldForDisplay = (field: any, formValues: any) => {
+    const resolvedLabel = resolveLabel(field.label, formValues);
 
-    const groupName = groupMap[field.key];
+    // Handle array fields specially
+    if (field.type === "array") {
+      const displayValue = getArrayFieldDisplayValue(field, formValues);
+      return {
+        label: resolvedLabel,
+        value: displayValue,
+        type: field.type,
+        isArray: true,
+        arrayData: formValues[field.key] || [],
+      };
+    }
+
+    // Handle regular fields
     const value = formValues[field.key] ?? "";
-
-    console.log("value: ", value, formValues)
-    console.log("groupName: ", groupName)
-    console.log("field: ", field)
-
-    if (!acc[groupName]) acc[groupName] = [];
-    acc[groupName].push({
-      label: field.label,
+    const displayValue = formatValueForDisplay(
       value,
-      type: field.type, // Include field type for proper formatting
-    });
-
-    return acc;
-  }, {} as Record<string, { label: string; value: any; type: string }[]>);
-
-  const groupedArray = Object.values(groupedData);
-
-  // Check if we should use accordion (when stepperData is not empty)
-  const shouldUseAccordion =
-    config?.stepperData && config.stepperData.length > 0;
-
-  // Check if form has multiple steps (stepper)
-  const hasMultipleSteps = config?.steps && config.steps.length > 1;
-
-  // Function to expand all sections
-  const expandAll = () => {
-    if (config?.steps) {
-      const allStepKeys = config.steps.map((_, index) => `step-${index}`);
-      setLocalExpandedSections(allStepKeys);
-      // Notify parent form of the change
-      if (onAccordionStateChange) {
-        onAccordionStateChange(allStepKeys);
-      }
-    }
-  };
-
-  // Function to collapse all sections
-  const collapseAll = () => {
-    setLocalExpandedSections([]);
-    // Notify parent form of the change
-    if (onAccordionStateChange) {
-      onAccordionStateChange([]);
-    }
-  };
-
-  // Function to handle accordion value change
-  const handleAccordionChange = (value: string[]) => {
-    setLocalExpandedSections(value);
-  };
-
-  // Function to render step-based preview with accordion
-  const renderStepBasedPreviewWithAccordion = () => {
-    if (!config?.steps) return null;
-
-    return (
-      <div className="space-y-3">
-        {/* Expand/Collapse Controls */}
-        <div className="flex gap-2 pb-2 border-b border-white/20 justify-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={expandAll}
-            className="text-primary border-white/30 hover:border-white/50  hover:bg-white/50 hover:text-primary"
-          >
-            <Expand className="w-4 h-4 mr-1" />
-            Expand All
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={collapseAll}
-            className="text-primary border-white/30  hover:bg-white/10 hover:text-primary"
-          >
-            <ChevronUp className="w-4 h-4 mr-1" />
-            Collapse All
-          </Button>
-        </div>
-        <Accordion
-          type="multiple"
-          className="w-full"
-          value={localExpandedSections}
-          onValueChange={handleAccordionChange}
-        >
-          {config.steps.map((step, stepIndex) => (
-            <AccordionItem
-              key={stepIndex}
-              value={`step-${stepIndex}`}
-              className="border-white/20"
-            >
-              <AccordionTrigger className="text-primary hover:text-primary/80 py-3">
-                <div className="flex items-center gap-3">
-                  {/* Step indicator */}
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-primary text-xs font-bold">
-                    {stepIndex + 1}
-                  </div>
-                  {/* Step title */}
-                  <span className="text-base font-semibold text-primary/60">
-                    {step.title}
-                  </span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="text-primary">
-                {/* Step Fields */}
-                <div className="space-y-3">
-                  {step.fields.map((field) => {
-                    const value = formValues[field.key] ?? "";
-                    const resolvedLabel = resolveLabel(field.label, formValues);
-                    const displayValue = formatValueForDisplay(
-                      value,
-                      field.type,
-                      resolvedLabel
-                    );
-
-                    return (
-                      <div
-                        key={field.key}
-                        className="flex justify-between items-start py-2 border-b border-white/10"
-                      >
-                        <span className="text-sm font-medium text-primary/90">
-                          {resolvedLabel}:
-                        </span>
-                        <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
-                          {displayValue === "" ? (
-                            <span className="text-primary/50 italic">
-                              Not filled
-                            </span>
-                          ) : (
-                            // Handle both string and object values for lookup fields
-                            displayValue
-                          )}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+      field.type,
+      resolvedLabel
     );
+
+    return {
+      label: resolvedLabel,
+      value: displayValue,
+      type: field.type,
+      isArray: false,
+    };
   };
 
-  // Function to render step-based preview with mixed accordion/normal display based on tabular property
+  // Function to render step-based preview with mixed display
   const renderStepBasedPreviewWithMixedDisplay = () => {
     if (!config?.steps) return null;
 
     return (
       <div className="space-y-4">
-        {" "}
-        {/* Expand/Collapse Controls for stepper forms */}
-        {hasMultipleSteps && (
+        {config.stepperData && config.stepperData.length > 0 && (
           <div className="flex gap-2 pb-2 border-b border-white/20 justify-center">
             <Button
               variant="outline"
               size="sm"
               onClick={expandAll}
-              className="text-primary "
+              className="text-primary"
             >
               <Expand className="w-4 h-4 mr-1" />
               Expand All
@@ -288,12 +206,11 @@ export default function LivePreview({
             </Button>
           </div>
         )}
+
         {config.steps.map((step, stepIndex) => {
-          // Check if this step should use accordion (tabular: true)
           const shouldUseAccordionForStep = step.tabular === true;
 
           if (shouldUseAccordionForStep) {
-            // Render step as accordion
             return (
               <Accordion
                 key={stepIndex}
@@ -321,29 +238,20 @@ export default function LivePreview({
                 >
                   <AccordionTrigger className="text-primary hover:text-primary/80 py-3">
                     <div className="flex items-center gap-3">
-                      {/* Step indicator */}
                       <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 text-primary text-xs font-bold">
                         {stepIndex + 1}
                       </div>
-                      {/* Step title */}
                       <span className="text-base font-semibold text-primary/60">
                         {step.title}
                       </span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="text-primary">
-                    {/* Step Fields */}
                     <div className="space-y-3">
                       {step.fields.map((field) => {
-                        const value = formValues[field.key] ?? "";
-                        const resolvedLabel = resolveLabel(
-                          field.label,
+                        const fieldData = processFieldForDisplay(
+                          field,
                           formValues
-                        );
-                        const displayValue = formatValueForDisplay(
-                          value,
-                          field.type,
-                          resolvedLabel
                         );
 
                         return (
@@ -352,16 +260,19 @@ export default function LivePreview({
                             className="flex justify-between items-start py-2 border-b border-white/10"
                           >
                             <span className="text-sm font-medium text-primary/90">
-                              {resolvedLabel}:
+                              {fieldData.label}:
                             </span>
                             <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
-                              {displayValue === "" ? (
+                              {fieldData.value === "" ? (
                                 <span className="text-primary/50 italic">
                                   Not filled
                                 </span>
+                              ) : fieldData.isArray ? (
+                                <span className="text-blue-600 font-medium">
+                                  {fieldData.value}
+                                </span>
                               ) : (
-                                // Handle both string and object values for lookup fields
-                                displayValue
+                                fieldData.value
                               )}
                             </span>
                           </div>
@@ -373,26 +284,17 @@ export default function LivePreview({
               </Accordion>
             );
           } else {
-            // Render step normally (non-accordion)
             return (
               <div key={stepIndex} className="space-y-3">
-                {/* Step Title with horizontal line */}
                 <div className="border-b border-white/30 pb-2">
                   <h3 className="text-lg font-semibold text-primary/60">
                     {step.title}
                   </h3>
                 </div>
 
-                {/* Step Fields */}
                 <div className="space-y-3">
                   {step.fields.map((field) => {
-                    const value = formValues[field.key] ?? "";
-                    const resolvedLabel = resolveLabel(field.label, formValues);
-                    const displayValue = formatValueForDisplay(
-                      value,
-                      field.type,
-                      resolvedLabel
-                    );
+                    const fieldData = processFieldForDisplay(field, formValues);
 
                     return (
                       <div
@@ -400,16 +302,19 @@ export default function LivePreview({
                         className="flex justify-between items-start py-2 border-b border-white/10"
                       >
                         <span className="text-sm font-medium text-primary/90">
-                          {resolvedLabel}:
+                          {fieldData.label}:
                         </span>
                         <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
-                          {displayValue === "" ? (
+                          {fieldData.value === "" ? (
                             <span className="text-primary/50 italic">
                               Not filled
                             </span>
+                          ) : fieldData.isArray ? (
+                            <span className="text-blue-600 font-medium">
+                              {fieldData.value}
+                            </span>
                           ) : (
-                            // Handle both string and object values for lookup fields
-                            displayValue
+                            fieldData.value
                           )}
                         </span>
                       </div>
@@ -417,7 +322,6 @@ export default function LivePreview({
                   })}
                 </div>
 
-                {/* Horizontal line after each step (except the last one) */}
                 {stepIndex < config.steps.length - 1 && (
                   <hr className="border-white/20 my-4" />
                 )}
@@ -429,52 +333,22 @@ export default function LivePreview({
     );
   };
 
-  // Function to render grouped preview (fallback)
-  const renderGroupedPreview = () => {
-    return (
-      <div className="space-y-3">
-        {groupedArray?.map((group, index) => (
-          <div key={index} className="space-y-2 py-2 border-b border-white/20">
-            {group.map((groupItem) => (
-              <div
-                key={groupItem.label + "live preview"}
-                className="flex justify-between items-start"
-              >
-                <span className="text-sm font-medium text-primary/90">
-                  {groupItem.label}:
-                </span>
-                <span className="text-sm text-primary/80 text-right max-w-[60%] break-words">
-                  {groupItem.value === "" ? (
-                    <span className="text-primary/50 italic">Not filled</span>
-                  ) : (
-                    // Handle both string and object values for lookup fields
-                    formatValueForDisplay(
-                      groupItem.value,
-                      groupItem.type,
-                      groupItem.label
-                    )
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
+  // Expand/Collapse functions
+  const expandAll = () => {
+    if (config?.steps) {
+      const allStepKeys = config.steps.map((_, index) => `step-${index}`);
+      setLocalExpandedSections(allStepKeys);
+      if (onAccordionStateChange) {
+        onAccordionStateChange(allStepKeys);
+      }
+    }
   };
 
-  // Determine which preview to render
-  const renderPreview = () => {
-    if (config?.steps) {
-      // If stepperData exists and is not empty, use accordion
-      if (shouldUseAccordion) {
-        return renderStepBasedPreviewWithAccordion();
-      }
-      // Otherwise use regular step-based preview
-      return renderStepBasedPreviewWithMixedDisplay();
+  const collapseAll = () => {
+    setLocalExpandedSections([]);
+    if (onAccordionStateChange) {
+      onAccordionStateChange([]);
     }
-    // Fallback to grouped preview
-    return renderGroupedPreview();
   };
 
   return (
@@ -483,13 +357,11 @@ export default function LivePreview({
         Preview
       </p>
       <Card className="" style={style}>
-        {/* Header */}
         <div className="border-b border-slate-300 flex gap-2 pb-3 items-center">
           <User className="text-primary" />
           <p className="text-primary font-semibold">{title}</p>
         </div>
 
-        {/* Avatar and Basic Info */}
         <div className="flex items-center py-3 border-b border-white/20">
           <div className="h-10 w-10 relative rounded-sm overflow-clip bg-white/50">
             {avatarSrc ? (
@@ -515,9 +387,8 @@ export default function LivePreview({
           </div>
         </div>
 
-        {/* Content - Dynamic preview based on configuration */}
         <div className="pt-3 max-h-[550px] overflow-y-auto px-5 no-scrollbar">
-          {renderPreview()}
+          {renderStepBasedPreviewWithMixedDisplay()}
         </div>
       </Card>
     </div>

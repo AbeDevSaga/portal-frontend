@@ -43,10 +43,16 @@ export interface ValidatorConfig {
     | "pattern"
     | "minDate"
     | "maxDate"
-    | "minAge";
+    | "minAge"
+    | "button"; // <-- new type for controlling Add button
   value?: number | string | Date | "dynamic";
+  label?: string;
   message: string;
   condition?: (formValues: any) => boolean; // Optional condition function to make validator conditional
+
+  // New properties for Add Button control
+  button?: boolean; // If true, this validator applies to the add button
+  maxItems?: number; // Maximum items allowed when button is true
 }
 
 export interface OptionConfig {
@@ -98,8 +104,8 @@ export interface FieldConfig {
   isRequired?: (dependentValue: any) => boolean; // Dynamic requirement based on dependent value
   getLength?: (formValues: any) => any; // Get value from dependent field
 
-  //create inner fileds 
-  
+  //create inner fileds
+
   fields?: FieldConfig[];
   // Lookup specific properties
   lookupConfig?: {
