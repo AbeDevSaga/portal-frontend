@@ -3,16 +3,18 @@ import { FormConfig } from "@/common/types/formType";
 export const formConfig: FormConfig = {
   stepperData: [],
   stepperPosition: "",
-  grouping: {
-    defaultGroup: "Deceased’s Details",
-    groups: [
-      {
-        name: "Deceased’s Details",
-        label: "Deceased’s Details",
-        order: 1,
-      },
-    ],
-  },
+  grouping: [
+    {
+      defaultGroup: "Deceased’s Details",
+      groups: [
+        {
+          name: "Deceased’s Details",
+          label: "Deceased’s Details",
+          order: 1,
+        },
+      ],
+    },
+  ],
   steps: [
     {
       title: "Deceased’s Details",
