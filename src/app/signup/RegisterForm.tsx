@@ -19,6 +19,7 @@ import {
   getWoredaOptionsBySubcity,
 } from "./subcityWoredaData";
 import DatePickerComponent from "@/common/components/common/DatePickerComponent";
+import { error } from "console";
 
 type UserType = "organization" | "user" | null;
 type AuthMethod = "fayda" | "email" | null;
@@ -66,14 +67,24 @@ export default function RegisterForm() {
 
   const subcityOptions = getSubcityOptions();
   const woredaOptions = getWoredaOptionsBySubcity(organizationForm.subCity);
-
+  // COURT, HEALTH_FACILITY, POLICE
   const organizationTypes = [
-    { label: "Government", value: "government" },
-    { label: "Private", value: "private" },
-    { label: "NGO", value: "ngo" },
-    { label: "International Organization", value: "international" },
+    { label: "Court", value: "COURT" },
+    { label: "Health Facility", value: "HEALTH_FACILITY" },
+    { label: "Police", value: "POLICE" },
   ];
 
+  const formatPhoneNumber = (phone: string) => {
+    if (!phone) return "";
+    phone = phone.trim();
+    if (phone.startsWith("0")) {
+      return "+251" + phone.slice(1);
+    } else if (phone.startsWith("+251")) {
+      return phone;
+    } else {
+      return phone; // fallback for already formatted numbers
+    }
+  };
   // Simple validation functions
   const isOrganizationFormValid = () => {
     return (
@@ -103,12 +114,69 @@ export default function RegisterForm() {
     setOrganizationForm((prev) => ({ ...prev, attachment: file }));
   };
 
-  const handleOrganizationSubmit = (e: React.FormEvent) => {
+  const handleOrganizationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isOrganizationFormValid()) {
-      // Handle organization registration
-      console.log("Organization form:", organizationForm);
+    if (!isOrganizationFormValid()) return;
+
+    try {
+      let attachmentId: string | null = null;
+
+      // Upload file if exists
+      if (organizationForm.attachment) {
+        const formData = new FormData();
+        formData.append("file", organizationForm.attachment);
+
+        const uploadResponse = await fetch(
+          "https://crrsa-api.risertechservices.com/api/v1/storage/files/public",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!uploadResponse.ok) {
+          throw new Error("File upload failed");
+        }
+
+        const uploadResult = await uploadResponse.json();
+        console.log("File upload response:", uploadResult);
+        attachmentId = uploadResult.id;
+      }
+
+      // Prepare registration body
+      const registrationBody: any = {
+        organizationName: organizationForm.organizationName,
+        email: organizationForm.email,
+        organizationType: organizationForm.organizationType.toUpperCase(),
+        phoneNumber: formatPhoneNumber(organizationForm.phoneNumber),
+        structureId: "8b097e41-8adf-42e4-a0d5-b23a47d7f356",
+      };
+
+      if (attachmentId) {
+        registrationBody.attachmentIds = [attachmentId];
+      }
+
+      const registrationResponse = await fetch(
+        "https://crrsa-api.risertechservices.com/api/v1/informant-service/registrations",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(registrationBody),
+        }
+      );
+      console.log("Registration request body:", registrationBody);
+
+      if (!registrationResponse.ok) {
+        throw new Error("Registration failed");
+      }
+
+      const registrationResult = await registrationResponse.json();
+      console.log("Registration response:", registrationResult);
+
       setIsSubmitted(true);
+    } catch (error: any) {
+      console.error("Error during registration:", error.message);
+      alert(error.message);
     }
   };
 
@@ -151,7 +219,8 @@ export default function RegisterForm() {
         type="button"
         variant="ghost"
         onClick={handleBack}
-        className="absolute top-1 left-0 p-2 pr-3 hover:bg-gray-100 rounded-full z-10 flex items-center gap-1 font-bold">
+        className="absolute top-1 left-0 p-2 pr-3 hover:bg-gray-100 rounded-full z-10 flex items-center gap-1 font-bold"
+      >
         <ChevronLeft className="w-5 h-5 text-gray-600" />
         <span className=" font-medium">Back</span>
       </Button>
@@ -167,7 +236,8 @@ export default function RegisterForm() {
             className="w-8 h-8 text-green-600"
             fill="none"
             stroke="currentColor"
-            viewBox="0 0 24 24">
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -220,7 +290,8 @@ export default function RegisterForm() {
                 phoneNumber: "",
                 dateOfBirth: "",
               });
-            }}>
+            }}
+          >
             Register Another Account
           </Button>
         </div>
@@ -241,7 +312,8 @@ export default function RegisterForm() {
           {/* Organization Card */}
           <Card
             className="flex-1 w-full h-full max-w-[222px] max-h-[222px] aspect-square cursor-pointer shadow-lg hover:shadow-xl transition-shadow border border-[#E5E5E5]"
-            onClick={() => setUserType("organization")}>
+            onClick={() => setUserType("organization")}
+          >
             <CardContent className="p-3 text-center flex flex-col items-center h-full gap-2.5 justify-center">
               <Image
                 src="/icons/org.svg"
@@ -262,7 +334,8 @@ export default function RegisterForm() {
           {/* User Card */}
           <Card
             className="flex-1 w-full h-full max-w-[222px] max-h-[222px] aspect-square cursor-pointer shadow-lg hover:shadow-xl transition-shadow border border-[#E5E5E5]"
-            onClick={() => setUserType("user")}>
+            onClick={() => setUserType("user")}
+          >
             <CardContent className="p-3 text-center flex flex-col items-center h-full gap-2.5 justify-center">
               <Image
                 src="/icons/user.svg"
@@ -289,9 +362,7 @@ export default function RegisterForm() {
           Sign Up
         </h2>
 
-        <form
-          onSubmit={handleOrganizationSubmit}
-          className="space-y-6">
+        <form onSubmit={handleOrganizationSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Organization Name */}
             <div className="flex flex-col items-start justify-start">
@@ -324,15 +395,14 @@ export default function RegisterForm() {
                     ...prev,
                     organizationType: value,
                   }))
-                }>
+                }
+              >
                 <SelectTrigger className="w-full h-12 text-base">
                   <SelectValue placeholder="Select organization type" />
                 </SelectTrigger>
                 <SelectContent>
                   {organizationTypes.map((type) => (
-                    <SelectItem
-                      key={type.value}
-                      value={type.value}>
+                    <SelectItem key={type.value} value={type.value}>
                       {type.label}
                     </SelectItem>
                   ))}
@@ -391,7 +461,8 @@ export default function RegisterForm() {
                     subCity: value,
                     woreda: "",
                   }))
-                }>
+                }
+              >
                 <SelectTrigger className="w-full h-12 text-base">
                   <SelectValue placeholder="Select sub-city" />
                 </SelectTrigger>
@@ -400,7 +471,8 @@ export default function RegisterForm() {
                     <SelectItem
                       className="text-base"
                       key={subcity.value}
-                      value={subcity.value}>
+                      value={subcity.value}
+                    >
                       {subcity.label}
                     </SelectItem>
                   ))}
@@ -418,7 +490,8 @@ export default function RegisterForm() {
                 onValueChange={(value) =>
                   setOrganizationForm((prev) => ({ ...prev, woreda: value }))
                 }
-                disabled={!organizationForm.subCity}>
+                disabled={!organizationForm.subCity}
+              >
                 <SelectTrigger className="w-full h-12 text-base">
                   <SelectValue placeholder="Select woreda" />
                 </SelectTrigger>
@@ -427,7 +500,8 @@ export default function RegisterForm() {
                     <SelectItem
                       className="text-base"
                       key={woreda.value}
-                      value={woreda.value}>
+                      value={woreda.value}
+                    >
                       {woreda.label}
                     </SelectItem>
                   ))}
@@ -470,7 +544,8 @@ export default function RegisterForm() {
               />
               <label
                 htmlFor="file-upload"
-                className="cursor-pointer h-full w-full my-auto">
+                className="cursor-pointer h-full w-full my-auto"
+              >
                 <Image
                   src="/icons/upload-file.svg"
                   alt="Upload"
@@ -502,7 +577,8 @@ export default function RegisterForm() {
                 isOrganizationFormValid()
                   ? "bg-[#073954] hover:bg-[#073954]/90 text-white shadow-[#4475F240] cursor-pointer"
                   : "bg-gray-400 text-gray-200 cursor-not-allowed"
-              }`}>
+              }`}
+            >
               SignUp
             </Button>
           </div>
@@ -520,9 +596,7 @@ export default function RegisterForm() {
           Sign Up
         </h2>
 
-        <form
-          onSubmit={handleUserSubmit}
-          className="space-y-6">
+        <form onSubmit={handleUserSubmit} className="space-y-6">
           {/* User Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* first Name */}
@@ -623,7 +697,8 @@ export default function RegisterForm() {
                 isUserFormValid()
                   ? "bg-[#073954] hover:bg-[#073954]/90 text-white shadow-[#4475F240] cursor-pointer"
                   : "bg-gray-400 text-gray-200 cursor-not-allowed"
-              }`}>
+              }`}
+            >
               SignUp
             </Button>
           </div>
@@ -649,7 +724,8 @@ export default function RegisterForm() {
                 type="button"
                 variant="outline"
                 onClick={() => setAuthMethod("fayda")}
-                className="w-full h-12 flex items-center justify-center gap-2 bg-[#0739541A] hover:bg-gray-300/70 border-gray-300 text-base">
+                className="w-full h-12 flex items-center justify-center gap-2 bg-[#0739541A] hover:bg-gray-300/70 border-gray-300 text-base"
+              >
                 <Image
                   src="/images/fayda.svg"
                   alt="Fayda"
@@ -666,7 +742,8 @@ export default function RegisterForm() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 flex items-center justify-center gap-2 bg-[#0739541A] hover:bg-gray-300/70 border-gray-300 text-base">
+                className="w-full h-12 flex items-center justify-center gap-2 bg-[#0739541A] hover:bg-gray-300/70 border-gray-300 text-base"
+              >
                 <Image
                   src="/icons/mail-box.svg"
                   alt="Email"
@@ -694,7 +771,8 @@ export default function RegisterForm() {
             type="button"
             variant="ghost"
             onClick={handleBack}
-            className="p-2 hover:bg-gray-100 rounded-full flex items-center gap-1">
+            className="p-2 hover:bg-gray-100 rounded-full flex items-center gap-1"
+          >
             <ChevronLeft className="w-4 h-4 text-gray-600" />
             <span className="text-gray-600 text-base">Back</span>
           </Button>
@@ -722,7 +800,8 @@ export default function RegisterForm() {
           <div className="flex gap-4 pt-4 items-center justify-between">
             <Button
               type="submit"
-              className={`h-11 font-extrabold text-lg shadow-lg w-full px-8 py-2 bg-[#073954] hover:bg-[#073954]/90 text-white shadow-[#4475F240] cursor-pointer`}>
+              className={`h-11 font-extrabold text-lg shadow-lg w-full px-8 py-2 bg-[#073954] hover:bg-[#073954]/90 text-white shadow-[#4475F240] cursor-pointer`}
+            >
               <Image
                 src="/icons/fayda.svg"
                 alt="Fayda"
