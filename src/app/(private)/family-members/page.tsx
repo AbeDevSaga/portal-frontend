@@ -1,3 +1,4 @@
+"use client";
 import FamilyTree from "@/features/vital-service/components/FamilyTree";
 import React from "react";
 
