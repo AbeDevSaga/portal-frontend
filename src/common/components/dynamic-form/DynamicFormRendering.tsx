@@ -90,40 +90,7 @@ export default function DynamicFormRendering({
       );
     }
   }, [stepIndex, hasStepper]);
-  // Ensure current step and first group are expanded automatically
-  // useEffect(() => {
-  //   if (!externalExpandedItems && hasStepper) {
-  //     const stepValue = `step-${stepIndex}`;
-  //     const baseExpanded = internalExpandedItems.filter(
-  //       (item) => !item.startsWith(`step-${stepIndex}`)
-  //     );
-
-  //     const stepperStep = config.stepperData?.[stepIndex];
-
-  //     let groupExpanded: string[] = [];
-
-  //     const matchingGroup = config.grouping?.find(
-  //       (g) => g.group === stepperStep?.content
-  //     );
-
-  //     if (matchingGroup?.groups?.length) {
-  //       // Always expand the first group in the current step
-  //       groupExpanded.push(`step-${stepIndex}-group-0`);
-  //     } else {
-  //       // No group, expand the step itself
-  //       groupExpanded.push(stepValue);
-  //     }
-
-  //     setInternalExpandedItems([...baseExpanded, ...groupExpanded]);
-  //   }
-  // }, [
-  //   stepIndex,
-  //   hasStepper,
-  //   config,
-  //   internalExpandedItems,
-  //   externalExpandedItems,
-  // ]);
-
+  
   // Handle accordion value changes
   const handleAccordionValueChange = (value: string[]) => {
     if (externalExpandedItems) {
@@ -338,7 +305,7 @@ export default function DynamicFormRendering({
           enableReinitialize
         >
           {({ values, isValid }) => {
-            const shouldEnableButton = isValid;
+            const shouldEnableButton = true;
 
             return (
               <>

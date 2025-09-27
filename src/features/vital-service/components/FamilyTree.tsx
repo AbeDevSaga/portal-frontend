@@ -81,7 +81,12 @@ const FamilyTableColumns: ColumnDef<any>[] = [
     },
   },
 ];
-const FamilyTree = () => {
+
+interface FamilyTreeProps {
+  onContinue: (value: string) => void;
+}
+
+const FamilyTree = ({ onContinue }: FamilyTreeProps) => {
   const husbandData = resident[0]; // Husband's data
   const wifeData = resident[1]; // Wife's data
   const router = useRouter();
@@ -172,11 +177,15 @@ const FamilyTree = () => {
   const handleSelect = (memberType: string, memberData: any) => {
     console.log(`Selected ${memberType}:`, memberData);
     // Navigation will be implemented later
-    router.push(`/civil-registration/birth/correction/${memberData.id}`);
+    onContinue(memberData.id);
   };
 
   const FamilyMemberCard = ({ member }: { member: any }) => (
-    <div key={member.id} onClick={() => handleSelect(member.memberType, member)} className="bg-white px-5 rounded-lg hover:bg-slate-100 hover:border-slate-300   transition-all duration-300 shadow-lg border cursor-pointer border-gray-100 p-4   hover:shadow-md">
+    <div
+      key={member.id}
+      onClick={() => handleSelect(member.memberType, member)}
+      className="bg-white px-5 rounded-lg hover:bg-slate-100 hover:border-slate-300   transition-all duration-300 shadow-lg border cursor-pointer border-gray-100 p-4   hover:shadow-md"
+    >
       <div className="flex items-center space-x-3 mb-3 border-b pb-3">
         <img
           src={member.profile_picture}
@@ -289,7 +298,6 @@ const FamilyTree = () => {
             />
           </div>
         )}
-
       </div>
     </>
   );
