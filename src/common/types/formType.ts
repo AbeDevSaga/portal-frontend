@@ -104,6 +104,11 @@ export interface FieldConfig {
   isRequired?: (dependentValue: any) => boolean; // Dynamic requirement based on dependent value
   getLength?: (formValues: any) => any; // Get value from dependent field
 
+  actionButton?: {
+    label: string;
+    onClick?: (val: string) => void;
+  };
+
   //create inner fileds
 
   fields?: FieldConfig[];

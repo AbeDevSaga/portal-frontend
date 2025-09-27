@@ -136,7 +136,7 @@ export const ArrayFieldRenderer: React.FC<ArrayFieldRendererProps> = ({
           if (nestedField.isHide?.(form.values)) return null;
 
           const gridClass = `${nestedField.className ?? ""} w-full space-y-2`;
-
+          // inputSearch
           switch (nestedField.type) {
             case "input":
             case "number":
@@ -159,6 +159,49 @@ export const ArrayFieldRenderer: React.FC<ArrayFieldRendererProps> = ({
                     component="div"
                     className="text-red-500 text-sm"
                   />
+                </div>
+              );
+
+            case "inputSearch":
+              return (
+                <div className="col-span-3 grid grid-cols-1 md:grid-cols-2">
+                  <div className={`${gridClass}`}>
+                    <label className="block text-sm font-medium mb-1">
+                      {nestedField.label} {isRequired && "*"}
+                    </label>
+                    <div className="flex gap-2">
+                      <Input
+                        {...formikField}
+                        type="text"
+                        placeholder={placeholder}
+                        disabled={isDisabled}
+                      />
+                      <Button
+                        type="button"
+                        className="bg-[#073954] px-4"
+                        onClick={() => {
+                          if (nestedField.actionButton?.onClick) {
+                            nestedField.actionButton.onClick(formikField.value);
+                          } else {
+                            console.log(
+                              "InputSearch value:",
+                              formikField.value
+                            );
+                          }
+                        }}
+                      >
+                        {nestedField.actionButton?.label || "Search"}
+                      </Button>
+                    </div>
+                    {description && (
+                      <p className="text-sm text-gray-500">{description}</p>
+                    )}
+                    <ErrorMessage
+                      name={fieldKey}
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
                 </div>
               );
 

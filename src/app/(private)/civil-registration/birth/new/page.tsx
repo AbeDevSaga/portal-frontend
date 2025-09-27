@@ -21,6 +21,7 @@ import HeroSection from "@/common/components/common/HeroSection";
 import { RadioGroup, RadioGroupItem } from "@/common/components/ui/radio-group";
 import { Label } from "@/common/components/ui/label";
 import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function NewBirthRegistrationPage() {
   const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -28,6 +29,15 @@ export default function NewBirthRegistrationPage() {
   const [selected, setSelected] = React.useState<string>("");
   const prevBirthTypeRef = useRef<string | null>(null);
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const param = searchParams.get("selected");
+    if (param) {
+      setSelected(param);
+    }
+  }, [searchParams]);
+  
   // Dynamically select form configuration based on selected option
   const currentFormConfig = useMemo(() => {
     switch (selected) {

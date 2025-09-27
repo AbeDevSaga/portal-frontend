@@ -132,7 +132,7 @@ function SidePreview({
               </span>
             </div>
           </div>
-          <Button
+          {/* <Button
             className="w-full mt-4 bg-green-600 hover:bg-green-700"
             onClick={() => {
               console.log("Continue to payment");
@@ -140,7 +140,7 @@ function SidePreview({
             }}
           >
             Continue Payment
-          </Button>
+          </Button> */}
         </div>
       </Card>
     </div>

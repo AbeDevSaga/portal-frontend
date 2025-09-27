@@ -2915,7 +2915,7 @@ export const FieldRenderer: React.FC<Props> = ({
             formArrayConfig={field.formArrayConfig}
           />
         );
-      
+
         case "inputSearch":
         return (
           <Field name={field.key}>

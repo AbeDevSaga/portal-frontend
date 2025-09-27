@@ -44,32 +44,29 @@ export default function DynamicFormRendering({
   customHeader,
   defaultTitle,
   expandedItems: externalExpandedItems,
-  extraData,
 }: DynamicFormProps) {
   const [stepIndex, setStepIndex] = useState(0);
-  // State to track which accordion items are expanded
   const [internalExpandedItems, setInternalExpandedItems] = useState<string[]>(
     []
   );
-  // Use external expanded items if provided, otherwise use internal state
   const expandedItems = externalExpandedItems || internalExpandedItems;
   const setExpandedItems = externalExpandedItems
     ? () => {}
     : setInternalExpandedItems;
 
   const steps = config?.steps || [];
-  console.log("config: ", config);
-  console.log("steps: ", steps);
   const hasStepper = config?.stepperData && config.stepperData.length > 0;
   const stepperPosition = config?.stepperPosition || "top";
-
   const currentStep = hasStepper
     ? steps[stepIndex] || { title: "", fields: [] }
     : { title: "", fields: steps.flatMap((step) => step.fields) };
-
-  console.log("currentStep: ", steps);
-
   const singleFormSteps = hasStepper ? null : steps;
+
+  const validationSchema = generateEnhancedSchema(config);
+  const currentStepValidationSchema =
+    hasStepper && steps[stepIndex]
+      ? generateEnhancedSchema({ ...config, steps: [steps[stepIndex]] })
+      : validationSchema;
 
   // Initialize expanded items for non-stepper forms
   useEffect(() => {
@@ -81,7 +78,7 @@ export default function DynamicFormRendering({
     }
   }, [singleFormSteps, externalExpandedItems]);
 
-  // Always expand the current step (but let user collapse it later if they want)
+  // Always expand the current step for stepper forms
   useEffect(() => {
     if (hasStepper) {
       const stepValue = `step-${stepIndex}`;
@@ -90,34 +87,51 @@ export default function DynamicFormRendering({
       );
     }
   }, [stepIndex, hasStepper]);
-  
-  // Handle accordion value changes
-  const handleAccordionValueChange = (value: string[]) => {
-    if (externalExpandedItems) {
-      // If using external state, notify parent component
-      if (onAccordionStateChange) {
-        onAccordionStateChange(value);
-      }
-    } else {
-      // If using internal state, update it directly
-      setExpandedItems(value);
-      if (onAccordionStateChange) {
-        onAccordionStateChange(value);
-      }
-    }
-  };
 
-  const validationSchema = generateEnhancedSchema(config);
-  const currentStepValidationSchema =
-    hasStepper && steps[stepIndex]
-      ? generateEnhancedSchema({ ...config, steps: [steps[stepIndex]] })
-      : validationSchema;
+  // Auto-expand first group of current step
+  useEffect(() => {
+    if (!hasStepper) return;
+
+    const step = steps[stepIndex];
+    if (!step) return;
+
+    const stepperStep = config.stepperData?.[stepIndex];
+    const stepLabel = stepperStep?.content || step.title;
+
+    const matchingGroup = config.grouping?.find(
+      (g: any) => g.group === stepLabel
+    );
+    const grouped =
+      matchingGroup && Array.isArray(matchingGroup.groups)
+        ? matchingGroup.groups
+            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+            .map((groupObj: any) => {
+              const fields = steps
+                .filter((s) => s.group === groupObj.name)
+                .flatMap((s) => s.fields || [])
+                .sort((a, b) => (a.groupOrder || 0) - (b.groupOrder || 0));
+              return { label: groupObj.label, fields };
+            })
+            .filter((g) => g.fields.length > 0)
+        : [{ label: step.title, fields: step.fields || [] }];
+
+    if (grouped.length > 0) {
+      const firstGroupValue = `step-${stepIndex}-group-0`;
+      setExpandedItems((prev) =>
+        prev.includes(firstGroupValue) ? prev : [...prev, firstGroupValue]
+      );
+    }
+  }, [stepIndex, hasStepper, steps, config.grouping]);
+
+  const handleAccordionValueChange = (value: string[]) => {
+    setExpandedItems(value);
+    if (onAccordionStateChange) onAccordionStateChange(value);
+  };
 
   const handleNext = (values: any) => {
     if (hasStepper && stepIndex < steps.length - 1) {
       setStepIndex((prev) => prev + 1);
     } else {
-      if (hasStepper) setStepIndex(steps.length);
       handleSubmit(values);
     }
   };
@@ -126,7 +140,6 @@ export default function DynamicFormRendering({
     if (hasStepper && stepIndex > 0) setStepIndex((prev) => prev - 1);
   };
 
-  console.log("formStyle: ", formStyle);
   const renderFields = (fields: any[], values: any) => (
     <div className={`${formStyle}`}>
       {fields.map((field) => (
@@ -151,6 +164,7 @@ export default function DynamicFormRendering({
       : hasDefaultTitle
       ? defaultTitle?.description || ""
       : "";
+
     return (
       <div className="flex gap-4 items-center justify-between py-[24px]">
         {(hasConfigTitle || hasDefaultTitle) && (
@@ -179,15 +193,12 @@ export default function DynamicFormRendering({
   };
 
   const renderGroupedFields = (step: any, values: any) => {
-    // Find the stepperData entry for this stepIndex
     const stepperStep = config.stepperData?.[stepIndex];
-    const stepLabel = stepperStep?.content || step.title; // fallback
+    const stepLabel = stepperStep?.content || step.title;
 
-    // Find the matching grouping config for this stepper label
     const matchingGroup = config.grouping?.find(
       (g: any) => g.group === stepLabel
     );
-
     const grouped =
       matchingGroup && Array.isArray(matchingGroup.groups)
         ? matchingGroup.groups
@@ -197,19 +208,10 @@ export default function DynamicFormRendering({
                 .filter((s) => s.group === groupObj.name)
                 .flatMap((s) => s.fields || [])
                 .sort((a, b) => (a.groupOrder || 0) - (b.groupOrder || 0));
-
-              return {
-                label: groupObj.label,
-                fields,
-              };
+              return { label: groupObj.label, fields };
             })
             .filter((g) => g.fields.length > 0)
-        : [
-            {
-              label: step.title,
-              fields: step.fields || [],
-            },
-          ];
+        : [{ label: step.title, fields: step.fields || [] }];
 
     return (
       <Accordion
@@ -241,49 +243,19 @@ export default function DynamicFormRendering({
   };
 
   const renderStepAccordion = (step: any, index: number, values: any) => {
-    console.log("step.fields,: ", step.fields, "values: ", values)
     const stepValue = `step-${index}`;
     if (step.tabular) {
-      // Wrap tabular step in Accordion
-      if (hasStepper) {
-        console.log("hasStepper: ", hasStepper);
-        return (
-          <div key={stepValue} className="px-[16px]">
-            {renderGroupedFields(step, values)}
-          </div>
-        );
-      }
       return (
-        <Accordion
-          key={stepValue}
-          type="multiple"
-          value={expandedItems}
-          onValueChange={handleAccordionValueChange}
-          className="w-full"
-        >
-          <AccordionItem value={stepValue} className="">
-            <AccordionTrigger className="py-0 w-full text-[17.5px] text-[#073954] font-bold hover:text-gray-700">
-              <div className="flex items-center gap-3 py-3">
-                <span>{step.title}</span>
-                <span className="text-sm text-gray-500">
-                  ({step.fields.length} fields)
-                </span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-2 px-[16px]">
-              {renderFields(step.fields, values)}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      );
-    } else {
-      // Non-tabular step just render fields
-      return (
-        <div className="px-[16px]" key={`step-${index}`}>
-          {renderFields(step.fields, values)}
+        <div key={stepValue} className="px-[16px]">
+          {renderGroupedFields(step, values)}
         </div>
       );
     }
+    return (
+      <div className="px-[16px]" key={`step-${index}`}>
+        {renderFields(step.fields, values)}
+      </div>
+    );
   };
 
   return (
@@ -304,72 +276,58 @@ export default function DynamicFormRendering({
           }
           enableReinitialize
         >
-          {({ values, isValid }) => {
-            const shouldEnableButton = true;
-
-            return (
-              <>
-                {customHeader && <div className="mb-4">{customHeader}</div>}
-                <LineSeparator width="h-[2px]" />
-                <Form className="space-y-2.5">
-                  {/* Multi-step form */}
-                  {hasStepper
-                    ? renderStepAccordion(currentStep, stepIndex, values)
-                    : singleFormSteps?.map((step, idx) =>
-                        renderStepAccordion(step, idx, values)
-                      )}
-
-                  {/* Buttons */}
-                  <div
-                    className={`flex space-x-4 px-[16px] ${
-                      hasStepper ? "justify-start" : "justify-end"
-                    } pt-4`}
-                  >
-                    {hasStepper && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handlePrev}
-                        disabled={stepIndex === 0}
-                        className="px-6"
-                      >
-                        Previous
-                      </Button>
+          {({ values }) => (
+            <>
+              {customHeader && <div className="mb-4">{customHeader}</div>}
+              <LineSeparator width="h-[2px]" />
+              <Form className="space-y-2.5">
+                {hasStepper
+                  ? renderStepAccordion(currentStep, stepIndex, values)
+                  : singleFormSteps?.map((step, idx) =>
+                      renderStepAccordion(step, idx, values)
                     )}
-                    <Button
-                      type="submit"
-                      disabled={!shouldEnableButton}
-                      className={`px-10 ${
-                        !shouldEnableButton
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      {hasStepper
-                        ? stepIndex === steps.length - 1
-                          ? "Submit"
-                          : "Next"
-                        : shouldEnableButton
-                        ? "Submit"
-                        : "Fill Required Fields"}
-                    </Button>
-                  </div>
 
-                  {/* Live Preview */}
-                  {showPreview && (
-                    <LivePreview
-                      title="Form Preview"
-                      subtitle="Live preview of your form data"
-                      formValues={values}
-                      allFields={steps.flatMap((step) => step.fields)}
-                      config={config}
-                      expandedSections={expandedItems}
-                    />
+                <div
+                  className={`flex space-x-4 px-[16px] ${
+                    hasStepper ? "justify-start" : "justify-end"
+                  } pt-4`}
+                >
+                  {hasStepper && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handlePrev}
+                      disabled={stepIndex === 0}
+                    >
+                      Previous
+                    </Button>
                   )}
-                </Form>
-              </>
-            );
-          }}
+                  <Button
+                    type="button"
+                    className="px-10"
+                    onClick={() => handleNext(values)}
+                  >
+                    {hasStepper
+                      ? stepIndex === steps.length - 1
+                        ? "Submit"
+                        : "Next"
+                      : "Submit"}
+                  </Button>
+                </div>
+
+                {showPreview && (
+                  <LivePreview
+                    title="Form Preview"
+                    subtitle="Live preview of your form data"
+                    formValues={values}
+                    allFields={steps.flatMap((step) => step.fields)}
+                    config={config}
+                    expandedSections={expandedItems}
+                  />
+                )}
+              </Form>
+            </>
+          )}
         </Formik>
       </div>
     </div>

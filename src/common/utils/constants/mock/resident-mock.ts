@@ -4,13 +4,24 @@ const attachments = [
     url: "https://data.unicef.org/wp-content/uploads/2017/12/EngBirthfinal.jpg",
     fileName: "Birth Certificate",
     fileType: "image/jpg",
+    size: "1.2 MB",
+  },
+
+  {
+    type: "IMAGE",
+    url: "https://data.unicef.org/wp-content/uploads/2017/12/EngMarriagefinal.jpg",
+    fileName: "Marriage Certificate",
+    fileType: "image/jpg",
+    size: "1.2 MB",
   },
   {
     type: "IMAGE",
-    url: "https://data.unicef.org/wp-content/uploads/2017/12/EngBirthfinal.jpg",
-    fileName: "Birth Certificate",
+    url: "https://data.unicef.org/wp-content/uploads/2017/12/Engdeathfinal.jpg",
+    fileName: "Death Certificate",
     fileType: "image/jpg",
+    size: "1.2 MB",
   },
+  // https://data.unicef.org/wp-content/uploads/2017/12/EngUnmarriedfinal.jpg
 ];
 const resident = [
   {
@@ -18,9 +29,9 @@ const resident = [
       first_name: "Yohannes",
       last_name: "Tesfaye",
       profile_picture: "https://randomuser.me/api/portraits/men/1.jpg",
-      date_of_birth: "1990-08-20T10:15:00.0", // realistic birth date for 5-year-old child in 2025
+      date_of_birth: "1990-08-20", // realistic birth date for 5-year-old child in 2025
       gender: "Male",
-      national_id: "1dbf80f6-d2ef-44f9-b9a7-9e96697c8a84",
+      national_id: "1232-0097-8246-8686",
       phone_number: "+251911234567",
       registration_form_number: "RO-2020-00220250011",
       occupation: "Engineer",
@@ -28,6 +39,7 @@ const resident = [
       weight_kg: 3.1,
       height_cm: 49,
       relation_status: "husband",
+      religion: "Orthodox Tewahdo",
       attachments: attachments,
       place_of_birth: {
         facility_name: "Tikur Anbessa Specialized Hospital",
@@ -93,6 +105,39 @@ const resident = [
       date_of_marriage: "2018-10-12T14:00:00.0", // plausible marriage date
       marriage_type: "Traditional",
     },
+
+    requestHistory: [
+      {
+        type: "Divorce Certificate",
+        status: "Pending",
+        date: "Jun 12, 2025",
+      },
+      {
+        type: "Birth Certificate",
+        status: "Authorized",
+        date: "Jun 12, 2025",
+      },
+      {
+        type: "Death Certificate",
+        status: "Rejected",
+        date: "Jun 12, 2025",
+      },
+      {
+        type: "Unmarried Certificate",
+        status: "Authorized",
+        date: "Jun 12, 2025",
+      },
+      {
+        type: "Unmarried Certificate",
+        status: "Authorized",
+        date: "Jun 12, 2025",
+      },
+      {
+        type: "Birth Certificate",
+        status: "Authorized",
+        date: "Jun 12, 2025",
+      },
+    ],
     children_info: [
       {
         child_name: "Beckam Tesfaye",
@@ -101,6 +146,7 @@ const resident = [
         gender: "Male",
         birth_type: "TWIN",
         relation_status: "Son",
+        religion: "Orthodox Tewahdo",
         weight_kg: 3.1,
         height_cm: 49,
         nationality_name: "Ethiopia",
@@ -124,6 +170,7 @@ const resident = [
         gender: "Male",
         birth_type: "TWIN",
         relation_status: "Son",
+        religion: "Orthodox Tewahdo",
         weight_kg: 3.1,
         height_cm: 49,
         nationality_name: "Ethiopia",
@@ -148,13 +195,14 @@ const resident = [
       last_name: "Beriso",
       date_of_birth: "1993-06-15T08:30:00.0", // realistic age adult
       gender: "Female",
-      national_id: "2f9b80a7-a3ef-55b9-c9a7-9f96697c9b85",
+      national_id: "1232-0097-8246-8686",
       phone_number: "+251911987654",
       registration_form_number: "RO-2020-00220250014",
       occupation: "Teacher",
       birth_type: "SINGLE",
       weight_kg: 3.1,
       height_cm: 49,
+      religion: "Orthodox Tewahdo",
       attachments: attachments,
       relation_status: "wife",
       profile_picture: "https://randomuser.me/api/portraits/women/6.jpg",
@@ -170,7 +218,7 @@ const resident = [
         kebele: "05",
         house_number: "123",
       },
-      blood_type_id: "a3b8f877-330f-4857-bb66-530ae5b1aa7d",
+      blood_type_id: "A+",
       nationality_name: "Ethiopia",
     },
     parental_info: {
@@ -230,6 +278,7 @@ const resident = [
         gender: "Male",
         birth_type: "TWIN",
         relation_status: "Son",
+        religion: "Orthodox Tewahdo",
         weight_kg: 3.1,
         height_cm: 49,
         nationality_name: "Ethiopia",
@@ -253,6 +302,7 @@ const resident = [
         gender: "Male",
         birth_type: "TWIN",
         relation_status: "Son",
+        religion: "Orthodox Tewahdo",
         weight_kg: 3.1,
         height_cm: 49,
         nationality_name: "Ethiopia",

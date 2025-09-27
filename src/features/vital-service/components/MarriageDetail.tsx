@@ -20,11 +20,11 @@ import check from "@/public/images/check.svg";
 import FileViewer from "@/common/components/common/FileViewer";
 import FileViewerModal from "@/common/components/common/FileModalCompoennt";
 import { useSubmitCertificateRequestMutation } from "@/features/application-service/api/certificateApi";
-import BridalInformation from "@/features/marriage-service/components/bridalInformation";
-import WitnessInformation from "@/features/marriage-service/components/witnessInformation";
-import RejectionModal from "@/features/marriage-service/components/rejectionModal";
-import { useGetMarriageBySlugQuery } from "@/features/marriage-service/api/marriageApi";
-import GeneralInformation from "@/features/marriage-service/components/generalInformation";
+import BridalInformation from "@/features/vital-service/marriage-service/components/bridalInformation";
+import WitnessInformation from "@/features/vital-service/marriage-service/components/witnessInformation";
+import RejectionModal from "@/features/vital-service/marriage-service/components/rejectionModal";
+import { useGetMarriageBySlugQuery } from "@/features/vital-service/marriage-service/api/marriageApi";
+import GeneralInformation from "@/features/vital-service/marriage-service/components/generalInformation";
 import Marriagedata from "./marriagemockdata";
 const body = {
   request: {
@@ -282,7 +282,7 @@ export default function MarriageDetail() {
       action: handleRequestCertificate,
     },
   ];
-console.log(data,"data check");
+  console.log(data, "data check");
   return (
     <>
       <HeroSection
@@ -333,8 +333,8 @@ console.log(data,"data check");
                     key={component.value}
                     variant="bare"
                     className={`w-full px-10 py-2.5 flex items-center justify-center gap-2 ${
-                      component.value === displayData 
-                        ? "bg-primary text-white" 
+                      component.value === displayData
+                        ? "bg-primary text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >

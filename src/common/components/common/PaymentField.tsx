@@ -5,10 +5,12 @@ import { useState } from "react";
 import { ErrorMessage } from "formik";
 import LineSeparator from "./LineSeparator";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const PaymentField = ({ field, form, formikField, dispatch }: any) => {
   const [pendingOption, setPendingOption] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleConfirm = async (option: any) => {
     try {
@@ -28,6 +30,7 @@ const PaymentField = ({ field, form, formikField, dispatch }: any) => {
       );
 
       setPendingOption(null);
+      router.push("/application");
     } catch (err) {
       alert("Payment failed. Please try again.");
     } finally {
