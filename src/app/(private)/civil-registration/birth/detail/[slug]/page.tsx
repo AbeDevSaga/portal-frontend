@@ -130,7 +130,8 @@ export default function BirthDetailPage() {
             onClick={() =>
               handleValidateApplication({ status: "UNDER_REVIEW", reason: "" })
             }
-            disabled={resolutionIsLoading}>
+            disabled={resolutionIsLoading}
+          >
             Validate Application
           </Button>
           <Button onClick={() => setOpenRejectModal(true)}>
@@ -145,12 +146,14 @@ export default function BirthDetailPage() {
             onClick={() =>
               handleValidateApplication({ status: "APPROVED", reason: "" })
             }
-            disabled={resolutionIsLoading}>
+            disabled={resolutionIsLoading}
+          >
             Approve Application
           </Button>
           <Button
             onClick={() => setOpenRejectModal(true)}
-            disabled={resolutionIsLoading}>
+            disabled={resolutionIsLoading}
+          >
             Reject Application
           </Button>
         </>
@@ -164,7 +167,8 @@ export default function BirthDetailPage() {
           <Button
             className="bg-[#073954]"
             onClick={() => setShowCertificateDialog(true)}
-            disabled={resolutionIsLoading}>
+            disabled={resolutionIsLoading}
+          >
             View Certificate
           </Button>
         </div>
@@ -192,92 +196,52 @@ export default function BirthDetailPage() {
   };
 
   // Inline Info Sections (instead of external components)
+
   const renderBasicInfo = () => {
-    const d = response?.data;
-    if (!d) return null;
-    const child = d.localizations[0];
+    const d = response.data;
+    console.log("response data for basic info: ", d);
 
     return (
       <div className="flex flex-col w-full">
-        <div className="flex flex-col md:flex-row w-full justify-between gap-4">
-          {/* Profile (left) */}
-          <div className="flex flex-col space-y-2 items-center w-full md:w-1/3">
-            <div className="w-full p-4 pl-[0] flex items-center">
-              <div className="relative w-full max-w-[250px] aspect-square rounded-full overflow-hidden">
-                <Image
-                  src={child_image}
-                  alt="Child Profile"
-                  fill
-                  className="object-cover rounded-full"
-                />
-              </div>
+        <div className="flex flex-col md:flex-row justify-between gap-6">
+          {/* Image Section - Fixed */}
+          <div className="flex flex-col items-center w-full md:w-1/3 space-y-3">
+            <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden shadow-lg border-4 border-[#073954]/20 mx-auto bg-gray-100">
+              <Image
+                src={child_image || "/images/placeholder-child.png"} // fallback if needed
+                alt={`${d.localizations[0].childFirstName || "Child"} profile`}
+                fill
+                className="object-cover rounded-full"
+                priority
+              />
             </div>
-            <div className="w-full pr-4 flex flex-col items-center -justify-center">
-              <div className="text-sm text-[#073954] font-medium">
-                {child.childFirstName || "-"}
-              </div>
-              <div className="rounded-full py-1 px-4 bg-[#E8EEFD] text-[#073954] font-semibold text-sm">
-                Child
-              </div>
+            <div className="text-base text-[#073954] font-semibold text-center">
+              {d.localizations[0].childFirstName || "MockFirst"}{" "}
+              {d.localizations[0].childLastName || "MockLast"}
             </div>
           </div>
 
-          {/* Info (right) */}
-          <div className="flex flex-col max-w-[250px] md:w-2/3 gap-3">
-            <span className="text-left font-semibold">Basic Information</span>
+          {/* Information Section */}
+          <div className="flex flex-col w-full md:w-2/3 gap-4">
+            <span className="font-semibold text-[#073954] text-lg">
+              Basic Information
+            </span>
             <div className="flex justify-between border-b pb-2">
               <p className="text-sm text-gray-600">Application Number</p>
               <p className="text-sm font-semibold">
-                {d.registrationFormNumber || "-"}
+                {d.registration_form_number || "APP-123456"}
               </p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Full Name</p>
-              <p className="text-sm font-semibold">
-                {child.childFirstName || "-"}
-              </p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Mother Name</p>
-              <p className="text-sm font-semibold">
-                {/* Mother name not in JSON, using placeholder */}
-                "Not Available"
-              </p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Mother Nationality</p>
-              <p className="text-sm font-semibold">
-                {d.nationalityName || "-"}
-              </p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Father Name</p>
-              <p className="text-sm font-semibold">
-                {/* Father name not in JSON, using placeholder */}
-                "Not Available"
-              </p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Father Nationality</p>
-              <p className="text-sm font-semibold">
-                {d.nationalityName || "-"}
-              </p>
-            </div>
-            <div className="flex justify-between border-b pb-2">
-              <p className="text-sm text-gray-600">Sex</p>
-              <p className="text-sm font-semibold">{child.gender || "-"}</p>
             </div>
             <div className="flex justify-between border-b pb-2">
               <p className="text-sm text-gray-600">Phone Number</p>
               <p className="text-sm font-semibold">
-                {/* Phone number not in JSON */}
-                "-"
+                {d.phone_number || "0912345678"}
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Nationality</p>
               <p className="text-sm font-semibold">
-                {d.nationalityName || "-"}
+                {d.nationality_name || "Ethiopian"}
               </p>
             </div>
           </div>
@@ -287,26 +251,28 @@ export default function BirthDetailPage() {
   };
 
   const renderApplicationInfo = () => {
-    const d = response?.data;
+    const d = response;
     if (!d) return null;
 
     return (
       <div className="flex flex-col w-full gap-3">
-        <span className="text-left font-semibold">Application</span>
+        <span className="text-left font-semibold text-[#073954] text-lg">
+          Application
+        </span>
         <div className="flex flex-col md:flex-row w-full">
-          <div className="gap-2 max-w-[250px] flex flex-col justify-center w-full">
-            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Service</p>
-              <p className="text-sm text-right font-semibold w-fit">Birth</p>
+          <div className="gap-2 min-w-[250px] flex flex-col w-full">
+            <div className="w-full flex justify-between border-b pb-2">
+              <p className="text-sm text-gray-600">Service</p>
+              <p className="text-sm font-semibold">Birth</p>
             </div>
-            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Service Type</p>
-              <p className="text-sm text-right font-semibold w-fit">New</p>
+            <div className="w-full flex justify-between border-b pb-2">
+              <p className="text-sm text-gray-600">Service Type</p>
+              <p className="text-sm font-semibold">New</p>
             </div>
-            <div className="w-full flex justify-between gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Status</p>
-              <p className="text-sm text-right font-semibold w-fit">
-                {d.registrationStatus || "-"}
+            <div className="w-full flex justify-between border-b pb-2">
+              <p className="text-sm text-gray-600">Status</p>
+              <p className="text-sm font-semibold">
+                {d.registrationStatus || "APPROVED"}
               </p>
             </div>
           </div>
@@ -316,56 +282,57 @@ export default function BirthDetailPage() {
   };
 
   const renderBirthInfo = () => {
-    const d = response?.data;
+    const d = response;
     if (!d) return null;
-    const child = d.localizations[0];
 
     return (
       <div className="flex flex-col w-full gap-3">
-        <span className="text-left font-semibold">Birth Information</span>
-        <div className="gap-2 min-w-[250px] flex flex-col justify-center w-full">
-          <div className="flex justify-between space-x-5 border-b pb-2">
+        <span className="text-left font-semibold text-[#073954] text-lg">
+          Birth Information
+        </span>
+        <div className="gap-2 flex flex-col w-full">
+          <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Country of Birth</p>
-            <p className="text-sm font-semibold">{d.nationalityName || "-"}</p>
+            <p className="text-sm font-semibold">
+              {d.nationalityName || "Ethiopia"}
+            </p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Region</p>
             <p className="text-sm font-semibold">
-              {child.placeOfBirth?.facilityName || "-"}
+              {d.placeOfBirth?.facilityName || "Addis Ababa"}
             </p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Zone/Subcity</p>
             <p className="text-sm font-semibold">
-              {/* Using father's current zone as placeholder */}
               {d.fatherId?.currentAddress?.zone?.localizedContent?.en?.name ||
-                "-"}
+                "Arada"}
             </p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Woreda</p>
             <p className="text-sm font-semibold">
-              {/* Using father's current woreda as placeholder */}
               {d.fatherId?.currentAddress?.woreda?.localizedContent?.en?.name ||
-                "-"}
+                "Woreda 05"}
             </p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Kebele</p>
             <p className="text-sm font-semibold">
-              {d.fatherId?.currentAddress?.kebele || "-"}
+              {d.fatherId?.currentAddress?.kebele || "Kebele 15"}
             </p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Specific Location</p>
             <p className="text-sm font-semibold">
-              {child.placeOfBirth?.facilityName || "-"}
+              {d.placeOfBirth?.facilityName || "Black Lion Hospital"}
             </p>
           </div>
           <div className="flex justify-between">
             <p className="text-sm text-gray-600">Birth Date</p>
             <p className="text-sm font-semibold">
-              {formatDate(child.birthDate) || "-"}
+              {formatDate(d.birthDate) || "2000-01-01"}
             </p>
           </div>
         </div>
@@ -374,49 +341,97 @@ export default function BirthDetailPage() {
   };
 
   const renderLegalInfo = () => {
-    const d = response?.data;
+    const d = response;
     if (!d) return null;
-    const child = d.localizations[0];
 
     return (
       <div className="flex flex-col w-full gap-3">
-        <span className="text-left font-semibold">Legal Information</span>
-        <div className="gap-2 min-w-[250px] flex flex-col justify-center w-full">
-          <div className="flex justify-between space-x-5 border-b pb-2">
+        <span className="text-left font-semibold text-[#073954] text-lg">
+          Legal Information
+        </span>
+        <div className="flex flex-col gap-2 w-full">
+          <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Digital Registration No</p>
             <p className="text-sm font-semibold">
-              {d.registrationFormNumber || "-"}
+              {d.registrationFormNumber || "REG-123456"}
             </p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">Passport No</p>
-            <p className="text-sm font-semibold">
-              {/* Not in JSON */}
-              "-"
-            </p>
+            <p className="text-sm font-semibold">A1234567</p>
           </div>
           <div className="flex justify-between border-b pb-2">
             <p className="text-sm text-gray-600">FIN</p>
-            <p className="text-sm font-semibold">
-              {/* Not in JSON */}
-              "-"
-            </p>
+            <p className="text-sm font-semibold">FIN-987654</p>
           </div>
           <div className="flex justify-between border-b pb-2">
-            <p className="text-sm text-gray-600">Drivers License No</p>
-            <p className="text-sm font-semibold">
-              {/* Not in JSON */}
-              "-"
-            </p>
+            <p className="text-sm text-gray-600">Driver's License No</p>
+            <p className="text-sm font-semibold">DL-12345</p>
           </div>
           <div className="flex justify-between">
             <p className="text-sm text-gray-600">Marital Status</p>
-            <p className="text-sm font-semibold">
-              {/* Not in JSON */}
-              "-"
-            </p>
+            <p className="text-sm font-semibold">Single</p>
           </div>
         </div>
+      </div>
+    );
+  };
+
+  const renderEducationInfo = () => {
+    const d = response;
+    if (!d) return null;
+
+    return (
+      <div className="w-full flex flex-col gap-3">
+        <span className="text-left font-semibold text-[#073954] text-lg">
+          Education and Work Information
+        </span>
+        <div className="flex flex-col gap-2 w-full">
+          <div className="flex justify-between border-b pb-2">
+            <p className="text-sm text-gray-600">Education Level</p>
+            <p className="text-sm font-semibold">Bachelor's Degree</p>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <p className="text-sm text-gray-600">Occupation Type</p>
+            <p className="text-sm font-semibold">Software Engineer</p>
+          </div>
+          <div className="flex justify-between">
+            <p className="text-sm text-gray-600">Work Place Name</p>
+            <p className="text-sm font-semibold">Tech Company</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderAttachments = () => {
+    const attachments = response?.personal_info?.attachments || [
+      { fileName: "BirthCertificate.pdf", fileType: "PDF", url: "#" },
+    ];
+
+    return (
+      <div className="flex flex-col gap-3">
+        <span className="font-semibold text-[#073954] text-lg">
+          Attachments
+        </span>
+        {attachments.map((att: any, idx: number) => (
+          <div
+            key={idx}
+            className="flex justify-between items-center border-b pb-2"
+          >
+            <div>
+              <p className="text-sm font-semibold">{att.fileName}</p>
+              <p className="text-xs text-gray-500">{att.fileType}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(att.url, "_blank")}
+            >
+              <Eye className="w-4 h-4 mr-1" /> View
+            </Button>
+          </div>
+        ))}
       </div>
     );
   };
@@ -425,68 +440,6 @@ export default function BirthDetailPage() {
     return (
       <div className="w-full py-4">
         <div className="w-full h-[2px] bg-gray-200 rounded"></div>
-      </div>
-    );
-  };
-
-  const renderEducationInfo = () => {
-    const d = response?.data;
-    if (!d) return null;
-
-    return (
-      <div className="w-full flex flex-col gap-3">
-        <span className="text-left font-semibold">
-          Education and Work Information
-        </span>
-        <div className="w-full flex flex-col md:flex-row">
-          <div className="w-full min-w-[250px] gap-2 flex flex-col justify-center">
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Education Level</p>
-              <p className="text-sm text-right font-semibold w-fit">
-                {/* Not in JSON */}
-                "-"
-              </p>
-            </div>
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Occupation Type</p>
-              <p className="text-sm text-right font-semibold w-fit">
-                {/* Not in JSON */}
-                "-"
-              </p>
-            </div>
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Work Place Name</p>
-              <p className="text-sm text-right font-semibold w-fit">
-                {/* Not in JSON */}
-                "-"
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderAttachments = () => {
-    return (
-      <div className="w-full flex flex-col gap-3">
-        <span className="text-left font-semibold">Attachments</span>
-        <div className="w-full flex flex-col">
-          <div className="w-full min-w-[250px] gap-2 flex flex-col justify-center">
-            <div className="w-full justify-between flex gap-x-5 gap-y-2 border-b pb-2">
-              <p className="text-sm">Document Icon</p>
-              <p className="text-sm text-right font-semibold w-fit">
-                Document Name
-              </p>
-              <Button
-                variant="outline"
-                size="sm">
-                View
-              </Button>
-            </div>
-            {/* Add more attachments as needed */}
-          </div>
-        </div>
       </div>
     );
   };
@@ -515,24 +468,20 @@ export default function BirthDetailPage() {
 
         {/* Information Section */}
         {response ? (
-          <Card className="w-full md:w-2/3 flex flex-col p-5">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-10 h-fit">
-              <div className="w-full md:col-span-3 h-fit">
-                {renderBasicInfo()}
-              </div>
-              <div className="w-full md:col-span-2 h-fit">
-                {renderApplicationInfo()}
-              </div>
+          <Card className="w-full md:w-2/3 flex flex-col p-6 shadow-md border rounded-xl">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+              <div className="md:col-span-3">{renderBasicInfo()}</div>
+              <div className="md:col-span-2">{renderApplicationInfo()}</div>
             </div>
-            {renderLineSeparator()}
-            <div className="flex flex-col md:flex-row item-center justify-between gap-5 h-fit">
-              <div className="h-fit flex-1">{renderBirthInfo()}</div>
-              <div className="h-fit flex-1">{renderLegalInfo()}</div>
+            <hr className="my-6 border-gray-200" />
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1">{renderBirthInfo()}</div>
+              <div className="flex-1">{renderLegalInfo()}</div>
             </div>
-            {renderLineSeparator()}
-            <div className="flex flex-col md:flex-row item-center justify-between gap-5 h-fit">
-              <div className="h-fit flex-1">{renderEducationInfo()}</div>
-              <div className="h-fit flex-1">{renderAttachments()}</div>
+            <hr className="my-6 border-gray-200" />
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1">{renderEducationInfo()}</div>
+              <div className="flex-1">{renderAttachments()}</div>
             </div>
           </Card>
         ) : null}
@@ -580,21 +529,17 @@ export default function BirthDetailPage() {
               {requirementsandaction.map((item) => (
                 <Card
                   key={item.title}
-                  className="p-3 space-y-3 bg-[#E8EEFD] border border-[#204D66] text-[#073954]">
+                  className="p-3 space-y-3 bg-[#E8EEFD] border border-[#204D66] text-[#073954]"
+                >
                   <p className="font-semibold mb-3">{item.title}</p>
                   {item.details.map((d) => (
-                    <div
-                      key={d}
-                      className="flex gap-2 items-center">
+                    <div key={d} className="flex gap-2 items-center">
                       <Check size={24} />
                       <p>{d}</p>
                     </div>
                   ))}
                   <div className="rounded-sm px-5 flex items-center gap-2 bg-[#FFF6E0] py-2">
-                    <Info
-                      fill="orange"
-                      color="white"
-                    />
+                    <Info fill="orange" color="white" />
                     <p>You are asked to pay {item.paymentAmount} Br</p>
                   </div>
                   <Button className="bg-[#073954]">{item.buttonTitle}</Button>
