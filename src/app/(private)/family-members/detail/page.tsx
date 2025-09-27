@@ -58,7 +58,10 @@ const page = () => {
             <h1 className="text-lg font-semibold mb-5">Certificates</h1>
             <div className="flex flex-col   gap-3 p-2 rounded-md px-5">
               {certificates.map((certificate, index) => (
-                <div className="flex w-full justify-between px-3 rounded-md py-4  bg-slate-50 border" key={index}>
+                <div
+                  key={index}
+                  className="flex w-full justify-between px-3 rounded-md py-4  bg-slate-50 border"
+                >
                   <div className="flex gap-4">
                     <img
                       src="/images/file.svg"
@@ -94,7 +97,10 @@ const page = () => {
             {requestHistory &&
               requestHistory?.map((item, index) => (
                 <div
-                  style={{ borderLeftColor: requestHistoryColor[item.status as string] }}
+                  key={index}
+                  style={{
+                    borderLeftColor: requestHistoryColor[item.status as string],
+                  }}
                   className={`flex w-full mt-2 rounded-md border-l-8 cursor-pointer hover:bg-slate-50  bg-slate-100 b p-2 px-4   items-center `}
                 >
                   <div className="flex  gap-2 w-full " key={index}>
@@ -110,12 +116,15 @@ const page = () => {
                       <p className="text-sm text-gray-500">{item.date}</p>
                     </div>
                   </div>
-                   <div
-                     className="flex justify-between rounded-full px-4 gap-2 text-xs py-1 text-white"
-                     style={{ backgroundColor: requestHistoryColor[item.status as string] }}
-                   >
-                     {item.status}
-                   </div>
+                  <div
+                    className="flex justify-between rounded-full px-4 gap-2 text-xs py-1 text-white"
+                    style={{
+                      backgroundColor:
+                        requestHistoryColor[item.status as string],
+                    }}
+                  >
+                    {item.status}
+                  </div>
                 </div>
               ))}
           </div>
