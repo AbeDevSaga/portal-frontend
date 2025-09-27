@@ -227,9 +227,9 @@ export default function DynamicFormRendering({
               <AccordionTrigger className="py-0 w-full text-[17.5px] text-[#073954] font-bold hover:text-gray-700">
                 <div className="flex items-center gap-3 py-3">
                   <span>{group.label}</span>
-                  <span className="text-sm text-gray-500">
+                  {/* <span className="text-sm text-gray-500">
                     ({group.fields.length} fields)
-                  </span>
+                  </span> */}
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pt-2 px-[16px]">

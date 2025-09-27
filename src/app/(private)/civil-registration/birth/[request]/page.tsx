@@ -22,7 +22,7 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
   // http://168.231.109.155:8081/api/v1/birth-registrations/vital-request?registrationFormNumber=RO-2025-00220250195
 
   // Validate the request
-  if (!["lost", "damaged", "correction"].includes(request)) {
+  if (!["lost", "damaged", "correction", "print"].includes(request)) {
     notFound(); // return 404 page if not valid
   }
 
@@ -65,6 +65,8 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
         return "Replace Damaged Birth Certificate";
       case "correction":
         return "Request Birth Certificate Correction";
+      case "print":
+        return "Get Your Original Birth Certificate";
       default:
         return "Birth Certificate Service";
     }
@@ -78,6 +80,8 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
         return "Enter your birth registration ID to replace a damaged certificate";
       case "correction":
         return "Enter your birth registration ID to request corrections";
+      case "print":
+        return "Enter your birth registration ID to get the original certificate";
       default:
         return "Enter your birth registration ID";
     }
