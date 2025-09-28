@@ -169,28 +169,28 @@ export const formConfig: FormConfig = {
               groupOrder: 5,
               gridCols: 6,
             },
-            {
-              type: "number",
-              key: "birthTimeHeight",
-              label: "Birth Time Height",
-              placeholder: "Ensert Birth Time Height",
-              description: "",
-              validators: [
-                {
-                  type: "required",
-                  message: "Birth time hight is required",
-                },
-                {
-                  type: "min",
-                  value: 0,
-                  message: "Must be above 0",
-                },
-              ],
-              required: true,
-              group: "Child Details",
-              groupOrder: 6,
-              gridCols: 6,
-            },
+            // {
+            //   type: "number",
+            //   key: "birthTimeHeight",
+            //   label: "Birth Time Height",
+            //   placeholder: "Ensert Birth Time Height",
+            //   description: "",
+            //   validators: [
+            //     {
+            //       type: "required",
+            //       message: "Birth time hight is required",
+            //     },
+            //     {
+            //       type: "min",
+            //       value: 0,
+            //       message: "Must be above 0",
+            //     },
+            //   ],
+            //   required: true,
+            //   group: "Child Details",
+            //   groupOrder: 6,
+            //   gridCols: 6,
+            // },
           ],
         },
         {

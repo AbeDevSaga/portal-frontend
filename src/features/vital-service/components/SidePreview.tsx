@@ -325,14 +325,14 @@ function SidePreview({
       {/* Conditional Buttons */}
 
       {paidOption && attachments.length > 0 && (
-        <Card className="px-6 border-none">
+        <div className="px-6">
           <Button
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full bg-[#073954] hover:bg-[#073954]/90"
             onClick={() => alert("Request submitted successfully!")}
           >
             Submit Request
           </Button>
-        </Card>
+        </div>
       )}
     </div>
   );

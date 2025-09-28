@@ -1,7 +1,16 @@
 import { FormConfig } from "@/common/types/formType";
 
 export const formConfig: FormConfig = {
-  stepperData: [],
+  stepperData: [
+    {
+      label: "Step 1",
+      content: "Detail Information",
+    },
+    {
+      label: "Step 2",
+      content: "Payment Information",
+    },
+  ],
   stepperPosition: "",
   grouping: [
     {
@@ -271,6 +280,58 @@ export const formConfig: FormConfig = {
           isHide: (dependentValues: any) => {
             return !dependentValues?.childId;
           },
+        },
+      ],
+    },
+    {
+      title: "Payment Information",
+      group: "Payment Information",
+      groupOrder: 1,
+      tabular: false,
+      defaultExpanded: true,
+      fields: [
+        {
+          type: "payment",
+          key: "paymentOption",
+          label: "Payment Option",
+          description: "Choose your payment method.",
+          required: true,
+          options: [
+            {
+              id: "telebirr",
+              label: "Telebirr Transfer",
+              value: "telebirr",
+              data: {
+                image: "/images/telebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-white",
+              },
+            },
+            {
+              id: "cbe",
+              label: "CBE Transfer",
+              value: "cbe",
+              data: {
+                image: "/images/cbebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#730b7d]",
+              },
+            },
+            {
+              id: "mpesa",
+              label: "Mpesa Transfer",
+              value: "mpesa",
+              data: {
+                image: "/images/mpesa.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#09ed2c]",
+              },
+            },
+          ],
+          gridCols: 12,
         },
       ],
     },

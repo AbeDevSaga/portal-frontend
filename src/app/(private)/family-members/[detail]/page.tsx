@@ -4,6 +4,7 @@ import HeroSection from "@/common/components/common/HeroSection";
 import { Button } from "@/common/components/ui/button";
 import resident from "@/common/utils/constants/mock/resident-mock";
 import PersonalInformation from "./PersonalInformation";
+export const dynamic = "force-dynamic";
 
 const requestHistory = resident[0].requestHistory;
 // generate color for the left border of the request history
@@ -36,7 +37,12 @@ const personalInformation = {
   },
 };
 
-const page = () => {
+function DetailPage({
+  params,
+}: {
+  params: Promise<{ detail: string }>;
+}) {
+  const { detail } = React.use(params);
   return (
     <>
       <HeroSection
@@ -64,7 +70,7 @@ const page = () => {
                 >
                   <div className="flex gap-4">
                     <img
-                      src="/images/file.svg"
+                      src="/images/file.jpg"
                       alt="certificate"
                       className="w-10 h-10"
                     />
@@ -132,6 +138,6 @@ const page = () => {
       </div>
     </>
   );
-};
+}
 
-export default page;
+export default DetailPage;

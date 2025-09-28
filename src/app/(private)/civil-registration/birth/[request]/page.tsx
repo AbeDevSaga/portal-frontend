@@ -91,16 +91,16 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
 
   return (
     <>
-      <div className="flex justify-center gap-4">
+      {/* <div className="flex justify-center gap-4">
         <Button onClick={() => setShowFamilyList(false)} variant="outline">
           By Registration Form Number
         </Button>
         <Button onClick={() => setShowFamilyList(true)} variant="outline">
           Family Members
         </Button>
-      </div>
-
-      {showFamilyList ? (
+      </div> */}
+      <FamilyTree onContinue={handleContinue} />
+      {/* {showFamilyList ? (
         <FamilyTree onContinue={handleContinue}/>
       ) : (
         <div className="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -211,7 +211,7 @@ function Page({ params }: { params: Promise<{ request: string }> }) {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 }

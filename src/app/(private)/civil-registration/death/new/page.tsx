@@ -17,6 +17,7 @@ import {
 import HeroSection from "@/common/components/common/HeroSection";
 import { RadioGroup, RadioGroupItem } from "@/common/components/ui/radio-group";
 import { Label } from "@/common/components/ui/label";
+import DynamicFormRendering from "@/common/components/dynamic-form/DynamicFormRendering";
 
 export default function NewBirthRegistrationPage() {
   const formValues = useSelector((state: RootState) => state.birthSlice);
@@ -293,15 +294,17 @@ export default function NewBirthRegistrationPage() {
           </div>
         </RadioGroup>
       </div>
-      {selected && <DynamicForm
-        key={selected}
-        config={currentFormConfig}
-        handleSubmit={handleCreateBirth}
-        initialValues={formValues}
-        formStyle="grid grid-cols-12 gap-5"
-        onAccordionStateChange={handleAccordionStateChange}
-        showPreview={false}
-      />}
+      {selected && (
+        <DynamicFormRendering
+          key={selected}
+          config={currentFormConfig}
+          handleSubmit={handleCreateBirth}
+          initialValues={formValues}
+          formStyle="grid grid-cols-12 gap-5"
+          onAccordionStateChange={handleAccordionStateChange}
+          showPreview={false}
+        />
+      )}
     </Card>
   );
 

@@ -1456,7 +1456,7 @@ export const FieldRenderer: React.FC<Props> = ({
                           />
 
                           {/* File Constraints Info */}
-                          <div className="text-xs text-gray-500 mt-1">
+                          {/* <div className="text-xs text-gray-500 mt-1">
                             <div>
                               Max file size: {formatFileSize(maxFileSize)}
                             </div>
@@ -1474,7 +1474,7 @@ export const FieldRenderer: React.FC<Props> = ({
                                 * This field is required
                               </div>
                             )}
-                          </div>
+                          </div> */}
                         </div>
 
                         {/* Selected Files Display - only show if preview is disabled or multiple files */}

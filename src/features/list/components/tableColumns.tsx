@@ -12,6 +12,7 @@ export const TableColumns: ColumnDef<unknown>[] = [
     {
         accessorKey: "requester_name",
         header: "Applied For",
+        accessorFn: (row: any) => row.localizatoin[0]?.firstName || "Samson",
     },
     {
         accessorKey: "eventType",

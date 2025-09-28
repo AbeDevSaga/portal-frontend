@@ -40,13 +40,17 @@ export const formConfig: FormConfig = {
       label: "Step 3",
       content: "Bride's Information",
     },
-    {
-      label: "Step 4",
-      content: "Witness Information",
-    },
+    // {
+    //   label: "Step 4",
+    //   content: "Witness Information",
+    // },
     {
       label: "Step 5",
       content: "Honor Information",
+    },
+    {
+      label: "Step 6",
+      content: "Payment Information",
     },
   ],
   stepperPosition: "",
@@ -69,10 +73,15 @@ export const formConfig: FormConfig = {
           label: "Bride's Information",
           order: 3,
         },
+        // {
+        //   name: "Witnesses Information",
+        //   label: "Witnesses Information",
+        //   order: 4,
+        // },
         {
-          name: "Witnesses Information",
-          label: "Witnesses Information",
-          order: 4,
+          name: "Payment Information",
+          label: "Payment Information",
+          order: 6,
         },
       ],
     },
@@ -171,8 +180,7 @@ export const formConfig: FormConfig = {
           key: "groomResidentId",
           label: "Grooms's resident ID",
           placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for a resident by entering their ID. The system will search as you type.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -248,12 +256,12 @@ export const formConfig: FormConfig = {
           key: "groomFullName",
           label: "Groom's Full Name",
           placeholder: "",
-          description:
-            "Groom legal Full Name as it appears on official documents",
+          description: "",
           validators: [],
           required: false,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.groomResidentId &&
@@ -278,7 +286,7 @@ export const formConfig: FormConfig = {
           key: "groomBirthCertificate",
           label: "Groom's Birth Certificate",
           placeholder: "",
-          description: "Upload the Groom's Birth Certificate",
+          description: "",
           required: false,
           gridCols: 6,
           group: "Groom's Information",
@@ -289,9 +297,10 @@ export const formConfig: FormConfig = {
           key: "groomNationality",
           label: "Groom's Nationality",
           placeholder: "",
-          description: "Groom Nationality it appears on official documents",
+          description: "",
           validators: [],
           required: false,
+          gridCols: 6,
           group: "Groom's Information",
           groupOrder: 2,
           defaultValue: (dependentValues: any) => {
@@ -322,7 +331,8 @@ export const formConfig: FormConfig = {
           key: "groomNationalId",
           label: "Groom's National ID",
           placeholder: "Insert Groom's National Id.",
-          description: "Insert Groom's National Id",
+          description: "",
+          gridCols: 6,
           validators: [
             {
               type: "required",
@@ -346,11 +356,12 @@ export const formConfig: FormConfig = {
           key: "groomDateOfBirth",
           label: "Groom's Date of Birth",
           placeholder: "",
-          description: "Birth Date it appears on official documents",
+          description: "",
           validators: [],
           required: false,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.groomResidentId &&
@@ -373,9 +384,10 @@ export const formConfig: FormConfig = {
         {
           type: "fileUpload",
           key: "groomSpecialApproval",
-          label: "Groom's Special Approval Document",
-          placeholder: "",
-          description: "Upload the Grooms Special Approval Document",
+          label: "Approval Document",
+          placeholder: " Upload Special Approval Document",
+          gridCols: 6,
+          description: "",
           validators: [
             {
               type: "required",
@@ -412,7 +424,7 @@ export const formConfig: FormConfig = {
           key: "groomPlaceOfBirth",
           label: "Groom's Place of Birth",
           placeholder: "Search for Place of Birth.",
-          description: "Select the Groom's Place of Birth",
+          description: "",
           validators: [
             {
               type: "required",
@@ -422,6 +434,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           clearable: false,
           searchable: true,
           lookupConfig: {
@@ -455,7 +468,7 @@ export const formConfig: FormConfig = {
           key: "groomCurrentResidence",
           label: "Groom's Current Residence",
           placeholder: "Search for Current Residence.",
-          description: "Select the Groom's Current Residence",
+          description: "",
           validators: [
             {
               type: "required",
@@ -465,6 +478,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -499,13 +513,14 @@ export const formConfig: FormConfig = {
           key: "groomReligion",
           label: "Groom's Religion",
           placeholder: "Search for Religion.",
-          description: "Select the Groom's Religion",
+          description: "",
           validators: [
             {
               type: "required",
               message: "Groom's Religion is required",
             },
           ],
+          gridCols: 6,
           required: true,
           group: "Groom's Information",
           groupOrder: 2,
@@ -554,12 +569,12 @@ export const formConfig: FormConfig = {
           key: "earlierMaritalStatusGroom",
           label: "Earlier Marital Status",
           placeholder: "",
-          description:
-            "Earlier Marital Status it appears on official documents",
+          description: "",
           validators: [],
           required: false,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.groomResidentId &&
@@ -624,8 +639,9 @@ export const formConfig: FormConfig = {
           type: "fileUpload",
           key: "groomPhoto",
           label: "Groom's Photo",
-          placeholder: "",
-          description: "Upload the Grooms 3*4 Photo",
+          placeholder: "Upload the Grooms 3*4 Photo",
+          gridCols: 6,
+          description: "",
           validators: [
             {
               type: "required",
@@ -647,8 +663,8 @@ export const formConfig: FormConfig = {
           type: "lookup",
           key: "groomEducationlStatus",
           label: "Groom's Education Level",
-          placeholder: "Search for Education Level.",
-          description: "Select the Groom's Education Level",
+          placeholder: "Select Your Education Level.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -660,6 +676,7 @@ export const formConfig: FormConfig = {
           groupOrder: 2,
           clearable: false,
           searchable: true,
+          gridCols: 6,
 
           lookupConfig: {
             apiEndpoint: "/reference-data/education-levels",
@@ -687,7 +704,7 @@ export const formConfig: FormConfig = {
           key: "groomJobType",
           label: "Groom's Job Type",
           placeholder: "Search for Job Type.",
-          description: "Select the Groom's Job Type",
+          description: "",
           validators: [
             {
               type: "required",
@@ -697,6 +714,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -725,8 +743,8 @@ export const formConfig: FormConfig = {
           type: "lookup",
           key: "groomEconomicStatus",
           label: "Groom's Economic Status",
-          placeholder: "Search for Economic Status.",
-          description: "Select the Groom's Economic Status",
+          placeholder: "Select Economic Status.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -736,6 +754,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -765,10 +784,10 @@ export const formConfig: FormConfig = {
           key: "groomWitnessFirstResidentId",
           label: "Groom's First Witness resident ID",
           placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for a resident by entering their ID. The system will search as you type.",
+          description: "",
           validators: [],
           required: false,
+          gridCols: 6,
           group: "Groom's Information",
           groupOrder: 1,
           inputSearchConfig: {
@@ -833,10 +852,9 @@ export const formConfig: FormConfig = {
         {
           type: "input",
           key: "groomWitnessFirstFullName",
-          label: "Groom's First Witness Full Name",
-          placeholder: "",
-          description:
-            "Groom's First Witness Full Name as it appears on official documents",
+          label: "Groom's Witness Full Name",
+          placeholder: "Enter Groom's First Witness Full Name",
+          description: "",
           validators: [
             {
               type: "required",
@@ -846,6 +864,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.groomWitnessFirstResidentId &&
@@ -868,10 +887,9 @@ export const formConfig: FormConfig = {
         {
           type: "inputSearch",
           key: "groomWitnessSecondResidentId",
-          label: "Groom's Second Witness resident ID",
-          placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for a resident by entering their ID. The system will search as you type.",
+          label: "Groom's Witness resident ID",
+          placeholder: "Enter Groom's Witness Resident ID",
+          description: "",
           validators: [
             {
               type: "required",
@@ -881,6 +899,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Groom's Information",
           groupOrder: 1,
+          gridCols: 6,
           inputSearchConfig: {
             isExternal: true,
             apiEndpoint: "/resident/residents",
@@ -951,6 +970,7 @@ export const formConfig: FormConfig = {
           required: false,
           group: "Groom's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.groomWitnessSecondResidentId &&
@@ -987,9 +1007,8 @@ export const formConfig: FormConfig = {
           type: "inputSearch",
           key: "brideResidentId",
           label: "Brides's resident ID",
-          placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for a resident by entering their ID. The system will search as you type.",
+          placeholder: "Enter Brides's resident ID",
+          description: "",
           validators: [
             {
               type: "required",
@@ -999,6 +1018,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 1,
+          gridCols: 6,
           inputSearchConfig: {
             isExternal: true,
             apiEndpoint: "/resident/residents",
@@ -1062,9 +1082,8 @@ export const formConfig: FormConfig = {
           type: "input",
           key: "brideFullName",
           label: "Bride's Full Name",
-          placeholder: "",
-          description:
-            "Bride legal Full Name as it appears on official documents",
+          placeholder: "Enter Bride's Full Name",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1074,6 +1093,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.brideResidentId &&
@@ -1097,8 +1117,8 @@ export const formConfig: FormConfig = {
           type: "input",
           key: "brideNationality",
           label: "Bride's Nationality",
-          placeholder: "",
-          description: "Bride Nationality it appears on official documents",
+          placeholder: "Enter Bride's Nationality",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1108,6 +1128,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.brideResidentId &&
@@ -1132,7 +1153,7 @@ export const formConfig: FormConfig = {
           key: "brideNationalId",
           label: "Bride's National ID",
           placeholder: "Insert Bride's National Id.",
-          description: "Insert Bride's National Id",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1145,6 +1166,7 @@ export const formConfig: FormConfig = {
             },
           ],
           required: true,
+          gridCols: 6,
           group: "Bride's Information",
           groupOrder: 3,
           clearable: false,
@@ -1154,8 +1176,8 @@ export const formConfig: FormConfig = {
           type: "input",
           key: "brideDateOfBirth",
           label: "Bride's Date of Birth",
-          placeholder: "",
-          description: "Birth Date it appears on official documents",
+          placeholder: "Enter Bride's Date of Birth",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1165,6 +1187,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.brideResidentId &&
@@ -1188,8 +1211,8 @@ export const formConfig: FormConfig = {
           type: "fileUpload",
           key: "brideSpecialApproval",
           label: "Bride's Special Approval Document",
-          placeholder: "",
-          description: "Upload the Brides Special Approval Document",
+          placeholder: "Upload Special Approval Document",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1209,6 +1232,7 @@ export const formConfig: FormConfig = {
           // },
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           getDependentValue: (formValues: any) => ({
             brideResidentId: formValues.brideDateOfBirth,
           }),
@@ -1227,7 +1251,7 @@ export const formConfig: FormConfig = {
           key: "bridePlaceOfBirth",
           label: "Bride's Place of Birth",
           placeholder: "Search for Place of Birth.",
-          description: "Select the Bride's Place of Birth",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1237,6 +1261,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 3,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -1271,7 +1296,7 @@ export const formConfig: FormConfig = {
           key: "brideCurrentResidence",
           label: "Bride's Current Residence",
           placeholder: "Search for Current Residence.",
-          description: "Select the Bride's Current Residence",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1279,6 +1304,7 @@ export const formConfig: FormConfig = {
             },
           ],
           required: true,
+          gridCols: 6,
           group: "Bride's Information",
           groupOrder: 3,
           clearable: false,
@@ -1314,8 +1340,8 @@ export const formConfig: FormConfig = {
           type: "lookup",
           key: "brideReligion",
           label: "Bride's Religion",
-          placeholder: "Search for Religion.",
-          description: "Select the Bride's Religion",
+          placeholder: "Select Religion.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1325,6 +1351,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 3,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -1353,13 +1380,13 @@ export const formConfig: FormConfig = {
           type: "input",
           key: "earlierMaritalStatusBride",
           label: "Earlier Marital Status",
-          placeholder: "",
-          description:
-            "Earlier Marital Status it appears on official documents",
+          placeholder: "Earlier Marital Status",
+          description: "",
           validators: [],
           required: false,
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.brideResidentId &&
@@ -1383,8 +1410,8 @@ export const formConfig: FormConfig = {
           type: "fileUpload",
           key: "bridePhoto",
           label: "Bride's Photo",
-          placeholder: "",
-          description: "Upload the Brides 3*4 Photo",
+          placeholder: "Upload the Brides 3*4 Photo",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1398,6 +1425,7 @@ export const formConfig: FormConfig = {
           // },
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           isDisabled: (dependentValues: any) => {
             return dependentValues?.bridePhoto;
           },
@@ -1407,7 +1435,7 @@ export const formConfig: FormConfig = {
           key: "brideEducationlStatus",
           label: "Bride's Education Level",
           placeholder: "Search for Education Level.",
-          description: "Select the Bride's Education Level",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1417,6 +1445,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 3,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -1445,8 +1474,8 @@ export const formConfig: FormConfig = {
           type: "lookup",
           key: "brideJobType",
           label: "Bride's Job Type",
-          placeholder: "Search for Job Type.",
-          description: "Select the Bride's Job Type",
+          placeholder: "Select Job Type.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1456,6 +1485,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 3,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -1484,8 +1514,8 @@ export const formConfig: FormConfig = {
           type: "lookup",
           key: "brideEconomicStatus",
           label: "Bride's Economic Status",
-          placeholder: "Search for Economic Status.",
-          description: "Select the Bride's Economic Status",
+          placeholder: "Select Economic Status.",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1495,6 +1525,7 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Bride's Information",
           groupOrder: 3,
+          gridCols: 6,
           clearable: false,
           searchable: true,
 
@@ -1522,14 +1553,14 @@ export const formConfig: FormConfig = {
         {
           type: "inputSearch",
           key: "brideWitnessFirstResidentId",
-          label: "Bride's First Witness resident ID",
-          placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for a resident by entering their ID. The system will search as you type.",
+          label: "Bride's Witness resident ID",
+          placeholder: "Enter Witness Resident ID",
+          description: "",
           validators: [],
           required: false,
           group: "Bride's Information",
           groupOrder: 1,
+          gridCols: 6,
           inputSearchConfig: {
             isExternal: true,
             apiEndpoint: "/resident/residents",
@@ -1592,14 +1623,14 @@ export const formConfig: FormConfig = {
         {
           type: "input",
           key: "brideWitnessFirstFullName",
-          label: "Bride's First Witness Full Name",
-          placeholder: "",
-          description:
-            "Bride's First Witness Full Name as it appears on official documents",
+          label: "Bride's Witness Full Name",
+          placeholder: "Enter Bride's First Witness Full Name",
+          description: "",
           validators: [],
           required: false,
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.brideWitnessFirstResidentId &&
@@ -1622,14 +1653,14 @@ export const formConfig: FormConfig = {
         {
           type: "inputSearch",
           key: "brideWitnessSecondResidentId",
-          label: "Bride's Second Witness resident ID",
-          placeholder: "Enter at least 3 characters to search...",
-          description:
-            "Search for a resident by entering their ID. The system will search as you type.",
+          label: "Bride's Witness resident ID",
+          placeholder: "Enter Bride's Witness Resident ID",
+          description: "",
           validators: [],
           required: false,
           group: "Bride's Information",
           groupOrder: 1,
+          gridCols: 6,
           inputSearchConfig: {
             isExternal: true,
             apiEndpoint: "/resident/residents",
@@ -1692,14 +1723,14 @@ export const formConfig: FormConfig = {
         {
           type: "input",
           key: "brideWitnessSecondFullName",
-          label: "Bride's Second Witness Full Name",
-          placeholder: "",
-          description:
-            "Bride's Second Witness Full Name as it appears on official documents",
+          label: "Bride's Witness Full Name",
+          placeholder: "Enter Bride's Witness Full Name",
+          description: "",
           validators: [],
           required: false,
           group: "Bride's Information",
           groupOrder: 2,
+          gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (
               dependentValues?.brideWitnessSecondResidentId &&
@@ -1724,76 +1755,76 @@ export const formConfig: FormConfig = {
         },
       ],
     },
-    {
-      title: "Witnesses Information",
-      group: "Witnesses Information",
-      groupOrder: 4,
-      tabular: false,
-      defaultExpanded: false,
-      fields: [
-        {
-          type: "input",
-          key: "honorRecordNumber",
-          label: "Marriage Honor Record Number",
-          placeholder: "",
-          description: "Enter the Marriage Honor Record Number",
-          validators: [
-            {
-              type: "required",
-              message: "Marriage Honor Record Number is required",
-            },
-          ],
-          required: true,
-          group: "Honor Information",
-          groupOrder: 4,
-        },
-        {
-          type: "input",
-          key: "uniqueRegistrationOfficeNumber",
-          label: "Registration Office Number",
-          placeholder: "",
-          description: "Enter the Unique number of the registration office",
-          validators: [
-            {
-              type: "required",
-              message: "Registration Office Number is required",
-            },
-          ],
-          required: true,
-          group: "Honor Information",
-          groupOrder: 4,
-        },
-        {
-          type: "input",
-          key: "uniqueMarriageCertificateNumber",
-          label: "Marriage Certificate Number",
-          placeholder: "",
-          description: "Enter the Unique Marraige Certificate Number",
-          validators: [
-            {
-              type: "required",
-              message: "Marriage Certificate Number is required",
-            },
-          ],
-          required: true,
-          group: "Honor Information",
-          groupOrder: 4,
-        },
-      ],
-    },
+    // {
+    //   title: "Witnesses Information",
+    //   group: "Witnesses Information",
+    //   groupOrder: 4,
+    //   tabular: false,
+    //   defaultExpanded: false,
+    //   fields: [
+    //     {
+    //       type: "input",
+    //       key: "honorRecordNumber",
+    //       label: "Marriage Honor Record Number",
+    //       placeholder: "",
+    //       description: "Enter the Marriage Honor Record Number",
+    //       validators: [
+    //         {
+    //           type: "required",
+    //           message: "Marriage Honor Record Number is required",
+    //         },
+    //       ],
+    //       required: true,
+    //       group: "Honor Information",
+    //       groupOrder: 4,
+    //     },
+    //     {
+    //       type: "input",
+    //       key: "uniqueRegistrationOfficeNumber",
+    //       label: "Registration Office Number",
+    //       placeholder: "",
+    //       description: "Enter the Unique number of the registration office",
+    //       validators: [
+    //         {
+    //           type: "required",
+    //           message: "Registration Office Number is required",
+    //         },
+    //       ],
+    //       required: true,
+    //       group: "Honor Information",
+    //       groupOrder: 4,
+    //     },
+    //     {
+    //       type: "input",
+    //       key: "uniqueMarriageCertificateNumber",
+    //       label: "Marriage Certificate Number",
+    //       placeholder: "",
+    //       description: "Enter the Unique Marraige Certificate Number",
+    //       validators: [
+    //         {
+    //           type: "required",
+    //           message: "Marriage Certificate Number is required",
+    //         },
+    //       ],
+    //       required: true,
+    //       group: "Honor Information",
+    //       groupOrder: 4,
+    //     },
+    //   ],
+    // },
     {
       title: "Honor Information",
       group: "Honor Information",
       groupOrder: 5,
-      tabular: false,
-      defaultExpanded: false,
+      tabular: true,
+      defaultExpanded: true,
       fields: [
         {
           type: "input",
           key: "honorRecordNumber",
           label: "Marriage Honor Record Number",
-          placeholder: "",
-          description: "Enter the Marriage Honor Record Number",
+          placeholder: "Enter Marriage Honor Record Number",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1803,13 +1834,14 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Honor Information",
           groupOrder: 4,
+          gridCols: 6,
         },
         {
           type: "input",
           key: "uniqueRegistrationOfficeNumber",
           label: "Registration Office Number",
-          placeholder: "",
-          description: "Enter the Unique number of the registration office",
+          placeholder: "Enter Registration Office Number",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1817,6 +1849,7 @@ export const formConfig: FormConfig = {
             },
           ],
           required: true,
+          gridCols: 6,
           group: "Honor Information",
           groupOrder: 4,
         },
@@ -1824,8 +1857,8 @@ export const formConfig: FormConfig = {
           type: "input",
           key: "uniqueMarriageCertificateNumber",
           label: "Marriage Certificate Number",
-          placeholder: "",
-          description: "Enter the Unique Marraige Certificate Number",
+          placeholder: "Enter Marriage Certificate Number",
+          description: "",
           validators: [
             {
               type: "required",
@@ -1835,6 +1868,59 @@ export const formConfig: FormConfig = {
           required: true,
           group: "Honor Information",
           groupOrder: 4,
+          gridCols: 6,
+        },
+      ],
+    },
+    {
+      title: "Payment Information",
+      group: "Payment Information",
+      groupOrder: 1,
+      tabular: false,
+      defaultExpanded: true,
+      fields: [
+        {
+          type: "payment",
+          key: "paymentOption",
+          label: "Payment Option",
+          description: "Choose your payment method.",
+          required: true,
+          options: [
+            {
+              id: "telebirr",
+              label: "Telebirr Transfer",
+              value: "telebirr",
+              data: {
+                image: "/images/telebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-white",
+              },
+            },
+            {
+              id: "cbe",
+              label: "CBE Transfer",
+              value: "cbe",
+              data: {
+                image: "/images/cbebirr.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#730b7d]",
+              },
+            },
+            {
+              id: "mpesa",
+              label: "Mpesa Transfer",
+              value: "mpesa",
+              data: {
+                image: "/images/mpesa.png",
+                price: "200 ETB",
+                serviceType: "New Birth",
+                class: "bg-[#09ed2c]",
+              },
+            },
+          ],
+          gridCols: 12,
         },
       ],
     },

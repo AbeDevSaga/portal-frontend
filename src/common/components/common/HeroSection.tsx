@@ -33,7 +33,7 @@ const HeroSection = ({
                     </Button>{" "}
                     <p className='text-xl font-bold '>{title}</p>
                 </div>
-                <p className='text-[#7D7D7D]'>{description}</p>
+                {/* <p className='text-[#7D7D7D]'>{description}</p> */}
             </div>
             <div className='flex flex-wrap items-center gap-3'>{action}</div>
         </div>

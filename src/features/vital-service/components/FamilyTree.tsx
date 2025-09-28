@@ -232,9 +232,6 @@ const FamilyTree = ({ onContinue }: FamilyTreeProps) => {
               <p className="font-bold text-2xl text-[#073954]">
                 Family Members
               </p>
-              <p className="text-lg text-[#073954]/40">
-                This is the family members section
-              </p>
             </div>
 
             <div className="flex gap-2">
