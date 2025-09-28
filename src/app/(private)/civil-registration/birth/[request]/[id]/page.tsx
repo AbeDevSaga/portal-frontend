@@ -64,9 +64,9 @@ function RequestDeatil({
 
   console.log("user data: ", userData);
 
-  if (validRequestType === "correction") {
-    return <BirthCorrection data={userData} loading={loading} error={error} />;
-  }
+  // if (validRequestType === "correction") {
+  //   return <BirthCorrection data={userData} loading={loading} error={error} />;
+  // }
   return (
     <BirthDetail
       data={userData}

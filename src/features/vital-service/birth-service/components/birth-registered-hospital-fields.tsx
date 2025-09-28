@@ -157,7 +157,7 @@ export const formConfig: FormConfig = {
         {
           type: "input",
           key: "childFullName",
-          label: "Child's Full Name",
+          label: "Child's Name",
           placeholder: "",
           description: "",
           validators: [],
@@ -167,16 +167,16 @@ export const formConfig: FormConfig = {
           gridCols: 6,
           defaultValue: (dependentValues: any) => {
             if (dependentValues?.hospitalNotificationId) {
-              return dependentValues.hospitalNotificationId.fullName || "";
+              return dependentValues.hospitalNotificationId.firstName || "";
             }
             return "";
           },
           getDependentValue: (formValues: any) => ({
             hospitalNotificationId: formValues.hospitalNotificationId,
           }),
-          isDisabled: (dependentValues: any) => {
-            return dependentValues?.hospitalNotificationId;
-          },
+          // isDisabled: (dependentValues: any) => {
+          //   return dependentValues?.hospitalNotificationId;
+          // },
           isHide: (dependentValues: any) => {
             return !dependentValues?.hospitalNotificationId;
           },
@@ -262,33 +262,33 @@ export const formConfig: FormConfig = {
             return !dependentValues?.hospitalNotificationId;
           },
         },
-        {
-          type: "input",
-          key: "childBirthHeight",
-          label: "Birth Height (cm)",
-          placeholder: "",
-          description: "",
-          validators: [],
-          required: false,
-          group: "Child Details",
-          groupOrder: 10,
-          gridCols: 6,
-          defaultValue: (dependentValues: any) => {
-            if (dependentValues?.hospitalNotificationId) {
-              return dependentValues.hospitalNotificationId.birthHeight || "";
-            }
-            return "";
-          },
-          getDependentValue: (formValues: any) => ({
-            hospitalNotificationId: formValues.hospitalNotificationId,
-          }),
-          isDisabled: (dependentValues: any) => {
-            return dependentValues?.hospitalNotificationId;
-          },
-          isHide: (dependentValues: any) => {
-            return !dependentValues?.hospitalNotificationId;
-          },
-        },
+        // {
+        //   type: "input",
+        //   key: "childBirthHeight",
+        //   label: "Birth Height (cm)",
+        //   placeholder: "",
+        //   description: "",
+        //   validators: [],
+        //   required: false,
+        //   group: "Child Details",
+        //   groupOrder: 10,
+        //   gridCols: 6,
+        //   defaultValue: (dependentValues: any) => {
+        //     if (dependentValues?.hospitalNotificationId) {
+        //       return dependentValues.hospitalNotificationId.birthHeight || "";
+        //     }
+        //     return "";
+        //   },
+        //   getDependentValue: (formValues: any) => ({
+        //     hospitalNotificationId: formValues.hospitalNotificationId,
+        //   }),
+        //   isDisabled: (dependentValues: any) => {
+        //     return dependentValues?.hospitalNotificationId;
+        //   },
+        //   isHide: (dependentValues: any) => {
+        //     return !dependentValues?.hospitalNotificationId;
+        //   },
+        // },
         {
           type: "input",
           key: "birthFacilityName",

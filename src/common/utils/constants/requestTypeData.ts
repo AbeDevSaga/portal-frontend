@@ -19,19 +19,15 @@ export const requestTypeData = [
       processingFee: 50,
     },
   },
-
   {
     type: "print",
-    // attachment: {
-    //   label: "Supporting Documents",
-    //   requiredDoc: {
-    //     label: "Required Documents",
-    //     list: [
-    //       "Original birth certificate",
-    //       "Valid ID document",
-    //     ],
-    //   },
-    // },
+    attachment: {
+      label: "Supporting Documents",
+      requiredDoc: {
+        label: "Required Documents",
+        list: ["Original birth certificate", "Valid ID document"],
+      },
+    },
     payment: {
       label: "Payment Information",
       serviceFee: 150, // Printing service fee

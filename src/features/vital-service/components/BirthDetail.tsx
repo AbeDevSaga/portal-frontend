@@ -7,6 +7,7 @@ import { Card } from "@/common/components/ui/card";
 import Image from "next/image";
 import child_image from "@/public/images/groom.svg";
 import CertificateDialog from "@/common/components/common/CertificateDialog";
+import SidePreview from "./SidePreview";
 
 interface BirthDetailProps {
   data: any | null;
@@ -22,6 +23,7 @@ export default function BirthDetail({
   requestType,
 }: BirthDetailProps) {
   const [showCertificateDialog, setShowCertificateDialog] = useState(false);
+  const [attachments, setAttachments] = useState<any[]>([]);
 
   const requirementsandaction = [
     {
@@ -61,6 +63,21 @@ export default function BirthDetail({
         (item) => item.title.toLowerCase() === requestType.toLowerCase()
       )
     : requirementsandaction;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const filesArray = Array.from(e.target.files).map((file) => ({
+      fileName: file.name,
+      fileType: file.type,
+      file,
+      url: URL.createObjectURL(file),
+    }));
+    setAttachments((prev) => [...prev, ...filesArray]);
+  };
+
+  const handleRemoveAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleRenderApplicationDecisionButtons = (status: string) => {
     if (status === "SUBMITTED")
@@ -384,38 +401,14 @@ export default function BirthDetail({
           </Card>
         )}
 
-        <div className="w-full md:w-1/3 flex flex-col gap-5">
-          <Card className="p-5 space-y-4 shadow-md border rounded-xl">
-            <p className="text-lg font-semibold text-[#073954]">
-              Requirements and Actions
-            </p>
-            <div className="space-y-4">
-              {requestTransaction.map((item) => (
-                <Card
-                  key={item.title}
-                  className="p-4 space-y-3 bg-[#E8EEFD] border border-[#204D66] rounded-lg"
-                >
-                  <p className="font-semibold text-[#073954]">{item.title}</p>
-                  {item.details.map((d) => (
-                    <div key={d} className="flex gap-2 items-start">
-                      <Check size={18} className="text-[#073954] mt-0.5" />
-                      <p className="text-sm">{d}</p>
-                    </div>
-                  ))}
-                  <div className="rounded-md px-4 py-2 flex items-center gap-2 bg-[#FFF6E0]">
-                    <Info fill="orange" color="white" />
-                    <p className="text-sm">
-                      You are asked to pay {item.paymentAmount} Br
-                    </p>
-                  </div>
-                  <Button className="bg-[#073954] hover:bg-[#062c3d] w-full">
-                    {item.buttonTitle}
-                  </Button>
-                </Card>
-              ))}
-            </div>
-          </Card>
-        </div>
+        {/* Sidebar */}
+        <SidePreview
+          userData={data}
+          requestType={requestType || "lost"}
+          attachments={attachments}
+          fileUploadHandler={handleFileChange}
+          removeAttachment={handleRemoveAttachment}
+        />
       </div>
 
       <CertificateDialog
