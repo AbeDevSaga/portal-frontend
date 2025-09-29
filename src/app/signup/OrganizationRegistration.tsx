@@ -96,7 +96,7 @@ export default function OrganizationRegistration({
 
     try {
       // Get all attachment IDs (since AttachmentCard already uploads files)
-      const attachmentIds = organizationForm.attachments.map(
+      const attachment = organizationForm.attachments.map(
         (attachment) => attachment.id
       );
 
@@ -105,12 +105,16 @@ export default function OrganizationRegistration({
         organizationName: organizationForm.organizationName,
         email: organizationForm.email,
         organizationType: organizationForm.organizationType.toUpperCase(),
-        phoneNumber: formatPhoneNumber(organizationForm.phoneNumber),
+        // phoneNumber: formatPhoneNumber(organizationForm.phoneNumber),
+        phoneNumber: organizationForm.phoneNumber,
+        subCity: organizationForm.subCity,
+        woreda: organizationForm.woreda,
+        description: organizationForm.description,
         structureId: "8b097e41-8adf-42e4-a0d5-b23a47d7f356",
       };
 
-      if (attachmentIds.length > 0) {
-        registrationBody.attachmentIds = attachmentIds;
+      if (attachment.length > 0) {
+        registrationBody.attachment = attachment;
       }
 
       console.log("Final Registration request body:", registrationBody);
@@ -262,9 +266,7 @@ export default function OrganizationRegistration({
 
           {/* Sub-City */}
           <div className="flex flex-col items-start justify-start">
-            <label
-              htmlFor="subCity"
-              className="block text-base font-medium text-gray-700 mb-1">
+            <label className="block text-base font-medium text-gray-700 mb-1">
               Sub-City <span className="text-red-500">*</span>
             </label>
             <Select
@@ -294,9 +296,7 @@ export default function OrganizationRegistration({
 
           {/* Woreda */}
           <div className="flex flex-col items-start justify-start">
-            <label
-              htmlFor="woreda"
-              className="block text-base font-medium text-gray-700 mb-1">
+            <label className="block text-base font-medium text-gray-700 mb-1">
               Woreda <span className="text-red-500">*</span>
             </label>
             <Select
@@ -348,17 +348,6 @@ export default function OrganizationRegistration({
         <div className="flex flex-col items-start justify-start min-w-full">
           <AttachmentCard
             requestConfig={null}
-            // requestConfig={{
-            //   label: "Organization Documents",
-            //   requiredDoc: {
-            //     label: "Required Documents",
-            //     list: [
-            //       "Organization registration certificate",
-            //       "Valid ID of organization representative",
-            //       "Authorization letter (if applicable)",
-            //     ],
-            //   },
-            // }}
             onChange={handleAttachmentsChange}
           />
         </div>
