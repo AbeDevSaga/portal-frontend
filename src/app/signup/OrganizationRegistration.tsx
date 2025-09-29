@@ -148,7 +148,7 @@ export default function OrganizationRegistration({
       };
 
       if (attachment.length > 0) {
-        registrationBody.attachment = attachment;
+        registrationBody.attachmentIds = attachment;
       }
 
       console.log("Final Registration request body:", registrationBody);
