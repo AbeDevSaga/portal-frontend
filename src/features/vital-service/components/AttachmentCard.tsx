@@ -26,7 +26,7 @@ function AttachmentCard({ requestConfig, onChange }: AttachmentCardProps) {
     if (onChange) {
       onChange(attachments);
     }
-  }, [attachments]); // Remove onChange from dependencies to prevent infinite loop
+  }, [attachments]);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -142,7 +142,6 @@ function AttachmentCard({ requestConfig, onChange }: AttachmentCardProps) {
                 <div className="flex items-center space-x-2">
                   <FileText className="h-4 w-4 text-gray-500" />
                   <span className="text-sm text-gray-700">{item.name}</span>
-                  <span className="text-xs text-gray-400">(ID: {item.id})</span>
                 </div>
                 <Button
                   variant="ghost"

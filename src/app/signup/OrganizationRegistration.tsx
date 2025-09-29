@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Button } from "@/common/components/ui/button";
 import { Input } from "@/common/components/ui/input";
 import { Textarea } from "@/common/components/ui/textarea";
@@ -12,13 +12,10 @@ import {
 } from "@/common/components/ui/select";
 import { ChevronLeft, Upload } from "lucide-react";
 import Image from "next/image";
-import {
-  getSubcityOptions,
-  getWoredaOptionsBySubcity,
-} from "./subcityWoredaData";
 import AttachmentCard, {
   UploadedFile,
 } from "@/features/vital-service/components/AttachmentCard";
+import { administrativeApi, DropdownOption } from "./administrativeApi";
 
 interface OrganizationForm {
   organizationName: string;
@@ -51,8 +48,46 @@ export default function OrganizationRegistration({
     attachments: [],
   });
 
-  const subcityOptions = getSubcityOptions();
-  const woredaOptions = getWoredaOptionsBySubcity(organizationForm.subCity);
+  // Dynamic dropdown data
+  const [subcities, setSubcities] = useState<DropdownOption[]>([]);
+  const [woredas, setWoredas] = useState<DropdownOption[]>([]);
+
+  // Loading states
+  const [loadingSubcities, setLoadingSubcities] = useState(false);
+  const [loadingWoredas, setLoadingWoredas] = useState(false);
+
+  // Hardcoded city ID (Addis Ababa) - you can change this to the correct city ID
+  const CITY_ID = "91cf3266-a2d9-46ba-ae8d-008050512d9e"; // Based on the parentId from your API data
+
+  useEffect(() => {
+    loadSubcities(CITY_ID);
+  }, []);
+
+  const loadSubcities = async (cityId: string) => {
+    try {
+      setLoadingSubcities(true);
+      const subcityData = await administrativeApi.getSubcities(cityId);
+      setSubcities(subcityData);
+    } catch (error) {
+      console.error("Failed to load subcities:", error);
+    } finally {
+      setLoadingSubcities(false);
+    }
+  };
+
+  // Load woredas when subcity changes
+  const loadWoredas = async (subcityId: string) => {
+    try {
+      setLoadingWoredas(true);
+      const woredaData = await administrativeApi.getWoredas(subcityId);
+      setWoredas(woredaData);
+    } catch (error) {
+      console.error("Failed to load woredas:", error);
+    } finally {
+      setLoadingWoredas(false);
+    }
+  };
+
   // COURT, HEALTH_FACILITY, POLICE
   const organizationTypes = [
     { label: "Court", value: "COURT" },
@@ -105,8 +140,7 @@ export default function OrganizationRegistration({
         organizationName: organizationForm.organizationName,
         email: organizationForm.email,
         organizationType: organizationForm.organizationType.toUpperCase(),
-        // phoneNumber: formatPhoneNumber(organizationForm.phoneNumber),
-        phoneNumber: organizationForm.phoneNumber,
+        phoneNumber: formatPhoneNumber(organizationForm.phoneNumber),
         subCity: organizationForm.subCity,
         woreda: organizationForm.woreda,
         description: organizationForm.description,
@@ -271,18 +305,30 @@ export default function OrganizationRegistration({
             </label>
             <Select
               value={organizationForm.subCity}
-              onValueChange={(value) =>
+              onValueChange={(value) => {
                 setOrganizationForm((prev) => ({
                   ...prev,
                   subCity: value,
-                  woreda: "",
-                }))
-              }>
+                  woreda: "", // Clear woreda when subcity changes
+                }));
+                if (value) {
+                  loadWoredas(value);
+                } else {
+                  setWoredas([]);
+                }
+              }}
+              disabled={loadingSubcities}>
               <SelectTrigger className="w-full h-12 text-base">
-                <SelectValue placeholder="Select sub-city" />
+                <SelectValue
+                  placeholder={
+                    loadingSubcities
+                      ? "Loading subcities..."
+                      : "Select sub-city"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
-                {subcityOptions.map((subcity) => (
+                {subcities.map((subcity) => (
                   <SelectItem
                     className="text-base"
                     key={subcity.value}
@@ -304,12 +350,16 @@ export default function OrganizationRegistration({
               onValueChange={(value) =>
                 setOrganizationForm((prev) => ({ ...prev, woreda: value }))
               }
-              disabled={!organizationForm.subCity}>
+              disabled={!organizationForm.subCity || loadingWoredas}>
               <SelectTrigger className="w-full h-12 text-base">
-                <SelectValue placeholder="Select woreda" />
+                <SelectValue
+                  placeholder={
+                    loadingWoredas ? "Loading woredas..." : "Select woreda"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
-                {woredaOptions.map((woreda) => (
+                {woredas.map((woreda) => (
                   <SelectItem
                     className="text-base"
                     key={woreda.value}
